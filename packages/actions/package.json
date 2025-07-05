@@ -1,0 +1,36 @@
+{
+  "name": "@p0tion/actions",
+  "version": "0.0.0",
+  "description": "A set of actions and helpers for CLI, website and server commands",
+  "author": "NicoSerranoP",
+  "homepage": "https://github.com/NicoSerranoP/brebaje#readme",
+  "license": "MIT",
+  "keywords": [
+    "typescript",
+    "zero-knowledge",
+    "zk-snarks",
+    "phase-2",
+    "trusted-setup",
+    "ceremony",
+    "snarkjs",
+    "circom"
+  ],
+  "main": "lib/actions.js",
+  "directories": {
+    "lib": "lib",
+    "test": "__tests__"
+  },
+  "files": [
+    "lib"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NicoSerranoP/brebaje.git"
+  },
+  "scripts": {
+    "test": "node ./__tests__/actions.test.js"
+  },
+  "bugs": {
+    "url": "https://github.com/NicoSerranoP/brebaje/issues"
+  }
+}
