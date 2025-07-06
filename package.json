@@ -16,6 +16,7 @@
     "lerna": "^8.2.3"
   },
   "scripts": {
-    "prepare": "husky"
+    "prepare": "husky",
+    "test": "lerna run test --stream"
   }
 }
