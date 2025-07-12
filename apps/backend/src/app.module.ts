@@ -7,6 +7,8 @@ import { CeremoniesModule } from './ceremonies/ceremonies.module';
 import { CircuitsModule } from './circuits/circuits.module';
 import { ProjectsModule } from './projects/projects.module';
 import { ContributionsModule } from './contributions/contributions.module';
+import { StorageModule } from './storage/storage.module';
+import { AuthModule } from './auth/auth.module';
 
 @Module({
   imports: [
@@ -16,6 +18,8 @@ import { ContributionsModule } from './contributions/contributions.module';
     CircuitsModule,
     ProjectsModule,
     ContributionsModule,
+    StorageModule,
+    AuthModule,
   ],
   controllers: [AppController],
   providers: [AppService],
