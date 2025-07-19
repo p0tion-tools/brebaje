@@ -49,6 +49,12 @@ $ mau deploy
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
+## Convert from DBML (dbdiagram.io file) to SQL
+
+```bash
+$ pnpm run convert diagram.dbml
+```
+
 ## Resources
 
 Check out a few resources that may come in handy when working with NestJS:

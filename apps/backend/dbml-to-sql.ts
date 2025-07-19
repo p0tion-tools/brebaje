@@ -95,9 +95,15 @@ class DbDiagramToSQL {
 
       // Parse column definitions
       if (currentTable && line.includes(' ') && !line.startsWith('}')) {
-        const column = this.parseColumn(line);
-        if (column) {
-          currentTable.columns.push(column);
+        const colResult = this.parseColumn(line);
+        if (!colResult) continue;
+        if ('column' in colResult) {
+          currentTable.columns.push(colResult.column);
+          if (colResult.foreignKey) {
+            currentTable.foreignKeys.push(colResult.foreignKey);
+          }
+        } else {
+          currentTable.columns.push(colResult);
         }
         continue;
       }
@@ -107,27 +113,14 @@ class DbDiagramToSQL {
         // Handle indexes section
         continue;
       }
-
-      /* TODO: parse foreign keys from each column
-      // Parse foreign key references (separate lines)
-      if (line.includes('>') && line.includes('ref') && !currentTable) {
-        const fk = this.parseForeignKey(line);
-        if (fk) {
-          // Find the table this FK belongs to
-          const tableName = line.split('.')[0].trim();
-          const table = this.tables.get(tableName);
-          if (table) {
-            table.foreignKeys.push(fk);
-          }
-        }
-      }
-        */
     }
 
     return this.generateSQL();
   }
 
-  private parseColumn(line: string): ColumnDefinition | null {
+  private parseColumn(
+    line: string,
+  ): ColumnDefinition | null | { column: ColumnDefinition; foreignKey?: ForeignKeyDefinition } {
     // Remove comments
     const commentMatch = line.match(/\s*\/\/\s*(.+)$/);
     const comment = commentMatch ? commentMatch[1] : undefined;
@@ -140,6 +133,7 @@ class DbDiagramToSQL {
     const name = parts[0];
     const type = parts[1];
     const constraints: string[] = [];
+    let foreignKey: ForeignKeyDefinition | undefined = undefined;
 
     // Parse constraints from bracket notation [pk, increment, not null, etc.]
     const bracketMatch = cleanLine.match(/\[(.*?)\]/);
@@ -157,40 +151,33 @@ class DbDiagramToSQL {
           const defaultValue = part.replace('default:', '').trim();
           constraints.push(`DEFAULT ${defaultValue}`);
         } else if (part.startsWith('ref')) {
-          // Foreign key reference - handled separately
-          continue;
+          // Foreign key reference: ref: > projects.id
+          const refMatch = part.match(/ref:\s*>\s*(\w+)\.(\w+)/);
+          if (refMatch) {
+            const refTable = refMatch[1];
+            const refColumn = refMatch[2];
+            foreignKey = {
+              columns: [name],
+              references: {
+                table: refTable,
+                columns: [refColumn],
+              },
+            };
+          }
         }
       }
     }
 
-    return {
+    const column: ColumnDefinition = {
       name,
       type: this.normalizeType(type),
       constraints,
       comment,
     };
-  }
-
-  private parseForeignKey(line: string): ForeignKeyDefinition | null {
-    // Parse patterns like: "column > ref table.column"
-    const fkMatch = line.match(/(\w+)\s*>\s*ref\s+(\w+)\.(\w+)/);
-    if (!fkMatch) return null;
-
-    const [, column, refTable, refColumn] = fkMatch;
-
-    // Check for onDelete/onUpdate
-    const onDeleteMatch = line.match(/onDelete:\s*(\w+)/);
-    const onUpdateMatch = line.match(/onUpdate:\s*(\w+)/);
-
-    return {
-      columns: [column],
-      references: {
-        table: refTable,
-        columns: [refColumn],
-      },
-      onDelete: onDeleteMatch ? onDeleteMatch[1] : undefined,
-      onUpdate: onUpdateMatch ? onUpdateMatch[1] : undefined,
-    };
+    if (foreignKey) {
+      return { column, foreignKey };
+    }
+    return column;
   }
 
   private normalizeType(type: string): string {
@@ -231,7 +218,7 @@ class DbDiagramToSQL {
 
     // Handle types with size specifications like varchar(255)
     const baseType = type.replace(/\([^)]*\)/, '');
-    const normalizedBaseType = typeMap[baseType.toLowerCase()] || baseType.toUpperCase();
+    const normalizedBaseType = typeMap[baseType.toLowerCase()] || baseType;
 
     // Preserve size specifications
     const sizeMatch = type.match(/\(([^)]+)\)/);
@@ -306,8 +293,8 @@ if (require.main === module) {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log('Usage: ts-node dbdiagram-to-sql.ts <input-file> [output-file]');
-    console.log('Example: ts-node dbdiagram-to-sql.ts schema.dbml schema.sql');
+    console.log('Usage: pnpm convert <input-file> [output-file]');
+    console.log('Example: pnpm convert diagram.dbml');
     process.exit(1);
   }
 

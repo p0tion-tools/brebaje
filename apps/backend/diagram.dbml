@@ -90,7 +90,7 @@ Table contributions {
   valid boolean
   lastUpdated int
   files json
-  verificationSofware json
+  verificationSoftware json
   beacon json
 }
 
