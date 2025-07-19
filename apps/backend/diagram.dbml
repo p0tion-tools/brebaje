@@ -1,0 +1,118 @@
+Enum ceremonyState {
+  'SCHEDULED'
+  'OPENED'
+  'PAUSED'
+  'CLOSED'
+  'CANCELED'
+  'FINALIZED'
+}
+
+Enum ceremonyType {
+  'PHASE1'
+  'PHASE2'
+}
+
+Enum circuitTimeoutType {
+  'DYNAMIC'
+  'FIXED'
+  'LOBBY'
+}
+
+Enum participantStatus {
+  'CREATED'
+  'WAITING'
+  'READY'
+  'CONTRIBUTING'
+  'CONTRIBUTED'
+  'DONE'
+  'FINALIZING'
+  'FINALIZED'
+  'TIMEDOUT'
+  'EXHUMED'
+}
+
+Enum participantContributionStep {
+  'DOWNLOADING'
+  'COMPUTING'
+  'UPLOADING'
+  'VERIFYING'
+  'COMPLETED'
+}
+
+Table projects {
+  id int [pk, increment]
+  name varchar [note: 'title in the frontend']
+  contact varchar [note: 'E.g.: nicoserranop (Discord)']
+  coordinatorId int [ref: > users.id, not null]
+}
+
+Table ceremonies {
+  projectId int [ref: > projects.id, not null]
+  id int [pk, increment]
+  description varchar [note: 'description in the frontend']
+  state ceremonyState [default: 'SCHEDULED']
+  start_date int
+  end_date int
+  penalty int
+  authProviders json [note: 'check auth providers classes']
+}
+
+Table circuits {
+  ceremonyId int [ref: > ceremonies.id, not null]
+  id int [pk, increment]
+  name varchar
+  timeoutMechanismType circuitTimeoutType [default: 'FIXED']
+  dynamicThreshold int
+  fixedTimeWindow int
+  sequencePosition int
+  zKeySizeInBytes int
+  constraints int
+  pot int
+  averageContributionComputationTime int
+  averageFullContributionTime int
+  averageVerifyContributionTime int
+  compiler json
+  template json
+  verification json
+  artifacts json
+  metadata json
+  files json
+}
+
+Table contributions {
+  circuitId int [ref: > circuits.id, not null]
+  participantId int [ref: > participants.id, not null]
+  id int [pk, increment]
+  contributionComputationTime int
+  fullContributionTime int
+  verifyContributionTime int
+  zkeyIndex int
+  valid boolean
+  lastUpdated int
+  files json
+  verificationSofware json
+  beacon json
+}
+
+Table participants {
+  userId int [ref: > users.id, not null]
+  ceremonyId int [ref: > ceremonies.id, not null]
+  id int [pk, increment]
+  status participantStatus [default: 'CREATED']
+  contributionStep participantContributionStep
+  contributionProgress int
+  contributionStartedAt int
+  verificationStartedAt int
+  tempContributionData json
+  timeout json [note: 'Array of timeouts. Check Timeout class']
+}
+
+Table users {
+  id int [pk, increment]
+  displayName varchar
+  creationTime int
+  lastSignInTime int
+  lastUpdated int
+  avatarUrl int
+  provider varchar
+}
