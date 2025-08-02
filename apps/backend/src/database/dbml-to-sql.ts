@@ -32,7 +32,7 @@ interface ForeignKeyDefinition {
   onUpdate?: string;
 }
 
-class DbDiagramToSQL {
+export default class DbmlToSQL {
   private tables: Map<string, TableDefinition> = new Map();
   private enums: Map<string, string[]> = new Map();
 
@@ -288,6 +288,29 @@ class DbDiagramToSQL {
   }
 }
 
+export function convertDbmlToSql(dbInputFilePath: string, dbOutputFilePath?: string): string {
+  if (process.env.NODE_ENV === 'production') {
+    try {
+      const dbDiagramCode = fs.readFileSync(dbInputFilePath, 'utf8');
+      const converter = new DbmlToSQL();
+      const sql = converter.parse(dbDiagramCode);
+
+      const outputFile = dbOutputFilePath || dbInputFilePath.replace(/\.(dbml|dbdiagram)$/, '.sql');
+      fs.writeFileSync(outputFile, sql);
+
+      console.log(`✅ Successfully converted ${dbInputFilePath} to ${outputFile}`);
+
+      return sql;
+    } catch (error) {
+      console.error('❌ Error:', (error as Error).message);
+      throw error;
+    }
+  } else {
+    // TODO: update existing database schema without deleting data
+    return '';
+  }
+}
+
 // CLI usage
 if (require.main === module) {
   const args = process.argv.slice(2);
@@ -299,19 +322,11 @@ if (require.main === module) {
   }
 
   const inputFile = args[0];
-  const outputFile = args[1] || inputFile.replace(/\.(dbml|dbdiagram)$/, '.sql');
+  const outputFile = args[1];
 
   try {
-    const dbDiagramCode = fs.readFileSync(inputFile, 'utf8');
-    const converter = new DbDiagramToSQL();
-    const sql = converter.parse(dbDiagramCode);
-
-    fs.writeFileSync(outputFile, sql);
-    console.log(`✅ Successfully converted ${inputFile} to ${outputFile}`);
-  } catch (error) {
-    console.error('❌ Error:', (error as Error).message);
+    convertDbmlToSql(inputFile, outputFile);
+  } catch {
     process.exit(1);
   }
 }
-
-export { DbDiagramToSQL };
