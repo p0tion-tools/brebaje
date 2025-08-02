@@ -8,6 +8,16 @@ A backend service built with [Nest](https://github.com/nestjs/nest) to facilitat
 
 ```bash
 $ pnpm install
+
+# IMPORTANT Run sqlite3 postcript install
+
+# Option 1 (recommended):
+# BE SURE TO USE ARROW KEYS AND SPACE BAR TO SELECT THE SQLITE3 OPTION
+# BEFORE TO PRESS ENTER
+$ pnpm approve-builds
+
+# Option 2
+$ cd node_modules/sqlite3/ && pnpm rebuild & cd ../..
 ```
 
 ## Compile and run the project
