@@ -1,46 +1,12 @@
-CREATE TYPE "ceremonyState" AS ENUM (
-  'SCHEDULED',
-  'OPENED',
-  'PAUSED',
-  'CLOSED',
-  'CANCELED',
-  'FINALIZED'
-);
-
-CREATE TYPE "ceremonyType" AS ENUM (
-  'PHASE1',
-  'PHASE2'
-);
-
-CREATE TYPE "circuitTimeoutType" AS ENUM (
-  'DYNAMIC',
-  'FIXED',
-  'LOBBY'
-);
-
-CREATE TYPE "participantStatus" AS ENUM (
-  'CREATED',
-  'WAITING',
-  'READY',
-  'CONTRIBUTING',
-  'CONTRIBUTED',
-  'DONE',
-  'FINALIZING',
-  'FINALIZED',
-  'TIMEDOUT',
-  'EXHUMED'
-);
-
-CREATE TYPE "participantContributionStep" AS ENUM (
-  'DOWNLOADING',
-  'COMPUTING',
-  'UPLOADING',
-  'VERIFYING',
-  'COMPLETED'
-);
+DROP TABLE IF EXISTS "users";
+DROP TABLE IF EXISTS "participants";
+DROP TABLE IF EXISTS "contributions";
+DROP TABLE IF EXISTS "circuits";
+DROP TABLE IF EXISTS "ceremonies";
+DROP TABLE IF EXISTS "projects";
 
 CREATE TABLE "projects" (
-  "id" INTEGER PRIMARY KEY AUTO_INCREMENT,
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "name" VARCHAR,
   "contact" VARCHAR,
   "coordinatorId" INTEGER NOT NULL
@@ -48,9 +14,9 @@ CREATE TABLE "projects" (
 
 CREATE TABLE "ceremonies" (
   "projectId" INTEGER NOT NULL,
-  "id" INTEGER PRIMARY KEY AUTO_INCREMENT,
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "description" VARCHAR,
-  "state" CEREMONYSTATE DEFAULT 'SCHEDULED',
+  "state" TEXT CHECK("state" IN ('SCHEDULED', 'OPENED', 'PAUSED', 'CLOSED', 'CANCELED', 'FINALIZED')) DEFAULT 'SCHEDULED',
   "start_date" INTEGER,
   "end_date" INTEGER,
   "penalty" INTEGER,
@@ -59,9 +25,9 @@ CREATE TABLE "ceremonies" (
 
 CREATE TABLE "circuits" (
   "ceremonyId" INTEGER NOT NULL,
-  "id" INTEGER PRIMARY KEY AUTO_INCREMENT,
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "name" VARCHAR,
-  "timeoutMechanismType" CIRCUITTIMEOUTTYPE DEFAULT 'FIXED',
+  "timeoutMechanismType" TEXT CHECK("timeoutMechanismType" IN ('DYNAMIC', 'FIXED', 'LOBBY')) DEFAULT 'FIXED',
   "dynamicThreshold" INTEGER,
   "fixedTimeWindow" INTEGER,
   "sequencePosition" INTEGER,
@@ -82,7 +48,7 @@ CREATE TABLE "circuits" (
 CREATE TABLE "contributions" (
   "circuitId" INTEGER NOT NULL,
   "participantId" INTEGER NOT NULL,
-  "id" INTEGER PRIMARY KEY AUTO_INCREMENT,
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "contributionComputationTime" INTEGER,
   "fullContributionTime" INTEGER,
   "verifyContributionTime" INTEGER,
@@ -90,16 +56,16 @@ CREATE TABLE "contributions" (
   "valid" BOOLEAN,
   "lastUpdated" INTEGER,
   "files" JSON,
-  "verificationSofware" JSON,
+  "verificationSoftware" JSON,
   "beacon" JSON
 );
 
 CREATE TABLE "participants" (
   "userId" INTEGER NOT NULL,
   "ceremonyId" INTEGER NOT NULL,
-  "id" INTEGER PRIMARY KEY AUTO_INCREMENT,
-  "status" PARTICIPANTSTATUS DEFAULT 'CREATED',
-  "contributionStep" PARTICIPANTCONTRIBUTIONSTEP,
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "status" TEXT CHECK("status" IN ('CREATED', 'WAITING', 'READY', 'CONTRIBUTING', 'CONTRIBUTED', 'DONE', 'FINALIZING', 'FINALIZED', 'TIMEDOUT', 'EXHUMED')) DEFAULT 'CREATED',
+  "contributionStep" TEXT CHECK("contributionStep" IN ('DOWNLOADING', 'COMPUTING', 'UPLOADING', 'VERIFYING', 'COMPLETED')),
   "contributionProgress" INTEGER,
   "contributionStartedAt" INTEGER,
   "verificationStartedAt" INTEGER,
@@ -108,7 +74,7 @@ CREATE TABLE "participants" (
 );
 
 CREATE TABLE "users" (
-  "id" INTEGER PRIMARY KEY AUTO_INCREMENT,
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "displayName" VARCHAR,
   "creationTime" INTEGER,
   "lastSignInTime" INTEGER,

@@ -46,6 +46,9 @@ importers:
       "@nestjs/common":
         specifier: ^11.0.1
         version: 11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      "@nestjs/config":
+        specifier: ^4.0.2
+        version: 4.0.2(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)
       "@nestjs/core":
         specifier: ^11.0.1
         version: 11.1.3(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -67,6 +70,9 @@ importers:
       sequelize:
         specifier: ^6.37.7
         version: 6.37.7(sqlite3@5.1.7)
+      sequelize-auto:
+        specifier: ^0.8.8
+        version: 0.8.8(sequelize@6.37.7(sqlite3@5.1.7))
       sequelize-typescript:
         specifier: ^2.1.6
         version: 2.1.6(@types/node@22.16.0)(@types/validator@13.15.2)(reflect-metadata@0.2.2)(sequelize@6.37.7(sqlite3@5.1.7))
@@ -104,9 +110,6 @@ importers:
       "@types/node":
         specifier: ^22.10.7
         version: 22.16.0
-      "@types/sequelize":
-        specifier: ^6.12.0
-        version: 6.12.0(sqlite3@5.1.7)
       "@types/supertest":
         specifier: ^6.0.2
         version: 6.0.3
@@ -1340,6 +1343,15 @@ packages:
       class-validator:
         optional: true
 
+  "@nestjs/config@4.0.2":
+    resolution:
+      {
+        integrity: sha512-McMW6EXtpc8+CwTUwFdg6h7dYcBUpH5iUILCclAsa+MbCEvC9ZKu4dCHRlJqALuhjLw97pbQu62l4+wRwGeZqA==,
+      }
+    peerDependencies:
+      "@nestjs/common": ^10.0.0 || ^11.0.0
+      rxjs: ^7.1.0
+
   "@nestjs/core@11.1.3":
     resolution:
       {
@@ -2248,13 +2260,6 @@ packages:
       {
         integrity: sha512-z6F2D3cOStZvuk2SaP6YrwkNO65iTZcwA2ZkSABegdkAh/lf+Aa/YQndZVfmEXT5vgAp6zv06VQ3ejSVjAny4w==,
       }
-
-  "@types/sequelize@6.12.0":
-    resolution:
-      {
-        integrity: sha512-rJRUf3AkP356HicHSjM2I7+d0FiLvOPZdDxFY0bhmKiZnGOuZZ1cUcDlPyyin9b3pYFvxZfJUTC3nGXLoi6DWA==,
-      }
-    deprecated: This is a stub types definition. sequelize provides its own type definitions, so you do not need this installed.
 
   "@types/serve-static@1.15.8":
     resolution:
@@ -3852,6 +3857,13 @@ packages:
     resolution:
       {
         integrity: sha512-zIHwmZPRshsCdpMDyVsqGmgyP0yT8GAgXUnkdAoJisxvf33k7yO6OuoKmcTGuXPWSsm8Oh88nZicRLA9Y0rUeA==,
+      }
+    engines: { node: ">=12" }
+
+  dotenv-expand@12.0.1:
+    resolution:
+      {
+        integrity: sha512-LaKRbou8gt0RNID/9RoI+J2rvXsBRPMV7p+ElHlPhcSARbCPDYcYG2s1TIzAfWv4YSgyY5taidWzzs31lNV3yQ==,
       }
     engines: { node: ">=12" }
 
@@ -7471,6 +7483,12 @@ packages:
       }
     engines: { node: ">=0.10.0" }
 
+  reserved-words@0.1.2:
+    resolution:
+      {
+        integrity: sha512-0S5SrIUJ9LfpbVl4Yzij6VipUdafHrOTzvmfazSw/jeZrZtQK303OPZW+obtkaw7jQlTQppy0UvZWm9872PbRw==,
+      }
+
   resolve-alpn@1.2.1:
     resolution:
       {
@@ -7689,6 +7707,16 @@ packages:
         integrity: sha512-uaW0WwXKpL9blXE2o0bRhoL2EGXIrZxQ2ZQ4mgcfoBxdFmQold+qWsD2jLrfZ0trjKL6vOw0j//eAwcALFjKSw==,
       }
     engines: { node: ">= 18" }
+
+  sequelize-auto@0.8.8:
+    resolution:
+      {
+        integrity: sha512-9o0qi2yMA86oFqcA5Nh14PnQSHP0E9WPEB4hP/NgxqdFE44Nq2u8Di5O3xmvWwXMIV6W+Q0YI/2VTLvlMJAjnQ==,
+      }
+    engines: { node: ">= 10" }
+    hasBin: true
+    peerDependencies:
+      sequelize: ">3.30.0"
 
   sequelize-pool@7.1.0:
     resolution:
@@ -10050,6 +10078,14 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  "@nestjs/config@4.0.2(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(rxjs@7.8.2)":
+    dependencies:
+      "@nestjs/common": 11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      dotenv: 16.4.7
+      dotenv-expand: 12.0.1
+      lodash: 4.17.21
+      rxjs: 7.8.2
+
   "@nestjs/core@11.1.3(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)":
     dependencies:
       "@nestjs/common": 11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2)
@@ -10648,21 +10684,6 @@ snapshots:
     dependencies:
       "@types/mime": 1.3.5
       "@types/node": 22.16.0
-
-  "@types/sequelize@6.12.0(sqlite3@5.1.7)":
-    dependencies:
-      sequelize: 6.37.7(sqlite3@5.1.7)
-    transitivePeerDependencies:
-      - ibm_db
-      - mariadb
-      - mysql2
-      - oracledb
-      - pg
-      - pg-hstore
-      - snowflake-sdk
-      - sqlite3
-      - supports-color
-      - tedious
 
   "@types/serve-static@1.15.8":
     dependencies:
@@ -11675,6 +11696,10 @@ snapshots:
       is-obj: 2.0.0
 
   dotenv-expand@11.0.7:
+    dependencies:
+      dotenv: 16.4.7
+
+  dotenv-expand@12.0.1:
     dependencies:
       dotenv: 16.4.7
 
@@ -14138,6 +14163,8 @@ snapshots:
 
   require-from-string@2.0.2: {}
 
+  reserved-words@0.1.2: {}
+
   resolve-alpn@1.2.1: {}
 
   resolve-cwd@3.0.0:
@@ -14261,6 +14288,14 @@ snapshots:
       statuses: 2.0.2
     transitivePeerDependencies:
       - supports-color
+
+  sequelize-auto@0.8.8(sequelize@6.37.7(sqlite3@5.1.7)):
+    dependencies:
+      lodash: 4.17.21
+      mkdirp: 1.0.4
+      reserved-words: 0.1.2
+      sequelize: 6.37.7(sqlite3@5.1.7)
+      yargs: 16.2.0
 
   sequelize-pool@7.1.0: {}
 

@@ -143,7 +143,7 @@ export default class DbmlToSQL {
 
       for (const part of constraintParts) {
         if (part === 'pk') constraints.push('PRIMARY KEY');
-        else if (part === 'increment') constraints.push('AUTO_INCREMENT');
+        else if (part === 'increment') constraints.push('AUTOINCREMENT');
         else if (part === 'unique') constraints.push('UNIQUE');
         else if (part === 'not null') constraints.push('NOT NULL');
         else if (part === 'null') constraints.push('NULL');
@@ -232,12 +232,12 @@ export default class DbmlToSQL {
   private generateSQL(): string {
     let sql = '';
 
-    // Generate ENUM types first
-    for (const [enumName, values] of this.enums) {
-      sql += `CREATE TYPE "${enumName}" AS ENUM (\n`;
-      sql += `  '${values.join("',\n  '")}'\n`;
-      sql += `);\n\n`;
+    // Drop tables if they exist (in reverse order to handle foreign key dependencies)
+    const tableNames = Array.from(this.tables.keys());
+    for (const tableName of tableNames.reverse()) {
+      sql += `DROP TABLE IF EXISTS "${tableName}";\n`;
     }
+    sql += '\n';
 
     // Generate table definitions
     for (const table of this.tables.values()) {
@@ -245,6 +245,14 @@ export default class DbmlToSQL {
 
       const columnDefs = table.columns.map((col) => {
         let def = `  "${col.name}" ${col.type}`;
+
+        // Check if this column type is an enum
+        const enumValues = this.enums.get(col.type);
+        if (enumValues && enumValues.length > 0) {
+          // Replace enum type with TEXT and add CHECK constraint
+          def = `  "${col.name}" TEXT CHECK("${col.name}" IN ('${enumValues.join("', '")}'))`;
+        }
+
         if (col.constraints.length > 0) {
           def += ` ${col.constraints.join(' ')}`;
         }
@@ -257,15 +265,8 @@ export default class DbmlToSQL {
       sql += columnDefs.join(',\n');
       sql += '\n);\n\n';
 
-      // Add comments
-      for (const col of table.columns) {
-        if (col.comment) {
-          sql += `COMMENT ON COLUMN "${table.name}"."${col.name}" IS '${col.comment}';\n`;
-        }
-      }
-      if (table.columns.some((col) => col.comment)) {
-        sql += '\n';
-      }
+      // Add comments (SQLite doesn't support COMMENT ON COLUMN)
+      // Comments are already included inline above
     }
 
     // Generate foreign key constraints
@@ -289,7 +290,7 @@ export default class DbmlToSQL {
 }
 
 export function convertDbmlToSql(dbInputFilePath: string, dbOutputFilePath?: string): string {
-  if (process.env.NODE_ENV === 'production') {
+  if (process.env.NODE_ENV !== 'production') {
     try {
       const dbDiagramCode = fs.readFileSync(dbInputFilePath, 'utf8');
       const converter = new DbmlToSQL();
@@ -297,8 +298,6 @@ export function convertDbmlToSql(dbInputFilePath: string, dbOutputFilePath?: str
 
       const outputFile = dbOutputFilePath || dbInputFilePath.replace(/\.(dbml|dbdiagram)$/, '.sql');
       fs.writeFileSync(outputFile, sql);
-
-      console.log(`✅ Successfully converted ${dbInputFilePath} to ${outputFile}`);
 
       return sql;
     } catch (error) {

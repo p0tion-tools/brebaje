@@ -5,10 +5,14 @@
   "author": "",
   "private": true,
   "license": "UNLICENSED",
+  "engines": {
+    "node": ">=22.17.1"
+  },
   "scripts": {
     "build": "nest build",
     "convert": "ts-node src/database/dbml-to-sql.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+    "setup-database": "ts-node src/database/index.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",
@@ -22,6 +26,7 @@
   },
   "dependencies": {
     "@nestjs/common": "^11.0.1",
+    "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
     "@nestjs/mapped-types": "*",
     "@nestjs/platform-express": "^11.0.1",
@@ -29,6 +34,7 @@
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.7",
+    "sequelize-auto": "^0.8.8",
     "sequelize-typescript": "^2.1.6",
     "sqlite3": "^5.1.7"
   },
@@ -43,7 +49,6 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
-    "@types/sequelize": "^6.12.0",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
