@@ -55,12 +55,18 @@ importers:
       "@nestjs/platform-express":
         specifier: ^11.0.1
         version: 11.1.3(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.3)
+      "@nestjs/swagger":
+        specifier: ^11.2.0
+        version: 11.2.0(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.3)(reflect-metadata@0.2.2)
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
       rxjs:
         specifier: ^7.8.1
         version: 7.8.2
+      swagger-ui-express:
+        specifier: ^5.0.1
+        version: 5.0.1(express@5.1.0)
     devDependencies:
       "@eslint/eslintrc":
         specifier: ^3.2.0
@@ -1130,6 +1136,12 @@ packages:
       }
     engines: { node: ">=8" }
 
+  "@microsoft/tsdoc@0.15.1":
+    resolution:
+      {
+        integrity: sha512-4aErSrCR/On/e5G2hDP0wjooqDdauzEbIq8hIkIe5pXV0rtWJZvdCEKL0ykZxex+IxIwBp0eGeV48hQN07dXtw==,
+      }
+
   "@napi-rs/nice-android-arm-eabi@1.0.4":
     resolution:
       {
@@ -1372,6 +1384,26 @@ packages:
       }
     peerDependencies:
       typescript: ">=4.8.2"
+
+  "@nestjs/swagger@11.2.0":
+    resolution:
+      {
+        integrity: sha512-5wolt8GmpNcrQv34tIPUtPoV1EeFbCetm40Ij3+M0FNNnf2RJ3FyWfuQvI8SBlcJyfaounYVTKzKHreFXsUyOg==,
+      }
+    peerDependencies:
+      "@fastify/static": ^8.0.0
+      "@nestjs/common": ^11.0.1
+      "@nestjs/core": ^11.0.1
+      class-transformer: "*"
+      class-validator: "*"
+      reflect-metadata: ^0.1.12 || ^0.2.0
+    peerDependenciesMeta:
+      "@fastify/static":
+        optional: true
+      class-transformer:
+        optional: true
+      class-validator:
+        optional: true
 
   "@nestjs/testing@11.1.3":
     resolution:
@@ -1736,6 +1768,12 @@ packages:
         integrity: sha512-YLT9Zo3oNPJoBjBc4q8G2mjU4tqIbf5CEOORbUUr48dCD9q3umJ3IPlVqOqDakPfd2HuwccBaqlGhN4Gmr5OWg==,
       }
     engines: { node: ^12.20.0 || ^14.18.0 || >=16.0.0 }
+
+  "@scarf/scarf@1.4.0":
+    resolution:
+      {
+        integrity: sha512-xxeapPiUXdZAE3che6f3xogoJPeZgig6omHEy1rIY5WVsB3H2BHNnZH+gHG6x91SCWyQCzWGsuL2Hh3ClO5/qQ==,
+      }
 
   "@sec-ant/readable-stream@0.4.1":
     resolution:
@@ -7754,6 +7792,7 @@ packages:
         integrity: sha512-O+PCv11lgTNJUzy49teNAWLjBZfc+A1enOwTpLlH6/rsvKcTwcdTT8m9azGkVqM7HBl5jpyZ7KTPhHweokBcdg==,
       }
     engines: { node: ">=14.18.0" }
+    deprecated: Please upgrade to superagent v10.2.2+, see release notes at https://github.com/forwardemail/superagent/releases/tag/v10.2.2 - maintenance is supported by Forward Email @ https://forwardemail.net
 
   supertest@7.1.1:
     resolution:
@@ -7761,6 +7800,7 @@ packages:
         integrity: sha512-aI59HBTlG9e2wTjxGJV+DygfNLgnWbGdZxiA/sgrnNNikIW8lbDvCtF6RnhZoJ82nU7qv7ZLjrvWqCEm52fAmw==,
       }
     engines: { node: ">=14.18.0" }
+    deprecated: Please upgrade to supertest v7.1.3+, see release notes at https://github.com/forwardemail/supertest/releases/tag/v7.1.3 - maintenance is supported by Forward Email @ https://forwardemail.net
 
   supports-color@7.2.0:
     resolution:
@@ -7782,6 +7822,27 @@ packages:
         integrity: sha512-ot0WnXS9fgdkgIcePe6RHNk1WA8+muPa6cSjeR3V8K27q9BB1rTE3R1p7Hv0z1ZyAc8s6Vvv8DIyWf681MAt0w==,
       }
     engines: { node: ">= 0.4" }
+
+  swagger-ui-dist@5.21.0:
+    resolution:
+      {
+        integrity: sha512-E0K3AB6HvQd8yQNSMR7eE5bk+323AUxjtCz/4ZNKiahOlPhPJxqn3UPIGs00cyY/dhrTDJ61L7C/a8u6zhGrZg==,
+      }
+
+  swagger-ui-dist@5.27.0:
+    resolution:
+      {
+        integrity: sha512-tS6LRyBhY6yAqxrfsA9IYpGWPUJOri6sclySa7TdC7XQfGLvTwDY531KLgfQwHEtQsn+sT4JlUspbeQDBVGWig==,
+      }
+
+  swagger-ui-express@5.0.1:
+    resolution:
+      {
+        integrity: sha512-SrNU3RiBGTLLmFU8GIJdOdanJTl4TOmT27tt3bWWHppqYmAZ6IDuEuBvMU6nZq0zLEe6b/1rACXCgLZqO6ZfrA==,
+      }
+    engines: { node: ">= v0.10.32" }
+    peerDependencies:
+      express: ">=4.0.0 || >=5.0.0-beta"
 
   symbol-observable@4.0.0:
     resolution:
@@ -9442,6 +9503,8 @@ snapshots:
 
   "@lukeed/csprng@1.1.0": {}
 
+  "@microsoft/tsdoc@0.15.1": {}
+
   "@napi-rs/nice-android-arm-eabi@1.0.4":
     optional: true
 
@@ -9599,6 +9662,18 @@ snapshots:
       typescript: 5.8.3
     transitivePeerDependencies:
       - chokidar
+
+  "@nestjs/swagger@11.2.0(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.3)(reflect-metadata@0.2.2)":
+    dependencies:
+      "@microsoft/tsdoc": 0.15.1
+      "@nestjs/common": 11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      "@nestjs/core": 11.1.3(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.3)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      "@nestjs/mapped-types": 2.1.0(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(reflect-metadata@0.2.2)
+      js-yaml: 4.1.0
+      lodash: 4.17.21
+      path-to-regexp: 8.2.0
+      reflect-metadata: 0.2.2
+      swagger-ui-dist: 5.21.0
 
   "@nestjs/testing@11.1.3(@nestjs/common@11.1.3(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.3)(@nestjs/platform-express@11.1.3)":
     dependencies:
@@ -9871,6 +9946,8 @@ snapshots:
     optional: true
 
   "@pkgr/core@0.2.7": {}
+
+  "@scarf/scarf@1.4.0": {}
 
   "@sec-ant/readable-stream@0.4.1": {}
 
@@ -13761,6 +13838,19 @@ snapshots:
       has-flag: 4.0.0
 
   supports-preserve-symlinks-flag@1.0.0: {}
+
+  swagger-ui-dist@5.21.0:
+    dependencies:
+      "@scarf/scarf": 1.4.0
+
+  swagger-ui-dist@5.27.0:
+    dependencies:
+      "@scarf/scarf": 1.4.0
+
+  swagger-ui-express@5.0.1(express@5.1.0):
+    dependencies:
+      express: 5.1.0
+      swagger-ui-dist: 5.27.0
 
   symbol-observable@4.0.0: {}
 
