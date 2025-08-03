@@ -9,6 +9,9 @@ import { ProjectsModule } from './projects/projects.module';
 import { ContributionsModule } from './contributions/contributions.module';
 import { StorageModule } from './storage/storage.module';
 import { AuthModule } from './auth/auth.module';
+import { ConfigModule } from '@nestjs/config';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { DB_NAME, DB_SQLITE_STORAGE_PATH, DB_SQLITE_SYNCHRONIZE } from './utils/constants';
 
 @Module({
   imports: [
@@ -20,6 +23,17 @@ import { AuthModule } from './auth/auth.module';
     ContributionsModule,
     StorageModule,
     AuthModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+    }),
+    SequelizeModule.forRoot({
+      dialect: 'sqlite',
+      storage: DB_SQLITE_STORAGE_PATH,
+      synchronize: DB_SQLITE_SYNCHRONIZE,
+      autoLoadModels: true,
+      logging: false,
+      name: DB_NAME,
+    }),
   ],
   controllers: [AppController],
   providers: [AppService],

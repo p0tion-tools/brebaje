@@ -42,17 +42,13 @@ const ModalTitle = classed.h3(
   "text-2xl font-semibold leading-none tracking-tight"
 );
 
-const ModalDescription = classed.p(
-  "text-base text-black/80"
-);
+const ModalDescription = classed.p("text-base text-black/80");
 
 const ModalFooter = classed.div(
   "flex flex-col-reverse sm:flex-row sm:justify-end sm:space-x-2"
 );
 
-const ModalBody = classed.div(
-  "relative flex flex-col gap-4 py-4"
-);
+const ModalBody = classed.div("relative flex flex-col gap-4 py-4");
 
 interface ModalProps extends VariantProps<typeof ModalComponent> {
   isOpen: boolean;
@@ -116,4 +112,4 @@ const Modal = forwardRef<HTMLDivElement, ModalProps>(
 
 Modal.displayName = "Modal";
 
-export { Modal }; 
+export { Modal };

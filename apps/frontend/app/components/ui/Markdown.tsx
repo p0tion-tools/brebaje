@@ -18,15 +18,20 @@ export const Markdown = ({ children, components }: MarkdownProps) => {
       rehypePlugins={[rehypeRaw]}
       components={{
         p: ({ children }) => (
-          <p className="font-poppins text-base font-normal text-black">{children}</p>
+          <p className="font-poppins text-base font-normal text-black">
+            {children}
+          </p>
         ),
         strong: ({ children }) => (
-          <strong className="font-bold">
-            {children}
-          </strong>
+          <strong className="font-bold">{children}</strong>
         ),
         a: ({ children, href }) => (
-          <a href={href} target="_blank" rel="noopener noreferrer" className="text-black underline">
+          <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-black underline"
+          >
             {children}
           </a>
         ),

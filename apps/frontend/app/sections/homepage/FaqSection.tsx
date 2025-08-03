@@ -15,8 +15,7 @@ const faqContentItems = [
   },
   {
     title: "What is the difference between Phase 1 and Phase 2 Trusted Setup?",
-    content:
-      `The **Phase 1** is universally reusable in any point of contribution as input for any zkSNARKs Phase 2. Briefly, the goal of the Phase 1 is to securely generate zk-SNARK parameters for circuits of up to a huge amount of constraints. For example, the [Perpetual Powers of Tau Phase 1 Ceremony](https://github.com/weijiekoh/perpetualpowersoftau) conducted by people from the EF, generated zkSNARK parameters up to 2 ^ 28 (260+ million) constraints. This means that the process will generate twice as many minus one (530+ million) powers of tau (pretty suitable for every zkSNARK circuit out of there). The **Phase 2** is a circuit-specific ceremony. Therefore, the Phase 2 must be don for each individual circuit. At the end of the ceremony or at a certain point in time, the last contribution (.zkey file) will be used for extracting the verification key and everything will be ready for proofs generation and verification!`,
+    content: `The **Phase 1** is universally reusable in any point of contribution as input for any zkSNARKs Phase 2. Briefly, the goal of the Phase 1 is to securely generate zk-SNARK parameters for circuits of up to a huge amount of constraints. For example, the [Perpetual Powers of Tau Phase 1 Ceremony](https://github.com/weijiekoh/perpetualpowersoftau) conducted by people from the EF, generated zkSNARK parameters up to 2 ^ 28 (260+ million) constraints. This means that the process will generate twice as many minus one (530+ million) powers of tau (pretty suitable for every zkSNARK circuit out of there). The **Phase 2** is a circuit-specific ceremony. Therefore, the Phase 2 must be don for each individual circuit. At the end of the ceremony or at a certain point in time, the last contribution (.zkey file) will be used for extracting the verification key and everything will be ready for proofs generation and verification!`,
   },
   {
     title: "What exactly happens during a ceremony?",
@@ -49,7 +48,6 @@ const faqContentItems = [
       "Each coordinator is free to choose the maximum time amount each participant has to execute a contribution. To avoid blocking situations in terms of waiting queue to calculate a contribution, this time amount is coded as a timeout. Each coordinator can choose whether to use a fixed or dynamic timeout. This time amount is total for the download, computation of the new contribution, and upload operations. It does not include the verification part which turns out to have a separate timeout (60 minutes) since there is a limitation by the Cloud Function. In any case, the coordinator can also choose the penalty for each individual circuit once the timeout is triggered for a participant at ceremony setup.",
   },
 ];
-
 
 export const FaqSection = () => {
   return (

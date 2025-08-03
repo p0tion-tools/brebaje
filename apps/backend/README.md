@@ -9,11 +9,10 @@ A backend service built with [Nest](https://github.com/nestjs/nest) to facilitat
 ```bash
 $ pnpm install
 
-# IMPORTANT Run sqlite3 postcript install
+# IMPORTANT: If you are having problems with an error about sqlite binding files, run sqlite3 post script install
 
 # Option 1 (recommended):
-# BE SURE TO USE ARROW KEYS AND SPACE BAR TO SELECT THE SQLITE3 OPTION
-# BEFORE TO PRESS ENTER
+# Be sure to select the sqlite3 option in the interactive prompt before pressing enter
 $ pnpm approve-builds
 
 # Option 2
@@ -58,6 +57,14 @@ $ mau deploy
 ```
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+
+## Load DBML (dbdiagram.io file) to the backend service
+
+Remember that in order to keep track of the database schema, you should always add new changes to the `/src/database/diagram.dbml` file and then load it into the backend service (transform DBML to SQL, load SQL to the database using Sequelize and export the models as Typescript objects using sequelize-auto). To run all this automatically, you can use the following command:
+
+```bash
+$ pnpm run setup-dml-to-database
+```
 
 ## Resources
 

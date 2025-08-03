@@ -7,7 +7,6 @@ export const DownloadZkeySection = () => {
   const { data: { finalContributionBeacon, finalZkeys, lastZkeys } = {} } =
     useGetCeremonyArtifacts();
 
-
   return (
     <div className="flex flex-col gap-14">
       <div className="flex flex-col gap-6">
@@ -34,8 +33,14 @@ export const DownloadZkeySection = () => {
               className="!px-5"
             >
               <div className="flex items-center gap-2">
-                <span className="text-sm text-black font-roboto-mono">{beacon}</span>
-                <Button size="sm" fontWeight="regular" className="text-xs ml-auto">
+                <span className="text-sm text-black font-roboto-mono">
+                  {beacon}
+                </span>
+                <Button
+                  size="sm"
+                  fontWeight="regular"
+                  className="text-xs ml-auto"
+                >
                   copy
                 </Button>
               </div>

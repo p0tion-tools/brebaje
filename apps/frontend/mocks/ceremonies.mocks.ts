@@ -2,7 +2,8 @@ export const ceremonies = [
   {
     id: 1,
     title: "ZK Email Verification",
-    description: "Prove ownership of your email address using zero-knowledge proofs",
+    description:
+      "Prove ownership of your email address using zero-knowledge proofs",
     isActive: true,
     startDate: new Date("2024-03-01"),
     endDate: new Date("2024-04-01"),

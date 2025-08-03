@@ -12,10 +12,10 @@ const ButtonComponent = classed.button(
   {
     variants: {
       variant: {
-        yellow: "bg-yellow text-black border border-black hover:bg-yellow-hover",
+        yellow:
+          "bg-yellow text-black border border-black hover:bg-yellow-hover",
         white: "bg-white text-black border border-black hover:bg-yellow",
-        black:
-          "bg-black text-white hover:bg-black/90",
+        black: "bg-black text-white hover:bg-black/90",
         "outline-white":
           "border border-white text-white hover:text-yellow hover:border-yellow",
         "outline-black": "border border-black text-black",

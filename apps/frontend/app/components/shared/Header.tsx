@@ -10,7 +10,9 @@ import { useState } from "react";
 export const Header = () => {
   const isLoggedIn = false;
   const [isOpenLoginModal, setIsOpenLoginModal] = useState(false);
-  const [selectedLoginMethod, setSelectedLoginMethod] = useState<"github" | "ethereum" | "bandada" | null>(null);
+  const [selectedLoginMethod, setSelectedLoginMethod] = useState<
+    "github" | "ethereum" | "bandada" | null
+  >(null);
 
   return (
     <>
@@ -42,7 +44,9 @@ export const Header = () => {
                 Github
               </Button>
               <Button
-                variant={selectedLoginMethod === "ethereum" ? "yellow" : "white"}
+                variant={
+                  selectedLoginMethod === "ethereum" ? "yellow" : "white"
+                }
                 fontWeight="regular"
                 size="xs"
                 className="!px-5"

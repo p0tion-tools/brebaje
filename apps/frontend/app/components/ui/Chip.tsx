@@ -28,22 +28,19 @@ const ChipComponent = classed.div(
   }
 );
 
-const StatusDot = classed.div(
-  "size-2 rounded-full",
-  {
-    variants: {
-      color: {
-        green: "bg-green-500 animate-pulse",
-        red: "bg-red-500",
-        yellow: "bg-yellow-500",
-        gray: "bg-gray-500",
-      },
+const StatusDot = classed.div("size-2 rounded-full", {
+  variants: {
+    color: {
+      green: "bg-green-500 animate-pulse",
+      red: "bg-red-500",
+      yellow: "bg-yellow-500",
+      gray: "bg-gray-500",
     },
-    defaultVariants: {
-      color: "green",
-    },
-  }
-);
+  },
+  defaultVariants: {
+    color: "green",
+  },
+});
 
 interface ChipProps
   extends React.HTMLAttributes<HTMLDivElement>,
@@ -85,4 +82,4 @@ const Chip = forwardRef<HTMLDivElement, ChipProps>(
 
 Chip.displayName = "Chip";
 
-export { Chip }; 
+export { Chip };

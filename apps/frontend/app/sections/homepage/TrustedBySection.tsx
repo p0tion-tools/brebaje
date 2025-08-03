@@ -40,13 +40,12 @@ const ceremoniesContent = [
     url: "https://privacypools.com/",
     image: "/ceremonies/privacypools.svg",
   },
-]; 
+];
 
 export const TrustedBySection = () => {
-
   const firstRowItems = ceremoniesContent.slice(0, 5);
   const secondRowItems = ceremoniesContent.slice(5);
-  
+
   return (
     <section className="bg-white">
       <AppContent className="py-20 lg:py-[100px] flex flex-col gap-10">

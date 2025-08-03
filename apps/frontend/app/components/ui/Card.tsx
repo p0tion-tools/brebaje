@@ -85,7 +85,10 @@ export const Card = ({
           )}
           size={size}
         >
-          <CardTitle size={size} className={titleClassName}>
+          <CardTitle
+            size={size}
+            className={titleClassName}
+          >
             {title}
           </CardTitle>
           {actions}

@@ -96,7 +96,10 @@ const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
     };
 
     return (
-      <div ref={ref} className={cn("flex flex-col gap-4", className)}>
+      <div
+        ref={ref}
+        className={cn("flex flex-col gap-4", className)}
+      >
         {items.map((item, index) => (
           <AccordionItem
             key={index}
@@ -115,4 +118,4 @@ const Accordion = forwardRef<HTMLDivElement, AccordionProps>(
 
 Accordion.displayName = "Accordion";
 
-export { Accordion, AccordionItem }; 
+export { Accordion, AccordionItem };
