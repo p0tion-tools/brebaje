@@ -1,4 +1,17 @@
 import * as Sequelize from 'sequelize';
+
+export enum ceremonyState {
+  SCHEDULED = 'SCHEDULED',
+  OPENED = 'OPENED',
+  PAUSED = 'PAUSED',
+  CLOSED = 'CLOSED',
+  CANCELED = 'CANCELED',
+  FINALIZED = 'FINALIZED',
+}
+export enum ceremonyType {
+  PHASE1 = 'PHASE1',
+  PHASE2 = 'PHASE2',
+}
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { Circuit, CircuitId } from 'src/circuits/circuit.entity';
 import type { Participant, ParticipantId } from 'src/participants/participant.entity';
@@ -8,7 +21,8 @@ export interface CeremonyAttributes {
   projectId: number;
   id?: number;
   description?: string;
-  state?: string;
+  type?: ceremonyType;
+  state?: ceremonyState;
   start_date?: number;
   end_date?: number;
   penalty?: number;
@@ -20,6 +34,7 @@ export type CeremonyId = Ceremony[CeremonyPk];
 export type CeremonyOptionalAttributes =
   | 'id'
   | 'description'
+  | 'type'
   | 'state'
   | 'start_date'
   | 'end_date'
@@ -34,7 +49,8 @@ export class Ceremony
   projectId!: number;
   id?: number;
   description?: string;
-  state?: string;
+  type?: ceremonyType;
+  state?: ceremonyState;
   start_date?: number;
   end_date?: number;
   penalty?: number;
@@ -91,8 +107,13 @@ export class Ceremony
           type: DataTypes.STRING,
           allowNull: true,
         },
+        type: {
+          type: DataTypes.TEXT /* Enum: ceremonyType */,
+          allowNull: true,
+          defaultValue: 'PHASE2',
+        },
         state: {
-          type: DataTypes.TEXT,
+          type: DataTypes.TEXT /* Enum: ceremonyState */,
           allowNull: true,
           defaultValue: 'SCHEDULED',
         },

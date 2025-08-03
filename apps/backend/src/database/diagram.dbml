@@ -1,3 +1,8 @@
+Enum ceremonyType {
+  'PHASE1'
+  'PHASE2'
+}
+
 Enum ceremonyState {
   'SCHEDULED'
   'OPENED'
@@ -5,11 +10,6 @@ Enum ceremonyState {
   'CLOSED'
   'CANCELED'
   'FINALIZED'
-}
-
-Enum ceremonyType {
-  'PHASE1'
-  'PHASE2'
 }
 
 Enum circuitTimeoutType {
@@ -60,6 +60,7 @@ Table ceremonies {
   projectId int [ref: > projects.id, not null]
   id int [pk, increment]
   description varchar [note: 'description in the frontend']
+  type ceremonyType [default: 'PHASE2']
   state ceremonyState [default: 'SCHEDULED']
   start_date int
   end_date int

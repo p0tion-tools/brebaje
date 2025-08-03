@@ -1,8 +1,8 @@
 #!/usr/bin/env ts-node
 
-import * as fs from 'fs';
+import * as fs from 'node:fs';
 
-interface TableDefinition {
+export interface TableDefinition {
   name: string;
   columns: ColumnDefinition[];
   indexes: IndexDefinition[];
@@ -292,7 +292,7 @@ export default class DbmlToSQL {
 export function convertDbmlToSql(
   dbInputFilePath: string,
   dbOutputFilePath?: string,
-): [string, Map<string, string[]>] {
+): { sql: string; enums: Map<string, string[]>; tables: Map<string, TableDefinition> } {
   if (process.env.NODE_ENV !== 'production') {
     try {
       const dbDiagramCode = fs.readFileSync(dbInputFilePath, 'utf8');
@@ -302,14 +302,18 @@ export function convertDbmlToSql(
       const outputFile = dbOutputFilePath || dbInputFilePath.replace(/\.(dbml|dbdiagram)$/, '.sql');
       fs.writeFileSync(outputFile, sql);
 
-      return [sql, converter.enums];
+      return { sql, enums: converter.enums, tables: converter.tables };
     } catch (error) {
       console.error('❌ Error:', (error as Error).message);
       throw error;
     }
   } else {
     // TODO: update existing database schema without deleting data
-    return ['', new Map<string, string[]>()];
+    return {
+      sql: '',
+      enums: new Map<string, string[]>(),
+      tables: new Map<string, TableDefinition>(),
+    };
   }
 }
 

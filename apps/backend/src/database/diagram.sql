@@ -27,6 +27,7 @@ CREATE TABLE "ceremonies" (
   "projectId" INTEGER NOT NULL,
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "description" VARCHAR,
+  "type" TEXT CHECK("type" IN ('PHASE1', 'PHASE2')) DEFAULT 'PHASE2',
   "state" TEXT CHECK("state" IN ('SCHEDULED', 'OPENED', 'PAUSED', 'CLOSED', 'CANCELED', 'FINALIZED')) DEFAULT 'SCHEDULED',
   "start_date" INTEGER,
   "end_date" INTEGER,

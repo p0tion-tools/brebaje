@@ -1,16 +1,16 @@
-import { createEnums } from './create-enums';
 import { createModels } from './create-models';
 import { convertDbmlToSql } from './dbml-to-sql';
+import { enumsToModels } from './enums-to-models';
 import { modelsToModules } from './models-to-modules';
 
 export async function setUpDatabase() {
-  const [sql, enums] = convertDbmlToSql('src/database/diagram.dbml');
+  const { sql, enums, tables } = convertDbmlToSql('src/database/diagram.dbml');
 
   await createModels(sql);
 
-  modelsToModules();
+  enumsToModels(enums, tables);
 
-  await createEnums(enums);
+  await modelsToModules();
 }
 
 void setUpDatabase();

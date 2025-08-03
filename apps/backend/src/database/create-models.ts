@@ -1,4 +1,3 @@
-import { ESLint } from 'eslint';
 import { Sequelize } from 'sequelize';
 import SequelizeAuto from 'sequelize-auto';
 import { DB_SQLITE_STORAGE_PATH } from '../utils/constants';
@@ -48,15 +47,6 @@ export async function createModels(sql: string) {
     console.log('✅ Models generated successfully.');
   } catch (error) {
     console.log('❌ Error generating models:', (error as Error).message);
-    throw error;
-  }
-
-  try {
-    const eslint = new ESLint({ fix: true });
-    const result = await eslint.lintFiles(['src/database/models/**/*.ts']);
-    await ESLint.outputFixes(result);
-  } catch (error) {
-    console.log('❌ Error running ESLint:', (error as Error).message);
     throw error;
   }
 }

@@ -1,4 +1,10 @@
 import * as Sequelize from 'sequelize';
+
+export enum circuitTimeoutType {
+  DYNAMIC = 'DYNAMIC',
+  FIXED = 'FIXED',
+  LOBBY = 'LOBBY',
+}
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { Ceremony, CeremonyId } from 'src/ceremonies/ceremony.entity';
 import type { Contribution, ContributionId } from 'src/contributions/contribution.entity';
@@ -7,7 +13,7 @@ export interface CircuitAttributes {
   ceremonyId: number;
   id?: number;
   name?: string;
-  timeoutMechanismType?: string;
+  timeoutMechanismType?: circuitTimeoutType;
   dynamicThreshold?: number;
   fixedTimeWindow?: number;
   sequencePosition?: number;
@@ -55,7 +61,7 @@ export class Circuit
   ceremonyId!: number;
   id?: number;
   name?: string;
-  timeoutMechanismType?: string;
+  timeoutMechanismType?: circuitTimeoutType;
   dynamicThreshold?: number;
   fixedTimeWindow?: number;
   sequencePosition?: number;
@@ -112,7 +118,7 @@ export class Circuit
           allowNull: true,
         },
         timeoutMechanismType: {
-          type: DataTypes.TEXT,
+          type: DataTypes.TEXT /* Enum: circuitTimeoutType */,
           allowNull: true,
           defaultValue: 'FIXED',
         },
