@@ -1,3 +1,11 @@
 packages:
-  - "packages/*"
-  - "apps/*"
+  - packages/*
+  - apps/*
+
+ignoredBuiltDependencies:
+  - "@nestjs/core"
+  - "@scarf/scarf"
+  - "@swc/core"
+  - nx
+  - sqlite3
+  - unrs-resolver

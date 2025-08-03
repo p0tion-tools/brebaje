@@ -9,9 +9,14 @@ A backend service built with [Nest](https://github.com/nestjs/nest) to facilitat
 ```bash
 $ pnpm install
 
-## if you are having problems with the sqlite binding files do this
-$ cd node_modules/sqlite3
-$ pnpm rebuild
+# IMPORTANT: If you are having problems with an error about sqlite binding files, run sqlite3 post script install
+
+# Option 1 (recommended):
+# Be sure to select the sqlite3 option in the interactive prompt before pressing enter
+$ pnpm approve-builds
+
+# Option 2
+$ cd node_modules/sqlite3/ && pnpm rebuild & cd ../..
 ```
 
 ## Compile and run the project
