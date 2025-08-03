@@ -1,9 +1,9 @@
-Enum ceremonyType {
+Enum CEREMONY_TYPE {
   'PHASE1'
   'PHASE2'
 }
 
-Enum ceremonyState {
+Enum CEREMONY_STATE {
   'SCHEDULED'
   'OPENED'
   'PAUSED'
@@ -12,13 +12,13 @@ Enum ceremonyState {
   'FINALIZED'
 }
 
-Enum circuitTimeoutType {
+Enum CIRCUIT_TIMEOUT_TYPE {
   'DYNAMIC'
   'FIXED'
   'LOBBY'
 }
 
-Enum participantStatus {
+Enum PARTICIPANT_STATUS {
   'CREATED'
   'WAITING'
   'READY'
@@ -31,7 +31,7 @@ Enum participantStatus {
   'EXHUMED'
 }
 
-Enum participantContributionStep {
+Enum PARTICIPANT_CONTRIBUTION_STEP {
   'DOWNLOADING'
   'COMPUTING'
   'UPLOADING'
@@ -60,8 +60,8 @@ Table ceremonies {
   projectId int [ref: > projects.id, not null]
   id int [pk, increment]
   description varchar [note: 'description in the frontend']
-  type ceremonyType [default: 'PHASE2']
-  state ceremonyState [default: 'SCHEDULED']
+  type CEREMONY_TYPE [default: 'PHASE2']
+  state CEREMONY_STATE [default: 'SCHEDULED']
   start_date int
   end_date int
   penalty int
@@ -72,7 +72,7 @@ Table circuits {
   ceremonyId int [ref: > ceremonies.id, not null]
   id int [pk, increment]
   name varchar
-  timeoutMechanismType circuitTimeoutType [default: 'FIXED']
+  timeoutMechanismType CIRCUIT_TIMEOUT_TYPE [default: 'FIXED']
   dynamicThreshold int
   fixedTimeWindow int
   sequencePosition int
@@ -109,8 +109,8 @@ Table participants {
   userId int [ref: > users.id, not null]
   ceremonyId int [ref: > ceremonies.id, not null]
   id int [pk, increment]
-  status participantStatus [default: 'CREATED']
-  contributionStep participantContributionStep
+  status PARTICIPANT_STATUS [default: 'CREATED']
+  contributionStep PARTICIPANT_CONTRIBUTION_STEP
   contributionProgress int
   contributionStartedAt int
   verificationStartedAt int

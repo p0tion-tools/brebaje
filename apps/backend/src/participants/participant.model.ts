@@ -1,13 +1,13 @@
 import * as Sequelize from 'sequelize';
 
-export enum participantContributionStep {
+export enum PARTICIPANT_CONTRIBUTION_STEP {
   DOWNLOADING = 'DOWNLOADING',
   COMPUTING = 'COMPUTING',
   UPLOADING = 'UPLOADING',
   VERIFYING = 'VERIFYING',
   COMPLETED = 'COMPLETED',
 }
-export enum participantStatus {
+export enum PARTICIPANT_STATUS {
   CREATED = 'CREATED',
   WAITING = 'WAITING',
   READY = 'READY',
@@ -28,8 +28,8 @@ export interface ParticipantAttributes {
   userId: number;
   ceremonyId: number;
   id?: number;
-  status?: participantStatus;
-  contributionStep?: participantContributionStep;
+  status?: PARTICIPANT_STATUS;
+  contributionStep?: PARTICIPANT_CONTRIBUTION_STEP;
   contributionProgress?: number;
   contributionStartedAt?: number;
   verificationStartedAt?: number;
@@ -60,8 +60,8 @@ export class Participant
   userId!: number;
   ceremonyId!: number;
   id?: number;
-  status?: participantStatus;
-  contributionStep?: participantContributionStep;
+  status?: PARTICIPANT_STATUS;
+  contributionStep?: PARTICIPANT_CONTRIBUTION_STEP;
   contributionProgress?: number;
   contributionStartedAt?: number;
   verificationStartedAt?: number;
@@ -117,12 +117,12 @@ export class Participant
           primaryKey: true,
         },
         status: {
-          type: DataTypes.TEXT /* Enum: participantStatus */,
+          type: DataTypes.TEXT /* Enum: PARTICIPANT_STATUS */,
           allowNull: true,
           defaultValue: 'CREATED',
         },
         contributionStep: {
-          type: DataTypes.TEXT /* Enum: participantContributionStep */,
+          type: DataTypes.TEXT /* Enum: PARTICIPANT_CONTRIBUTION_STEP */,
           allowNull: true,
         },
         contributionProgress: {

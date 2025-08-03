@@ -1,6 +1,6 @@
 import * as Sequelize from 'sequelize';
 
-export enum ceremonyState {
+export enum CEREMONY_STATE {
   SCHEDULED = 'SCHEDULED',
   OPENED = 'OPENED',
   PAUSED = 'PAUSED',
@@ -8,7 +8,7 @@ export enum ceremonyState {
   CANCELED = 'CANCELED',
   FINALIZED = 'FINALIZED',
 }
-export enum ceremonyType {
+export enum CEREMONY_TYPE {
   PHASE1 = 'PHASE1',
   PHASE2 = 'PHASE2',
 }
@@ -21,8 +21,8 @@ export interface CeremonyAttributes {
   projectId: number;
   id?: number;
   description?: string;
-  type?: ceremonyType;
-  state?: ceremonyState;
+  type?: CEREMONY_TYPE;
+  state?: CEREMONY_STATE;
   start_date?: number;
   end_date?: number;
   penalty?: number;
@@ -49,8 +49,8 @@ export class Ceremony
   projectId!: number;
   id?: number;
   description?: string;
-  type?: ceremonyType;
-  state?: ceremonyState;
+  type?: CEREMONY_TYPE;
+  state?: CEREMONY_STATE;
   start_date?: number;
   end_date?: number;
   penalty?: number;
@@ -108,12 +108,12 @@ export class Ceremony
           allowNull: true,
         },
         type: {
-          type: DataTypes.TEXT /* Enum: ceremonyType */,
+          type: DataTypes.TEXT /* Enum: CEREMONY_TYPE */,
           allowNull: true,
           defaultValue: 'PHASE2',
         },
         state: {
-          type: DataTypes.TEXT /* Enum: ceremonyState */,
+          type: DataTypes.TEXT /* Enum: CEREMONY_STATE */,
           allowNull: true,
           defaultValue: 'SCHEDULED',
         },
