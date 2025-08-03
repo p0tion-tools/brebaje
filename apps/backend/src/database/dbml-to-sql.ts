@@ -33,8 +33,8 @@ interface ForeignKeyDefinition {
 }
 
 export default class DbmlToSQL {
-  private tables: Map<string, TableDefinition> = new Map();
-  private enums: Map<string, string[]> = new Map();
+  tables: Map<string, TableDefinition> = new Map();
+  enums: Map<string, string[]> = new Map();
 
   /**
    * Parse dbdiagram.io syntax and convert to SQL DDL
@@ -289,7 +289,10 @@ export default class DbmlToSQL {
   }
 }
 
-export function convertDbmlToSql(dbInputFilePath: string, dbOutputFilePath?: string): string {
+export function convertDbmlToSql(
+  dbInputFilePath: string,
+  dbOutputFilePath?: string,
+): [string, Map<string, string[]>] {
   if (process.env.NODE_ENV !== 'production') {
     try {
       const dbDiagramCode = fs.readFileSync(dbInputFilePath, 'utf8');
@@ -299,14 +302,14 @@ export function convertDbmlToSql(dbInputFilePath: string, dbOutputFilePath?: str
       const outputFile = dbOutputFilePath || dbInputFilePath.replace(/\.(dbml|dbdiagram)$/, '.sql');
       fs.writeFileSync(outputFile, sql);
 
-      return sql;
+      return [sql, converter.enums];
     } catch (error) {
       console.error('❌ Error:', (error as Error).message);
       throw error;
     }
   } else {
     // TODO: update existing database schema without deleting data
-    return '';
+    return ['', new Map<string, string[]>()];
   }
 }
 

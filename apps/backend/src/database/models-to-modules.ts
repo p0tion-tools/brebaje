@@ -1,5 +1,6 @@
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
+import { pluralize } from './utils';
 
 export function modelsToModules() {
   try {
@@ -14,27 +15,29 @@ export function modelsToModules() {
     for (const file of modelFiles) {
       // Determine which module this model belongs to
       const modelName = file.replace('.ts', '');
-      let moduleName: string;
-
-      if (modelName.endsWith('y')) {
-        // If the model name ends with 'y', convert it to plural form
-        moduleName = modelName.toLowerCase().slice(0, -1) + 'ie';
-      } else {
-        moduleName = modelName.toLowerCase() + 's';
-      }
+      const moduleName = pluralize(modelName);
 
       // Create destination directory
-      const destDir = join(modulesDir, moduleName, 'entities');
+      const destDir = join(modulesDir, moduleName);
       if (!existsSync(destDir)) {
         mkdirSync(destDir, { recursive: true });
       }
 
       // Read model content and update imports if needed
       const sourceFile = join(sourceDir, file);
-      const content = readFileSync(sourceFile, 'utf8');
+
+      let content = readFileSync(sourceFile, 'utf8');
+      content = content.replace(
+        /import\s+(type\s+)?\{\s*([^}]+)\s*\}\s+from\s+['"]\.\/([^'"]+)['"];?/g,
+        (_match, typeKeyword, existingImports: string, oldModule: string) => {
+          const newModule = `src/${pluralize(oldModule)}/${oldModule}.entity`;
+
+          return `import ${typeKeyword || ''}{ ${existingImports.trim()} } from '${newModule}';`;
+        },
+      );
 
       // Write to new location
-      const destFile = join(destDir, modelName + 'entity.ts');
+      const destFile = join(destDir, modelName + '.entity.ts');
       writeFileSync(destFile, content);
     }
 

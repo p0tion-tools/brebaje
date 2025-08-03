@@ -1,0 +1,36 @@
+export enum ceremonyState {
+  SCHEDULED = 'SCHEDULED',
+  OPENED = 'OPENED',
+  PAUSED = 'PAUSED',
+  CLOSED = 'CLOSED',
+  CANCELED = 'CANCELED',
+  FINALIZED = 'FINALIZED',
+}
+export enum ceremonyType {
+  PHASE1 = 'PHASE1',
+  PHASE2 = 'PHASE2',
+}
+export enum circuitTimeoutType {
+  DYNAMIC = 'DYNAMIC',
+  FIXED = 'FIXED',
+  LOBBY = 'LOBBY',
+}
+export enum participantStatus {
+  CREATED = 'CREATED',
+  WAITING = 'WAITING',
+  READY = 'READY',
+  CONTRIBUTING = 'CONTRIBUTING',
+  CONTRIBUTED = 'CONTRIBUTED',
+  DONE = 'DONE',
+  FINALIZING = 'FINALIZING',
+  FINALIZED = 'FINALIZED',
+  TIMEDOUT = 'TIMEDOUT',
+  EXHUMED = 'EXHUMED',
+}
+export enum participantContributionStep {
+  DOWNLOADING = 'DOWNLOADING',
+  COMPUTING = 'COMPUTING',
+  UPLOADING = 'UPLOADING',
+  VERIFYING = 'VERIFYING',
+  COMPLETED = 'COMPLETED',
+}
