@@ -1,4 +1,4 @@
-name: Backend
+name: Frontend
 
 on:
   push:
@@ -31,22 +31,7 @@ jobs:
         run: |
           pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Build the backend
-        working-directory: apps/backend
+      - name: Build the frontend
+        working-directory: apps/frontend
         run: |
           pnpm run build
-
-      - name: Run tests
-        working-directory: apps/backend
-        run: |
-          pnpm run test
-
-      - name: Run coverage tests
-        working-directory: apps/backend
-        run: |
-          pnpm run test:cov
-
-      - name: Run e2e tests
-        working-directory: apps/backend
-        run: |
-          pnpm run test:e2e
