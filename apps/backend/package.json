@@ -12,7 +12,7 @@
     "build": "nest build",
     "convert": "ts-node src/database/dbml-to-sql.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "setup-database": "ts-node src/database/index.ts",
+    "setup-dml-to-database": "ts-node src/database/index.ts",
     "start": "nest start",
     "start:dev": "nest start --watch",
     "start:debug": "nest start --debug --watch",

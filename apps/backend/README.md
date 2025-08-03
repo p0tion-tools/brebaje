@@ -8,6 +8,10 @@ A backend service built with [Nest](https://github.com/nestjs/nest) to facilitat
 
 ```bash
 $ pnpm install
+
+## if you are having problems with the sqlite binding files do this
+$ cd node_modules/sqlite3
+$ pnpm rebuild
 ```
 
 ## Compile and run the project
@@ -49,10 +53,12 @@ $ mau deploy
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
-## Convert from DBML (dbdiagram.io file) to SQL
+## Load DBML (dbdiagram.io file) to the backend service
+
+Remember that in order to keep track of the database schema, you should always add new changes to the `/src/database/diagram.dbml` file and then load it into the backend service (transform DBML to SQL, load SQL to the database using Sequelize and export the models as Typescript objects using sequelize-auto). To run all this automatically, you can use the following command:
 
 ```bash
-$ pnpm run convert diagram.dbml
+$ pnpm run setup-dml-to-database
 ```
 
 ## Resources

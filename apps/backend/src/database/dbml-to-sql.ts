@@ -262,27 +262,27 @@ export default class DbmlToSQL {
         return def;
       });
 
-      sql += columnDefs.join(',\n');
+      // Add foreign key constraints inline
+      const foreignKeyDefs = table.foreignKeys.map((fk) => {
+        let fkDef = `  FOREIGN KEY ("${fk.columns.join('", "')}") `;
+        fkDef += `REFERENCES "${fk.references.table}" ("${fk.references.columns.join('", "')}")`;
+
+        if (fk.onDelete) {
+          fkDef += ` ON DELETE ${fk.onDelete.toUpperCase()}`;
+        }
+        if (fk.onUpdate) {
+          fkDef += ` ON UPDATE ${fk.onUpdate.toUpperCase()}`;
+        }
+        return fkDef;
+      });
+
+      // Combine column definitions and foreign key definitions
+      const allDefs = [...columnDefs, ...foreignKeyDefs];
+      sql += allDefs.join(',\n');
       sql += '\n);\n\n';
 
       // Add comments (SQLite doesn't support COMMENT ON COLUMN)
       // Comments are already included inline above
-    }
-
-    // Generate foreign key constraints
-    for (const table of this.tables.values()) {
-      for (const fk of table.foreignKeys) {
-        sql += `ALTER TABLE "${table.name}" ADD FOREIGN KEY ("${fk.columns.join('", "')}") `;
-        sql += `REFERENCES "${fk.references.table}" ("${fk.references.columns.join('", "')}")`;
-
-        if (fk.onDelete) {
-          sql += ` ON DELETE ${fk.onDelete.toUpperCase()}`;
-        }
-        if (fk.onUpdate) {
-          sql += ` ON UPDATE ${fk.onUpdate.toUpperCase()}`;
-        }
-        sql += ';\n';
-      }
     }
 
     return sql.trim();

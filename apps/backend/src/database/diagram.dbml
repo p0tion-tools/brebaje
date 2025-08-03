@@ -39,6 +39,16 @@ Enum participantContributionStep {
   'COMPLETED'
 }
 
+Table users {
+  id int [pk, increment]
+  displayName varchar
+  creationTime int
+  lastSignInTime int
+  lastUpdated int
+  avatarUrl int
+  provider varchar
+}
+
 Table projects {
   id int [pk, increment]
   name varchar [note: 'title in the frontend']
@@ -105,14 +115,4 @@ Table participants {
   verificationStartedAt int
   tempContributionData json
   timeout json [note: 'Array of timeouts. Check Timeout class']
-}
-
-Table users {
-  id int [pk, increment]
-  displayName varchar
-  creationTime int
-  lastSignInTime int
-  lastUpdated int
-  avatarUrl int
-  provider varchar
 }

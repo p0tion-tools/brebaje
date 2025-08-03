@@ -1,15 +1,26 @@
-DROP TABLE IF EXISTS "users";
 DROP TABLE IF EXISTS "participants";
 DROP TABLE IF EXISTS "contributions";
 DROP TABLE IF EXISTS "circuits";
 DROP TABLE IF EXISTS "ceremonies";
 DROP TABLE IF EXISTS "projects";
+DROP TABLE IF EXISTS "users";
+
+CREATE TABLE "users" (
+  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
+  "displayName" VARCHAR,
+  "creationTime" INTEGER,
+  "lastSignInTime" INTEGER,
+  "lastUpdated" INTEGER,
+  "avatarUrl" INTEGER,
+  "provider" VARCHAR
+);
 
 CREATE TABLE "projects" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "name" VARCHAR,
   "contact" VARCHAR,
-  "coordinatorId" INTEGER NOT NULL
+  "coordinatorId" INTEGER NOT NULL,
+  FOREIGN KEY ("coordinatorId") REFERENCES "users" ("id")
 );
 
 CREATE TABLE "ceremonies" (
@@ -20,7 +31,8 @@ CREATE TABLE "ceremonies" (
   "start_date" INTEGER,
   "end_date" INTEGER,
   "penalty" INTEGER,
-  "authProviders" JSON
+  "authProviders" JSON,
+  FOREIGN KEY ("projectId") REFERENCES "projects" ("id")
 );
 
 CREATE TABLE "circuits" (
@@ -42,7 +54,8 @@ CREATE TABLE "circuits" (
   "verification" JSON,
   "artifacts" JSON,
   "metadata" JSON,
-  "files" JSON
+  "files" JSON,
+  FOREIGN KEY ("ceremonyId") REFERENCES "ceremonies" ("id")
 );
 
 CREATE TABLE "contributions" (
@@ -57,7 +70,9 @@ CREATE TABLE "contributions" (
   "lastUpdated" INTEGER,
   "files" JSON,
   "verificationSoftware" JSON,
-  "beacon" JSON
+  "beacon" JSON,
+  FOREIGN KEY ("circuitId") REFERENCES "circuits" ("id"),
+  FOREIGN KEY ("participantId") REFERENCES "participants" ("id")
 );
 
 CREATE TABLE "participants" (
@@ -70,23 +85,7 @@ CREATE TABLE "participants" (
   "contributionStartedAt" INTEGER,
   "verificationStartedAt" INTEGER,
   "tempContributionData" JSON,
-  "timeout" JSON
+  "timeout" JSON,
+  FOREIGN KEY ("userId") REFERENCES "users" ("id"),
+  FOREIGN KEY ("ceremonyId") REFERENCES "ceremonies" ("id")
 );
-
-CREATE TABLE "users" (
-  "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-  "displayName" VARCHAR,
-  "creationTime" INTEGER,
-  "lastSignInTime" INTEGER,
-  "lastUpdated" INTEGER,
-  "avatarUrl" INTEGER,
-  "provider" VARCHAR
-);
-
-ALTER TABLE "projects" ADD FOREIGN KEY ("coordinatorId") REFERENCES "users" ("id");
-ALTER TABLE "ceremonies" ADD FOREIGN KEY ("projectId") REFERENCES "projects" ("id");
-ALTER TABLE "circuits" ADD FOREIGN KEY ("ceremonyId") REFERENCES "ceremonies" ("id");
-ALTER TABLE "contributions" ADD FOREIGN KEY ("circuitId") REFERENCES "circuits" ("id");
-ALTER TABLE "contributions" ADD FOREIGN KEY ("participantId") REFERENCES "participants" ("id");
-ALTER TABLE "participants" ADD FOREIGN KEY ("userId") REFERENCES "users" ("id");
-ALTER TABLE "participants" ADD FOREIGN KEY ("ceremonyId") REFERENCES "ceremonies" ("id");
