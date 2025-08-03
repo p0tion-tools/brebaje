@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Ceremony, CeremonyId } from 'src/ceremonies/ceremony.entity';
-import type { User, UserId } from 'src/users/user.entity';
+import type { Ceremony, CeremonyId } from 'src/ceremonies/ceremony.model';
+import type { User, UserId } from 'src/users/user.model';
 
 export interface ProjectAttributes {
   id?: number;

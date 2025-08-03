@@ -6,8 +6,8 @@ export enum circuitTimeoutType {
   LOBBY = 'LOBBY',
 }
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Ceremony, CeremonyId } from 'src/ceremonies/ceremony.entity';
-import type { Contribution, ContributionId } from 'src/contributions/contribution.entity';
+import type { Ceremony, CeremonyId } from 'src/ceremonies/ceremony.model';
+import type { Contribution, ContributionId } from 'src/contributions/contribution.model';
 
 export interface CircuitAttributes {
   ceremonyId: number;

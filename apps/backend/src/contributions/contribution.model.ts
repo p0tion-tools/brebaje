@@ -1,7 +1,7 @@
 import * as Sequelize from 'sequelize';
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Circuit, CircuitId } from 'src/circuits/circuit.entity';
-import type { Participant, ParticipantId } from 'src/participants/participant.entity';
+import type { Circuit, CircuitId } from 'src/circuits/circuit.model';
+import type { Participant, ParticipantId } from 'src/participants/participant.model';
 
 export interface ContributionAttributes {
   circuitId: number;

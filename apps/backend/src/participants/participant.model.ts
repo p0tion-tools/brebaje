@@ -20,9 +20,9 @@ export enum participantStatus {
   EXHUMED = 'EXHUMED',
 }
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Ceremony, CeremonyId } from 'src/ceremonies/ceremony.entity';
-import type { Contribution, ContributionId } from 'src/contributions/contribution.entity';
-import type { User, UserId } from 'src/users/user.entity';
+import type { Ceremony, CeremonyId } from 'src/ceremonies/ceremony.model';
+import type { Contribution, ContributionId } from 'src/contributions/contribution.model';
+import type { User, UserId } from 'src/users/user.model';
 
 export interface ParticipantAttributes {
   userId: number;

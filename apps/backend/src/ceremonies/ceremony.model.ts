@@ -13,9 +13,9 @@ export enum ceremonyType {
   PHASE2 = 'PHASE2',
 }
 import { DataTypes, Model, Optional } from 'sequelize';
-import type { Circuit, CircuitId } from 'src/circuits/circuit.entity';
-import type { Participant, ParticipantId } from 'src/participants/participant.entity';
-import type { Project, ProjectId } from 'src/projects/project.entity';
+import type { Circuit, CircuitId } from 'src/circuits/circuit.model';
+import type { Participant, ParticipantId } from 'src/participants/participant.model';
+import type { Project, ProjectId } from 'src/projects/project.model';
 
 export interface CeremonyAttributes {
   projectId: number;

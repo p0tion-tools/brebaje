@@ -31,14 +31,14 @@ export async function modelsToModules() {
       content = content.replace(
         /import\s+(type\s+)?\{\s*([^}]+)\s*\}\s+from\s+['"]\.\/([^'"]+)['"];?/g,
         (_match, typeKeyword, existingImports: string, oldModule: string) => {
-          const newModule = `src/${pluralize(oldModule)}/${oldModule}.entity`;
+          const newModule = `src/${pluralize(oldModule)}/${oldModule}.model`;
 
           return `import ${typeKeyword || ''}{ ${existingImports.trim()} } from '${newModule}';`;
         },
       );
 
       // Write to new location
-      const destFile = join(destDir, modelName + '.entity.ts');
+      const destFile = join(destDir, modelName + '.model.ts');
       writeFileSync(destFile, content);
     }
 
@@ -52,7 +52,7 @@ export async function modelsToModules() {
 
   try {
     const eslint = new ESLint({ fix: true });
-    const result = await eslint.lintFiles(['src/**/*.entity.ts']);
+    const result = await eslint.lintFiles(['src/**/*.model.ts']);
     await ESLint.outputFixes(result);
   } catch (error) {
     console.log('❌ Error running ESLint:', (error as Error).message);
