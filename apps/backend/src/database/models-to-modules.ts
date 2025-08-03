@@ -1,10 +1,10 @@
-import { existsSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
 export function modelsToModules() {
   try {
     const sourceDir = resolve('src/database/models');
-    const modulesDir = resolve('src/modules');
+    const modulesDir = resolve('src');
 
     // Read all model files
     const modelFiles = readdirSync(sourceDir).filter(
@@ -14,7 +14,14 @@ export function modelsToModules() {
     for (const file of modelFiles) {
       // Determine which module this model belongs to
       const modelName = file.replace('.ts', '');
-      const moduleName = modelName.toLowerCase();
+      let moduleName: string;
+
+      if (modelName.endsWith('y')) {
+        // If the model name ends with 'y', convert it to plural form
+        moduleName = modelName.toLowerCase().slice(0, -1) + 'ie';
+      } else {
+        moduleName = modelName.toLowerCase() + 's';
+      }
 
       // Create destination directory
       const destDir = join(modulesDir, moduleName, 'entities');
@@ -27,9 +34,11 @@ export function modelsToModules() {
       const content = readFileSync(sourceFile, 'utf8');
 
       // Write to new location
-      const destFile = join(destDir, file);
+      const destFile = join(destDir, modelName + 'entity.ts');
       writeFileSync(destFile, content);
     }
+
+    rmSync(sourceDir, { recursive: true });
 
     console.log('✅ Models relocated successfully');
   } catch (error) {

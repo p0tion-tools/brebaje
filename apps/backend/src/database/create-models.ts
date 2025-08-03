@@ -1,7 +1,7 @@
 import { ESLint } from 'eslint';
 import { Sequelize } from 'sequelize';
 import SequelizeAuto from 'sequelize-auto';
-import { DB_SQLITE_STORAGE_PATH } from 'src/utils/constants';
+import { DB_SQLITE_STORAGE_PATH } from '../utils/constants';
 
 export async function createModels(sql: string) {
   const sequelize = new Sequelize({
