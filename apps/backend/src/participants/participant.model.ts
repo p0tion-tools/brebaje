@@ -28,8 +28,8 @@ export interface ParticipantAttributes {
   userId: number;
   ceremonyId: number;
   id?: number;
-  status?: PARTICIPANT_STATUS;
-  contributionStep?: PARTICIPANT_CONTRIBUTION_STEP;
+  status: PARTICIPANT_STATUS;
+  contributionStep: PARTICIPANT_CONTRIBUTION_STEP;
   contributionProgress?: number;
   contributionStartedAt?: number;
   verificationStartedAt?: number;
@@ -42,7 +42,6 @@ export type ParticipantId = Participant[ParticipantPk];
 export type ParticipantOptionalAttributes =
   | 'id'
   | 'status'
-  | 'contributionStep'
   | 'contributionProgress'
   | 'contributionStartedAt'
   | 'verificationStartedAt'
@@ -60,8 +59,8 @@ export class Participant
   userId!: number;
   ceremonyId!: number;
   id?: number;
-  status?: PARTICIPANT_STATUS;
-  contributionStep?: PARTICIPANT_CONTRIBUTION_STEP;
+  status!: PARTICIPANT_STATUS;
+  contributionStep!: PARTICIPANT_CONTRIBUTION_STEP;
   contributionProgress?: number;
   contributionStartedAt?: number;
   verificationStartedAt?: number;
@@ -118,12 +117,12 @@ export class Participant
         },
         status: {
           type: DataTypes.TEXT /* Enum: PARTICIPANT_STATUS */,
-          allowNull: true,
+          allowNull: false,
           defaultValue: 'CREATED',
         },
         contributionStep: {
           type: DataTypes.TEXT /* Enum: PARTICIPANT_CONTRIBUTION_STEP */,
-          allowNull: true,
+          allowNull: false,
         },
         contributionProgress: {
           type: DataTypes.INTEGER,

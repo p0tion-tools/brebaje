@@ -12,11 +12,11 @@ import type { Contribution, ContributionId } from 'src/contributions/contributio
 export interface CircuitAttributes {
   ceremonyId: number;
   id?: number;
-  name?: string;
-  timeoutMechanismType?: CIRCUIT_TIMEOUT_TYPE;
+  name: string;
+  timeoutMechanismType: CIRCUIT_TIMEOUT_TYPE;
   dynamicThreshold?: number;
   fixedTimeWindow?: number;
-  sequencePosition?: number;
+  sequencePosition: number;
   zKeySizeInBytes?: number;
   constraints?: number;
   pot?: number;
@@ -35,11 +35,9 @@ export type CircuitPk = 'id';
 export type CircuitId = Circuit[CircuitPk];
 export type CircuitOptionalAttributes =
   | 'id'
-  | 'name'
   | 'timeoutMechanismType'
   | 'dynamicThreshold'
   | 'fixedTimeWindow'
-  | 'sequencePosition'
   | 'zKeySizeInBytes'
   | 'constraints'
   | 'pot'
@@ -60,11 +58,11 @@ export class Circuit
 {
   ceremonyId!: number;
   id?: number;
-  name?: string;
-  timeoutMechanismType?: CIRCUIT_TIMEOUT_TYPE;
+  name!: string;
+  timeoutMechanismType!: CIRCUIT_TIMEOUT_TYPE;
   dynamicThreshold?: number;
   fixedTimeWindow?: number;
-  sequencePosition?: number;
+  sequencePosition!: number;
   zKeySizeInBytes?: number;
   constraints?: number;
   pot?: number;
@@ -115,11 +113,11 @@ export class Circuit
         },
         name: {
           type: DataTypes.STRING,
-          allowNull: true,
+          allowNull: false,
         },
         timeoutMechanismType: {
           type: DataTypes.TEXT /* Enum: CIRCUIT_TIMEOUT_TYPE */,
-          allowNull: true,
+          allowNull: false,
           defaultValue: 'FIXED',
         },
         dynamicThreshold: {
@@ -132,7 +130,7 @@ export class Circuit
         },
         sequencePosition: {
           type: DataTypes.INTEGER,
-          allowNull: true,
+          allowNull: false,
         },
         zKeySizeInBytes: {
           type: DataTypes.INTEGER,

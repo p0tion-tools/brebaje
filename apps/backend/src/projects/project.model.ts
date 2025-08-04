@@ -5,14 +5,14 @@ import type { User, UserId } from 'src/users/user.model';
 
 export interface ProjectAttributes {
   id?: number;
-  name?: string;
-  contact?: string;
+  name: string;
+  contact: string;
   coordinatorId: number;
 }
 
 export type ProjectPk = 'id';
 export type ProjectId = Project[ProjectPk];
-export type ProjectOptionalAttributes = 'id' | 'name' | 'contact';
+export type ProjectOptionalAttributes = 'id';
 export type ProjectCreationAttributes = Optional<ProjectAttributes, ProjectOptionalAttributes>;
 
 export class Project
@@ -20,8 +20,8 @@ export class Project
   implements ProjectAttributes
 {
   id?: number;
-  name?: string;
-  contact?: string;
+  name!: string;
+  contact!: string;
   coordinatorId!: number;
 
   // Project hasMany Ceremony via projectId
@@ -53,11 +53,11 @@ export class Project
         },
         name: {
           type: DataTypes.STRING,
-          allowNull: true,
+          allowNull: false,
         },
         contact: {
           type: DataTypes.STRING,
-          allowNull: true,
+          allowNull: false,
         },
         coordinatorId: {
           type: DataTypes.INTEGER,

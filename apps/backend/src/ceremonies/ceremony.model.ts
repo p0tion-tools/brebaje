@@ -21,25 +21,17 @@ export interface CeremonyAttributes {
   projectId: number;
   id?: number;
   description?: string;
-  type?: CEREMONY_TYPE;
-  state?: CEREMONY_STATE;
-  start_date?: number;
-  end_date?: number;
-  penalty?: number;
-  authProviders?: object;
+  type: CEREMONY_TYPE;
+  state: CEREMONY_STATE;
+  start_date: number;
+  end_date: number;
+  penalty: number;
+  authProviders: object;
 }
 
 export type CeremonyPk = 'id';
 export type CeremonyId = Ceremony[CeremonyPk];
-export type CeremonyOptionalAttributes =
-  | 'id'
-  | 'description'
-  | 'type'
-  | 'state'
-  | 'start_date'
-  | 'end_date'
-  | 'penalty'
-  | 'authProviders';
+export type CeremonyOptionalAttributes = 'id' | 'description' | 'type' | 'state';
 export type CeremonyCreationAttributes = Optional<CeremonyAttributes, CeremonyOptionalAttributes>;
 
 export class Ceremony
@@ -49,12 +41,12 @@ export class Ceremony
   projectId!: number;
   id?: number;
   description?: string;
-  type?: CEREMONY_TYPE;
-  state?: CEREMONY_STATE;
-  start_date?: number;
-  end_date?: number;
-  penalty?: number;
-  authProviders?: object;
+  type!: CEREMONY_TYPE;
+  state!: CEREMONY_STATE;
+  start_date!: number;
+  end_date!: number;
+  penalty!: number;
+  authProviders!: object;
 
   // Ceremony hasMany Circuit via ceremonyId
   circuits!: Circuit[];
@@ -109,29 +101,29 @@ export class Ceremony
         },
         type: {
           type: DataTypes.TEXT /* Enum: CEREMONY_TYPE */,
-          allowNull: true,
+          allowNull: false,
           defaultValue: 'PHASE2',
         },
         state: {
           type: DataTypes.TEXT /* Enum: CEREMONY_STATE */,
-          allowNull: true,
+          allowNull: false,
           defaultValue: 'SCHEDULED',
         },
         start_date: {
           type: DataTypes.INTEGER,
-          allowNull: true,
+          allowNull: false,
         },
         end_date: {
           type: DataTypes.INTEGER,
-          allowNull: true,
+          allowNull: false,
         },
         penalty: {
           type: DataTypes.INTEGER,
-          allowNull: true,
+          allowNull: false,
         },
         authProviders: {
           type: DataTypes.JSON,
-          allowNull: true,
+          allowNull: false,
         },
       },
       {

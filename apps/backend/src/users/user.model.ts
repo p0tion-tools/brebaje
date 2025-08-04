@@ -1,24 +1,27 @@
 import * as Sequelize from 'sequelize';
+
+export enum USER_PROVIDER {
+  GITHUB = 'GITHUB',
+  ETH = 'ETH',
+}
 import { DataTypes, Model, Optional } from 'sequelize';
 import type { Participant, ParticipantId } from 'src/participants/participant.model';
 import type { Project, ProjectId } from 'src/projects/project.model';
 
 export interface UserAttributes {
   id?: number;
-  displayName?: string;
-  creationTime?: number;
+  displayName: string;
+  creationTime: number;
   lastSignInTime?: number;
   lastUpdated?: number;
-  avatarUrl?: number;
-  provider?: string;
+  avatarUrl?: string;
+  provider: USER_PROVIDER;
 }
 
 export type UserPk = 'id';
 export type UserId = User[UserPk];
 export type UserOptionalAttributes =
   | 'id'
-  | 'displayName'
-  | 'creationTime'
   | 'lastSignInTime'
   | 'lastUpdated'
   | 'avatarUrl'
@@ -27,12 +30,12 @@ export type UserCreationAttributes = Optional<UserAttributes, UserOptionalAttrib
 
 export class User extends Model<UserAttributes, UserCreationAttributes> implements UserAttributes {
   id?: number;
-  displayName?: string;
-  creationTime?: number;
+  displayName!: string;
+  creationTime!: number;
   lastSignInTime?: number;
   lastUpdated?: number;
-  avatarUrl?: number;
-  provider?: string;
+  avatarUrl?: string;
+  provider!: USER_PROVIDER;
 
   // User hasMany Participant via userId
   participants!: Participant[];
@@ -70,11 +73,11 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
         },
         displayName: {
           type: DataTypes.STRING,
-          allowNull: true,
+          allowNull: false,
         },
         creationTime: {
           type: DataTypes.INTEGER,
-          allowNull: true,
+          allowNull: false,
         },
         lastSignInTime: {
           type: DataTypes.INTEGER,
@@ -85,12 +88,13 @@ export class User extends Model<UserAttributes, UserCreationAttributes> implemen
           allowNull: true,
         },
         avatarUrl: {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
           allowNull: true,
         },
         provider: {
-          type: DataTypes.STRING,
-          allowNull: true,
+          type: DataTypes.TEXT /* Enum: USER_PROVIDER */,
+          allowNull: false,
+          defaultValue: 'GITHUB',
         },
       },
       {
