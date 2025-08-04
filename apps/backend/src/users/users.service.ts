@@ -1,6 +1,15 @@
-import { Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  GatewayTimeoutException,
+  Injectable,
+  InternalServerErrorException,
+  NotFoundException,
+  ServiceUnavailableException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
-import { UserErrorResponse } from 'src/types/declarations';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.model';
@@ -13,95 +22,118 @@ export class UsersService {
   ) {}
 
   async create(createUserDto: CreateUserDto) {
-    return this.userModel
-      .create({
+    try {
+      const user = await this.userModel.create({
         displayName: createUserDto.displayName,
         creationTime: Date.now(),
         lastSignInTime: Date.now(),
         lastUpdated: Date.now(),
         avatarUrl: createUserDto.avatarUrl,
-      })
-      .then((user) => {
-        return user;
-      })
-      .catch((error: Error) => {
-        console.log('NICO ERROR', error);
-        this.handleErrors(error);
       });
+      return user;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
-  findAll() {
-    return `This action returns all users`;
+  async findAll() {
+    try {
+      return await this.userModel.findAll();
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} user`;
+  async findById(id: number) {
+    try {
+      const user = await this.userModel.findByPk(id);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
-  update(id: number, updateUserDto: UpdateUserDto) {
-    console.log('Update User DTO:', updateUserDto);
-    return `This action updates a #${id} user`;
+  async findByDisplayName(displayName: string) {
+    try {
+      const user = await this.userModel.findOne({
+        where: { displayName },
+      });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
+  async findByIds(ids: number[]) {
+    try {
+      const users = await this.userModel.findAll({
+        where: { id: ids },
+      });
+      return users;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
-  handleErrors(error: Error): UserErrorResponse {
-    let message = error.message;
-    let statusCode = 500;
+  async update(id: number, updateUserDto: UpdateUserDto) {
+    try {
+      const user = await this.userModel.findByPk(id);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      await user.update(updateUserDto);
+      return user;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
 
+  async remove(id: number) {
+    try {
+      const user = await this.userModel.findByPk(id);
+      if (!user) {
+        throw new Error('User not found');
+      }
+      await user.destroy();
+      return { message: 'User deleted successfully' };
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  handleErrors(error: Error): never {
     switch (error.name) {
       case 'SequelizeUniqueConstraintError':
-        message = 'User already exists';
-        statusCode = 409; // Conflict
-        break;
+        throw new ConflictException('User already exists');
       case 'SequelizeValidationError':
-        message = 'Invalid user data';
-        statusCode = 400; // Bad Request
-        break;
+        throw new BadRequestException('Invalid user data');
       case 'SequelizeForeignKeyConstraintError':
-        message = 'Invalid reference to a related entity';
-        statusCode = 400; // Bad Request
-        break;
+        throw new BadRequestException('Invalid reference to a related entity');
       case 'SequelizeTimeoutError':
-        message = 'Database operation timed out';
-        statusCode = 504; // Gateway Timeout
-        break;
+        throw new GatewayTimeoutException('Database operation timed out');
       case 'SequelizeConnectionError':
-        message = 'Failed to connect to the database';
-        statusCode = 503; // Service Unavailable
-        break;
+        throw new ServiceUnavailableException('Failed to connect to the database');
       case 'SequelizeDatabaseError':
-        message = 'Database error occurred';
-        statusCode = 500; // Internal Server Error
-        break;
+        throw new InternalServerErrorException('Database error occurred');
       case 'JsonWebTokenError':
-        message = 'Invalid token';
-        statusCode = 401; // Unauthorized
-        break;
+        throw new UnauthorizedException('Invalid token');
       case 'TokenExpiredError':
-        message = 'Token has expired';
-        statusCode = 401; // Unauthorized
-        break;
+        throw new UnauthorizedException('Token has expired');
       case 'Error':
         if (error.message === 'User not found') {
-          statusCode = 404; // Not Found
+          throw new NotFoundException('User not found');
         } else if (error.message === 'Insufficient permissions') {
-          message = "You don't have permission to perform this action";
-          statusCode = 403; // Forbidden
+          throw new ForbiddenException("You don't have permission to perform this action");
         }
-        break;
+        throw new InternalServerErrorException(error.message);
       default:
-        message = 'An unexpected error occurred';
-        statusCode = 500; // Internal Server Error
+        throw new InternalServerErrorException('An unexpected error occurred');
     }
-
-    return {
-      message,
-      name: error.name,
-      statusCode,
-      user: null,
-    };
   }
 }

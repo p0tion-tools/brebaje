@@ -1,7 +1,7 @@
-import * as Sequelize from 'sequelize';
-import { DataTypes, Model, Optional } from 'sequelize';
-import type { Circuit, CircuitId } from 'src/circuits/circuit.model';
-import type { Participant, ParticipantId } from 'src/participants/participant.model';
+import { Optional } from 'sequelize';
+import { BelongsTo, Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Circuit } from 'src/circuits/circuit.model';
+import { Participant } from 'src/participants/participant.model';
 
 export interface ContributionAttributes {
   circuitId: number;
@@ -36,101 +36,84 @@ export type ContributionCreationAttributes = Optional<
   ContributionOptionalAttributes
 >;
 
-export class Contribution
-  extends Model<ContributionAttributes, ContributionCreationAttributes>
-  implements ContributionAttributes
-{
-  circuitId!: number;
-  participantId!: number;
-  id?: number;
+@Table({ tableName: 'contributions' })
+export class Contribution extends Model implements ContributionAttributes {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  declare id?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  circuitId: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  participantId: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   contributionComputationTime?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   fullContributionTime?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   verifyContributionTime?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   zkeyIndex?: number;
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: true,
+  })
   valid?: boolean;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   lastUpdated?: number;
-  files?: object;
-  verificationSoftware?: object;
-  beacon?: object;
 
-  // Contribution belongsTo Circuit via circuitId
-  circuit!: Circuit;
-  getCircuit!: Sequelize.BelongsToGetAssociationMixin<Circuit>;
-  setCircuit!: Sequelize.BelongsToSetAssociationMixin<Circuit, CircuitId>;
-  createCircuit!: Sequelize.BelongsToCreateAssociationMixin<Circuit>;
-  // Contribution belongsTo Participant via participantId
-  participant!: Participant;
-  getParticipant!: Sequelize.BelongsToGetAssociationMixin<Participant>;
-  setParticipant!: Sequelize.BelongsToSetAssociationMixin<Participant, ParticipantId>;
-  createParticipant!: Sequelize.BelongsToCreateAssociationMixin<Participant>;
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  files?: any;
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof Contribution {
-    return Contribution.init(
-      {
-        circuitId: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          references: {
-            model: 'circuits',
-            key: 'id',
-          },
-        },
-        participantId: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          references: {
-            model: 'participants',
-            key: 'id',
-          },
-        },
-        id: {
-          autoIncrement: true,
-          type: DataTypes.INTEGER,
-          allowNull: true,
-          primaryKey: true,
-        },
-        contributionComputationTime: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        fullContributionTime: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        verifyContributionTime: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        zkeyIndex: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        valid: {
-          type: DataTypes.BOOLEAN,
-          allowNull: true,
-        },
-        lastUpdated: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        files: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-        verificationSoftware: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-        beacon: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-      },
-      {
-        sequelize,
-        tableName: 'contributions',
-        timestamps: false,
-      },
-    );
-  }
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  verificationSoftware?: any;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  beacon?: any;
+
+  @BelongsTo(() => Circuit, 'circuitId')
+  circuit: Circuit;
+
+  @BelongsTo(() => Participant, 'participantId')
+  participant: Participant;
 }

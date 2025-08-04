@@ -1,9 +1,13 @@
 import { Module } from '@nestjs/common';
-import { CircuitsService } from './circuits.service';
+import { SequelizeModule } from '@nestjs/sequelize';
+import { Circuit } from './circuit.model';
 import { CircuitsController } from './circuits.controller';
+import { CircuitsService } from './circuits.service';
 
 @Module({
+  imports: [SequelizeModule.forFeature([Circuit])],
   controllers: [CircuitsController],
   providers: [CircuitsService],
+  exports: [CircuitsModule],
 })
 export class CircuitsModule {}

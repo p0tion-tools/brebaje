@@ -18,21 +18,44 @@ export class UsersController {
     return this.usersService.create(createUserDto);
   }
 
-  @Get()
+  @ApiOperation({ summary: 'Get all users' })
+  @Get('all')
   findAll() {
     return this.usersService.findAll();
   }
 
+  @ApiOperation({ summary: 'Get user by ID' })
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  findById(@Param('id') id: string) {
+    return this.usersService.findById(+id);
   }
 
+  @ApiOperation({ summary: 'Get user by display name' })
+  @Get('by-name/:displayName')
+  findByDisplayName(@Param('displayName') displayName: string) {
+    return this.usersService.findByDisplayName(displayName);
+  }
+
+  @ApiOperation({ summary: 'Get users by IDs' })
+  @ApiBody({
+    type: [Number],
+    description: 'Array of user IDs',
+  })
+  @Post('by-ids')
+  findByIds(@Body('ids') ids: number[]) {
+    return this.usersService.findByIds(ids);
+  }
+
+  @ApiOperation({ summary: 'Update user by ID' })
+  @ApiBody({
+    type: UpdateUserDto,
+  })
   @Patch(':id')
   update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
     return this.usersService.update(+id, updateUserDto);
   }
 
+  @ApiOperation({ summary: 'Delete user by ID' })
   @Delete(':id')
   remove(@Param('id') id: string) {
     return this.usersService.remove(+id);

@@ -1,14 +1,14 @@
-Enum USER_PROVIDER {
+Enum UserProvider {
   'GITHUB'
   'ETH'
 }
 
-Enum CEREMONY_TYPE {
+Enum CeremonyType {
   'PHASE1'
   'PHASE2'
 }
 
-Enum CEREMONY_STATE {
+Enum CeremonyState {
   'SCHEDULED'
   'OPENED'
   'PAUSED'
@@ -17,13 +17,13 @@ Enum CEREMONY_STATE {
   'FINALIZED'
 }
 
-Enum CIRCUIT_TIMEOUT_TYPE {
+Enum CircuitTimeoutType {
   'DYNAMIC'
   'FIXED'
   'LOBBY'
 }
 
-Enum PARTICIPANT_STATUS {
+Enum ParticipantStatus {
   'CREATED'
   'WAITING'
   'READY'
@@ -36,7 +36,7 @@ Enum PARTICIPANT_STATUS {
   'EXHUMED'
 }
 
-Enum PARTICIPANT_CONTRIBUTION_STEP {
+Enum ParticipantContributionStep {
   'DOWNLOADING'
   'COMPUTING'
   'UPLOADING'
@@ -51,7 +51,7 @@ Table users {
   lastSignInTime int
   lastUpdated int
   avatarUrl varchar
-  provider USER_PROVIDER [not null, default: 'GITHUB']
+  provider UserProvider [not null, default: 'GITHUB']
 }
 
 Table projects {
@@ -65,8 +65,8 @@ Table ceremonies {
   projectId int [ref: > projects.id, not null]
   id int [pk, increment]
   description varchar [note: 'description in the frontend']
-  type CEREMONY_TYPE [not null, default: 'PHASE2']
-  state CEREMONY_STATE [not null, default: 'SCHEDULED']
+  type CeremonyType [not null, default: 'PHASE2']
+  state CeremonyState [not null, default: 'SCHEDULED']
   start_date int [not null]
   end_date int [not null]
   penalty int [not null]
@@ -77,7 +77,7 @@ Table circuits {
   ceremonyId int [ref: > ceremonies.id, not null]
   id int [pk, increment]
   name varchar [not null]
-  timeoutMechanismType CIRCUIT_TIMEOUT_TYPE [not null, default: 'FIXED']
+  timeoutMechanismType CircuitTimeoutType [not null, default: 'FIXED']
   dynamicThreshold int
   fixedTimeWindow int
   sequencePosition int [not null]
@@ -114,8 +114,8 @@ Table participants {
   userId int [ref: > users.id, not null]
   ceremonyId int [ref: > ceremonies.id, not null]
   id int [pk, increment]
-  status PARTICIPANT_STATUS [not null, default: 'CREATED']
-  contributionStep PARTICIPANT_CONTRIBUTION_STEP [not null]
+  status ParticipantStatus [not null, default: 'CREATED']
+  contributionStep ParticipantContributionStep [not null]
   contributionProgress int
   contributionStartedAt int
   verificationStartedAt int

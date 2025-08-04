@@ -1,6 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
-import { USER_PROVIDER, UserAttributes } from '../user.model';
+import { UserProvider } from 'src/types/enums';
+import { UserAttributes } from '../user.model';
 
 export class CreateUserDto implements UserAttributes {
   @ApiProperty({
@@ -28,8 +29,8 @@ export class CreateUserDto implements UserAttributes {
 
   @ApiProperty({
     description: 'The provider of the user',
-    example: USER_PROVIDER.GITHUB,
+    example: UserProvider.GITHUB,
   })
-  @IsEnum(USER_PROVIDER)
-  provider: USER_PROVIDER;
+  @IsEnum(UserProvider)
+  provider: UserProvider;
 }
