@@ -11,7 +11,7 @@ import { ParticipantsModule } from './participants/participants.module';
 import { ProjectsModule } from './projects/projects.module';
 import { StorageModule } from './storage/storage.module';
 import { UsersModule } from './users/users.module';
-import { DB_NAME, DB_SQLITE_STORAGE_PATH, DB_SQLITE_SYNCHRONIZE } from './utils/constants';
+import { DB_SQLITE_STORAGE_PATH, DB_SQLITE_SYNCHRONIZE } from './utils/constants';
 
 @Module({
   imports: [
@@ -32,7 +32,7 @@ import { DB_NAME, DB_SQLITE_STORAGE_PATH, DB_SQLITE_SYNCHRONIZE } from './utils/
       synchronize: DB_SQLITE_SYNCHRONIZE,
       autoLoadModels: true,
       logging: false,
-      name: DB_NAME,
+      name: 'default',
     }),
   ],
   controllers: [AppController],
