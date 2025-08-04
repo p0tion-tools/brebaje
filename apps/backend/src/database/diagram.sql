@@ -7,18 +7,18 @@ DROP TABLE IF EXISTS "users";
 
 CREATE TABLE "users" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-  "displayName" VARCHAR,
-  "creationTime" INTEGER,
+  "displayName" VARCHAR NOT NULL,
+  "creationTime" INTEGER NOT NULL,
   "lastSignInTime" INTEGER,
   "lastUpdated" INTEGER,
-  "avatarUrl" INTEGER,
-  "provider" VARCHAR
+  "avatarUrl" VARCHAR,
+  "provider" TEXT CHECK("provider" IN ('GITHUB', 'ETH')) NOT NULL DEFAULT 'GITHUB'
 );
 
 CREATE TABLE "projects" (
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-  "name" VARCHAR,
-  "contact" VARCHAR,
+  "name" VARCHAR NOT NULL,
+  "contact" VARCHAR NOT NULL,
   "coordinatorId" INTEGER NOT NULL,
   FOREIGN KEY ("coordinatorId") REFERENCES "users" ("id")
 );
@@ -27,23 +27,23 @@ CREATE TABLE "ceremonies" (
   "projectId" INTEGER NOT NULL,
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
   "description" VARCHAR,
-  "type" TEXT CHECK("type" IN ('PHASE1', 'PHASE2')) DEFAULT 'PHASE2',
-  "state" TEXT CHECK("state" IN ('SCHEDULED', 'OPENED', 'PAUSED', 'CLOSED', 'CANCELED', 'FINALIZED')) DEFAULT 'SCHEDULED',
-  "start_date" INTEGER,
-  "end_date" INTEGER,
-  "penalty" INTEGER,
-  "authProviders" JSON,
+  "type" TEXT CHECK("type" IN ('PHASE1', 'PHASE2')) NOT NULL DEFAULT 'PHASE2',
+  "state" TEXT CHECK("state" IN ('SCHEDULED', 'OPENED', 'PAUSED', 'CLOSED', 'CANCELED', 'FINALIZED')) NOT NULL DEFAULT 'SCHEDULED',
+  "start_date" INTEGER NOT NULL,
+  "end_date" INTEGER NOT NULL,
+  "penalty" INTEGER NOT NULL,
+  "authProviders" JSON NOT NULL,
   FOREIGN KEY ("projectId") REFERENCES "projects" ("id")
 );
 
 CREATE TABLE "circuits" (
   "ceremonyId" INTEGER NOT NULL,
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-  "name" VARCHAR,
-  "timeoutMechanismType" TEXT CHECK("timeoutMechanismType" IN ('DYNAMIC', 'FIXED', 'LOBBY')) DEFAULT 'FIXED',
+  "name" VARCHAR NOT NULL,
+  "timeoutMechanismType" TEXT CHECK("timeoutMechanismType" IN ('DYNAMIC', 'FIXED', 'LOBBY')) NOT NULL DEFAULT 'FIXED',
   "dynamicThreshold" INTEGER,
   "fixedTimeWindow" INTEGER,
-  "sequencePosition" INTEGER,
+  "sequencePosition" INTEGER NOT NULL,
   "zKeySizeInBytes" INTEGER,
   "constraints" INTEGER,
   "pot" INTEGER,
@@ -80,8 +80,8 @@ CREATE TABLE "participants" (
   "userId" INTEGER NOT NULL,
   "ceremonyId" INTEGER NOT NULL,
   "id" INTEGER PRIMARY KEY AUTOINCREMENT,
-  "status" TEXT CHECK("status" IN ('CREATED', 'WAITING', 'READY', 'CONTRIBUTING', 'CONTRIBUTED', 'DONE', 'FINALIZING', 'FINALIZED', 'TIMEDOUT', 'EXHUMED')) DEFAULT 'CREATED',
-  "contributionStep" TEXT CHECK("contributionStep" IN ('DOWNLOADING', 'COMPUTING', 'UPLOADING', 'VERIFYING', 'COMPLETED')),
+  "status" TEXT CHECK("status" IN ('CREATED', 'WAITING', 'READY', 'CONTRIBUTING', 'CONTRIBUTED', 'DONE', 'FINALIZING', 'FINALIZED', 'TIMEDOUT', 'EXHUMED')) NOT NULL DEFAULT 'CREATED',
+  "contributionStep" TEXT CHECK("contributionStep" IN ('DOWNLOADING', 'COMPUTING', 'UPLOADING', 'VERIFYING', 'COMPLETED')) NOT NULL,
   "contributionProgress" INTEGER,
   "contributionStartedAt" INTEGER,
   "verificationStartedAt" INTEGER,

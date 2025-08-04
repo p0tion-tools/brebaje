@@ -1,22 +1,16 @@
-import * as Sequelize from 'sequelize';
-
-export enum CIRCUIT_TIMEOUT_TYPE {
-  DYNAMIC = 'DYNAMIC',
-  FIXED = 'FIXED',
-  LOBBY = 'LOBBY',
-}
-import { DataTypes, Model, Optional } from 'sequelize';
-import type { Ceremony, CeremonyId } from 'src/ceremonies/ceremony.model';
-import type { Contribution, ContributionId } from 'src/contributions/contribution.model';
-
+import { Optional } from 'sequelize';
+import { BelongsTo, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Ceremony } from 'src/ceremonies/ceremony.model';
+import { Contribution } from 'src/contributions/contribution.model';
+import { CircuitTimeoutType } from 'src/types/enums';
 export interface CircuitAttributes {
   ceremonyId: number;
   id?: number;
-  name?: string;
-  timeoutMechanismType?: CIRCUIT_TIMEOUT_TYPE;
+  name: string;
+  timeoutMechanismType: CircuitTimeoutType;
   dynamicThreshold?: number;
   fixedTimeWindow?: number;
-  sequencePosition?: number;
+  sequencePosition: number;
   zKeySizeInBytes?: number;
   constraints?: number;
   pot?: number;
@@ -35,11 +29,9 @@ export type CircuitPk = 'id';
 export type CircuitId = Circuit[CircuitPk];
 export type CircuitOptionalAttributes =
   | 'id'
-  | 'name'
   | 'timeoutMechanismType'
   | 'dynamicThreshold'
   | 'fixedTimeWindow'
-  | 'sequencePosition'
   | 'zKeySizeInBytes'
   | 'constraints'
   | 'pot'
@@ -54,140 +46,127 @@ export type CircuitOptionalAttributes =
   | 'files';
 export type CircuitCreationAttributes = Optional<CircuitAttributes, CircuitOptionalAttributes>;
 
-export class Circuit
-  extends Model<CircuitAttributes, CircuitCreationAttributes>
-  implements CircuitAttributes
-{
-  ceremonyId!: number;
-  id?: number;
-  name?: string;
-  timeoutMechanismType?: CIRCUIT_TIMEOUT_TYPE;
+@Table({ tableName: 'circuits' })
+export class Circuit extends Model implements CircuitAttributes {
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
+  declare id?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  ceremonyId: number;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  name: string;
+
+  @Column({
+    type: DataType.ENUM(...Object.values(CircuitTimeoutType)),
+    allowNull: false,
+    defaultValue: CircuitTimeoutType.FIXED,
+  })
+  timeoutMechanismType: CircuitTimeoutType;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   dynamicThreshold?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   fixedTimeWindow?: number;
-  sequencePosition?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  sequencePosition: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   zKeySizeInBytes?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   constraints?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   pot?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   averageContributionComputationTime?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   averageFullContributionTime?: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
   averageVerifyContributionTime?: number;
-  compiler?: object;
-  template?: object;
-  verification?: object;
-  artifacts?: object;
-  metadata?: object;
-  files?: object;
 
-  // Circuit belongsTo Ceremony via ceremonyId
-  ceremony!: Ceremony;
-  getCeremony!: Sequelize.BelongsToGetAssociationMixin<Ceremony>;
-  setCeremony!: Sequelize.BelongsToSetAssociationMixin<Ceremony, CeremonyId>;
-  createCeremony!: Sequelize.BelongsToCreateAssociationMixin<Ceremony>;
-  // Circuit hasMany Contribution via circuitId
-  contributions!: Contribution[];
-  getContributions!: Sequelize.HasManyGetAssociationsMixin<Contribution>;
-  setContributions!: Sequelize.HasManySetAssociationsMixin<Contribution, ContributionId>;
-  addContribution!: Sequelize.HasManyAddAssociationMixin<Contribution, ContributionId>;
-  addContributions!: Sequelize.HasManyAddAssociationsMixin<Contribution, ContributionId>;
-  createContribution!: Sequelize.HasManyCreateAssociationMixin<Contribution>;
-  removeContribution!: Sequelize.HasManyRemoveAssociationMixin<Contribution, ContributionId>;
-  removeContributions!: Sequelize.HasManyRemoveAssociationsMixin<Contribution, ContributionId>;
-  hasContribution!: Sequelize.HasManyHasAssociationMixin<Contribution, ContributionId>;
-  hasContributions!: Sequelize.HasManyHasAssociationsMixin<Contribution, ContributionId>;
-  countContributions!: Sequelize.HasManyCountAssociationsMixin;
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  compiler?: any;
 
-  static initModel(sequelize: Sequelize.Sequelize): typeof Circuit {
-    return Circuit.init(
-      {
-        ceremonyId: {
-          type: DataTypes.INTEGER,
-          allowNull: false,
-          references: {
-            model: 'ceremonies',
-            key: 'id',
-          },
-        },
-        id: {
-          autoIncrement: true,
-          type: DataTypes.INTEGER,
-          allowNull: true,
-          primaryKey: true,
-        },
-        name: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
-        timeoutMechanismType: {
-          type: DataTypes.TEXT /* Enum: CIRCUIT_TIMEOUT_TYPE */,
-          allowNull: true,
-          defaultValue: 'FIXED',
-        },
-        dynamicThreshold: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        fixedTimeWindow: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        sequencePosition: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        zKeySizeInBytes: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        constraints: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        pot: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        averageContributionComputationTime: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        averageFullContributionTime: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        averageVerifyContributionTime: {
-          type: DataTypes.INTEGER,
-          allowNull: true,
-        },
-        compiler: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-        template: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-        verification: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-        artifacts: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-        metadata: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-        files: {
-          type: DataTypes.JSON,
-          allowNull: true,
-        },
-      },
-      {
-        sequelize,
-        tableName: 'circuits',
-        timestamps: false,
-      },
-    );
-  }
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  template?: any;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  verification?: any;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  artifacts?: any;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  metadata?: any;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+  })
+  files?: any;
+
+  @BelongsTo(() => Ceremony, 'ceremonyId')
+  ceremony: Ceremony;
+
+  @HasMany(() => Contribution, 'circuitId')
+  contributions: Contribution[];
 }
