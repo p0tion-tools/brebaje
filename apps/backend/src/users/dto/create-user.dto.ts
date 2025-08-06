@@ -5,6 +5,13 @@ import { UserAttributes } from '../user.model';
 
 export class CreateUserDto implements UserAttributes {
   @ApiProperty({
+    description: 'The id of the user',
+    example: '1',
+  })
+  @IsNumber()
+  id: number;
+
+  @ApiProperty({
     description: 'The display name of the user',
     example: 'NicoSerranoP',
   })
@@ -17,6 +24,22 @@ export class CreateUserDto implements UserAttributes {
   })
   @IsNumber()
   creationTime: number;
+
+  @ApiProperty({
+    description: 'The last sign time of the user in milliseconds since epoch',
+    example: 1633072800000,
+  })
+  @IsOptional()
+  @IsNumber()
+  lastSignInTime: number;
+
+  @ApiProperty({
+    description: 'The last profile update time of the user in milliseconds since epoch',
+    example: 1633072800000,
+  })
+  @IsOptional()
+  @IsNumber()
+  lastUpdated: number;
 
   @ApiProperty({
     description: 'The avatar URL of the user',
