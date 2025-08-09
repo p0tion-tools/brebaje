@@ -27,8 +27,7 @@ export class AuthService {
       }).then((res) => res.json())) as GithubUser;
       // find or create user
       const _user: CreateUserDto = {
-        id: result.id || 0, // TODO.
-        displayName: result.login || result.email,
+        displayName: result.login || result.id.toString(),
         creationTime: Date.now(),
         lastSignInTime: Date.now(),
         lastUpdated: Date.now(),
