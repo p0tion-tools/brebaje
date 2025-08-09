@@ -11,7 +11,6 @@ export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
   @ApiOperation({ summary: 'Create a new user' })
-  @ApiBody({ type: CreateUserDto })
   @ApiResponse({ status: 201, description: 'The user has been successfully created.', type: User })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @Post()
@@ -54,7 +53,6 @@ export class UsersController {
 
   @ApiOperation({ summary: 'Update user by ID' })
   @ApiParam({ name: 'id', type: 'number' })
-  @ApiBody({ type: UpdateUserDto })
   @ApiResponse({ status: 200, description: 'The user has been successfully updated.', type: User })
   @ApiResponse({ status: 404, description: 'User not found.' })
   @Patch(':id')
