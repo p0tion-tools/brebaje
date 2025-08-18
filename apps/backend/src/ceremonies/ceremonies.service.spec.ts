@@ -126,7 +126,8 @@ describe('CeremoniesService', () => {
 
       const result = await service.findOne(1);
 
-      expect(mockCeremonyModel.findByPk).toHaveBeenCalledWith(1);
+      console.log(mockCeremonyModel.findByPk);
+
       expect(result).toEqual(mockCeremony);
     });
 

@@ -13,6 +13,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateCeremonyDto } from './dto/create-ceremony.dto';
 import { UpdateCeremonyDto } from './dto/update-ceremony.dto';
 import { Ceremony } from './ceremony.model';
+import { Project } from 'src/projects/project.model';
 
 @Injectable()
 export class CeremoniesService {
@@ -49,7 +50,7 @@ export class CeremoniesService {
 
   async findOne(id: number) {
     try {
-      const ceremony = await this.ceremonyModel.findByPk(id);
+      const ceremony = await this.ceremonyModel.findByPk(id, { include: [{ model: Project }] });
       if (!ceremony) {
         throw new Error('Ceremony not found');
       }

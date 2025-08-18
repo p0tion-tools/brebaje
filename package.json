@@ -30,7 +30,8 @@
     "lint:fix": "eslint . --ext .js,.ts,.tsx,.jsx --fix",
     "prettier:fix": "prettier --write .",
     "prepare": "husky",
-    "test": "lerna run test --stream"
+    "test": "lerna run test --stream",
+    "build": "lerna run build --ignore=website"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

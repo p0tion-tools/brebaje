@@ -31,8 +31,7 @@ jobs:
         run: |
           pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Build the backend
-        working-directory: apps/backend
+      - name: Build all the packages
         run: |
           pnpm run build
 

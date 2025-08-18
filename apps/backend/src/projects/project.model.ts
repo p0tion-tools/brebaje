@@ -29,7 +29,7 @@ export class Project extends Model implements ProjectAttributes {
     allowNull: false,
     comment: 'title in the frontend',
   })
-  name: string;
+  declare name: string;
 
   @Column({
     type: DataType.STRING,
