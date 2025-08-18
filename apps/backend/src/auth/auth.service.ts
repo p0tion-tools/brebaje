@@ -35,7 +35,6 @@ export class AuthService {
         provider: UserProvider.GITHUB,
       };
       const user = await this.usersService.create(_user);
-      // const jwt = await this.jwtService.signAsync({ user: user.dataValues })
       // create jwt
       const jwt = await this.jwtService.signAsync({ user: user });
       return { user, jwt };
