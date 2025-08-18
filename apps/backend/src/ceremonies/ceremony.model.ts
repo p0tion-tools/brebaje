@@ -41,7 +41,7 @@ export class Ceremony extends Model implements CeremonyAttributes {
     allowNull: true,
     comment: 'description in the frontend',
   })
-  description?: string;
+  declare description?: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(CeremonyType)),
@@ -83,7 +83,7 @@ export class Ceremony extends Model implements CeremonyAttributes {
   authProviders: any;
 
   @BelongsTo(() => Project, 'projectId')
-  project: Project;
+  declare project: Project;
 
   @HasMany(() => Circuit, 'ceremonyId')
   circuits: Circuit[];

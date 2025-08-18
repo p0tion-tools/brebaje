@@ -38,7 +38,10 @@ export class StorageService {
   async createBucket(s3: S3Client, bucketName: string) {
     try {
       const { Location } = await s3.send(
-        new CreateBucketCommand({ Bucket: bucketName, ObjectOwnership: 'BucketOwnerPreferred' }),
+        new CreateBucketCommand({
+          Bucket: bucketName,
+          ObjectOwnership: 'BucketOwnerPreferred',
+        }),
       );
       await waitUntilBucketExists(
         { client: s3, maxWaitTime: AWS_WAIT_TIME },
@@ -117,7 +120,23 @@ export class StorageService {
     await this.setPublicAccessBlock(s3, bucketName);
     await this.setBucketCors(s3, bucketName);
 
-    return bucketName;
+    return { bucketName };
+  }
+
+  async deleteCeremonyBucket(ceremonyId: number) {
+    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
+    if (!ceremony) {
+      throw new InternalServerErrorException(`Ceremony with ID ${ceremonyId} not found`);
+    }
+
+    const s3 = this.getS3Client();
+    const bucketName = getBucketName(
+      AWS_CEREMONY_BUCKET_POSTFIX,
+      ceremony.project.name,
+      ceremony.description,
+    );
+
+    await this.deleteBucket(s3, bucketName);
   }
 
   handleErrors(error: Error): never {

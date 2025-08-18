@@ -35,6 +35,7 @@
     "@nestjs/sequelize": "^11.0.0",
     "@nestjs/swagger": "^11.2.0",
     "class-validator": "^0.14.2",
+    "dotenv": "^17.2.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.7",

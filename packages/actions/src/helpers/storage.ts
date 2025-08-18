@@ -5,5 +5,9 @@
  * @param description <string> - the ceremony description.
  * @returns <string>
  */
-export const getBucketName = (postfix: string, project: string, description?: string): string =>
-  `${project}-${description || "default"}-${postfix}`;
+export const getBucketName = (postfix: string, project: string, description?: string): string => {
+  const sanitize = (value?: string) =>
+    (value ?? "default").toString().trim().replace(/\s+/g, "-").toLowerCase();
+
+  return `${sanitize(project)}-${sanitize(description)}-${sanitize(postfix)}`;
+};
