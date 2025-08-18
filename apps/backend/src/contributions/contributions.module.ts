@@ -8,6 +8,6 @@ import { ContributionsService } from './contributions.service';
   imports: [SequelizeModule.forFeature([Contribution])],
   controllers: [ContributionsController],
   providers: [ContributionsService],
-  exports: [ContributionsModule],
+  exports: [ContributionsService],
 })
 export class ContributionsModule {}

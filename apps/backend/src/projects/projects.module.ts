@@ -8,6 +8,6 @@ import { ProjectsService } from './projects.service';
   imports: [SequelizeModule.forFeature([Project])],
   controllers: [ProjectsController],
   providers: [ProjectsService],
-  exports: [ProjectsModule],
+  exports: [ProjectsService],
 })
 export class ProjectsModule {}

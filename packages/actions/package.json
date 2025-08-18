@@ -1,5 +1,5 @@
 {
-  "name": "@p0tion/actions",
+  "name": "@brebaje/actions",
   "version": "0.0.0",
   "description": "A set of actions and helpers for CLI, website and server commands",
   "author": "NicoSerranoP",
@@ -15,7 +15,17 @@
     "snarkjs",
     "circom"
   ],
-  "main": "lib/actions.js",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    }
+  },
+  "bin": {
+    "maci-sdk": "./build/index.js"
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -28,7 +38,8 @@
     "url": "git+https://github.com/NicoSerranoP/brebaje.git"
   },
   "scripts": {
-    "test": "node ./__tests__/actions.test.js"
+    "test": "node ./__tests__/actions.test.js",
+    "build": "tsc -p tsconfig.json"
   },
   "bugs": {
     "url": "https://github.com/NicoSerranoP/brebaje/issues"

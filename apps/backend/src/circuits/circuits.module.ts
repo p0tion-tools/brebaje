@@ -8,6 +8,6 @@ import { CircuitsService } from './circuits.service';
   imports: [SequelizeModule.forFeature([Circuit])],
   controllers: [CircuitsController],
   providers: [CircuitsService],
-  exports: [CircuitsModule],
+  exports: [CircuitsService],
 })
 export class CircuitsModule {}
