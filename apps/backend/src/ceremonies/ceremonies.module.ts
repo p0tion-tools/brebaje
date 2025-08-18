@@ -8,6 +8,6 @@ import { Ceremony } from './ceremony.model';
   imports: [SequelizeModule.forFeature([Ceremony])],
   controllers: [CeremoniesController],
   providers: [CeremoniesService],
-  exports: [CeremoniesModule],
+  exports: [CeremoniesService],
 })
 export class CeremoniesModule {}
