@@ -13,6 +13,6 @@ export class AuthController {
 
   @Post('github/user')
   async githubUser(@Body() deviceFlowTokenDto: DeviceFlowTokenDto) {
-    return this.authService.getUserInfoFromGithub(deviceFlowTokenDto);
+    return this.authService.authWithGithub(deviceFlowTokenDto);
   }
 }

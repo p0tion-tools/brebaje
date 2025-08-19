@@ -19,7 +19,7 @@ export class AuthService {
     };
   }
 
-  async getUserInfoFromGithub(deviceFlowTokenDto: DeviceFlowTokenDto) {
+  async authWithGithub(deviceFlowTokenDto: DeviceFlowTokenDto) {
     try {
       const result = (await fetch('https://api.github.com/user', {
         headers: {
@@ -49,4 +49,6 @@ export class AuthService {
       return error;
     }
   }
+
+  async getUserInfoFromCardano() {}
 }
