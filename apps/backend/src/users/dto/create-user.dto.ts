@@ -19,22 +19,6 @@ export class CreateUserDto implements UserAttributes {
   creationTime: number;
 
   @ApiProperty({
-    description: 'The last sign time of the user in milliseconds since epoch',
-    example: 1633072800000,
-  })
-  @IsOptional()
-  @IsNumber()
-  lastSignInTime: number;
-
-  @ApiProperty({
-    description: 'The last profile update time of the user in milliseconds since epoch',
-    example: 1633072800000,
-  })
-  @IsOptional()
-  @IsNumber()
-  lastUpdated: number;
-
-  @ApiProperty({
     description: 'The avatar URL of the user',
     example: 'https://example.com/avatar.png',
     required: false,
