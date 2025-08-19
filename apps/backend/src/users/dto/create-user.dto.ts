@@ -5,15 +5,6 @@ import { UserAttributes } from '../user.model';
 
 export class CreateUserDto implements UserAttributes {
   @ApiProperty({
-    description: 'The id of the user',
-    example: '1',
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  id?: number;
-
-  @ApiProperty({
     description: 'The display name of the user',
     example: 'NicoSerranoP',
   })
