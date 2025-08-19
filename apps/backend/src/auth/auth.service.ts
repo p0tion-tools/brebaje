@@ -35,8 +35,6 @@ export class AuthService {
         const _user: CreateUserDto = {
           displayName: result.login || result.id.toString(),
           creationTime: Date.now(),
-          lastSignInTime: Date.now(),
-          lastUpdated: Date.now(),
           avatarUrl: result.avatar_url,
           provider: UserProvider.GITHUB,
           githubId: result.id,
