@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
-import { DeviceFlowTokenDto, GithubUser } from './dto/auth-dto';
+import { DeviceFlowTokenDto } from './dto/auth-dto';
+import type { GithubUser } from '../types/declarations';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
