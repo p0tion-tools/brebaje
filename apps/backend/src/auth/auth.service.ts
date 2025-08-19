@@ -25,16 +25,24 @@ export class AuthService {
           Authorization: `token ${deviceFlowTokenDto.access_token}`,
         },
       }).then((res) => res.json())) as GithubUser;
-      // find or create user
-      const _user: CreateUserDto = {
-        displayName: result.login || result.id.toString(),
-        creationTime: Date.now(),
-        lastSignInTime: Date.now(),
-        lastUpdated: Date.now(),
-        avatarUrl: result.avatar_url,
-        provider: UserProvider.GITHUB,
-      };
-      const user = await this.usersService.create(_user);
+
+      let user;
+      try {
+        user = await this.usersService.findByGithubId(result.id);
+      } catch {
+        // User not found, create one
+        const _user: CreateUserDto = {
+          displayName: result.login || result.id.toString(),
+          creationTime: Date.now(),
+          lastSignInTime: Date.now(),
+          lastUpdated: Date.now(),
+          avatarUrl: result.avatar_url,
+          provider: UserProvider.GITHUB,
+          githubId: result.id,
+        };
+        user = await this.usersService.create(_user);
+      }
+
       // create jwt
       const jwt = await this.jwtService.signAsync({ user: user });
       return { user, jwt };

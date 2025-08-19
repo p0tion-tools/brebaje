@@ -58,4 +58,13 @@ export class CreateUserDto implements UserAttributes {
   })
   @IsEnum(UserProvider)
   provider: UserProvider;
+
+  @ApiProperty({
+    description: 'The GitHub user ID',
+    example: 123456,
+    required: false,
+  })
+  @IsOptional()
+  @IsNumber()
+  githubId?: number;
 }
