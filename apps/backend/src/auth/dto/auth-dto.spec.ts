@@ -1,7 +1,15 @@
-import { AuthDto } from './auth-dto';
+import { DeviceFlowTokenDto, JWTDto } from './auth-dto';
 
-describe('AuthDto', () => {
-  it('should be defined', () => {
-    expect(new AuthDto()).toBeDefined();
+describe('Auth DTOs', () => {
+  describe('JWTDto', () => {
+    it('should be defined', () => {
+      expect(new JWTDto()).toBeDefined();
+    });
+  });
+
+  describe('DeviceFlowTokenDto', () => {
+    it('should be defined', () => {
+      expect(new DeviceFlowTokenDto()).toBeDefined();
+    });
   });
 });

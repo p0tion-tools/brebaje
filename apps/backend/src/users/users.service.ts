@@ -25,7 +25,7 @@ export class UsersService {
     try {
       const user = await this.userModel.create({
         displayName: createUserDto.displayName,
-        creationTime: Date.now(),
+        creationTime: createUserDto.creationTime,
         lastSignInTime: Date.now(),
         lastUpdated: Date.now(),
         avatarUrl: createUserDto.avatarUrl,
@@ -60,6 +60,20 @@ export class UsersService {
     try {
       const user = await this.userModel.findOne({
         where: { displayName },
+      });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  async findByGithubId(githubId: number) {
+    try {
+      const user = await this.userModel.findOne({
+        where: { githubId },
       });
       if (!user) {
         throw new Error('User not found');

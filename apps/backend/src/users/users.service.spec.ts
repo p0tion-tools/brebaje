@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersService } from './users.service';
-import { User } from './user.model';
 import { getModelToken } from '@nestjs/sequelize';
+import { User } from './user.model';
 
 describe('UsersService', () => {
   let service: UsersService;
@@ -13,8 +13,12 @@ describe('UsersService', () => {
         {
           provide: getModelToken(User),
           useValue: {
-            // Mock your User model methods here if needed for specific tests
-            // For now, just defining it to resolve the dependency
+            create: jest.fn(),
+            findAll: jest.fn(),
+            findByPk: jest.fn(),
+            findOne: jest.fn(),
+            update: jest.fn(),
+            destroy: jest.fn(),
           },
         },
       ],
