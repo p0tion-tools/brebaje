@@ -27,6 +27,13 @@ export class HealthController {
                 message: { type: 'string' },
               },
             },
+            s3: {
+              type: 'object',
+              properties: {
+                status: { type: 'string', enum: ['ok', 'error'] },
+                message: { type: 'string' },
+              },
+            },
             environment: {
               type: 'object',
               properties: {
@@ -41,5 +48,22 @@ export class HealthController {
   })
   async getHealth() {
     return await this.healthService.getHealthStatus();
+  }
+
+  @Get('s3')
+  @ApiOperation({ summary: 'Check S3/MinIO connection status' })
+  @ApiResponse({
+    status: 200,
+    description: 'S3/MinIO connection status',
+    schema: {
+      type: 'object',
+      properties: {
+        status: { type: 'string', enum: ['ok', 'error'] },
+        message: { type: 'string' },
+      },
+    },
+  })
+  async getS3Health() {
+    return await this.healthService.checkS3Connection();
   }
 }
