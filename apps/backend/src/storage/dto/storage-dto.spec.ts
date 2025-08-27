@@ -1,7 +1,13 @@
-import { StorageDto } from './storage-dto';
+import { ObjectKeyDto, UploadIdDto } from './storage-dto';
 
 describe('StorageDto', () => {
-  it('should be defined', () => {
-    expect(new StorageDto()).toBeDefined();
+  it('should define ObjectKeyDto', () => {
+    const dto = new ObjectKeyDto();
+    expect(dto).toBeDefined();
+  });
+
+  it('should define UploadIdDto', () => {
+    const dto = new UploadIdDto();
+    expect(dto).toBeDefined();
   });
 });
