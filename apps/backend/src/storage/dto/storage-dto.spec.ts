@@ -1,3 +1,4 @@
+import 'reflect-metadata';
 import { ObjectKeyDto, UploadIdDto } from './storage-dto';
 
 describe('StorageDto', () => {
