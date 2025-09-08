@@ -23,9 +23,6 @@
       "default": "./build/index.js"
     }
   },
-  "bin": {
-    "maci-sdk": "./build/index.js"
-  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"

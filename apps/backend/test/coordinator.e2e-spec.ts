@@ -1,3 +1,6 @@
+// pass the Nest SQLite models to the database in /.db/data.sqlite3
+process.env.DB_SQLITE_SYNCHRONIZE = 'true';
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
@@ -28,9 +31,9 @@ describe('Coordinator (e2e)', () => {
   });
 
   afterAll(async () => {
-    await Ceremony.destroy({ where: { id: ceremonyId } });
-    await Project.destroy({ where: { id: projectId } });
-    await User.destroy({ where: { id: coordinatorId } });
+    await Ceremony.destroy({ where: { id: ceremonyId || '' } });
+    await Project.destroy({ where: { id: projectId || '' } });
+    await User.destroy({ where: { id: coordinatorId || '' } });
 
     await app.close();
   });

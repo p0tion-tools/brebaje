@@ -31,6 +31,11 @@ jobs:
         run: |
           pnpm install --frozen-lockfile --prefer-offline
 
+      - name: Fix binding files sqlite error
+        working-directory: apps/backend/node_modules/sqlite3
+        run: |
+          pnpm rebuild
+
       - name: Build all the packages
         run: |
           pnpm run build
