@@ -1,5 +1,5 @@
 import { Optional } from 'sequelize';
-import { Column, DataType, HasMany, Index, Model, PrimaryKey, Table } from 'sequelize-typescript';
+import { Column, DataType, HasMany, Index, Model, Table } from 'sequelize-typescript';
 import { Participant } from 'src/participants/participant.model';
 import { Project } from 'src/projects/project.model';
 import { UserProvider } from 'src/types/enums';
@@ -26,8 +26,11 @@ export type UserCreationAttributes = Optional<UserAttributes, UserOptionalAttrib
 
 @Table({ tableName: 'users' })
 export class User extends Model implements UserAttributes {
-  @PrimaryKey
-  @Column
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+  })
   declare id?: number;
 
   @Index
