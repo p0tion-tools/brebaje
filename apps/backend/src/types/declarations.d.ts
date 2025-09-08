@@ -4,3 +4,10 @@ export type UserErrorResponse = {
   statusCode: number;
   user: null;
 };
+
+export type AWSError = {
+  $metadata?: {
+    httpStatusCode?: number;
+  };
+  message?: string;
+};

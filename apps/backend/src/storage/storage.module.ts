@@ -7,5 +7,6 @@ import { CeremoniesModule } from 'src/ceremonies/ceremonies.module';
   imports: [CeremoniesModule],
   controllers: [StorageController],
   providers: [StorageService],
+  exports: [StorageService],
 })
 export class StorageModule {}
