@@ -19,3 +19,6 @@ export const AWS_S3_CORS_ORIGINS = process.env.AWS_S3_CORS_ORIGINS
 
 // non env constants
 export const AWS_WAIT_TIME = 60;
+
+export const JWT_SECRET = process.env.JWT_SECRET || 'defaultSecret';
+export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';

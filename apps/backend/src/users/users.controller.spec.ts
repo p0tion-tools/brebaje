@@ -1,8 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { UsersController } from './users.controller';
 import { UsersService } from './users.service';
-import { User } from './user.model';
 import { getModelToken } from '@nestjs/sequelize';
+import { User } from './user.model';
 
 describe('UsersController', () => {
   let controller: UsersController;
@@ -15,8 +15,7 @@ describe('UsersController', () => {
         {
           provide: getModelToken(User),
           useValue: {
-            // Mock your User model methods here if needed for specific tests
-            // For now, just defining it to resolve the dependency
+            // Add mock methods that are used by the controller through the service
           },
         },
       ],

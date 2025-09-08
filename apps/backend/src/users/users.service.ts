@@ -70,6 +70,20 @@ export class UsersService {
     }
   }
 
+  async findByGithubId(githubId: number) {
+    try {
+      const user = await this.userModel.findOne({
+        where: { githubId },
+      });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
   async findByIds(ids: number[]) {
     try {
       const users = await this.userModel.findAll({
