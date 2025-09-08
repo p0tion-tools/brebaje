@@ -39,3 +39,9 @@ export class GithubUser {
   created_at: string;
   updated_at: string;
 }
+export type AWSError = {
+  $metadata?: {
+    httpStatusCode?: number;
+  };
+  message?: string;
+};
