@@ -25,7 +25,7 @@ export class UsersService {
     try {
       const user = await this.userModel.create({
         displayName: createUserDto.displayName,
-        creationTime: createUserDto.creationTime,
+        creationTime: Date.now(),
         lastSignInTime: Date.now(),
         lastUpdated: Date.now(),
         avatarUrl: createUserDto.avatarUrl,

@@ -39,6 +39,16 @@ export class GithubUser {
   created_at: string;
   updated_at: string;
 }
+
+export type GithubOAuthResponse = {
+  access_token: string;
+  token_type: string;
+  scope: string;
+  error: string;
+  error_description: string;
+  error_uri: string;
+};
+
 export type AWSError = {
   $metadata?: {
     httpStatusCode?: number;
