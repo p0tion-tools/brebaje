@@ -1,6 +1,9 @@
 #!/usr/bin/env ts-node
 
 import * as fs from 'node:fs';
+import { ScriptLogger } from '../utils/logger';
+
+const logger = new ScriptLogger('DbmlToSql');
 
 export interface TableDefinition {
   name: string;
@@ -304,7 +307,8 @@ export function convertDbmlToSql(
 
       return { sql, enums: converter.enums, tables: converter.tables };
     } catch (error) {
-      console.error('❌ Error:', (error as Error).message);
+      logger.failure('Error converting DBML to SQL');
+      logger.error((error as Error).message, error as Error);
       throw error;
     }
   } else {
@@ -322,8 +326,8 @@ if (require.main === module) {
   const args = process.argv.slice(2);
 
   if (args.length === 0) {
-    console.log('Usage: pnpm convert <input-file> [output-file]');
-    console.log('Example: pnpm convert diagram.dbml');
+    logger.log('Usage: pnpm convert <input-file> [output-file]');
+    logger.log('Example: pnpm convert diagram.dbml');
     process.exit(1);
   }
 

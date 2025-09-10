@@ -1,6 +1,9 @@
 import { Sequelize } from 'sequelize';
 import SequelizeAuto from 'sequelize-auto';
 import { DB_SQLITE_STORAGE_PATH } from '../utils/constants';
+import { ScriptLogger } from '../utils/logger';
+
+const logger = new ScriptLogger('CreateModels');
 
 export async function createModels(sql: string) {
   const sequelize = new Sequelize({
@@ -24,9 +27,10 @@ export async function createModels(sql: string) {
       }
     }
 
-    console.log('✅ Database setup complete. DBML loaded succesully.');
+    logger.success('Database setup complete. DBML loaded successfully.');
   } catch (error) {
-    console.log('❌ Error setting up database:', (error as Error).message);
+    logger.failure('Error setting up database');
+    logger.error((error as Error).message, error as Error);
     throw error;
   }
 
@@ -44,9 +48,10 @@ export async function createModels(sql: string) {
     });
 
     await sequelizeAuto.run();
-    console.log('✅ Models generated successfully.');
+    logger.success('Models generated successfully.');
   } catch (error) {
-    console.log('❌ Error generating models:', (error as Error).message);
+    logger.failure('Error generating models');
+    logger.error((error as Error).message, error as Error);
     throw error;
   }
 }
