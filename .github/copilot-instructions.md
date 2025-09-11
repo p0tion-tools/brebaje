@@ -13,7 +13,7 @@ Monorepo using pnpm workspaces with two main applications:
 
 ## Key Domain Models
 
-- **Users**: GitHub OAuth authentication
+- **Users**: General users logic
 - **Projects**: Container for ceremonies managed by coordinators
 - **Ceremonies**: Time-bounded events with phases (SCHEDULED → OPENED → CLOSED → FINALIZED)
 - **Circuits**: Individual zkSNARK circuits requiring trusted setup
@@ -26,7 +26,7 @@ Monorepo using pnpm workspaces with two main applications:
 apps/
 ├── backend/           # NestJS API application
 │   ├── src/
-│   │   ├── auth/      # GitHub OAuth authentication
+│   │   ├── auth/      # Authentication
 │   │   ├── ceremonies/ # Ceremony management
 │   │   ├── circuits/  # Circuit handling
 │   │   ├── contributions/ # User contributions
