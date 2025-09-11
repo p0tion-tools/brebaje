@@ -131,7 +131,7 @@ export class HealthService {
         },
       };
 
-      this.logger.log(`Health check completed: ${result.status}`);
+      this.logger.log(`Health check completed: ${isHealthy}`);
       return result;
     } catch {
       return {

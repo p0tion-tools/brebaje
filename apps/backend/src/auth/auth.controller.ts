@@ -11,7 +11,7 @@ export class AuthController {
   @Get('github/client-id')
   @ApiOperation({ summary: 'Get GitHub client ID for OAuth setup' })
   @ApiResponse({ status: 200, description: 'GitHub client ID returned successfully' })
-  async getGithubClientId() {
+  getGithubClientId() {
     return this.authService.getGithubClientId();
   }
 
@@ -36,7 +36,7 @@ export class AuthController {
       },
     },
   })
-  async generateAuth() {
+  generateAuth() {
     return this.authService.getGithubAuthUrl();
   }
 
