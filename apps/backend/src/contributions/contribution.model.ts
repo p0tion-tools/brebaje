@@ -1,5 +1,5 @@
 import { Optional } from 'sequelize';
-import { BelongsTo, Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, BelongsTo } from 'sequelize-typescript';
 import { Circuit } from 'src/circuits/circuit.model';
 import { Participant } from 'src/participants/participant.model';
 
@@ -40,13 +40,6 @@ export type ContributionCreationAttributes = Optional<
 export class Contribution extends Model implements ContributionAttributes {
   @Column({
     type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  declare id?: number;
-
-  @Column({
-    type: DataType.INTEGER,
     allowNull: false,
   })
   circuitId: number;
@@ -56,6 +49,14 @@ export class Contribution extends Model implements ContributionAttributes {
     allowNull: false,
   })
   participantId: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: true,
+  })
+  declare id?: number;
 
   @Column({
     type: DataType.INTEGER,
@@ -97,19 +98,19 @@ export class Contribution extends Model implements ContributionAttributes {
     type: DataType.JSON,
     allowNull: true,
   })
-  files?: any;
+  files?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  verificationSoftware?: any;
+  verificationSoftware?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  beacon?: any;
+  beacon?: object;
 
   @BelongsTo(() => Circuit, 'circuitId')
   circuit: Circuit;

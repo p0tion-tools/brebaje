@@ -1,9 +1,9 @@
 import { Optional } from 'sequelize';
-import { BelongsTo, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, BelongsTo, HasMany } from 'sequelize-typescript';
+import { ParticipantStatus, ParticipantContributionStep } from 'src/types/enums';
+import { User } from 'src/users/user.model';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Contribution } from 'src/contributions/contribution.model';
-import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
-import { User } from 'src/users/user.model';
 
 export interface ParticipantAttributes {
   userId: number;
@@ -37,13 +37,6 @@ export type ParticipantCreationAttributes = Optional<
 export class Participant extends Model implements ParticipantAttributes {
   @Column({
     type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  declare id?: number;
-
-  @Column({
-    type: DataType.INTEGER,
     allowNull: false,
   })
   userId: number;
@@ -53,6 +46,14 @@ export class Participant extends Model implements ParticipantAttributes {
     allowNull: false,
   })
   ceremonyId: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: true,
+  })
+  declare id?: number;
 
   @Column({
     type: DataType.ENUM(...Object.values(ParticipantStatus)),
@@ -89,14 +90,14 @@ export class Participant extends Model implements ParticipantAttributes {
     type: DataType.JSON,
     allowNull: true,
   })
-  tempContributionData?: any;
+  tempContributionData?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
-    comment: 'Array of timeouts. Check Timeout class',
+    comment: 'Array of timeouts. Check Timeout class]',
   })
-  timeout?: any;
+  timeout?: object;
 
   @BelongsTo(() => User, 'userId')
   user: User;

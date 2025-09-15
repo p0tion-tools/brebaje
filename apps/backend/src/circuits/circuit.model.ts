@@ -1,8 +1,9 @@
 import { Optional } from 'sequelize';
-import { BelongsTo, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, BelongsTo, HasMany } from 'sequelize-typescript';
+import { CircuitTimeoutType } from 'src/types/enums';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Contribution } from 'src/contributions/contribution.model';
-import { CircuitTimeoutType } from 'src/types/enums';
+
 export interface CircuitAttributes {
   ceremonyId: number;
   id?: number;
@@ -50,16 +51,17 @@ export type CircuitCreationAttributes = Optional<CircuitAttributes, CircuitOptio
 export class Circuit extends Model implements CircuitAttributes {
   @Column({
     type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  declare id?: number;
-
-  @Column({
-    type: DataType.INTEGER,
     allowNull: false,
   })
   ceremonyId: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: true,
+  })
+  declare id?: number;
 
   @Column({
     type: DataType.STRING,
@@ -132,37 +134,37 @@ export class Circuit extends Model implements CircuitAttributes {
     type: DataType.JSON,
     allowNull: true,
   })
-  compiler?: any;
+  compiler?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  template?: any;
+  template?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  verification?: any;
+  verification?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  artifacts?: any;
+  artifacts?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  metadata?: any;
+  metadata?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  files?: any;
+  files?: object;
 
   @BelongsTo(() => Ceremony, 'ceremonyId')
   ceremony: Ceremony;

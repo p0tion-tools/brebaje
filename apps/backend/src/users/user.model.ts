@@ -1,8 +1,8 @@
 import { Optional } from 'sequelize';
-import { Column, DataType, HasMany, Index, Model, Table } from 'sequelize-typescript';
-import { Participant } from 'src/participants/participant.model';
-import { Project } from 'src/projects/project.model';
+import { Column, DataType, Model, Table, HasMany, Index } from 'sequelize-typescript';
 import { UserProvider } from 'src/types/enums';
+import { Project } from 'src/projects/project.model';
+import { Participant } from 'src/participants/participant.model';
 
 export interface UserAttributes {
   id?: number;
@@ -30,6 +30,7 @@ export class User extends Model implements UserAttributes {
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+    allowNull: true,
   })
   declare id?: number;
 

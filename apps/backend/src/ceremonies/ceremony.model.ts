@@ -1,9 +1,10 @@
 import { Optional } from 'sequelize';
-import { BelongsTo, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, BelongsTo, HasMany } from 'sequelize-typescript';
+import { CeremonyType, CeremonyState } from 'src/types/enums';
+import { Project } from 'src/projects/project.model';
 import { Circuit } from 'src/circuits/circuit.model';
 import { Participant } from 'src/participants/participant.model';
-import { Project } from 'src/projects/project.model';
-import { CeremonyState, CeremonyType } from 'src/types/enums';
+
 export interface CeremonyAttributes {
   projectId: number;
   id?: number;
@@ -25,23 +26,24 @@ export type CeremonyCreationAttributes = Optional<CeremonyAttributes, CeremonyOp
 export class Ceremony extends Model implements CeremonyAttributes {
   @Column({
     type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
-  })
-  declare id?: number;
-
-  @Column({
-    type: DataType.INTEGER,
     allowNull: false,
   })
   projectId: number;
 
   @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: true,
+  })
+  declare id?: number;
+
+  @Column({
     type: DataType.STRING,
     allowNull: true,
-    comment: 'description in the frontend',
+    comment: 'description in the frontend]',
   })
-  declare description?: string;
+  description?: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(CeremonyType)),
@@ -78,12 +80,12 @@ export class Ceremony extends Model implements CeremonyAttributes {
   @Column({
     type: DataType.JSON,
     allowNull: false,
-    comment: 'check auth providers classes',
+    comment: 'check auth providers classes]',
   })
-  authProviders: any;
+  authProviders: object;
 
   @BelongsTo(() => Project, 'projectId')
-  declare project: Project;
+  project: Project;
 
   @HasMany(() => Circuit, 'ceremonyId')
   circuits: Circuit[];
