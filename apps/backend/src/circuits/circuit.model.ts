@@ -53,13 +53,13 @@ export class Circuit extends Model implements CircuitAttributes {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  ceremonyId: number;
+  declare ceremonyId: number;
 
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    allowNull: true,
+    allowNull: false,
   })
   declare id?: number;
 
@@ -67,108 +67,108 @@ export class Circuit extends Model implements CircuitAttributes {
     type: DataType.STRING,
     allowNull: false,
   })
-  name: string;
+  declare name: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(CircuitTimeoutType)),
     allowNull: false,
     defaultValue: CircuitTimeoutType.FIXED,
   })
-  timeoutMechanismType: CircuitTimeoutType;
+  declare timeoutMechanismType: CircuitTimeoutType;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  dynamicThreshold?: number;
+  declare dynamicThreshold?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  fixedTimeWindow?: number;
+  declare fixedTimeWindow?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  sequencePosition: number;
+  declare sequencePosition: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  zKeySizeInBytes?: number;
+  declare zKeySizeInBytes?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  constraints?: number;
+  declare constraints?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  pot?: number;
+  declare pot?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  averageContributionComputationTime?: number;
+  declare averageContributionComputationTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  averageFullContributionTime?: number;
+  declare averageFullContributionTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  averageVerifyContributionTime?: number;
+  declare averageVerifyContributionTime?: number;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  compiler?: object;
+  declare compiler?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  template?: object;
+  declare template?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  verification?: object;
+  declare verification?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  artifacts?: object;
+  declare artifacts?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  metadata?: object;
+  declare metadata?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  files?: object;
+  declare files?: object;
 
   @BelongsTo(() => Ceremony, 'ceremonyId')
-  ceremony: Ceremony;
+  declare ceremony: Ceremony;
 
   @HasMany(() => Contribution, 'circuitId')
-  contributions: Contribution[];
+  declare contributions: Contribution[];
 }

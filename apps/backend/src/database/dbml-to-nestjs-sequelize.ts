@@ -334,7 +334,9 @@ export class DbmlToNestJSSequelizeGenerator {
       code += '    autoIncrement: true,\n';
     }
 
-    code += `    allowNull: ${!column.isNotNull},\n`;
+    // AutoIncrement fields should not allow null
+    const allowNull = column.isAutoIncrement ? false : !column.isNotNull;
+    code += `    allowNull: ${allowNull},\n`;
 
     if (column.defaultValue && enumDef) {
       code += `    defaultValue: ${column.type}.${column.defaultValue},\n`;
@@ -349,7 +351,8 @@ export class DbmlToNestJSSequelizeGenerator {
     // Property declaration
     const tsType = this.mapToTypeScript(column.type);
     const optional = column.isAutoIncrement || !column.isNotNull ? '?' : '';
-    const declare = column.isAutoIncrement ? 'declare ' : '';
+    // Only use declare for autoincrement fields
+    const declare = column.isAutoIncrement ? 'declare ' : 'declare ';
 
     code += `  ${declare}${column.name}${optional}: ${tsType};\n\n`;
 
@@ -365,7 +368,7 @@ export class DbmlToNestJSSequelizeGenerator {
       const propertyName = this.toSingular(ref.toTable);
 
       code += `  @BelongsTo(() => ${targetModel}, '${ref.fromColumn}')\n`;
-      code += `  ${propertyName}: ${targetModel};\n\n`;
+      code += `  declare ${propertyName}: ${targetModel};\n\n`;
     }
 
     // HasMany relations
@@ -374,7 +377,7 @@ export class DbmlToNestJSSequelizeGenerator {
         if (ref.toTable === table.name) {
           const targetModel = this.toModelName(otherTable.name);
           code += `  @HasMany(() => ${targetModel}, '${ref.fromColumn}')\n`;
-          code += `  ${otherTable.name}: ${targetModel}[];\n\n`;
+          code += `  declare ${otherTable.name}: ${targetModel}[];\n\n`;
         }
       }
     }

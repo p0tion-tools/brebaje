@@ -42,19 +42,19 @@ export class Contribution extends Model implements ContributionAttributes {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  circuitId: number;
+  declare circuitId: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  participantId: number;
+  declare participantId: number;
 
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    allowNull: true,
+    allowNull: false,
   })
   declare id?: number;
 
@@ -62,59 +62,59 @@ export class Contribution extends Model implements ContributionAttributes {
     type: DataType.INTEGER,
     allowNull: true,
   })
-  contributionComputationTime?: number;
+  declare contributionComputationTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  fullContributionTime?: number;
+  declare fullContributionTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  verifyContributionTime?: number;
+  declare verifyContributionTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  zkeyIndex?: number;
+  declare zkeyIndex?: number;
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
-  valid?: boolean;
+  declare valid?: boolean;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  lastUpdated?: number;
+  declare lastUpdated?: number;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  files?: object;
+  declare files?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  verificationSoftware?: object;
+  declare verificationSoftware?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  beacon?: object;
+  declare beacon?: object;
 
   @BelongsTo(() => Circuit, 'circuitId')
-  circuit: Circuit;
+  declare circuit: Circuit;
 
   @BelongsTo(() => Participant, 'participantId')
-  participant: Participant;
+  declare participant: Participant;
 }

@@ -21,7 +21,7 @@ export class Project extends Model implements ProjectAttributes {
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    allowNull: true,
+    allowNull: false,
   })
   declare id?: number;
 
@@ -30,24 +30,24 @@ export class Project extends Model implements ProjectAttributes {
     allowNull: false,
     comment: 'title in the frontend]',
   })
-  name: string;
+  declare name: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
     comment: 'E.g.: nicoserranop (Discord)]',
   })
-  contact: string;
+  declare contact: string;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  coordinatorId: number;
+  declare coordinatorId: number;
 
   @BelongsTo(() => User, 'coordinatorId')
-  user: User;
+  declare user: User;
 
   @HasMany(() => Ceremony, 'projectId')
-  ceremonies: Ceremony[];
+  declare ceremonies: Ceremony[];
 }

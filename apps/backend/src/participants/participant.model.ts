@@ -39,19 +39,19 @@ export class Participant extends Model implements ParticipantAttributes {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  userId: number;
+  declare userId: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  ceremonyId: number;
+  declare ceremonyId: number;
 
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    allowNull: true,
+    allowNull: false,
   })
   declare id?: number;
 
@@ -60,51 +60,51 @@ export class Participant extends Model implements ParticipantAttributes {
     allowNull: false,
     defaultValue: ParticipantStatus.CREATED,
   })
-  status: ParticipantStatus;
+  declare status: ParticipantStatus;
 
   @Column({
     type: DataType.ENUM(...Object.values(ParticipantContributionStep)),
     allowNull: false,
   })
-  contributionStep: ParticipantContributionStep;
+  declare contributionStep: ParticipantContributionStep;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  contributionProgress?: number;
+  declare contributionProgress?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  contributionStartedAt?: number;
+  declare contributionStartedAt?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  verificationStartedAt?: number;
+  declare verificationStartedAt?: number;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  tempContributionData?: object;
+  declare tempContributionData?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
     comment: 'Array of timeouts. Check Timeout class]',
   })
-  timeout?: object;
+  declare timeout?: object;
 
   @BelongsTo(() => User, 'userId')
-  user: User;
+  declare user: User;
 
   @BelongsTo(() => Ceremony, 'ceremonyId')
-  ceremony: Ceremony;
+  declare ceremony: Ceremony;
 
   @HasMany(() => Contribution, 'participantId')
-  contributions: Contribution[];
+  declare contributions: Contribution[];
 }

@@ -28,13 +28,13 @@ export class Ceremony extends Model implements CeremonyAttributes {
     type: DataType.INTEGER,
     allowNull: false,
   })
-  projectId: number;
+  declare projectId: number;
 
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    allowNull: true,
+    allowNull: false,
   })
   declare id?: number;
 
@@ -43,53 +43,53 @@ export class Ceremony extends Model implements CeremonyAttributes {
     allowNull: true,
     comment: 'description in the frontend]',
   })
-  description?: string;
+  declare description?: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(CeremonyType)),
     allowNull: false,
     defaultValue: CeremonyType.PHASE2,
   })
-  type: CeremonyType;
+  declare type: CeremonyType;
 
   @Column({
     type: DataType.ENUM(...Object.values(CeremonyState)),
     allowNull: false,
     defaultValue: CeremonyState.SCHEDULED,
   })
-  state: CeremonyState;
+  declare state: CeremonyState;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  start_date: number;
+  declare start_date: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  end_date: number;
+  declare end_date: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  penalty: number;
+  declare penalty: number;
 
   @Column({
     type: DataType.JSON,
     allowNull: false,
     comment: 'check auth providers classes]',
   })
-  authProviders: object;
+  declare authProviders: object;
 
   @BelongsTo(() => Project, 'projectId')
-  project: Project;
+  declare project: Project;
 
   @HasMany(() => Circuit, 'ceremonyId')
-  circuits: Circuit[];
+  declare circuits: Circuit[];
 
   @HasMany(() => Participant, 'ceremonyId')
-  participants: Participant[];
+  declare participants: Participant[];
 }

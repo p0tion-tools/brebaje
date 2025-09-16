@@ -30,7 +30,7 @@ export class User extends Model implements UserAttributes {
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    allowNull: true,
+    allowNull: false,
   })
   declare id?: number;
 
@@ -39,42 +39,42 @@ export class User extends Model implements UserAttributes {
     type: DataType.STRING,
     allowNull: false,
   })
-  displayName: string;
+  declare displayName: string;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  creationTime: number;
+  declare creationTime: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  lastSignInTime?: number;
+  declare lastSignInTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  lastUpdated?: number;
+  declare lastUpdated?: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  avatarUrl?: string;
+  declare avatarUrl?: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(UserProvider)),
     allowNull: false,
     defaultValue: UserProvider.GITHUB,
   })
-  provider: UserProvider;
+  declare provider: UserProvider;
 
   @HasMany(() => Project, 'coordinatorId')
-  projects: Project[];
+  declare projects: Project[];
 
   @HasMany(() => Participant, 'userId')
-  participants: Participant[];
+  declare participants: Participant[];
 }
