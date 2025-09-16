@@ -14,6 +14,22 @@ export const Header = () => {
     "github" | "ethereum" | "bandada" | null
   >(null);
 
+  const handleGithubLogin = async () => {
+    try {
+      // Call backend to get GitHub OAuth URL
+      const response = await fetch(
+        "http://localhost:3000/auth/github/generate-auth"
+      );
+      const data = await response.json();
+      console.log(data);
+
+      // Redirect to GitHub OAuth
+      window.location.href = data.authUrl;
+    } catch (error) {
+      console.error("GitHub OAuth initialization failed:", error);
+    }
+  };
+
   return (
     <>
       <Modal
@@ -38,7 +54,7 @@ export const Header = () => {
                 variant={selectedLoginMethod === "github" ? "yellow" : "white"}
                 fontWeight="regular"
                 size="xs"
-                onClick={() => setSelectedLoginMethod("github")}
+                onClick={handleGithubLogin}
                 icon={<Icons.Github />}
               >
                 Github
