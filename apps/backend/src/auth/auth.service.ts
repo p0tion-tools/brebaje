@@ -229,7 +229,7 @@ export class AuthService {
       console.log(result);
 
       this.logger.log('GitHub OAuth authentication completed successfully');
-      return response;
+      return result;
     } catch (error) {
       console.log(error);
       this.logger.error('GitHub OAuth authentication failed', error.stack);

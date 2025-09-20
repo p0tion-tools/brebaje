@@ -13,68 +13,44 @@ export default function GitHubCallback() {
   const [userInfo, setUserInfo] = useState<any>(null);
 
   useEffect(() => {
-    const handleCallback = async () => {
-      try {
-        const code = searchParams.get("code");
-        const state = searchParams.get("state");
-        const error = searchParams.get("error");
+    const handleCallback = () => {
+      const success = searchParams.get("success");
+      const error = searchParams.get("error");
+      const jwt = searchParams.get("jwt");
+      const userParam = searchParams.get("user");
 
-        // Handle OAuth errors from GitHub
-        if (error) {
+      // Handle OAuth errors
+      if (error) {
+        setStatus("error");
+        setMessage(`Authentication failed: ${decodeURIComponent(error)}`);
+        return;
+      }
+
+      // Handle success case
+      if (success === "true" && jwt && userParam) {
+        try {
+          const userData = JSON.parse(decodeURIComponent(userParam));
+
+          // Store authentication data
+          localStorage.setItem("jwt_token", jwt);
+          localStorage.setItem("user", JSON.stringify(userData));
+
+          setUserInfo(userData);
+          setStatus("success");
+          setMessage("Login successful! Redirecting to home page...");
+
+          // Redirect to home page after 3 seconds
+          setTimeout(() => {
+            router.push("/");
+          }, 3000);
+        } catch (parseError) {
           setStatus("error");
-          setMessage(`GitHub OAuth error: ${error}`);
-          return;
+          setMessage("Failed to parse user data from authentication response");
         }
-
-        // Handle missing authorization code
-        if (!code) {
-          setStatus("error");
-          setMessage("Authorization code missing from GitHub callback");
-          return;
-        }
-
-        setMessage("Exchanging authorization code for access token...");
-
-        // Call backend to exchange code for tokens
-        const params = new URLSearchParams();
-        params.append("code", code);
-        if (state) {
-          params.append("state", state);
-        }
-
-        const response = await fetch(
-          `http://localhost:3000/auth/github/authorize-login?${params.toString()}`
-        );
-
-        console.log(response.ok);
-        if (!response.ok) {
-          const errorText = await response.text();
-          throw new Error(
-            `Authentication failed: ${response.status} - ${errorText}`
-          );
-        }
-
-        const data = await response.json();
-
-        console.log(data);
-
-        // Store authentication data (in a real app, use secure storage)
-        localStorage.setItem("jwt_token", data.jwt);
-        localStorage.setItem("user", JSON.stringify(data.user));
-
-        setUserInfo(data.user);
-        setStatus("success");
-        setMessage("Login successful! Redirecting to home page...");
-
-        // Redirect to home page after 3 seconds
-        setTimeout(() => {
-          router.push("/");
-        }, 3000);
-      } catch (error) {
-        console.error("GitHub OAuth callback error:", error);
+      } else {
         setStatus("error");
         setMessage(
-          `Authentication failed: ${error instanceof Error ? error.message : "Unknown error"}`
+          "Invalid authentication response - missing required parameters"
         );
       }
     };
