@@ -2,6 +2,9 @@ import { readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { TableDefinition } from './dbml-to-sql';
 import { singularize } from './utils';
+import { ScriptLogger } from '../utils/logger';
+
+const logger = new ScriptLogger('EnumsToModels');
 
 export function enumsToModels(
   enums: Map<string, string[]>,
@@ -62,6 +65,6 @@ export function enumsToModels(
     }
   }
 
-  console.log('✅ Enum types added to models successfully');
+  logger.success('Enum types added to models successfully');
   return [];
 }

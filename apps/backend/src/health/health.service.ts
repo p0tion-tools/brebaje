@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Logger } from '@nestjs/common';
 import { InjectConnection } from '@nestjs/sequelize';
 import { Sequelize } from 'sequelize-typescript';
 import { HeadBucketCommand } from '@aws-sdk/client-s3';
@@ -7,6 +7,8 @@ import { AWSError } from 'src/types/declarations';
 
 @Injectable()
 export class HealthService {
+  private readonly logger = new Logger(HealthService.name);
+
   constructor(
     @InjectConnection() private readonly sequelize: Sequelize,
     private readonly storageService: StorageService,
@@ -15,8 +17,13 @@ export class HealthService {
   async checkDatabaseConnection(): Promise<{ status: 'ok' | 'error'; message?: string }> {
     try {
       await this.sequelize.authenticate();
+      this.logger.debug('Database connection check: OK');
       return { status: 'ok' };
-    } catch {
+    } catch (error) {
+      this.logger.warn(
+        'Database connection check failed',
+        error instanceof Error ? error.stack : undefined,
+      );
       return {
         status: 'error',
         message: 'Database connection failed',
@@ -34,12 +41,14 @@ export class HealthService {
     });
 
     if (missingVars.length > 0) {
+      this.logger.warn(`Environment check failed: missing variables ${missingVars.join(', ')}`);
       return {
         status: 'error',
         message: `Missing required environment variables: ${missingVars.length} variables not configured`,
       };
     }
 
+    this.logger.debug('Environment variables check: OK');
     return { status: 'ok' };
   }
 
@@ -103,6 +112,7 @@ export class HealthService {
   }
 
   async getHealthStatus() {
+    this.logger.debug('Starting health check');
     try {
       const dbCheck = await this.checkDatabaseConnection();
       const envCheck = this.checkEnvironmentVariables();
@@ -111,7 +121,7 @@ export class HealthService {
       const isHealthy =
         dbCheck.status === 'ok' && envCheck.status === 'ok' && s3Check.status === 'ok';
 
-      return {
+      const result = {
         status: isHealthy ? 'healthy' : 'unhealthy',
         timestamp: new Date().toISOString(),
         checks: {
@@ -120,6 +130,9 @@ export class HealthService {
           s3: s3Check,
         },
       };
+
+      this.logger.log(`Health check completed: ${isHealthy}`);
+      return result;
     } catch {
       return {
         status: 'unhealthy',

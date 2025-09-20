@@ -2,6 +2,9 @@ import { ESLint } from 'eslint';
 import { existsSync, mkdirSync, readdirSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { pluralize } from './utils';
+import { ScriptLogger } from '../utils/logger';
+
+const logger = new ScriptLogger('ModelsToModules');
 
 export async function modelsToModules() {
   try {
@@ -44,9 +47,10 @@ export async function modelsToModules() {
 
     rmSync(sourceDir, { recursive: true });
 
-    console.log('✅ Models relocated successfully');
+    logger.success('Models relocated successfully');
   } catch (error) {
-    console.error('❌ Error relocating models:', (error as Error).message);
+    logger.failure('Error relocating models');
+    logger.error((error as Error).message, error as Error);
     throw error;
   }
 
@@ -55,7 +59,8 @@ export async function modelsToModules() {
     const result = await eslint.lintFiles(['src/**/*.model.ts']);
     await ESLint.outputFixes(result);
   } catch (error) {
-    console.log('❌ Error running ESLint:', (error as Error).message);
+    logger.failure('Error running ESLint');
+    logger.error((error as Error).message, error as Error);
     throw error;
   }
 }

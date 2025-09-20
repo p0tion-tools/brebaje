@@ -1,4 +1,9 @@
-import { ConflictException, Injectable, InternalServerErrorException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  InternalServerErrorException,
+  Logger,
+} from '@nestjs/common';
 import { getBucketName } from '@brebaje/actions';
 import { CeremoniesService } from 'src/ceremonies/ceremonies.service';
 import {
@@ -23,6 +28,8 @@ import {
 
 @Injectable()
 export class StorageService {
+  private readonly logger = new Logger(StorageService.name);
+
   constructor(private readonly ceremoniesService: CeremoniesService) {}
 
   getS3Client() {
@@ -47,7 +54,7 @@ export class StorageService {
         { client: s3, maxWaitTime: AWS_WAIT_TIME },
         { Bucket: bucketName },
       );
-      console.log(`Bucket created with location ${Location}`);
+      this.logger.log(`Bucket created with location ${Location}`);
     } catch (error) {
       this.handleErrors(error as Error);
     }
@@ -64,7 +71,7 @@ export class StorageService {
           },
         }),
       );
-      console.log(`Successfully set public access block for bucket: ${bucketName}`);
+      this.logger.log(`Successfully set public access block for bucket: ${bucketName}`);
     } catch (error) {
       this.handleErrors(error as Error);
     }
@@ -88,7 +95,7 @@ export class StorageService {
           },
         }),
       );
-      console.log(`Successfully set CORS rules for bucket: ${bucketName}`);
+      this.logger.log(`Successfully set CORS rules for bucket: ${bucketName}`);
     } catch (error) {
       this.handleErrors(error as Error);
     }
@@ -97,7 +104,7 @@ export class StorageService {
   async deleteBucket(s3: S3Client, bucketName: string) {
     try {
       await s3.send(new DeleteBucketCommand({ Bucket: bucketName }));
-      console.log(`Successfully deleted bucket: ${bucketName}`);
+      this.logger.log(`Successfully deleted bucket: ${bucketName}`);
     } catch (error) {
       this.handleErrors(error as Error);
     }
