@@ -20,7 +20,7 @@ export interface CircuitAttributes {
   averageVerifyContributionTime?: number;
   compiler?: object;
   template?: object;
-  verification?: object;
+  verification: object;
   artifacts?: object;
   metadata?: object;
   files?: object;
@@ -41,7 +41,6 @@ export type CircuitOptionalAttributes =
   | 'averageVerifyContributionTime'
   | 'compiler'
   | 'template'
-  | 'verification'
   | 'artifacts'
   | 'metadata'
   | 'files';
@@ -144,9 +143,9 @@ export class Circuit extends Model implements CircuitAttributes {
 
   @Column({
     type: DataType.JSON,
-    allowNull: true,
+    allowNull: false,
   })
-  declare verification?: object;
+  declare verification: object;
 
   @Column({
     type: DataType.JSON,

@@ -125,7 +125,7 @@ export class DbmlToNestJSSequelizeGenerator {
       : '';
     const note = line.includes('note:')
       ? line
-          .substring(line.indexOf('note:') + 5)
+          .substring(line.indexOf('note:') + 5, line.lastIndexOf(']'))
           .replace(/['"]/g, '')
           .trim()
       : undefined;

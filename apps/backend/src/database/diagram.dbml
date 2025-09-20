@@ -89,7 +89,7 @@ Table circuits {
   averageVerifyContributionTime int
   compiler json
   template json
-  verification json
+  verification json [not null]
   artifacts json
   metadata json
   files json
