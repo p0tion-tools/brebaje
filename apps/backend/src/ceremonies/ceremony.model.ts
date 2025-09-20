@@ -41,7 +41,7 @@ export class Ceremony extends Model implements CeremonyAttributes {
   @Column({
     type: DataType.STRING,
     allowNull: true,
-    comment: 'description in the frontend]',
+    comment: 'description in the frontend',
   })
   declare description?: string;
 
@@ -80,7 +80,7 @@ export class Ceremony extends Model implements CeremonyAttributes {
   @Column({
     type: DataType.JSON,
     allowNull: false,
-    comment: 'check auth providers classes]',
+    comment: 'check auth providers classes',
   })
   declare authProviders: object;
 

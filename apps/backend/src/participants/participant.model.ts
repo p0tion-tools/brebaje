@@ -95,7 +95,7 @@ export class Participant extends Model implements ParticipantAttributes {
   @Column({
     type: DataType.JSON,
     allowNull: true,
-    comment: 'Array of timeouts. Check Timeout class]',
+    comment: 'Array of timeouts. Check Timeout class',
   })
   declare timeout?: object;
 

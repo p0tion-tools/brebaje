@@ -28,14 +28,14 @@ export class Project extends Model implements ProjectAttributes {
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    comment: 'title in the frontend]',
+    comment: 'title in the frontend',
   })
   declare name: string;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
-    comment: 'E.g.: nicoserranop (Discord)]',
+    comment: 'E.g.: nicoserranop (Discord)',
   })
   declare contact: string;
 
