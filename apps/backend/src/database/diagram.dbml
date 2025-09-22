@@ -90,7 +90,7 @@ Table circuits {
   compiler json
   template json
   verification json [not null]
-  artifacts json
+  artifacts json [not null]
   metadata json
   files json
 }
