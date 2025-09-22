@@ -19,6 +19,7 @@
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
     "test": "jest",
+    "test:local": "jest test/coordinator-e2e.spec.ts --forceExit --runInBand",
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config=jest.config.js --runInBand",
@@ -42,6 +43,7 @@
     "sequelize": "^6.37.7",
     "sequelize-auto": "^0.8.8",
     "sequelize-typescript": "^2.1.6",
+    "snarkjs": "^0.7.5",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
@@ -55,6 +57,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
+    "@types/snarkjs": "^0.7.9",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",

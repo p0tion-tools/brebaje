@@ -2,6 +2,7 @@ import { Optional } from 'sequelize';
 import { BelongsTo, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Contribution } from 'src/contributions/contribution.model';
+import { CircuitArtifactsType } from 'src/types/declarations';
 import { CircuitTimeoutType } from 'src/types/enums';
 export interface CircuitAttributes {
   ceremonyId: number;
@@ -19,8 +20,8 @@ export interface CircuitAttributes {
   averageVerifyContributionTime?: number;
   compiler?: object;
   template?: object;
-  verification?: object;
-  artifacts?: object;
+  verification: object;
+  artifacts: CircuitArtifactsType;
   metadata?: object;
   files?: object;
 }
@@ -40,8 +41,6 @@ export type CircuitOptionalAttributes =
   | 'averageVerifyContributionTime'
   | 'compiler'
   | 'template'
-  | 'verification'
-  | 'artifacts'
   | 'metadata'
   | 'files';
 export type CircuitCreationAttributes = Optional<CircuitAttributes, CircuitOptionalAttributes>;
@@ -142,15 +141,15 @@ export class Circuit extends Model implements CircuitAttributes {
 
   @Column({
     type: DataType.JSON,
-    allowNull: true,
+    allowNull: false,
   })
-  verification?: any;
+  verification: any;
 
   @Column({
     type: DataType.JSON,
-    allowNull: true,
+    allowNull: false,
   })
-  artifacts?: any;
+  artifacts: any;
 
   @Column({
     type: DataType.JSON,
