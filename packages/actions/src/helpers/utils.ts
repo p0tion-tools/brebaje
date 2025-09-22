@@ -69,13 +69,12 @@ export const getFilenameFromUrl = (url: string): string => {
 };
 
 /**
- * Extract a prefix consisting of alphanumeric and underscore characters from a string with arbitrary characters.
- * @dev replaces all special symbols and whitespaces with an underscore char ('_'). Convert all uppercase chars to lowercase.
- * @notice example: str = 'Multiplier-2!2.4.zkey'; output prefix = 'multiplier_2_2_4.zkey'.
- * NB. Prefix extraction is a key process that conditions the name of the ceremony artifacts, download/upload from/to storage, collections paths.
- * @param str <string> - the arbitrary string from which to extract the prefix.
- * @returns <string> - the resulting prefix.
+ * Sanitize a string by replacing all special symbols and whitespaces with a hyphen ('-') and converting all uppercase characters to lowercase.
+ * @dev Useful for normalizing filenames or artifact names.
+ * @notice example: str = 'Multiplier-2!2.4.zkey'; output = 'multiplier-2-2-4-zkey'.
+ * @param str <string> - the arbitrary string to sanitize.
+ * @returns <string> - the sanitized string.
  */
-export const extractPrefix = (str: string): string =>
+export const sanitizeString = (str: string): string =>
   // eslint-disable-next-line no-useless-escape
   str.replace(/[`\s~!@#$%^&*()|+\-=?;:'",.<>\{\}\[\]\\\/]/gi, "-").toLowerCase();

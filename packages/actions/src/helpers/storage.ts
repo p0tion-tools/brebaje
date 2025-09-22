@@ -2,7 +2,8 @@ import { GenericBar } from "cli-progress";
 import { createReadStream } from "fs";
 import https from "https";
 import mime from "mime-types";
-import { ChunkWithUrl, ETagWithPartNumber, TemporaryParticipantContributionData } from "src/types";
+import fetchretry from "@adobe/node-fetch-retry";
+import { ChunkWithUrl, ETagWithPartNumber, TemporaryParticipantContributionData } from "../types";
 
 /**
  * Return the bucket name based on the input arguments.
@@ -98,8 +99,7 @@ export const uploadPartsAPI = async (
     i += 1
   ) {
     // Consume the pre-signed url to upload the chunk.
-    // @ts-ignore
-    const response = await fetchretry.default(chunksWithUrls[i].preSignedUrl, {
+    const response = await fetchretry(chunksWithUrls[i].preSignedUrl, {
       retryOptions: {
         retryInitialDelay: 500, // 500 ms.
         socketTimeout: 60000, // 60 seconds.
@@ -108,7 +108,7 @@ export const uploadPartsAPI = async (
       method: "PUT",
       body: chunksWithUrls[i].chunk,
       headers: {
-        "Content-Type": contentType.toString(),
+        "Content-Type": contentType ? contentType.toString() : "application/octet-stream",
         "Content-Length": chunksWithUrls[i].chunk.length.toString(),
       },
       agent: new https.Agent({ keepAlive: true }),
@@ -366,7 +366,7 @@ export const multiPartUploadAPI = async (
   const partNumbersAndETagsZkey = await uploadPartsAPI(
     accessToken,
     chunksWithUrlsZkey,
-    mime.lookup(localFilePath), // content-type.
+    mime.lookup(localFilePath) || false, // content-type.
     ceremonyId,
     creatingCeremony,
     alreadyUploadedChunks,

@@ -9,7 +9,7 @@ import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Project } from 'src/projects/project.model';
 import {
   getBucketName,
-  extractPrefix,
+  sanitizeString,
   getURLOfPowersOfTau,
   getFilenameFromUrl,
   genesisZkeyIndex,
@@ -189,7 +189,7 @@ describe('Coordinator (e2e)', () => {
       for (const circuit of circuits) {
         const { artifacts, name } = circuit;
 
-        const prefix = extractPrefix(name);
+        const prefix = sanitizeString(name);
 
         const localR1csPath = `${DOWNLOAD_DIRECTORY}/${prefix}.r1cs`;
         await downloadAndSaveFile(artifacts.r1csStoragePath, localR1csPath);
