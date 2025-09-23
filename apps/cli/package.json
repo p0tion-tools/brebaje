@@ -1,0 +1,40 @@
+{
+  "name": "@brebaje/cli",
+  "version": "0.0.0",
+  "description": "CLI for Brebaje",
+  "type": "module",
+  "author": "NicoSerranoP",
+  "homepage": "https://github.com/NicoSerranoP/brebaje#readme",
+  "license": "MIT",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "bin": {
+    "brebaje-cli": "./build/index.js"
+  },
+  "directories": {
+    "lib": "build"
+  },
+  "files": [
+    "build"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NicoSerranoP/brebaje.git"
+  },
+  "scripts": {
+    "start": "ts-node src/index.ts",
+    "build": "tsc",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "bugs": {
+    "url": "https://github.com/NicoSerranoP/brebaje/issues"
+  },
+  "dependencies": {
+    "commander": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.9",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.2.2"
+  }
+}
