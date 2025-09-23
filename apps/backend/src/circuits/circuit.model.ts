@@ -1,8 +1,9 @@
 import { Optional } from 'sequelize';
-import { BelongsTo, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, BelongsTo, HasMany } from 'sequelize-typescript';
+import { CircuitTimeoutType } from 'src/types/enums';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Contribution } from 'src/contributions/contribution.model';
-import { CircuitTimeoutType } from 'src/types/enums';
+
 export interface CircuitAttributes {
   ceremonyId: number;
   id?: number;
@@ -19,7 +20,7 @@ export interface CircuitAttributes {
   averageVerifyContributionTime?: number;
   compiler?: object;
   template?: object;
-  verification?: object;
+  verification: object;
   artifacts?: object;
   metadata?: object;
   files?: object;
@@ -40,7 +41,6 @@ export type CircuitOptionalAttributes =
   | 'averageVerifyContributionTime'
   | 'compiler'
   | 'template'
-  | 'verification'
   | 'artifacts'
   | 'metadata'
   | 'files';
@@ -50,123 +50,124 @@ export type CircuitCreationAttributes = Optional<CircuitAttributes, CircuitOptio
 export class Circuit extends Model implements CircuitAttributes {
   @Column({
     type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+    allowNull: false,
   })
-  declare id?: number;
+  declare ceremonyId: number;
 
   @Column({
     type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
     allowNull: false,
   })
-  ceremonyId: number;
+  declare id?: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: false,
   })
-  name: string;
+  declare name: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(CircuitTimeoutType)),
     allowNull: false,
     defaultValue: CircuitTimeoutType.FIXED,
   })
-  timeoutMechanismType: CircuitTimeoutType;
+  declare timeoutMechanismType: CircuitTimeoutType;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  dynamicThreshold?: number;
+  declare dynamicThreshold?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  fixedTimeWindow?: number;
+  declare fixedTimeWindow?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  sequencePosition: number;
+  declare sequencePosition: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  zKeySizeInBytes?: number;
+  declare zKeySizeInBytes?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  constraints?: number;
+  declare constraints?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  pot?: number;
+  declare pot?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  averageContributionComputationTime?: number;
+  declare averageContributionComputationTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  averageFullContributionTime?: number;
+  declare averageFullContributionTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  averageVerifyContributionTime?: number;
+  declare averageVerifyContributionTime?: number;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  compiler?: any;
+  declare compiler?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  template?: any;
+  declare template?: object;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: false,
+  })
+  declare verification: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  verification?: any;
+  declare artifacts?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  artifacts?: any;
+  declare metadata?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  metadata?: any;
-
-  @Column({
-    type: DataType.JSON,
-    allowNull: true,
-  })
-  files?: any;
+  declare files?: object;
 
   @BelongsTo(() => Ceremony, 'ceremonyId')
-  ceremony: Ceremony;
+  declare ceremony: Ceremony;
 
   @HasMany(() => Contribution, 'circuitId')
-  contributions: Contribution[];
+  declare contributions: Contribution[];
 }

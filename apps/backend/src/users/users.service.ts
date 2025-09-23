@@ -29,6 +29,7 @@ export class UsersService {
         lastSignInTime: Date.now(),
         lastUpdated: Date.now(),
         avatarUrl: createUserDto.avatarUrl,
+        provider: createUserDto.provider,
       });
       return user;
     } catch (error) {

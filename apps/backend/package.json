@@ -10,9 +10,8 @@
   },
   "scripts": {
     "build": "nest build",
-    "convert": "ts-node src/database/dbml-to-sql.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "setup-dml-to-database": "ts-node src/database/index.ts",
+    "generate-models": "ts-node src/database/dbml-to-nestjs-sequelize.ts",
     "start": "nest start",
     "start:dev": "nest start --watch --env-file .env",
     "start:debug": "nest start --debug --watch --env-file .env",

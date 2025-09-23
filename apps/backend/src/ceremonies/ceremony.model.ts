@@ -1,9 +1,10 @@
 import { Optional } from 'sequelize';
-import { BelongsTo, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, BelongsTo, HasMany } from 'sequelize-typescript';
+import { CeremonyType, CeremonyState } from 'src/types/enums';
+import { Project } from 'src/projects/project.model';
 import { Circuit } from 'src/circuits/circuit.model';
 import { Participant } from 'src/participants/participant.model';
-import { Project } from 'src/projects/project.model';
-import { CeremonyState, CeremonyType } from 'src/types/enums';
+
 export interface CeremonyAttributes {
   projectId: number;
   id?: number;
@@ -25,16 +26,17 @@ export type CeremonyCreationAttributes = Optional<CeremonyAttributes, CeremonyOp
 export class Ceremony extends Model implements CeremonyAttributes {
   @Column({
     type: DataType.INTEGER,
-    primaryKey: true,
-    autoIncrement: true,
+    allowNull: false,
   })
-  declare id?: number;
+  declare projectId: number;
 
   @Column({
     type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
     allowNull: false,
   })
-  projectId: number;
+  declare id?: number;
 
   @Column({
     type: DataType.STRING,
@@ -48,46 +50,46 @@ export class Ceremony extends Model implements CeremonyAttributes {
     allowNull: false,
     defaultValue: CeremonyType.PHASE2,
   })
-  type: CeremonyType;
+  declare type: CeremonyType;
 
   @Column({
     type: DataType.ENUM(...Object.values(CeremonyState)),
     allowNull: false,
     defaultValue: CeremonyState.SCHEDULED,
   })
-  state: CeremonyState;
+  declare state: CeremonyState;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  start_date: number;
+  declare start_date: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  end_date: number;
+  declare end_date: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  penalty: number;
+  declare penalty: number;
 
   @Column({
     type: DataType.JSON,
     allowNull: false,
     comment: 'check auth providers classes',
   })
-  authProviders: any;
+  declare authProviders: object;
 
   @BelongsTo(() => Project, 'projectId')
   declare project: Project;
 
   @HasMany(() => Circuit, 'ceremonyId')
-  circuits: Circuit[];
+  declare circuits: Circuit[];
 
   @HasMany(() => Participant, 'ceremonyId')
-  participants: Participant[];
+  declare participants: Participant[];
 }
