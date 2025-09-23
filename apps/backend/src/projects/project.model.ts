@@ -1,7 +1,7 @@
 import { Optional } from 'sequelize';
-import { BelongsTo, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
-import { Ceremony } from 'src/ceremonies/ceremony.model';
+import { Column, DataType, Model, Table, BelongsTo, HasMany } from 'sequelize-typescript';
 import { User } from 'src/users/user.model';
+import { Ceremony } from 'src/ceremonies/ceremony.model';
 
 export interface ProjectAttributes {
   id?: number;
@@ -21,6 +21,7 @@ export class Project extends Model implements ProjectAttributes {
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+    allowNull: false,
   })
   declare id?: number;
 
@@ -36,17 +37,17 @@ export class Project extends Model implements ProjectAttributes {
     allowNull: false,
     comment: 'E.g.: nicoserranop (Discord)',
   })
-  contact: string;
+  declare contact: string;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  coordinatorId: number;
+  declare coordinatorId: number;
 
   @BelongsTo(() => User, 'coordinatorId')
-  coordinator: User;
+  declare user: User;
 
   @HasMany(() => Ceremony, 'projectId')
-  ceremonies: Ceremony[];
+  declare ceremonies: Ceremony[];
 }

@@ -1,5 +1,5 @@
 import { Optional } from 'sequelize';
-import { BelongsTo, Column, DataType, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, BelongsTo } from 'sequelize-typescript';
 import { Circuit } from 'src/circuits/circuit.model';
 import { Participant } from 'src/participants/participant.model';
 
@@ -40,80 +40,81 @@ export type ContributionCreationAttributes = Optional<
 export class Contribution extends Model implements ContributionAttributes {
   @Column({
     type: DataType.INTEGER,
+    allowNull: false,
+  })
+  declare circuitId: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  declare participantId: number;
+
+  @Column({
+    type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+    allowNull: false,
   })
   declare id?: number;
 
   @Column({
     type: DataType.INTEGER,
-    allowNull: false,
+    allowNull: true,
   })
-  circuitId: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  participantId: number;
+  declare contributionComputationTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  contributionComputationTime?: number;
+  declare fullContributionTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  fullContributionTime?: number;
+  declare verifyContributionTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  verifyContributionTime?: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: true,
-  })
-  zkeyIndex?: number;
+  declare zkeyIndex?: number;
 
   @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
   })
-  valid?: boolean;
+  declare valid?: boolean;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  lastUpdated?: number;
+  declare lastUpdated?: number;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  files?: any;
+  declare files?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  verificationSoftware?: any;
+  declare verificationSoftware?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  beacon?: any;
+  declare beacon?: object;
 
   @BelongsTo(() => Circuit, 'circuitId')
-  circuit: Circuit;
+  declare circuit: Circuit;
 
   @BelongsTo(() => Participant, 'participantId')
-  participant: Participant;
+  declare participant: Participant;
 }
