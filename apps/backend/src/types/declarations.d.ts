@@ -55,3 +55,8 @@ export type AWSError = {
   };
   message?: string;
 };
+
+export type CircuitArtifactsType = {
+  r1csStoragePath: string;
+  wasmStoragePath: string;
+};

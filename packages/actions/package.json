@@ -40,5 +40,20 @@
   },
   "bugs": {
     "url": "https://github.com/NicoSerranoP/brebaje/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@adobe/node-fetch-retry": "^2.2.0",
+    "cli-progress": "^3.12.0",
+    "mime-types": "^3.0.1",
+    "snarkjs": "^0.7.5"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.11.6",
+    "@types/mime-types": "^3.0.1",
+    "@types/node-fetch": "^2.6.13",
+    "@types/snarkjs": "^0.7.9"
   }
 }

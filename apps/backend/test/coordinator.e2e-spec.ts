@@ -1,18 +1,29 @@
-// pass the Nest SQLite models to the database in /.db/data.sqlite3
-process.env.DB_SQLITE_SYNCHRONIZE = 'true';
-
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
-import { AppModule } from './../src/app.module';
+import { AppModule } from '../src/app.module';
 import { AWS_CEREMONY_BUCKET_POSTFIX, PORT } from 'src/utils/constants';
-import { ceremonyDto, coordinatorDto, projectDto } from './constants';
+import { ceremonyDto, circuits, coordinatorDto, projectDto } from './constants';
 import { User } from 'src/users/user.model';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Project } from 'src/projects/project.model';
-import { getBucketName } from '@brebaje/actions';
+import {
+  getBucketName,
+  sanitizeString,
+  getURLOfPowersOfTau,
+  getFilenameFromUrl,
+  genesisZkeyIndex,
+} from '@brebaje/actions';
+import { existsSync, mkdirSync } from 'fs';
+import { downloadAndSaveFile } from 'src/utils';
+import { zKey } from 'snarkjs';
 
+const DOWNLOAD_DIRECTORY = './.downloads';
 const TEST_URL = `http://localhost:${PORT}`;
+
+// pass the Nest SQLite models to the database in /.db/data.sqlite3
+process.env.DB_SQLITE_SYNCHRONIZE = 'true';
+process.env.API_URL = TEST_URL;
 
 describe('Coordinator (e2e)', () => {
   let app: INestApplication<App>;
@@ -167,7 +178,47 @@ describe('Coordinator (e2e)', () => {
     expect(body.bucketName).toBe(expectedBucketName);
   });
 
-  it('should upload the circuit artifacts to the bucket', async () => {});
+  it(
+    'should upload the circuit artifacts to the bucket',
+    async () => {
+      // make the download directory if it doesn't exist
+      if (!existsSync(DOWNLOAD_DIRECTORY)) {
+        mkdirSync(DOWNLOAD_DIRECTORY);
+      }
+
+      for (const circuit of circuits) {
+        const { artifacts, name } = circuit;
+
+        const prefix = sanitizeString(name);
+
+        const localR1csPath = `${DOWNLOAD_DIRECTORY}/${prefix}.r1cs`;
+        await downloadAndSaveFile(artifacts.r1csStoragePath, localR1csPath);
+
+        const localWasmPath = `${DOWNLOAD_DIRECTORY}/${prefix}.wasm`;
+        await downloadAndSaveFile(artifacts.wasmStoragePath, localWasmPath);
+
+        const powersOfTauURL = await getURLOfPowersOfTau(localR1csPath);
+        const localPTauPath = `${DOWNLOAD_DIRECTORY}/${getFilenameFromUrl(powersOfTauURL)}`;
+        await downloadAndSaveFile(powersOfTauURL, localPTauPath);
+
+        const localZkeyPath = `${DOWNLOAD_DIRECTORY}/${prefix}_${genesisZkeyIndex}.zkey`;
+        await zKey.newZKey(localR1csPath, localPTauPath, localZkeyPath);
+
+        /*
+        // TODO: complete the storage.service migration first
+        await multiPartUploadAPI(
+          'accessToken',
+          ceremonyId!,
+          `${prefix}.r1cs`,
+          localR1csPath,
+          Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+          true,
+        );
+        */
+      }
+    },
+    5 * 60 * 1000, // Sets timeout to 5 minutes
+  );
 
   it('should create the circuits', async () => {});
 });
