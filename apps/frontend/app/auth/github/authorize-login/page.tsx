@@ -42,7 +42,7 @@ export default function GitHubCallback() {
           // Redirect to home page after 3 seconds
           setTimeout(() => {
             router.push("/");
-          }, 3000);
+          }, 4000);
         } catch (parseError) {
           setStatus("error");
           setMessage("Failed to parse user data from authentication response");
