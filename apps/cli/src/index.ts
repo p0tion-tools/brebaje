@@ -4,6 +4,7 @@ import { createCommand } from "commander";
 import { readFileSync } from "fs";
 import { dirname } from "path";
 import { fileURLToPath } from "url";
+import { setUpAuthCommands } from "./auth/index.js";
 import { setUpCeremonyCommands } from "./ceremonies/index.js";
 import { setUpParticipantCommands } from "./participants/index.js";
 
@@ -18,6 +19,7 @@ const program = createCommand();
 program.name(name).description(description).version(version);
 
 // Set up command groups
+setUpAuthCommands(program);
 setUpCeremonyCommands(program);
 setUpParticipantCommands(program);
 
