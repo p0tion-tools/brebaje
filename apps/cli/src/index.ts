@@ -7,6 +7,7 @@ import { fileURLToPath } from "url";
 import { setUpAuthCommands } from "./auth/index.js";
 import { setUpCeremonyCommands } from "./ceremonies/index.js";
 import { setUpParticipantCommands } from "./participants/index.js";
+import { setUpPerpetualPowersOfTau } from "./perpetual-powers-of-tau/index.js";
 
 // Get pkg info (e.g., name, version).
 const packagePath = `${dirname(fileURLToPath(import.meta.url))}/..`;
@@ -22,5 +23,6 @@ program.name(name).description(description).version(version);
 setUpAuthCommands(program);
 setUpCeremonyCommands(program);
 setUpParticipantCommands(program);
+setUpPerpetualPowersOfTau(program);
 
 program.parseAsync(process.argv);
