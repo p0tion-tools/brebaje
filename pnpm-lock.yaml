@@ -197,6 +197,9 @@ importers:
       commander:
         specifier: ^11.0.0
         version: 11.1.0
+      dotenv:
+        specifier: ^17.2.1
+        version: 17.2.1
       snarkjs:
         specifier: ^0.7.5
         version: 0.7.5

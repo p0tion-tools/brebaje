@@ -31,6 +31,7 @@
   },
   "dependencies": {
     "commander": "^11.0.0",
+    "dotenv": "^17.2.1",
     "snarkjs": "^0.7.5"
   },
   "devDependencies": {
