@@ -1,4 +1,13 @@
 import { Command } from "commander";
+import { config } from "dotenv";
+import * as snarkjs from "snarkjs";
+
+// Load environment variables
+config();
+
+// Environment variables
+const CEREMONY_POWER = parseInt(process.env.CEREMONY_POWER || "12");
+const CEREMONY_ELLIPTIC_CURVE = process.env.CEREMONY_ELLIPTIC_CURVE || "bn128";
 
 export function setUpPerpetualPowersOfTau(program: Command): void {
   const ppotCommand = program
@@ -9,8 +18,9 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
   ppotCommand
     .command("new")
     .description("Initialize a new perpetual powers of tau ceremony")
-    .action(() => {
-      console.log("New perpetual powers of tau ceremony initialization not implemented yet");
+    .action(async () => {
+      const { newPerpetualPowersOfTau } = await import("./new.js");
+      await newPerpetualPowersOfTau();
     });
 
   ppotCommand
