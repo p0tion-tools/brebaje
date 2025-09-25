@@ -30,7 +30,8 @@
     "url": "https://github.com/NicoSerranoP/brebaje/issues"
   },
   "dependencies": {
-    "commander": "^11.0.0"
+    "commander": "^11.0.0",
+    "snarkjs": "^0.7.5"
   },
   "devDependencies": {
     "@types/node": "^20.8.9",
