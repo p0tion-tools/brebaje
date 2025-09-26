@@ -69,6 +69,21 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     });
 
   ppotCommand
+    .command("generate-upload-url")
+    .description("Generate pre-signed URL for uploading contribution (coordinators only)")
+    .argument("<filename>", "Filename for the contribution file (e.g., pot12_0005.ptau)")
+    .option(
+      "-e, --expiration <minutes>",
+      "URL expiration time in minutes (default: 60)",
+      (value) => parseInt(value, 10),
+      60,
+    )
+    .action(async (filename: string, options: { expiration: number }) => {
+      const { generateUploadUrlPerpetualPowersOfTau } = await import("./generate-upload-url.js");
+      await generateUploadUrlPerpetualPowersOfTau(filename, options.expiration);
+    });
+
+  ppotCommand
     .command("beacon")
     .description("Apply beacon to finalize a Powers of Tau ceremony")
     .argument("<inputFile>", "Path to the input .ptau file")
