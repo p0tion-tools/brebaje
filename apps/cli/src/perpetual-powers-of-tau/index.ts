@@ -41,6 +41,15 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     });
 
   ppotCommand
+    .command("upload")
+    .description("Upload contribution file to ceremony")
+    .argument("<ceremonyId>", "ID of the ceremony to upload contribution to")
+    .action(async (ceremonyId: string) => {
+      const { uploadPerpetualPowersOfTau } = await import("./upload.js");
+      await uploadPerpetualPowersOfTau(ceremonyId);
+    });
+
+  ppotCommand
     .command("verify")
     .description("Verify a Powers of Tau file")
     .argument("<ptauFile>", "Path to the .ptau file to verify")
