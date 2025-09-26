@@ -41,6 +41,14 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     });
 
   ppotCommand
+    .command("auto-contribute")
+    .description("Complete contribution process: download → contribute → upload → post-record")
+    .action(async () => {
+      const { autoContributePerpetualPowersOfTau } = await import("./auto-contribute.js");
+      await autoContributePerpetualPowersOfTau();
+    });
+
+  ppotCommand
     .command("upload")
     .description("Upload contribution file using pre-signed URL")
     .argument("<uploadUrl>", "Pre-signed URL for uploading the contribution file")
