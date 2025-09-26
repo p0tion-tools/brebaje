@@ -1,14 +1,6 @@
-import { config } from "dotenv";
-
-// Load environment variables
-config();
-
-// Environment variables
-const BREBAJE_API_URL = process.env.BREBAJE_API_URL || "http://localhost:8067";
-
-export async function uploadPerpetualPowersOfTau(ceremonyId: string): Promise<void> {
+export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<void> {
   try {
-    console.log(`Uploading contribution for ceremony: ${ceremonyId}`);
+    console.log(`Uploading contribution using pre-signed URL...`);
 
     const fs = await import("fs");
     const path = await import("path");
@@ -76,52 +68,15 @@ export async function uploadPerpetualPowersOfTau(ceremonyId: string): Promise<vo
       process.exit(1);
     }
 
-    // Step 1: Request pre-signed URL from API
-    console.log("🔗 Requesting upload URL from API...");
-
-    const axios = await import("axios");
-    let uploadUrl: string;
-
+    // Validate pre-signed URL
     try {
-      const response = await axios.default.post(
-        `${BREBAJE_API_URL}/ceremony/${ceremonyId}/upload-request`,
-        {
-          filename: latestFile.file,
-          fileSize: fileStats.size,
-          power: latestFile.power,
-          index: latestFile.index,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      const responseData = response.data;
-      uploadUrl = responseData.uploadUrl;
-
-      if (!uploadUrl) {
-        console.error(`❌ Error: API did not return upload URL`);
-        process.exit(1);
-      }
-
-      console.log("✅ Upload URL received");
-    } catch (error: any) {
-      if (error.response) {
-        console.error(
-          `❌ API Error (${error.response.status}): ${error.response.data?.message || "Unknown error"}`,
-        );
-      } else if (error.request) {
-        console.error(`❌ Network Error: Cannot reach API at ${BREBAJE_API_URL}`);
-        console.error(`Please check your internet connection and API URL`);
-      } else {
-        console.error(`❌ Request Error: ${error.message}`);
-      }
+      new URL(uploadUrl);
+    } catch {
+      console.error(`❌ Error: Invalid upload URL format: ${uploadUrl}`);
       process.exit(1);
     }
 
-    // Step 2: Upload file using curl with pre-signed URL
+    // Upload file using curl with pre-signed URL
     console.log("📤 Uploading contribution file...");
 
     const uploadCommand = `curl -X PUT -T "${filePath}" --progress-bar "${uploadUrl}"`;
@@ -135,40 +90,10 @@ export async function uploadPerpetualPowersOfTau(ceremonyId: string): Promise<vo
       process.exit(1);
     }
 
-    // Step 3: Notify API that upload is complete
-    console.log("✅ File uploaded successfully");
-    console.log("📋 Notifying API of completed contribution...");
-
-    try {
-      await axios.default.post(
-        `${BREBAJE_API_URL}/ceremony/${ceremonyId}/contribution-submitted`,
-        {
-          filename: latestFile.file,
-          power: latestFile.power,
-          index: latestFile.index,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      console.log("✅ Contribution submitted successfully!");
-      console.log(`📁 Uploaded: ${latestFile.file}`);
-      console.log(`🎯 Ceremony: ${ceremonyId}`);
-      console.log(`📊 Your contribution index: ${latestFile.index}`);
-    } catch (error: any) {
-      console.warn("⚠️  File uploaded but failed to notify API");
-      if (error.response) {
-        console.warn(
-          `API Error (${error.response.status}): ${error.response.data?.message || "Unknown error"}`,
-        );
-      }
-      console.warn(
-        "Your contribution may still be valid. Please contact the ceremony coordinator.",
-      );
-    }
+    console.log("✅ File uploaded successfully!");
+    console.log(`📁 Uploaded: ${latestFile.file}`);
+    console.log(`📊 Your contribution index: ${latestFile.index}`);
+    console.log(`💡 Please notify the ceremony coordinator that your contribution is ready.`);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("❌ Failed to upload contribution:", errorMessage);
