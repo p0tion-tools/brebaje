@@ -7,8 +7,8 @@ config();
 const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
 const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
 const AWS_REGION = process.env.AWS_REGION || "us-east-1";
-const S3_BUCKET = "cardano-trusted-setup-test";
-const S3_PREFIX = "Cardano-PPOT/";
+const S3_BUCKET = process.env.S3_BUCKET || "cardano-trusted-setup-test";
+const S3_PREFIX = process.env.S3_PREFIX || "Cardano-PPOT/";
 
 export async function generateUploadUrlPerpetualPowersOfTau(
   filename: string,
