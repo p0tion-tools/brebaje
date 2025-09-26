@@ -80,16 +80,65 @@ export async function contributePerpetualPowersOfTau(): Promise<void> {
     const nextIncrement = (latestFile.index + 1).toString().padStart(4, "0");
     const outputFile = path.join(outputDir, `pot${ceremonyPower}_${nextIncrement}.ptau`);
 
-    // Run snarkjs CLI command for contribution
+    // Run snarkjs CLI command for contribution and capture output
     const { execSync } = await import("child_process");
 
     const command = `npx snarkjs powersoftau contribute ${inputFilePath} ${outputFile}`;
     console.log(`Running: ${command}`);
 
-    execSync(command, { stdio: "inherit" });
+    // Capture the output from snarkjs contribution
+    let contributionOutput: string;
+    try {
+      contributionOutput = execSync(command, { encoding: "utf-8" });
+      console.log(contributionOutput); // Display output to user
+    } catch (error: any) {
+      // If execSync fails, still try to get output from stderr
+      contributionOutput = error.stdout || error.stderr || "Contribution command failed";
+      throw error;
+    }
 
     console.log(`✅ Contribution completed: ${outputFile}`);
     console.log(`Previous: ${latestFile.file} -> New: ${path.basename(outputFile)}`);
+
+    // Save contribution log to record file
+    console.log("📝 Saving contribution record...");
+
+    const recordFileName = `pot${ceremonyPower}_${nextIncrement}_record.txt`;
+    const recordFilePath = path.join(outputDir, recordFileName);
+
+    try {
+      const timestamp = new Date().toISOString();
+      const stats = fs.statSync(outputFile);
+
+      // Create record content with contribution log
+      const recordContent = [
+        `Contribution Record`,
+        `==================`,
+        ``,
+        `File: ${path.basename(outputFile)}`,
+        `Size: ${stats.size} bytes (${(stats.size / (1024 * 1024)).toFixed(2)} MB)`,
+        `Ceremony Power: ${ceremonyPower}`,
+        `Contribution Index: ${latestFile.index + 1}`,
+        `Previous File: ${latestFile.file}`,
+        `Generated: ${timestamp}`,
+        ``,
+        `Contribution Log:`,
+        `================`,
+        contributionOutput,
+        ``,
+        `This record contains the output from the snarkjs contribution command`,
+        `including cryptographic hashes for verification purposes.`,
+      ].join("\n");
+
+      // Write record file
+      fs.writeFileSync(recordFilePath, recordContent, "utf-8");
+
+      console.log(`✅ Contribution record saved: ${recordFileName}`);
+    } catch (error) {
+      console.warn(`⚠️  Warning: Failed to save contribution record file`);
+      console.warn(`Error: ${error}`);
+      console.warn(`Your contribution is still valid, but manual verification may be needed.`);
+    }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
 
