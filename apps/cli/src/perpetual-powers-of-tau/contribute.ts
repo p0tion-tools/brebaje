@@ -6,41 +6,79 @@ config();
 // Environment variables
 const CEREMONY_POWER = parseInt(process.env.CEREMONY_POWER || "12");
 
-export async function contributePerpetualPowersOfTau(inputFilePath: string): Promise<void> {
+export async function contributePerpetualPowersOfTau(): Promise<void> {
   try {
     console.log(`Contributing to perpetual powers of tau ceremony...`);
-    console.log(`Input file: ${inputFilePath}`);
 
-    // Create output directory if it doesn't exist
     const fs = await import("fs");
     const path = await import("path");
 
-    // Check if input file exists
-    if (!fs.existsSync(inputFilePath)) {
-      console.warn(`⚠️  Warning: Input file does not exist: ${inputFilePath}`);
-      console.warn(`Please provide a valid path to the previous contribution file.`);
+    // Check if input directory exists
+    const inputDir = "input";
+    if (!fs.existsSync(inputDir)) {
+      console.error(`❌ Error: Input directory does not exist: ${inputDir}`);
+      console.error(`Please download a challenge file first using the download command.`);
       process.exit(1);
     }
+
+    // Find all .ptau files in input directory
+    const files = fs.readdirSync(inputDir);
+    const ptauFiles = files.filter((file) => file.endsWith(".ptau"));
+
+    if (ptauFiles.length === 0) {
+      console.error(`❌ Error: No .ptau files found in ${inputDir} directory`);
+      console.error(`Please download a challenge file first using the download command.`);
+      process.exit(1);
+    }
+
+    // Parse ceremony power and contribution index from filenames
+    const contributionFiles: Array<{ file: string; power: number; index: number }> = [];
+
+    for (const file of ptauFiles) {
+      const match = file.match(/pot(\d+)_(\d+)\.ptau/);
+      if (match) {
+        const power = parseInt(match[1]);
+        const index = parseInt(match[2]);
+        contributionFiles.push({ file, power, index });
+      }
+    }
+
+    if (contributionFiles.length === 0) {
+      console.error(`❌ Error: No valid ceremony files found with format pot<power>_<index>.ptau`);
+      console.error(`Found files: ${ptauFiles.join(", ")}`);
+      process.exit(1);
+    }
+
+    // Find the file with highest contribution index for the ceremony power
+    const ceremonyPower = parseInt(process.env.CEREMONY_POWER || "12");
+    const matchingPowerFiles = contributionFiles.filter((f) => f.power === ceremonyPower);
+
+    if (matchingPowerFiles.length === 0) {
+      console.error(`❌ Error: No ceremony files found for power ${ceremonyPower}`);
+      console.error(
+        `Available powers: ${[...new Set(contributionFiles.map((f) => f.power))].join(", ")}`,
+      );
+      console.error(`You can change CEREMONY_POWER in your .env file if needed.`);
+      process.exit(1);
+    }
+
+    // Get the file with highest index
+    const latestFile = matchingPowerFiles.reduce((latest, current) =>
+      current.index > latest.index ? current : latest,
+    );
+
+    const inputFilePath = path.join(inputDir, latestFile.file);
+    console.log(`Found latest contribution file: ${latestFile.file}`);
+    console.log(`Input file: ${inputFilePath}`);
 
     const outputDir = "output";
     if (!fs.existsSync(outputDir)) {
       fs.mkdirSync(outputDir, { recursive: true });
     }
 
-    // Extract current increment from input file name
-    const inputFileName = path.basename(inputFilePath);
-    const match = inputFileName.match(/pot\d+_(\d+)\.ptau/);
-
-    if (!match) {
-      throw new Error(
-        `Invalid input file format. Expected: pot<power>_<number>.ptau, got: ${inputFileName}`,
-      );
-    }
-
-    const currentIncrement = parseInt(match[1]);
-    const nextIncrement = (currentIncrement + 1).toString().padStart(4, "0");
-
-    const outputFile = path.join(outputDir, `pot${CEREMONY_POWER}_${nextIncrement}.ptau`);
+    // Calculate next increment
+    const nextIncrement = (latestFile.index + 1).toString().padStart(4, "0");
+    const outputFile = path.join(outputDir, `pot${ceremonyPower}_${nextIncrement}.ptau`);
 
     // Run snarkjs CLI command for contribution
     const { execSync } = await import("child_process");
@@ -51,7 +89,7 @@ export async function contributePerpetualPowersOfTau(inputFilePath: string): Pro
     execSync(command, { stdio: "inherit" });
 
     console.log(`✅ Contribution completed: ${outputFile}`);
-    console.log(`Previous: ${inputFileName} -> New: ${path.basename(outputFile)}`);
+    console.log(`Previous: ${latestFile.file} -> New: ${path.basename(outputFile)}`);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
 
