@@ -34,9 +34,11 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
 
   ppotCommand
     .command("verify")
-    .description("Verify contributions in the perpetual powers of tau ceremony")
-    .action(() => {
-      console.log("Perpetual powers of tau verification not implemented yet");
+    .description("Verify a Powers of Tau file")
+    .argument("<ptauFile>", "Path to the .ptau file to verify")
+    .action(async (ptauFile: string) => {
+      const { verifyPerpetualPowersOfTau } = await import("./verify.js");
+      await verifyPerpetualPowersOfTau(ptauFile);
     });
 
   ppotCommand
