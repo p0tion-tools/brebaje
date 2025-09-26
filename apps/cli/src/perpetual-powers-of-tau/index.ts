@@ -42,11 +42,11 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
 
   ppotCommand
     .command("upload")
-    .description("Upload contribution file to ceremony")
-    .argument("<ceremonyId>", "ID of the ceremony to upload contribution to")
-    .action(async (ceremonyId: string) => {
+    .description("Upload contribution file using pre-signed URL")
+    .argument("<uploadUrl>", "Pre-signed URL for uploading the contribution file")
+    .action(async (uploadUrl: string) => {
       const { uploadPerpetualPowersOfTau } = await import("./upload.js");
-      await uploadPerpetualPowersOfTau(ceremonyId);
+      await uploadPerpetualPowersOfTau(uploadUrl);
     });
 
   ppotCommand
