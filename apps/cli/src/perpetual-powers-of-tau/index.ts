@@ -109,6 +109,37 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     });
 
   ppotCommand
+    .command("generate-urls")
+    .description(
+      "Generate both download and upload URLs for ceremony coordination (coordinators only)",
+    )
+    .argument("<downloadFilename>", "Filename to download (e.g., pot12_0005.ptau)")
+    .option(
+      "--download-expiration <minutes>",
+      "Download URL expiration time in minutes (default: 1440 = 24 hours)",
+      (value) => parseInt(value, 10),
+      1440,
+    )
+    .option(
+      "--upload-expiration <minutes>",
+      "Upload URL expiration time in minutes (default: 60 = 1 hour)",
+      (value) => parseInt(value, 10),
+      60,
+    )
+    .action(
+      async (
+        downloadFilename: string,
+        options: { downloadExpiration: number; uploadExpiration: number },
+      ) => {
+        const { generateUrlsPerpetualPowersOfTau } = await import("./generate-urls.js");
+        await generateUrlsPerpetualPowersOfTau(downloadFilename, {
+          downloadExpiration: options.downloadExpiration,
+          uploadExpiration: options.uploadExpiration,
+        });
+      },
+    );
+
+  ppotCommand
     .command("beacon")
     .description("Apply beacon to finalize a Powers of Tau ceremony")
     .argument("<inputFile>", "Path to the input .ptau file")
