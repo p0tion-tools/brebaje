@@ -24,6 +24,15 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     });
 
   ppotCommand
+    .command("download")
+    .description("Download a Powers of Tau file from URL")
+    .argument("<url>", "URL to download the .ptau file from")
+    .action(async (url: string) => {
+      const { downloadPerpetualPowersOfTau } = await import("./download.js");
+      await downloadPerpetualPowersOfTau(url);
+    });
+
+  ppotCommand
     .command("contribute")
     .description("Make a contribution to the perpetual powers of tau ceremony")
     .argument("<inputFile>", "Path to the previous contribution file")
@@ -51,12 +60,5 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     .action(async (inputFile: string, beacon: string, iterations: number, name: string) => {
       const { applyBeaconPerpetualPowersOfTau } = await import("./beacon.js");
       await applyBeaconPerpetualPowersOfTau(inputFile, beacon, iterations, name);
-    });
-
-  ppotCommand
-    .command("status")
-    .description("Show status of the perpetual powers of tau ceremony")
-    .action(() => {
-      console.log("Perpetual powers of tau status not implemented yet");
     });
 }
