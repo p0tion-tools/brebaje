@@ -86,15 +86,23 @@ export async function contributePerpetualPowersOfTau(): Promise<void> {
     const command = `npx snarkjs powersoftau contribute ${inputFilePath} ${outputFile}`;
     console.log(`Running: ${command}`);
 
-    // Capture the output from snarkjs contribution
+    // Run snarkjs with inherited stdio for interactive input
+    try {
+      execSync(command, { stdio: "inherit" });
+    } catch (error: any) {
+      console.error("❌ Contribution command failed");
+      throw error;
+    }
+
+    // After successful execution, capture output by running verification command
+    console.log("📝 Capturing contribution details for record...");
     let contributionOutput: string;
     try {
-      contributionOutput = execSync(command, { encoding: "utf-8" });
-      console.log(contributionOutput); // Display output to user
+      const verifyCommand = `npx snarkjs powersoftau verify ${outputFile}`;
+      contributionOutput = execSync(verifyCommand, { encoding: "utf-8" });
     } catch (error: any) {
-      // If execSync fails, still try to get output from stderr
-      contributionOutput = error.stdout || error.stderr || "Contribution command failed";
-      throw error;
+      console.warn("⚠️  Could not capture verification details for record");
+      contributionOutput = `Contribution completed successfully for ${path.basename(outputFile)}`;
     }
 
     console.log(`✅ Contribution completed: ${outputFile}`);
