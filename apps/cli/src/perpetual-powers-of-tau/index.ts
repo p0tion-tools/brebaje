@@ -59,6 +59,16 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     });
 
   ppotCommand
+    .command("post-record")
+    .alias("pt")
+    .description("Post contribution record to GitHub Gist")
+    .option("-t, --token <token>", "GitHub personal access token")
+    .action(async (options: { token?: string }) => {
+      const { postRecordPerpetualPowersOfTau } = await import("./post-record.js");
+      await postRecordPerpetualPowersOfTau(options.token);
+    });
+
+  ppotCommand
     .command("beacon")
     .description("Apply beacon to finalize a Powers of Tau ceremony")
     .argument("<inputFile>", "Path to the input .ptau file")
