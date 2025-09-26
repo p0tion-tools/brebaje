@@ -42,6 +42,18 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     });
 
   ppotCommand
+    .command("beacon")
+    .description("Apply beacon to finalize a Powers of Tau ceremony")
+    .argument("<inputFile>", "Path to the input .ptau file")
+    .argument("<beacon>", "Beacon value in hexadecimal format")
+    .argument("<iterations>", "Number of iterations", (value) => parseInt(value, 10))
+    .argument("<name>", "Name for the beacon (in quotes)")
+    .action(async (inputFile: string, beacon: string, iterations: number, name: string) => {
+      const { applyBeaconPerpetualPowersOfTau } = await import("./beacon.js");
+      await applyBeaconPerpetualPowersOfTau(inputFile, beacon, iterations, name);
+    });
+
+  ppotCommand
     .command("status")
     .description("Show status of the perpetual powers of tau ceremony")
     .action(() => {
