@@ -82,9 +82,10 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
 
       const response = await axios.default.post("https://api.github.com/gists", gistData, {
         headers: {
-          Authorization: `token ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json",
           "User-Agent": "brebaje-cli",
+          Accept: "application/vnd.github.v3+json",
         },
       });
 
@@ -105,11 +106,20 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
         if (status === 401) {
           console.error(`❌ Authentication Error: Invalid GitHub token`);
           console.error(`Please check your token has 'gist' scope enabled`);
+          console.error(`Token format: ${token.substring(0, 10)}...`);
         } else if (status === 403) {
           console.error(`❌ Permission Error: Token lacks required permissions`);
           console.error(`Please ensure your token has 'gist' scope enabled`);
+        } else if (status === 404) {
+          console.error(`❌ Not Found Error: Check token and permissions`);
+          console.error(`This could mean:`);
+          console.error(`  1. Token is invalid or expired`);
+          console.error(`  2. Token doesn't have 'gist' scope`);
+          console.error(`  3. Token format is incorrect`);
+          console.error(`Your token starts with: ${token.substring(0, 10)}...`);
         } else {
           console.error(`❌ GitHub API Error (${status}): ${message}`);
+          console.error(`Full response: ${JSON.stringify(error.response.data, null, 2)}`);
         }
       } else if (error.request) {
         console.error(`❌ Network Error: Cannot reach GitHub API`);
