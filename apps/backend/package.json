@@ -25,7 +25,8 @@
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
-    "@aws-sdk/client-s3": "^3.864.0",
+    "@aws-sdk/client-s3": "^3.896.0",
+    "@aws-sdk/s3-request-presigner": "^3.896.0",
     "@brebaje/actions": "0.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
@@ -35,6 +36,7 @@
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/sequelize": "^11.0.0",
     "@nestjs/swagger": "^11.2.0",
+    "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dotenv": "^17.2.1",
     "reflect-metadata": "^0.2.2",
