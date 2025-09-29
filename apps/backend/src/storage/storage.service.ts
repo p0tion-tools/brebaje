@@ -113,18 +113,18 @@ export class StorageService {
     }
   }
 
-  async createAndSetupBucket(ceremonyId: number) {
+  async getCeremonyBucketName(ceremonyId: number) {
     const ceremony = await this.ceremoniesService.findOne(ceremonyId);
     if (!ceremony) {
       throw new InternalServerErrorException(`Ceremony with ID ${ceremonyId} not found`);
     }
 
+    return getBucketName(AWS_CEREMONY_BUCKET_POSTFIX, ceremony.project.name, ceremony.description);
+  }
+
+  async createAndSetupBucket(ceremonyId: number) {
+    const bucketName = await this.getCeremonyBucketName(ceremonyId);
     const s3 = this.getS3Client();
-    const bucketName = getBucketName(
-      AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project.name,
-      ceremony.description,
-    );
 
     await this.createBucket(s3, bucketName);
     await this.setPublicAccessBlock(s3, bucketName);
@@ -172,7 +172,7 @@ export class StorageService {
       const response = await client.send(command);
 
       if (response.$metadata.httpStatusCode !== 200) {
-        throw new InternalServerErrorException(`Failed to upload file ${objectKey}to S3`);
+        throw new InternalServerErrorException(`Failed to upload file ${objectKey} to S3`);
       }
 
       this.logger.log(`Successfully uploaded ${objectKey} to bucket ${bucketName}`);

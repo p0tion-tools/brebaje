@@ -24,6 +24,7 @@ import {
   AWS_INSTANCE_PROFILE_ARN,
   AWS_REGION,
   AWS_SECRET_ACCESS_KEY,
+  AWS_SNS_TOPIC_ARN,
   VM_BOOTSTRAP_SCRIPT_FILENAME,
 } from 'src/utils/constants';
 
@@ -47,16 +48,9 @@ export class VmService {
    * Return the list of Node environment (and packages) installation plus artifact caching for contribution verification.
    * @param zKeyPath <string> - the path to zKey artifact inside AWS S3 bucket.
    * @param potPath <string> - the path to ptau artifact inside AWS S3 bucket.
-   * @param snsTopic <string> - the SNS topic ARN.
-   * @param region <string> - the AWS region.
    * @returns <Array<string>> - the array of commands to be run by the EC2 instance.
    */
-  vmDependenciesAndCacheArtifactsCommand(
-    zKeyPath: string,
-    potPath: string,
-    snsTopic: string,
-    region: string,
-  ): Array<string> {
+  vmDependenciesAndCacheArtifactsCommand(zKeyPath: string, potPath: string): Array<string> {
     return [
       '#!/bin/bash',
       'MARKER_FILE="/var/run/my_script_ran"',
@@ -80,7 +74,7 @@ export class VmService {
       'wget https://github.com/BLAKE3-team/BLAKE3/releases/download/1.4.0/b3sum_linux_x64_bin -O /var/tmp/blake3.bin',
       'chmod +x /var/tmp/blake3.bin',
       "INSTANCE_ID=$(ec2-metadata -i | awk '{print $2}')",
-      `aws sns publish --topic-arn ${snsTopic} --message "$INSTANCE_ID" --region ${region}`,
+      `aws sns publish --topic-arn ${AWS_SNS_TOPIC_ARN} --message "$INSTANCE_ID" --region ${AWS_REGION}`,
       'fi',
     ];
   }
@@ -165,7 +159,7 @@ export class VmService {
    * @param instanceType <string> - the type of the EC2 VM instance.
    * @param diskSize <number> - the size of the disk (volume) of the VM.
    * @param diskType <VolumeType> - the type of the disk (volume) of the VM.
-   * @returns <Promise<P0tionEC2Instance>> the instance that was created
+   * @returns <Promise<EC2Instance>> the instance that was created
    */
   async createEC2Instance(
     commands: string[],
@@ -226,13 +220,27 @@ export class VmService {
           `Something went wrong when creating the EC2 instance. More details: ${JSON.stringify(response)}`,
         );
 
+      const instance = response.Instances && response.Instances[0];
+      if (
+        !instance ||
+        !instance.InstanceId ||
+        !instance.ImageId ||
+        !instance.InstanceType ||
+        !instance.KeyName ||
+        !instance.LaunchTime
+      ) {
+        throw new Error(
+          `EC2 RunInstances response is missing required instance fields: ${JSON.stringify(response)}`,
+        );
+      }
+
       // Create a new EC2 VM instance.
       return {
-        instanceId: response.Instances![0].InstanceId!,
-        imageId: response.Instances![0].ImageId!,
-        instanceType: response.Instances![0].InstanceType!,
-        keyName: response.Instances![0].KeyName!,
-        launchTime: response.Instances![0].LaunchTime!.toISOString(),
+        instanceId: instance.InstanceId,
+        imageId: instance.ImageId,
+        instanceType: instance.InstanceType,
+        keyName: instance.KeyName,
+        launchTime: instance.LaunchTime.toISOString(),
       };
     } catch (error: any) {
       throw new Error(`Something went wrong when creating the EC2 instance. More details ${error}`);
@@ -260,7 +268,15 @@ export class VmService {
         `Something went wrong when retrieving the EC2 instance (${instanceId}) status. More details ${JSON.stringify(response)}`,
       );
 
-    return response.InstanceStatuses![0].InstanceState!.Name === 'running';
+    if (
+      !response.InstanceStatuses ||
+      response.InstanceStatuses.length === 0 ||
+      !response.InstanceStatuses[0].InstanceState ||
+      !response.InstanceStatuses[0].InstanceState.Name
+    ) {
+      return false;
+    }
+    return response.InstanceStatuses[0].InstanceState.Name === 'running';
   }
 
   /**
@@ -311,7 +327,6 @@ export class VmService {
 
   /**
    * Terminate an EC2 VM instance.
-   * @param ec2 <EC2Client> - the instance of the EC2 client.
    * @param instanceId <string> - the unique identifier of the EC2 VM instance.
    */
   async terminateEC2Instance(instanceId: string) {

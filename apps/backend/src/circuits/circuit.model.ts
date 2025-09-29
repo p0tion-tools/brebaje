@@ -3,7 +3,7 @@ import { Column, DataType, Model, Table, BelongsTo, HasMany } from 'sequelize-ty
 import { CircuitTimeoutType } from 'src/types/enums';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Contribution } from 'src/contributions/contribution.model';
-import { CircuitArtifactsType } from 'src/types/declarations';
+import { CircuitArtifactsType, CircuitVerificationType } from 'src/types/declarations';
 export interface CircuitAttributes {
   ceremonyId: number;
   id?: number;
@@ -20,7 +20,7 @@ export interface CircuitAttributes {
   averageVerifyContributionTime?: number;
   compiler?: object;
   template?: object;
-  verification: object;
+  verification: CircuitVerificationType;
   artifacts: CircuitArtifactsType;
   metadata?: object;
   files?: object;
@@ -144,7 +144,7 @@ export class Circuit extends Model implements CircuitAttributes {
     type: DataType.JSON,
     allowNull: false,
   })
-  declare verification: object;
+  declare verification: CircuitVerificationType;
 
   @Column({
     type: DataType.JSON,

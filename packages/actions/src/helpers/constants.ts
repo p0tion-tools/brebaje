@@ -7,6 +7,9 @@ export const potFilenameTemplate = `ppot_0080_`;
 // The genesis zKey index.
 export const genesisZkeyIndex = `00000`;
 
+// The name of the VM startup script file.
+export const vmBootstrapScriptFilename = "bootstrap.sh";
+
 /**
  * Define the PPoT Trusted Setup ceremony output powers of tau files size (in GB).
  * @dev the powers of tau files can be retrieved at https://github.com/weijiekoh/perpetualpowersoftau

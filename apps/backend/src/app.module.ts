@@ -26,6 +26,7 @@ import { VmModule } from './vm/vm.module';
     StorageModule,
     AuthModule,
     HealthModule,
+    VmModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),
@@ -37,7 +38,6 @@ import { VmModule } from './vm/vm.module';
       logging: false,
       name: 'default',
     }),
-    VmModule,
   ],
   controllers: [AppController],
   providers: [AppService],

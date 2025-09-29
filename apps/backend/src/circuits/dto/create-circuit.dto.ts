@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { CircuitArtifactsType, CircuitVerificationType } from 'src/types/declarations';
 import { CircuitTimeoutType } from 'src/types/enums';
 
 export class CreateCircuitDto {
@@ -44,11 +45,11 @@ export class CreateCircuitDto {
   @ApiProperty({ example: {}, required: false })
   template?: object;
 
-  @ApiProperty({ example: {}, required: false })
-  verification?: object;
+  @ApiProperty({ example: {} })
+  verification: CircuitVerificationType;
 
-  @ApiProperty({ example: {}, required: false })
-  artifacts?: object;
+  @ApiProperty({ example: {} })
+  artifacts: CircuitArtifactsType;
 
   @ApiProperty({ example: {}, required: false })
   metadata?: object;
