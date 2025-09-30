@@ -1,0 +1,212 @@
+import { config } from "dotenv";
+
+// Load environment variables
+config();
+
+// Environment variables
+const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
+const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
+const AWS_REGION = process.env.AWS_REGION || "us-east-1";
+const S3_BUCKET = process.env.S3_BUCKET || "cardano-trusted-setup-test";
+const S3_PREFIX = process.env.S3_PREFIX || "Cardano-PPOT/";
+
+export async function generateUrlsPerpetualPowersOfTau(
+  downloadFilename: string,
+  options: {
+    downloadExpiration?: number;
+    uploadExpiration?: number;
+  } = {},
+): Promise<void> {
+  try {
+    const downloadExpirationMinutes = options.downloadExpiration || 1440; // 24 hours default
+    const uploadExpirationMinutes = options.uploadExpiration || 60; // 1 hour default
+
+    console.log(`🔗 Generating URL pair for ceremony coordination`);
+    console.log(`📥 Download file: ${downloadFilename}`);
+
+    // Validate download filename format
+    const filenameRegex = /^pot\d+_\d+\.ptau$/;
+    if (!filenameRegex.test(downloadFilename)) {
+      console.error(`❌ Error: Invalid filename format: ${downloadFilename}`);
+      console.error(`Expected format: pot<power>_<index>.ptau (e.g., pot12_0005.ptau)`);
+      process.exit(1);
+    }
+
+    // Extract power and index from download filename to generate upload filename
+    const match = downloadFilename.match(/^pot(\d+)_(\d+)\.ptau$/);
+    if (!match) {
+      console.error(`❌ Error: Could not parse filename: ${downloadFilename}`);
+      process.exit(1);
+    }
+
+    const power = match[1];
+    const currentIndex = parseInt(match[2]);
+    const nextIndex = currentIndex + 1;
+    const uploadFilename = `pot${power}_${nextIndex.toString().padStart(4, "0")}.ptau`;
+
+    console.log(`📤 Upload file: ${uploadFilename}`);
+    console.log(`=`.repeat(60));
+
+    // Check AWS credentials
+    if (!AWS_ACCESS_KEY_ID || !AWS_SECRET_ACCESS_KEY) {
+      console.error(`❌ Error: AWS credentials not found`);
+      console.error(`Please set the following environment variables:`);
+      console.error(`  AWS_ACCESS_KEY_ID=your_access_key`);
+      console.error(`  AWS_SECRET_ACCESS_KEY=your_secret_key`);
+      console.error(`  AWS_REGION=us-east-2 (or your bucket's region)`);
+      process.exit(1);
+    }
+
+    // Validate expiration times
+    if (downloadExpirationMinutes < 1 || downloadExpirationMinutes > 10080) {
+      console.error(`❌ Error: Invalid download expiration: ${downloadExpirationMinutes} minutes`);
+      console.error(`Expiration must be between 1 minute and 1 week (10080 minutes)`);
+      process.exit(1);
+    }
+
+    if (uploadExpirationMinutes < 1 || uploadExpirationMinutes > 10080) {
+      console.error(`❌ Error: Invalid upload expiration: ${uploadExpirationMinutes} minutes`);
+      console.error(`Expiration must be between 1 minute and 1 week (10080 minutes)`);
+      process.exit(1);
+    }
+
+    // Check if AWS SDK is available
+    let AWS: any;
+    try {
+      AWS = await import("aws-sdk");
+    } catch (error) {
+      console.error(`❌ Error: AWS SDK not found`);
+      console.error(`Please install aws-sdk:`);
+      console.error(`  pnpm add aws-sdk`);
+      process.exit(1);
+    }
+
+    // Configure AWS
+    AWS.default.config.update({
+      accessKeyId: AWS_ACCESS_KEY_ID,
+      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      region: AWS_REGION,
+    });
+
+    const s3 = new AWS.default.S3();
+
+    // Generate download URL
+    console.log(`📥 Generating download URL...`);
+    const downloadKey = `${S3_PREFIX}${downloadFilename}`;
+    const downloadExpirationSeconds = downloadExpirationMinutes * 60;
+
+    // Check if download file exists
+    try {
+      await s3.headObject({ Bucket: S3_BUCKET, Key: downloadKey }).promise();
+      console.log(`✅ Download file exists in S3`);
+    } catch (error: any) {
+      if (error.code === "NotFound") {
+        console.error(`❌ Error: Download file does not exist: ${downloadFilename}`);
+        console.error(`Please ensure the file has been uploaded to S3 first.`);
+        process.exit(1);
+      }
+      throw error;
+    }
+
+    const downloadParams = {
+      Bucket: S3_BUCKET,
+      Key: downloadKey,
+      Expires: downloadExpirationSeconds,
+    };
+
+    const downloadUrl = await s3.getSignedUrlPromise("getObject", downloadParams);
+
+    // Generate upload URL
+    console.log(`📤 Generating upload URL...`);
+    const uploadKey = `${S3_PREFIX}${uploadFilename}`;
+    const uploadExpirationSeconds = uploadExpirationMinutes * 60;
+
+    const uploadParams = {
+      Bucket: S3_BUCKET,
+      Key: uploadKey,
+      Expires: uploadExpirationSeconds,
+      ContentType: "application/octet-stream",
+      Metadata: {
+        "ceremony-type": "perpetual-powers-of-tau",
+        "generated-at": new Date().toISOString(),
+        coordinator: "brebaje-cli",
+      },
+    };
+
+    const uploadUrl = await s3.getSignedUrlPromise("putObject", uploadParams);
+
+    // Generate output filename
+    const outputFilename = `ceremony-urls-${downloadFilename.replace(".ptau", "")}.txt`;
+
+    // Create comprehensive URL file
+    const now = new Date();
+    const downloadExpiry = new Date(Date.now() + downloadExpirationSeconds * 1000);
+    const uploadExpiry = new Date(Date.now() + uploadExpirationSeconds * 1000);
+
+    const urlContent = [
+      `Ceremony URL Pair - Powers of Tau`,
+      `Generated: ${now.toISOString()}`,
+      `Coordinator: brebaje-cli`,
+      ``,
+      `=`.repeat(60),
+      `DOWNLOAD INFORMATION`,
+      `=`.repeat(60),
+      `File: ${downloadFilename}`,
+      `S3 Key: ${downloadKey}`,
+      `Expires: ${downloadExpiry.toISOString()} (${downloadExpirationMinutes} minutes)`,
+      ``,
+      `Download URL:`,
+      downloadUrl,
+      ``,
+      `=`.repeat(60),
+      `UPLOAD INFORMATION`,
+      `=`.repeat(60),
+      `File: ${uploadFilename}`,
+      `S3 Key: ${uploadKey}`,
+      `Expires: ${uploadExpiry.toISOString()} (${uploadExpirationMinutes} minutes)`,
+      ``,
+      `Upload URL:`,
+      uploadUrl,
+      ``,
+      `=`.repeat(60),
+      `ENVIRONMENT VARIABLES FOR PARTICIPANTS`,
+      `=`.repeat(60),
+      `Copy these to participant's .env file:`,
+      ``,
+      `DOWNLOAD_URL=${downloadUrl}`,
+      `UPLOAD_URL=${uploadUrl}`,
+      ``,
+      `=`.repeat(60),
+      `PARTICIPANT INSTRUCTIONS`,
+      `=`.repeat(60),
+      `1. Set environment variables in .env file (see above)`,
+      `2. Run: brebaje-cli ppot auto-contribute`,
+      ``,
+      `Or run individual commands:`,
+      `1. brebaje-cli ppot download "${downloadUrl}"`,
+      `2. brebaje-cli ppot contribute`,
+      `3. brebaje-cli ppot upload "${uploadUrl}"`,
+      `4. brebaje-cli ppot post-record`,
+      ``,
+    ].join("\n");
+
+    // Save to file
+    const fs = await import("fs");
+    fs.writeFileSync(outputFilename, urlContent, "utf-8");
+
+    // Success output
+    console.log(`✅ URL pair generated successfully!`);
+    console.log(`=`.repeat(60));
+    console.log(`📥 Download: ${downloadFilename} (expires ${downloadExpiry.toISOString()})`);
+    console.log(`📤 Upload: ${uploadFilename} (expires ${uploadExpiry.toISOString()})`);
+    console.log(`📝 URLs saved to: ${outputFilename}`);
+    console.log(``);
+    console.log(`💡 Share the environment variables with participants:`);
+    console.log(`DOWNLOAD_URL=${downloadUrl}`);
+    console.log(`UPLOAD_URL=${uploadUrl}`);
+  } catch (error) {
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("❌ Failed to generate URL pair:", errorMessage);
+    process.exit(1);
+  }
+}
