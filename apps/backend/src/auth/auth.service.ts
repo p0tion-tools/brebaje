@@ -101,9 +101,6 @@ export class AuthService {
 
   async authWithGithub(deviceFlowTokenDto: DeviceFlowTokenDto) {
     try {
-      // Clean up expired states when OAuth methods are called
-      //this.cleanupExpiredStates();
-
       const result = (await fetch('https://api.github.com/user', {
         headers: {
           Authorization: `token ${deviceFlowTokenDto.access_token}`,
@@ -140,8 +137,9 @@ export class AuthService {
   getGithubAuthUrl() {
     this.logger.log('Generating GitHub OAuth authorization URL');
 
-    // Clean up expired states when OAuth methods are called
-    //this.cleanupExpiredStates();
+    // Clean up expired states before creating new ones
+    this.cleanupExpiredStates();
+    this.logger.debug('OAuth state cleanup done');
 
     const { clientId, callbackUrl } = this.getGitHubConfig();
     const baseUrl = 'https://github.com/login/oauth/authorize';
