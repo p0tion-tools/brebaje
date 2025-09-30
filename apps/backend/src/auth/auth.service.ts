@@ -34,10 +34,10 @@ export class AuthService {
     }
 
     const stored = this.stateStore.get(state);
-    console.log('----------------------------------------------------');
-    console.log(state);
-    console.log(this.stateStore);
-    console.log(stored);
+    this.logger.debug('----------------------------------------------------');
+    this.logger.debug(`State: ${state}`);
+    this.logger.debug(`State Store: ${JSON.stringify([...this.stateStore.entries()])}`);
+    this.logger.debug(`Stored: ${JSON.stringify(stored)}`);
     if (!stored) {
       this.logger.warn('OAuth callback received with unknown state parameter');
       return false;
@@ -157,7 +157,7 @@ export class AuthService {
       scope: 'read:user user:email',
       state,
     });
-    console.log(params);
+    this.logger.debug(`OAuth params: ${params.toString()}`);
 
     const authUrl = `${baseUrl}?${params.toString()}`;
     this.logger.log('GitHub OAuth authorization URL generated successfully');
@@ -173,8 +173,8 @@ export class AuthService {
    * Step 2: Exchange authorization code for access token and authenticate user
    */
   async authenticateWithGithubCode(code: string, state?: string) {
-    console.log(this.stateStore);
-    console.log('On authenticateWithGithubCode: ', code, state);
+    this.logger.debug(`State Store: ${JSON.stringify([...this.stateStore.entries()])}`);
+    this.logger.debug(`On authenticateWithGithubCode - code: ${code}, state: ${state}`);
     try {
       this.logger.log(`Processing GitHub OAuth callback with code: ${code.substring(0, 8)}...`);
 
@@ -186,7 +186,7 @@ export class AuthService {
       const { clientId, clientSecret } = this.getGitHubConfig();
 
       this.logger.debug('Exchanging authorization code for access token');
-      console.log(code);
+      this.logger.debug(`Code: ${code}`);
       // Exchange authorization code for access token
       const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
@@ -201,7 +201,7 @@ export class AuthService {
         }),
       });
 
-      console.log('This is the body response: ', tokenResponse.body);
+      this.logger.debug(`Token response body: ${JSON.stringify(tokenResponse.body)}`);
       if (!tokenResponse.ok) {
         this.logger.error(
           `GitHub token exchange failed: ${tokenResponse.status} ${tokenResponse.statusText}`,
@@ -210,7 +210,7 @@ export class AuthService {
       }
 
       const tokenData = await tokenResponse.json();
-      console.log('token data: ', tokenData);
+      this.logger.debug(`Token data: ${JSON.stringify(tokenData)}`);
 
       if (tokenData.error) {
         this.logger.error(`GitHub OAuth error: ${tokenData.error}`, tokenData.error_description);
@@ -226,12 +226,11 @@ export class AuthService {
         access_token: tokenData.access_token,
         token_type: tokenData.token_type || 'bearer',
       });
-      console.log(result);
+      this.logger.debug(`Auth result: ${JSON.stringify(result)}`);
 
       this.logger.log('GitHub OAuth authentication completed successfully');
       return result;
     } catch (error) {
-      console.log(error);
       this.logger.error('GitHub OAuth authentication failed', error.stack);
 
       if (error instanceof UnauthorizedException || error instanceof BadRequestException) {
