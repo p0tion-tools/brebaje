@@ -43,9 +43,13 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
   ppotCommand
     .command("auto-contribute")
     .description("Complete contribution process: download → contribute → upload → post-record")
-    .action(async () => {
+    .argument(
+      "[jsonPath]",
+      "Path to ceremony URLs JSON file (optional, will check input/ folder first)",
+    )
+    .action(async (jsonPath?: string) => {
       const { autoContributePerpetualPowersOfTau } = await import("./auto-contribute.js");
-      await autoContributePerpetualPowersOfTau();
+      await autoContributePerpetualPowersOfTau(jsonPath);
     });
 
   ppotCommand
@@ -115,6 +119,10 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     )
     .argument("<downloadFilename>", "Filename to download (e.g., pot12_0005.ptau)")
     .option(
+      "-o, --output <path>",
+      "Output JSON file path (default: ceremony-urls-<filename>.json in current folder)",
+    )
+    .option(
       "--download-expiration <minutes>",
       "Download URL expiration time in minutes (default: 1440 = 24 hours)",
       (value) => parseInt(value, 10),
@@ -129,10 +137,11 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     .action(
       async (
         downloadFilename: string,
-        options: { downloadExpiration: number; uploadExpiration: number },
+        options: { output?: string; downloadExpiration: number; uploadExpiration: number },
       ) => {
         const { generateUrlsPerpetualPowersOfTau } = await import("./generate-urls.js");
         await generateUrlsPerpetualPowersOfTau(downloadFilename, {
+          outputPath: options.output,
           downloadExpiration: options.downloadExpiration,
           uploadExpiration: options.uploadExpiration,
         });

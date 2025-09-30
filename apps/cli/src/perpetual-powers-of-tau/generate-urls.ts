@@ -13,6 +13,7 @@ const S3_PREFIX = process.env.S3_PREFIX || "Cardano-PPOT/";
 export async function generateUrlsPerpetualPowersOfTau(
   downloadFilename: string,
   options: {
+    outputPath?: string;
     downloadExpiration?: number;
     uploadExpiration?: number;
   } = {},
@@ -135,64 +136,33 @@ export async function generateUrlsPerpetualPowersOfTau(
 
     const uploadUrl = await s3.getSignedUrlPromise("putObject", uploadParams);
 
-    // Generate output filename
-    const outputFilename = `ceremony-urls-${downloadFilename.replace(".ptau", "")}.txt`;
+    // Generate output filename - use provided path or default to current folder
+    const outputFilename =
+      options.outputPath || `ceremony-urls-${downloadFilename.replace(".ptau", "")}.json`;
 
-    // Create comprehensive URL file
-    const now = new Date();
+    const fs = await import("fs");
+
+    // Create JSON structure
     const downloadExpiry = new Date(Date.now() + downloadExpirationSeconds * 1000);
     const uploadExpiry = new Date(Date.now() + uploadExpirationSeconds * 1000);
 
-    const urlContent = [
-      `Ceremony URL Pair - Powers of Tau`,
-      `Generated: ${now.toISOString()}`,
-      `Coordinator: brebaje-cli`,
-      ``,
-      `=`.repeat(60),
-      `DOWNLOAD INFORMATION`,
-      `=`.repeat(60),
-      `File: ${downloadFilename}`,
-      `S3 Key: ${downloadKey}`,
-      `Expires: ${downloadExpiry.toISOString()} (${downloadExpirationMinutes} minutes)`,
-      ``,
-      `Download URL:`,
-      downloadUrl,
-      ``,
-      `=`.repeat(60),
-      `UPLOAD INFORMATION`,
-      `=`.repeat(60),
-      `File: ${uploadFilename}`,
-      `S3 Key: ${uploadKey}`,
-      `Expires: ${uploadExpiry.toISOString()} (${uploadExpirationMinutes} minutes)`,
-      ``,
-      `Upload URL:`,
-      uploadUrl,
-      ``,
-      `=`.repeat(60),
-      `ENVIRONMENT VARIABLES FOR PARTICIPANTS`,
-      `=`.repeat(60),
-      `Copy these to participant's .env file:`,
-      ``,
-      `DOWNLOAD_URL=${downloadUrl}`,
-      `UPLOAD_URL=${uploadUrl}`,
-      ``,
-      `=`.repeat(60),
-      `PARTICIPANT INSTRUCTIONS`,
-      `=`.repeat(60),
-      `1. Set environment variables in .env file (see above)`,
-      `2. Run: brebaje-cli ppot auto-contribute`,
-      ``,
-      `Or run individual commands:`,
-      `1. brebaje-cli ppot download "${downloadUrl}"`,
-      `2. brebaje-cli ppot contribute`,
-      `3. brebaje-cli ppot upload "${uploadUrl}"`,
-      `4. brebaje-cli ppot post-record`,
-      ``,
-    ].join("\n");
+    const urlData = {
+      download_info: {
+        field_name: downloadFilename,
+        s3_key_field: downloadKey,
+        expiration: downloadExpiry.toISOString(),
+        download_url: downloadUrl,
+      },
+      upload_info: {
+        field_name: uploadFilename,
+        s3_key_field: uploadKey,
+        expiration: uploadExpiry.toISOString(),
+        upload_url: uploadUrl,
+      },
+    };
 
-    // Save to file
-    const fs = await import("fs");
-    fs.writeFileSync(outputFilename, urlContent, "utf-8");
+    // Save to JSON file
+    fs.writeFileSync(outputFilename, JSON.stringify(urlData, null, 2), "utf-8");
 
     // Success output
     console.log(`✅ URL pair generated successfully!`);
@@ -201,9 +171,7 @@ export async function generateUrlsPerpetualPowersOfTau(
     console.log(`📤 Upload: ${uploadFilename} (expires ${uploadExpiry.toISOString()})`);
     console.log(`📝 URLs saved to: ${outputFilename}`);
     console.log(``);
-    console.log(`💡 Share the environment variables with participants:`);
-    console.log(`DOWNLOAD_URL=${downloadUrl}`);
-    console.log(`UPLOAD_URL=${uploadUrl}`);
+    console.log(`💡 Participants can now use: brebaje-cli ppot auto-contribute ${outputFilename}`);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("❌ Failed to generate URL pair:", errorMessage);
