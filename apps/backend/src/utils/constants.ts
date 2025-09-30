@@ -6,3 +6,5 @@ export const DB_BUILD_MODELS = process.env.DB_BUILD_MODELS === 'true';
 
 export const JWT_SECRET = process.env.JWT_SECRET || 'defaultSecret';
 export const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN || '1d';
+
+export const CORS_ORIGINS = process.env.CORS_ORIGINS;
