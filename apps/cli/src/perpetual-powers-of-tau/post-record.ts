@@ -98,6 +98,16 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
       console.log(`🆔 Gist ID: ${gistId}`);
       console.log(`📊 Contribution Index: ${index}`);
       console.log(`💡 Share this URL to verify your contribution publicly.`);
+
+      // Generate Twitter/X sharing link
+      const tweetText = `Hey! I have contributed to the Cardano Perpetual Powers of Tau, this is my contribution ${gistUrl}`;
+      const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
+
+      console.log(``);
+      console.log(`🐦 Share on Twitter/X:`);
+      console.log(`${twitterUrl}`);
+      console.log(``);
+      console.log(`📱 Click the link above to share your contribution on social media!`);
     } catch (error: any) {
       if (error.response) {
         const status = error.response.status;
