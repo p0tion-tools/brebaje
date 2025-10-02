@@ -66,6 +66,28 @@ To participate in the trusted setup, you will need a computer **with at least 16
 
 - Node.js (>= 22.17.1)
 - pnpm (>= 9.0.0)
+- wget (for downloading ceremony files)
+
+> **If you already have these prerequisites installed, jump to [Installation Instructions](#installation-instructions).**
+
+### Manual Installation (if needed)
+
+**Node.js:**
+
+- Download from [nodejs.org](https://nodejs.org/) (choose LTS version)
+- Or use package manager: `sudo apt install nodejs` (Ubuntu) / `brew install node` (macOS)
+
+**pnpm:**
+
+```bash
+npm install -g pnpm
+```
+
+**wget:**
+
+- Ubuntu/Debian: `sudo apt-get install wget`
+- macOS: `brew install wget`
+- Windows: [Download from here](https://eternallybored.org/misc/wget/)
 
 ## Installation Instructions
 
