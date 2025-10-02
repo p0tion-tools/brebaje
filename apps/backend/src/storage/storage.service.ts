@@ -22,6 +22,9 @@ import {
   waitUntilBucketExists,
   BucketAlreadyOwnedByYou,
   DeleteBucketCommand,
+  PutObjectCommand,
+  DeleteObjectCommand,
+  GetObjectCommand,
 } from '@aws-sdk/client-s3';
 import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 import { getBucketName } from '@brebaje/actions';
@@ -128,19 +131,18 @@ export class StorageService {
     }
   }
 
-  async createAndSetupBucket(ceremonyId: number) {
+  async getCeremonyBucketName(ceremonyId: number) {
     const ceremony = await this.ceremoniesService.findOne(ceremonyId);
     if (!ceremony) {
       throw new InternalServerErrorException(`Ceremony with ID ${ceremonyId} not found`);
     }
 
+    return getBucketName(AWS_CEREMONY_BUCKET_POSTFIX, ceremony.project.name, ceremony.description);
+  }
+
+  async createAndSetupBucket(ceremonyId: number) {
+    const bucketName = await this.getCeremonyBucketName(ceremonyId);
     const s3 = this.getS3Client();
-    // Use ceremony description as prefix for bucket name
-    const bucketName = getBucketName(
-      AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project?.name || 'unknown',
-      ceremony.description,
-    );
 
     // Check if bucket already exists
     try {
@@ -206,6 +208,38 @@ export class StorageService {
         );
         return { uploadId: response.UploadId };
       }
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  async uploadObject(
+    bucketName: string,
+    objectKey: string,
+    data: string,
+    isPublic: boolean = false,
+  ): Promise<void> {
+    // Prepare AWS S3 client instance.
+    const client = this.getS3Client();
+
+    // Prepare command with the data directly
+    const command = new PutObjectCommand({
+      Bucket: bucketName,
+      Key: objectKey,
+      Body: data, // if you have a file in local you can use here: readFileSync(localFilePath): Buffer
+      ContentType: 'text/plain',
+      ACL: isPublic ? 'public-read' : 'private',
+    });
+
+    try {
+      // Execute upload directly using S3 SDK
+      const response = await client.send(command);
+
+      if (response.$metadata.httpStatusCode !== 200) {
+        throw new InternalServerErrorException(`Failed to upload file ${objectKey} to S3`);
+      }
+
+      this.logger.log(`Successfully uploaded ${objectKey} to bucket ${bucketName}`);
     } catch (error) {
       this.handleErrors(error as Error);
     }
@@ -356,6 +390,49 @@ export class StorageService {
         return { url };
       }
     } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  async deleteObject(bucketName: string, objectKey: string) {
+    // Prepare AWS S3 client instance.
+    const client = this.getS3Client();
+
+    // Prepare command.
+    const command = new DeleteObjectCommand({ Bucket: bucketName, Key: objectKey });
+
+    // Execute command.
+    const data = await client.send(command);
+
+    if (data.$metadata.httpStatusCode !== 204) {
+      throw new InternalServerErrorException(`Failed to delete object ${objectKey} from S3`);
+    }
+  }
+
+  async downloadObject(bucketName: string, objectKey: string): Promise<string> {
+    // Prepare AWS S3 client instance.
+    const client = this.getS3Client();
+
+    // Prepare command.
+    const command = new GetObjectCommand({ Bucket: bucketName, Key: objectKey });
+
+    try {
+      // Execute command.
+      const data = await client.send(command);
+
+      if (data.$metadata.httpStatusCode !== 200) {
+        throw new InternalServerErrorException(`Failed to download object ${objectKey} from S3`);
+      }
+
+      // Convert the stream to string
+      if (data.Body) {
+        const bodyContent = await data.Body.transformToString();
+        return bodyContent;
+      } else {
+        throw new InternalServerErrorException(`No body content for object ${objectKey}`);
+      }
+    } catch (error) {
+      this.logger.error(`Failed to download ${objectKey} from bucket ${bucketName}:`, error);
       this.handleErrors(error as Error);
     }
   }

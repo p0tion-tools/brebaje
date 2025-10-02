@@ -17,6 +17,7 @@ import {
 import { existsSync, mkdirSync } from 'fs';
 import { downloadAndSaveFile } from 'src/utils';
 import { zKey } from 'snarkjs';
+import { Circuit } from 'src/circuits/circuit.model';
 
 const DOWNLOAD_DIRECTORY = './.downloads';
 const TEST_URL = `http://localhost:${PORT}`;
@@ -227,5 +228,22 @@ describe('Coordinator (e2e)', () => {
     5 * 60 * 1000, // Sets timeout to 5 minutes
   );
 
-  it('should create the circuits', async () => {});
+  it('should create the circuits', async () => {
+    for (const circuit of circuits) {
+      const response = await fetch(`${TEST_URL}/circuits`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          ...circuit,
+          ceremonyId,
+        }),
+      });
+
+      const body = (await response.json()) as Circuit;
+
+      expect(typeof body.id).toBe('number');
+    }
+  });
 });

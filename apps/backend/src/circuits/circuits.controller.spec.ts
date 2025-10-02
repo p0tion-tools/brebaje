@@ -6,9 +6,21 @@ describe('CircuitsController', () => {
   let controller: CircuitsController;
 
   beforeEach(async () => {
+    const mockCircuitsService = {
+      create: jest.fn(),
+      findAll: jest.fn(),
+      findOne: jest.fn(),
+      update: jest.fn(),
+      remove: jest.fn(),
+    };
     const module: TestingModule = await Test.createTestingModule({
       controllers: [CircuitsController],
-      providers: [CircuitsService],
+      providers: [
+        {
+          provide: CircuitsService,
+          useValue: mockCircuitsService,
+        },
+      ],
     }).compile();
 
     controller = module.get<CircuitsController>(CircuitsController);

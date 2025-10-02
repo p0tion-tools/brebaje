@@ -28,6 +28,15 @@ export const convertToDoubleDigits = (amount: number): string =>
   amount < 10 ? `0${amount}` : amount.toString();
 
 /**
+ * Convert bytes or chilobytes into gigabytes with customizable precision.
+ * @param bytesOrKb <number> - the amount of bytes or chilobytes to be converted.
+ * @param isBytes <boolean> - true when the amount to be converted is in bytes; otherwise false (= Chilobytes).
+ * @returns <number> - the converted amount in GBs.
+ */
+export const convertBytesOrKbToGb = (bytesOrKb: number, isBytes: boolean): number =>
+  Number(bytesOrKb / 1024 ** (isBytes ? 3 : 2));
+
+/**
  * Transform a number in a zKey index format.
  * @dev this method is aligned with the number of characters of the genesis zKey index (which is a constant).
  * @param progress <number> - the progression in zKey index.
