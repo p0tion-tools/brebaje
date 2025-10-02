@@ -162,3 +162,6 @@ else
     echo "❌ Installation failed!"
     exit 1
 fi
+
+echo "Creating input/folder"
+mkdir input
