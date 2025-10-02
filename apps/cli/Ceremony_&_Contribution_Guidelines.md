@@ -133,15 +133,19 @@ brebaje-cli --help
 
 ### Create GitHub Personal Access Token
 
-To post contribution records, you need a GitHub classic token:
+To post contribution records, you need a **GitHub classic personal access token** (not a fine-grained token):
+
+![GitHub Token Creation](./images/github-token-creation.jpg)
 
 1. Go to [GitHub Settings > Developer settings > Personal access tokens > Tokens (classic)](https://github.com/settings/tokens)
-2. Click "Generate new token (classic)"
+2. Click "Generate new token (classic)" - **Make sure to select "classic" not "fine-grained"**
 3. Give it a descriptive name (e.g., "Brebaje CLI - Powers of Tau")
 4. Select the following permission:
    - ✅ **gist** (Create gists)
 5. Click "Generate token"
 6. **Important**: Copy the token immediately (you won't see it again)
+
+![GitHub Token Permissions](./images/github-token-permissions.jpg)
 
 ### Configure Environment Variables
 
