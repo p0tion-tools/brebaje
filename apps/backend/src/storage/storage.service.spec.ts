@@ -1,10 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-require-imports */
-/* eslint-disable @typescript-eslint/no-unsafe-call */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
-/* eslint-disable @typescript-eslint/no-unsafe-argument */
-/* eslint-disable @typescript-eslint/require-await */
-
 import { Test, TestingModule } from '@nestjs/testing';
 import {
   ConflictException,
@@ -26,7 +19,13 @@ describe('StorageService', () => {
   let mockS3Send: jest.Mock;
   let mockGetSignedUrl: jest.Mock;
 
-  const mockCeremony = {
+  interface MockCeremony {
+    id: number;
+    description: string;
+    project: { name: string };
+  }
+
+  const mockCeremony: MockCeremony = {
     id: 1,
     description: 'test-ceremony',
     project: { name: 'test-project' },
@@ -38,12 +37,19 @@ describe('StorageService', () => {
     mockGetSignedUrl = jest.fn();
 
     // Mock AWS SDK modules
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
     const { S3Client } = require('@aws-sdk/client-s3');
+    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
     const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
 
-    S3Client.mockImplementation(() => ({
-      send: mockS3Send,
-    }));
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
+    S3Client.mockImplementation(
+      () =>
+        ({
+          send: mockS3Send,
+        }) as never,
+    );
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
     getSignedUrl.mockImplementation(mockGetSignedUrl);
     const mockCeremoniesService = {
       findOne: jest.fn(),
@@ -86,36 +92,41 @@ describe('StorageService', () => {
 
   describe('createAndSetupBucket', () => {
     beforeEach(() => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
     });
 
     it('should create and setup bucket successfully', async () => {
-      // Mock that bucket doesn't exist (HeadBucket throws NotFound)
-      const notFoundError = new Error('NotFound');
-      notFoundError.name = 'NotFound';
-
       mockS3Send
-        .mockRejectedValueOnce(notFoundError) // HeadBucket
         .mockResolvedValueOnce({ Location: 'https://bucket.s3.amazonaws.com/' }) // CreateBucket
         .mockResolvedValueOnce({ $metadata: { httpStatusCode: 204 } }) // PutPublicAccessBlock
         .mockResolvedValueOnce({ $metadata: { httpStatusCode: 200 } }); // PutBucketCors
 
       const result = await service.createAndSetupBucket(1);
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       expect(result).toEqual({ bucketName: expect.any(String) });
-      expect(mockS3Send).toHaveBeenCalledTimes(4);
+      expect(mockS3Send).toHaveBeenCalledTimes(3);
     });
 
     it('should throw ConflictException if bucket already exists', async () => {
-      // Mock that bucket exists (HeadBucket succeeds)
-      mockS3Send.mockResolvedValueOnce({});
+      // Mock that CreateBucket throws BucketAlreadyExists error
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { BucketAlreadyExists } = require('@aws-sdk/client-s3') as {
+        BucketAlreadyExists: new () => Error;
+      };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const error = Object.create(BucketAlreadyExists.prototype) as Error;
+      error.message = 'Bucket already exists';
+      error.name = 'BucketAlreadyExists';
+
+      mockS3Send.mockRejectedValueOnce(error);
 
       await expect(service.createAndSetupBucket(1)).rejects.toThrow(ConflictException);
       expect(mockS3Send).toHaveBeenCalledTimes(1);
     });
 
     it('should throw InternalServerErrorException if ceremony not found', async () => {
-      ceremoniesService.findOne.mockResolvedValue(null as any);
+      ceremoniesService.findOne.mockResolvedValue(null as never);
 
       await expect(service.createAndSetupBucket(999)).rejects.toThrow(InternalServerErrorException);
     });
@@ -123,7 +134,7 @@ describe('StorageService', () => {
 
   describe('deleteCeremonyBucket', () => {
     it('should delete bucket successfully', async () => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
       mockS3Send.mockResolvedValueOnce({});
 
       await service.deleteCeremonyBucket(1);
@@ -132,7 +143,7 @@ describe('StorageService', () => {
     });
 
     it('should throw InternalServerErrorException if ceremony not found', async () => {
-      ceremoniesService.findOne.mockResolvedValue(null as any);
+      ceremoniesService.findOne.mockResolvedValue(null as never);
 
       await expect(service.deleteCeremonyBucket(999)).rejects.toThrow(InternalServerErrorException);
     });
@@ -142,7 +153,7 @@ describe('StorageService', () => {
     const mockData = { objectKey: 'test-object.zkey' };
 
     it('should start multipart upload successfully', async () => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
       mockS3Send.mockResolvedValueOnce({
         $metadata: { httpStatusCode: 200 },
         UploadId: 'test-upload-id',
@@ -155,7 +166,7 @@ describe('StorageService', () => {
     });
 
     it('should throw NotFoundException if ceremony not found', async () => {
-      ceremoniesService.findOne.mockResolvedValue(null as any);
+      ceremoniesService.findOne.mockResolvedValue(null as never);
 
       await expect(service.startMultipartUpload(mockData, 999, 'user123')).rejects.toThrow(
         NotFoundException,
@@ -171,7 +182,7 @@ describe('StorageService', () => {
     };
 
     it('should generate pre-signed URLs for all parts', async () => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
       mockGetSignedUrl
         .mockResolvedValueOnce('https://bucket.s3.amazonaws.com/part1')
         .mockResolvedValueOnce('https://bucket.s3.amazonaws.com/part2')
@@ -187,7 +198,7 @@ describe('StorageService', () => {
     });
 
     it('should throw NotFoundException if ceremony not found', async () => {
-      ceremoniesService.findOne.mockResolvedValue(null as any);
+      ceremoniesService.findOne.mockResolvedValue(null as never);
 
       await expect(service.generatePreSignedUrlsParts(mockData, 999, 'user123')).rejects.toThrow(
         NotFoundException,
@@ -203,7 +214,7 @@ describe('StorageService', () => {
     };
 
     it('should complete multipart upload successfully', async () => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
       mockS3Send.mockResolvedValueOnce({
         $metadata: { httpStatusCode: 200 },
         Location: 'https://bucket.s3.amazonaws.com/test-object.zkey',
@@ -216,7 +227,7 @@ describe('StorageService', () => {
     });
 
     it('should throw InternalServerErrorException if upload fails', async () => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
       mockS3Send.mockResolvedValueOnce({
         $metadata: { httpStatusCode: 200 },
         Location: null,
@@ -232,7 +243,7 @@ describe('StorageService', () => {
     const mockData = { objectKey: 'test-object.zkey' };
 
     it('should return true if object exists', async () => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
       mockS3Send.mockResolvedValueOnce({
         $metadata: { httpStatusCode: 200 },
         ETag: '"abc123"',
@@ -245,7 +256,7 @@ describe('StorageService', () => {
     });
 
     it('should return false if object does not exist', async () => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
       mockS3Send.mockRejectedValueOnce(new Error('NoSuchKey'));
 
       const result = await service.checkIfObjectExists(mockData, 1);
@@ -254,7 +265,7 @@ describe('StorageService', () => {
     });
 
     it('should throw ForbiddenException if access denied', async () => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
       const error = { $metadata: { httpStatusCode: 403 } };
       mockS3Send.mockRejectedValueOnce(error);
 
@@ -266,7 +277,7 @@ describe('StorageService', () => {
     const mockData = { objectKey: 'test-object.zkey' };
 
     it('should generate pre-signed URL for object', async () => {
-      ceremoniesService.findOne.mockResolvedValue(mockCeremony as any);
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
       mockGetSignedUrl.mockResolvedValueOnce(
         'https://bucket.s3.amazonaws.com/test-object.zkey?signed',
       );
@@ -278,7 +289,7 @@ describe('StorageService', () => {
     });
 
     it('should throw NotFoundException if ceremony not found', async () => {
-      ceremoniesService.findOne.mockResolvedValue(null as any);
+      ceremoniesService.findOne.mockResolvedValue(null as never);
 
       await expect(service.generateGetObjectPreSignedUrl(mockData, 999)).rejects.toThrow(
         NotFoundException,
@@ -287,16 +298,20 @@ describe('StorageService', () => {
   });
 
   describe('handleErrors', () => {
-    it('should throw InternalServerErrorException for unknown errors', async () => {
+    it('should throw InternalServerErrorException for unknown errors', () => {
       const error = new Error('Unknown error');
 
       expect(() => service.handleErrors(error)).toThrow(InternalServerErrorException);
     });
 
-    it('should handle BucketAlreadyExists error correctly', async () => {
+    it('should handle BucketAlreadyExists error correctly', () => {
       // Import the actual class and create instance
-      const { BucketAlreadyExists } = require('@aws-sdk/client-s3');
-      const error = Object.create(BucketAlreadyExists.prototype);
+      // eslint-disable-next-line @typescript-eslint/no-require-imports
+      const { BucketAlreadyExists } = require('@aws-sdk/client-s3') as {
+        BucketAlreadyExists: new () => Error;
+      };
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const error = Object.create(BucketAlreadyExists.prototype) as Error;
       error.message = 'Bucket already exists';
       error.name = 'BucketAlreadyExists';
 

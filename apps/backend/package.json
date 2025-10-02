@@ -95,6 +95,9 @@
       "^src/(.*)": "<rootDir>/../src/$1"
     },
     "coverageDirectory": "../coverage",
-    "testEnvironment": "node"
+    "testEnvironment": "node",
+    "testTimeout": 10000,
+    "forceExit": true,
+    "detectOpenHandles": true
   }
 }

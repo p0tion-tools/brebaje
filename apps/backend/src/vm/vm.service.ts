@@ -114,24 +114,20 @@ export class VmService {
     const index = pot - 1;
     let potSize = 144;
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
     const selectedFile = powersOfTauFiles[index];
     if (selectedFile) {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
       potSize = selectedFile.size;
     } else {
       // fallback to the biggest ptau file.
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
       const lastIndex = powersOfTauFiles.length - 1;
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
+
       const lastFile = powersOfTauFiles[lastIndex];
       if (lastFile) {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access
         potSize = lastFile.size;
       }
     }
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call
     return Math.ceil(2 * convertBytesOrKbToGb(zKeySizeInBytes, true) + potSize) + 8;
   }
 

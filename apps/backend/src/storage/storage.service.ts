@@ -11,7 +11,6 @@ import {
   CreateBucketCommand,
   CreateMultipartUploadCommand,
   GetObjectCommand,
-  HeadBucketCommand,
   HeadObjectCommand,
   PutBucketCorsCommand,
   PutPublicAccessBlockCommand,
@@ -143,18 +142,6 @@ export class StorageService {
     const bucketName = await this.getCeremonyBucketName(ceremonyId);
     const s3 = this.getS3Client();
 
-    // Check if bucket already exists
-    try {
-      await s3.send(new HeadBucketCommand({ Bucket: bucketName }));
-      throw new ConflictException(`Bucket ${bucketName} already exists`);
-    } catch (error: unknown) {
-      const awsError = error as { name?: string };
-      if (awsError.name !== 'NotFound' && awsError.name !== 'NoSuchBucket') {
-        throw error;
-      }
-      // Bucket doesn't exist, we can create it
-    }
-
     await this.createBucket(s3, bucketName);
     await this.setPublicAccessBlock(s3, bucketName);
     await this.setBucketCors(s3, bucketName);
@@ -171,7 +158,7 @@ export class StorageService {
     const s3 = this.getS3Client();
     const bucketName = getBucketName(
       AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project?.name || 'unknown',
+      ceremony.project.name,
       ceremony.description,
     );
 
@@ -187,7 +174,7 @@ export class StorageService {
 
     const bucketName = getBucketName(
       AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project?.name || 'unknown',
+      ceremony.project.name,
       ceremony.description,
     );
 
@@ -257,7 +244,7 @@ export class StorageService {
 
     const bucketName = getBucketName(
       AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project?.name || 'unknown',
+      ceremony.project.name,
       ceremony.description,
     );
 
@@ -301,7 +288,7 @@ export class StorageService {
 
     const bucketName = getBucketName(
       AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project?.name || 'unknown',
+      ceremony.project.name,
       ceremony.description,
     );
 
@@ -339,7 +326,7 @@ export class StorageService {
 
     const bucketName = getBucketName(
       AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project?.name || 'unknown',
+      ceremony.project.name,
       ceremony.description,
     );
 
@@ -372,7 +359,7 @@ export class StorageService {
 
     const bucketName = getBucketName(
       AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project?.name || 'unknown',
+      ceremony.project.name,
       ceremony.description,
     );
 
