@@ -100,7 +100,9 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
       console.log(`💡 Share this URL to verify your contribution publicly.`);
 
       // Generate Twitter/X sharing link
-      const tweetText = `Hey! I have contributed to the Cardano Perpetual Powers of Tau, this is my contribution ${gistUrl}`;
+      const tweetText = `Hey! I have contributed to the Cardano Perpetual Powers of Tau Ceremony, here the public record of my contribution: ${gistUrl}
+
+#Cardano #ZK #Catalyst`;
       const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
       console.log(``);
