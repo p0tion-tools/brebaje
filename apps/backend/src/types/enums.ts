@@ -1,3 +1,5 @@
+// Auto-generated enums from DBML schema
+
 export enum UserProvider {
   GITHUB = 'GITHUB',
   ETH = 'ETH',

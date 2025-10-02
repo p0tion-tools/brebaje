@@ -1,3 +1,5 @@
+import type { VolumeType } from '@aws-sdk/client-ec2';
+
 export type UserErrorResponse = {
   message: string;
   name: string;
@@ -39,3 +41,50 @@ export class GithubUser {
   created_at: string;
   updated_at: string;
 }
+
+export type GithubOAuthResponse = {
+  access_token: string;
+  token_type: string;
+  scope: string;
+  error: string;
+  error_description: string;
+  error_uri: string;
+};
+
+export type AWSError = {
+  $metadata?: {
+    httpStatusCode?: number;
+  };
+  message?: string;
+};
+
+export type CircuitArtifactsType = {
+  r1csStoragePath: string;
+  wasmStoragePath: string;
+};
+
+/**
+ * Group information about the VM configuration for circuit contribution verification.
+ * @dev the coordinator could choose among CF and VM.
+ * @notice the VM configurations could be retrieved at https://aws.amazon.com/ec2/instance-types/.
+ * @typedef {Object} VMConfiguration
+ * @property {string} [vmConfigurationType] - the VM configuration type.
+ * @property {string} [vmDiskType] - the VM volume type (e.g., gp2)
+ * @property {number} [vmDiskSize] - the VM disk size in GB.
+ * @property {string} [vmInstanceId] - the VM instance identifier (after VM instantiation).
+ */
+export type VMConfiguration = {
+  vmConfigurationType: string;
+  vmDiskType: VolumeType;
+  vmDiskSize?: number;
+  vmInstanceId?: string;
+};
+
+export type CircuitVerificationType =
+  | {
+      serverOrVm: 'server';
+    }
+  | {
+      serverOrVm: 'vm';
+      vm: VMConfiguration;
+    };

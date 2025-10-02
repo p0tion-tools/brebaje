@@ -1,9 +1,9 @@
 import { Optional } from 'sequelize';
-import { BelongsTo, Column, DataType, HasMany, Model, Table } from 'sequelize-typescript';
+import { Column, DataType, Model, Table, BelongsTo, HasMany } from 'sequelize-typescript';
+import { ParticipantStatus, ParticipantContributionStep } from 'src/types/enums';
+import { User } from 'src/users/user.model';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Contribution } from 'src/contributions/contribution.model';
-import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
-import { User } from 'src/users/user.model';
 
 export interface ParticipantAttributes {
   userId: number;
@@ -37,73 +37,74 @@ export type ParticipantCreationAttributes = Optional<
 export class Participant extends Model implements ParticipantAttributes {
   @Column({
     type: DataType.INTEGER,
+    allowNull: false,
+  })
+  declare userId: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  declare ceremonyId: number;
+
+  @Column({
+    type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
+    allowNull: false,
   })
   declare id?: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  userId: number;
-
-  @Column({
-    type: DataType.INTEGER,
-    allowNull: false,
-  })
-  ceremonyId: number;
 
   @Column({
     type: DataType.ENUM(...Object.values(ParticipantStatus)),
     allowNull: false,
     defaultValue: ParticipantStatus.CREATED,
   })
-  status: ParticipantStatus;
+  declare status: ParticipantStatus;
 
   @Column({
     type: DataType.ENUM(...Object.values(ParticipantContributionStep)),
     allowNull: false,
   })
-  contributionStep: ParticipantContributionStep;
+  declare contributionStep: ParticipantContributionStep;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  contributionProgress?: number;
+  declare contributionProgress?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  contributionStartedAt?: number;
+  declare contributionStartedAt?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  verificationStartedAt?: number;
+  declare verificationStartedAt?: number;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
   })
-  tempContributionData?: any;
+  declare tempContributionData?: object;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
     comment: 'Array of timeouts. Check Timeout class',
   })
-  timeout?: any;
+  declare timeout?: object;
 
   @BelongsTo(() => User, 'userId')
-  user: User;
+  declare user: User;
 
   @BelongsTo(() => Ceremony, 'ceremonyId')
-  ceremony: Ceremony;
+  declare ceremony: Ceremony;
 
   @HasMany(() => Contribution, 'participantId')
-  contributions: Contribution[];
+  declare contributions: Contribution[];
 }

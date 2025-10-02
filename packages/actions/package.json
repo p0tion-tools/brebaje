@@ -1,5 +1,5 @@
 {
-  "name": "@p0tion/actions",
+  "name": "@brebaje/actions",
   "version": "0.0.0",
   "description": "A set of actions and helpers for CLI, website and server commands",
   "author": "NicoSerranoP",
@@ -15,7 +15,14 @@
     "snarkjs",
     "circom"
   ],
-  "main": "lib/actions.js",
+  "main": "build/index.js",
+  "types": "build/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/index.d.ts",
+      "default": "./build/index.js"
+    }
+  },
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -28,9 +35,25 @@
     "url": "git+https://github.com/NicoSerranoP/brebaje.git"
   },
   "scripts": {
-    "test": "node ./__tests__/actions.test.js"
+    "test": "node ./__tests__/actions.test.js",
+    "build": "tsc -p tsconfig.json"
   },
   "bugs": {
     "url": "https://github.com/NicoSerranoP/brebaje/issues"
+  },
+  "publishConfig": {
+    "access": "public"
+  },
+  "dependencies": {
+    "@adobe/node-fetch-retry": "^2.2.0",
+    "cli-progress": "^3.12.0",
+    "mime-types": "^3.0.1",
+    "snarkjs": "^0.7.5"
+  },
+  "devDependencies": {
+    "@types/cli-progress": "^3.11.6",
+    "@types/mime-types": "^3.0.1",
+    "@types/node-fetch": "^2.6.13",
+    "@types/snarkjs": "^0.7.9"
   }
 }

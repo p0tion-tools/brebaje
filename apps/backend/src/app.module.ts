@@ -7,11 +7,13 @@ import { AuthModule } from './auth/auth.module';
 import { CeremoniesModule } from './ceremonies/ceremonies.module';
 import { CircuitsModule } from './circuits/circuits.module';
 import { ContributionsModule } from './contributions/contributions.module';
+import { HealthModule } from './health/health.module';
 import { ParticipantsModule } from './participants/participants.module';
 import { ProjectsModule } from './projects/projects.module';
 import { StorageModule } from './storage/storage.module';
 import { UsersModule } from './users/users.module';
 import { DB_SQLITE_STORAGE_PATH, DB_SQLITE_SYNCHRONIZE } from './utils/constants';
+import { VmModule } from './vm/vm.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { DB_SQLITE_STORAGE_PATH, DB_SQLITE_SYNCHRONIZE } from './utils/constants
     ContributionsModule,
     StorageModule,
     AuthModule,
+    HealthModule,
+    VmModule,
     ConfigModule.forRoot({
       isGlobal: true,
     }),

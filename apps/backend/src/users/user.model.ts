@@ -1,8 +1,8 @@
 import { Optional } from 'sequelize';
-import { Column, DataType, HasMany, Index, Model, PrimaryKey, Table } from 'sequelize-typescript';
-import { Participant } from 'src/participants/participant.model';
-import { Project } from 'src/projects/project.model';
+import { Column, DataType, Model, Table, HasMany, Index } from 'sequelize-typescript';
 import { UserProvider } from 'src/types/enums';
+import { Project } from 'src/projects/project.model';
+import { Participant } from 'src/participants/participant.model';
 
 export interface UserAttributes {
   id?: number;
@@ -26,8 +26,12 @@ export type UserCreationAttributes = Optional<UserAttributes, UserOptionalAttrib
 
 @Table({ tableName: 'users' })
 export class User extends Model implements UserAttributes {
-  @PrimaryKey
-  @Column
+  @Column({
+    type: DataType.INTEGER,
+    primaryKey: true,
+    autoIncrement: true,
+    allowNull: false,
+  })
   declare id?: number;
 
   @Index
@@ -35,42 +39,42 @@ export class User extends Model implements UserAttributes {
     type: DataType.STRING,
     allowNull: false,
   })
-  displayName: string;
+  declare displayName: string;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
   })
-  creationTime: number;
+  declare creationTime: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  lastSignInTime?: number;
+  declare lastSignInTime?: number;
 
   @Column({
     type: DataType.INTEGER,
     allowNull: true,
   })
-  lastUpdated?: number;
+  declare lastUpdated?: number;
 
   @Column({
     type: DataType.STRING,
     allowNull: true,
   })
-  avatarUrl?: string;
+  declare avatarUrl?: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(UserProvider)),
     allowNull: false,
     defaultValue: UserProvider.GITHUB,
   })
-  provider: UserProvider;
+  declare provider: UserProvider;
 
   @HasMany(() => Project, 'coordinatorId')
-  projects: Project[];
+  declare projects: Project[];
 
   @HasMany(() => Participant, 'userId')
-  participants: Participant[];
+  declare participants: Participant[];
 }

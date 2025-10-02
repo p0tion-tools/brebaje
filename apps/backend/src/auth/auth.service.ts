@@ -1,12 +1,13 @@
 import { Injectable, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { DeviceFlowTokenDto } from './dto/auth-dto';
-import type { GithubUser } from '../types/declarations';
+import type { GithubOAuthResponse, GithubUser } from '../types/declarations';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserProvider } from '../types/enums';
 import { randomBytes } from 'crypto';
 import { response } from 'express';
+import { User } from 'src/users/user.model';
 
 @Injectable()
 export class AuthService {
@@ -107,14 +108,13 @@ export class AuthService {
         },
       }).then((res) => res.json())) as GithubUser;
 
-      let user: any;
+      let user: User;
       try {
         user = await this.usersService.findByGithubId(result.id);
       } catch {
         // User not found, create one
         const _user: CreateUserDto = {
           displayName: result.login || result.id.toString(),
-          creationTime: Date.now(),
           avatarUrl: result.avatar_url,
           provider: UserProvider.GITHUB,
           githubId: result.id,
@@ -126,7 +126,7 @@ export class AuthService {
       const jwt = await this.jwtService.signAsync({ user: user });
       return { user, jwt };
     } catch (error) {
-      return error;
+      return error as Error;
     }
   }
 
@@ -229,13 +229,14 @@ export class AuthService {
       this.logger.log('GitHub OAuth authentication completed successfully');
       return result;
     } catch (error) {
-      this.logger.error('GitHub OAuth authentication failed', error.stack);
+      const errorObject = error as Error;
+      this.logger.error('GitHub OAuth authentication failed', errorObject.stack);
 
       if (error instanceof UnauthorizedException || error instanceof BadRequestException) {
         throw error;
       }
 
-      throw new BadRequestException(`Authentication failed: ${error.message}`);
+      throw new BadRequestException(`Authentication failed: ${errorObject.message}`);
     }
   }
 

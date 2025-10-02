@@ -10,21 +10,26 @@
   },
   "scripts": {
     "build": "nest build",
-    "convert": "ts-node src/database/dbml-to-sql.ts",
     "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
-    "setup-dml-to-database": "ts-node src/database/index.ts",
+    "generate-models": "ts-node src/database/dbml-to-nestjs-sequelize.ts",
     "start": "nest start",
     "start:dev": "nest start --watch --env-file .env",
     "start:debug": "nest start --debug --watch --env-file .env",
     "start:prod": "node dist/main",
     "lint": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
-    "test": "jest --config=jest.config.js",
-    "test:watch": "jest --config=jest.config.js --watch",
-    "test:cov": "jest --config=jest.config.js --coverage",
+    "test": "jest",
+    "test:local": "jest test/coordinator-e2e.spec.ts --forceExit --runInBand",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config=jest.config.js --runInBand",
     "test:e2e": "jest --config ./test/jest-e2e.json"
   },
   "dependencies": {
+    "@aws-sdk/client-ec2": "3.898.0",
+    "@aws-sdk/client-s3": "3.896.0",
+    "@aws-sdk/client-ssm": "3.882.0",
+    "@aws-sdk/s3-request-presigner": "3.896.0",
+    "@brebaje/actions": "0.0.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
@@ -34,11 +39,13 @@
     "@nestjs/sequelize": "^11.0.0",
     "@nestjs/swagger": "^11.2.0",
     "class-validator": "^0.14.2",
+    "dotenv": "^17.2.1",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.7",
     "sequelize-auto": "^0.8.8",
     "sequelize-typescript": "^2.1.6",
+    "snarkjs": "^0.7.5",
     "sqlite3": "^5.1.7"
   },
   "devDependencies": {
@@ -52,6 +59,7 @@
     "@types/express": "^5.0.0",
     "@types/jest": "^29.5.14",
     "@types/node": "^22.10.7",
+    "@types/snarkjs": "^0.7.9",
     "@types/supertest": "^6.0.2",
     "eslint": "^9.18.0",
     "eslint-config-prettier": "^10.0.1",
@@ -82,6 +90,9 @@
     "collectCoverageFrom": [
       "**/*.(t|j)s"
     ],
+    "moduleNameMapper": {
+      "^src/(.*)": "<rootDir>/../src/$1"
+    },
     "coverageDirectory": "../coverage",
     "testEnvironment": "node"
   }
