@@ -153,20 +153,15 @@ To post contribution records, you need a **GitHub classic personal access token*
 
 ![GitHub Token Permissions](./images/github-token-permissions.jpg)
 
-### Configure Environment Variables
+### Configure GitHub Token
 
-Copy the environment example file and configure it:
-
-```bash
-cp .env.example .env
-```
-
-Edit the `.env` file and add your GitHub token:
+Once you have your GitHub classic token, configure it using the CLI:
 
 ```bash
-# GitHub Token (for posting contribution records to gists)
-GITHUB_TOKEN=ghp_your_github_token_here
+brebaje-cli setup gh-token <github_classic_token>
 ```
+
+Replace `<github_classic_token>` with your actual GitHub token.
 
 ### Receive Ceremony URLs from Coordinator
 
