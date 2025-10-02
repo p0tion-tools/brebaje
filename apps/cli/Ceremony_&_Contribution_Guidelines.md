@@ -98,6 +98,12 @@ git clone https://github.com/NicoSerranoP/brebaje.git
 cd brebaje
 ```
 
+### Checkout on the CLI branch
+
+```bash
+git checkout feat/CLI
+```
+
 ### Navigate to the CLI Folder
 
 ```bash
