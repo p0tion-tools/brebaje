@@ -211,6 +211,10 @@ This command will automatically:
 3. 📤 Upload your contribution
 4. 📋 Post your contribution record to GitHub Gist
 
+### Share Your Contribution on Social Media
+
+After posting your contribution record, the CLI will automatically generate a Twitter/X sharing link. Simply copy and click the provided Twitter link to share your participation in the ceremony with the Cardano community!
+
 ### Manual Step-by-Step Process
 
 1. **Download challenge file:**
