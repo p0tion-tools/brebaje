@@ -88,6 +88,23 @@ else
     echo "   Then restart your terminal or run: source ~/.bashrc (or ~/.zshrc)"
 fi
 
+# Check wget
+echo "🔍 Checking wget..."
+if command_exists wget; then
+    echo "✅ wget is available"
+else
+    echo "❌ wget not found"
+    echo "   wget is required for downloading ceremony files"
+    echo "   Please install wget for your platform:"
+    echo "   Ubuntu/Debian: sudo apt-get install wget"
+    echo "   CentOS/RHEL: sudo yum install wget"
+    echo "   Fedora: sudo dnf install wget"
+    echo "   macOS: brew install wget"
+    echo "   Windows: https://eternallybored.org/misc/wget/"
+    echo "   Alpine: apk add wget"
+    exit 1
+fi
+
 echo ""
 echo "📦 Installing dependencies..."
 pnpm install
