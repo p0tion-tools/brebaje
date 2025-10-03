@@ -55,41 +55,38 @@ apps/cli/
 ├── src/
 │   ├── index.ts                    # Entry point with Commander.js
 │   ├── utils/
-│   │   ├── logger.ts              # ScriptLogger for consistent logging
-│   │   ├── api.ts                 # API client for backend communication
-│   │   └── auth.ts                # Authentication token management
+│   │   └── logger.ts              # ScriptLogger for consistent logging
 │   ├── auth/
 │   │   ├── index.ts               # setUpAuthCommands()
-│   │   ├── login.ts               # GitHub OAuth login flow
-│   │   ├── logout.ts              # Clear stored tokens
-│   │   ├── status.ts              # Check authentication status
-│   │   └── whoami.ts              # Show current user info
-│   ├── user/
-│   │   ├── index.ts               # setUpUserCommands()
-│   │   ├── profile.ts             # Show user profile
-│   │   ├── ceremonies.ts          # User's ceremonies
-│   │   └── contributions.ts       # User's contributions
-│   ├── projects/
-│   │   ├── index.ts               # setUpProjectCommands()
-│   │   ├── list.ts                # List all projects
-│   │   ├── create.ts              # Create new project
-│   │   └── show.ts                # Project details
+│   │   └── github.ts              # GitHub OAuth implementation
 │   ├── ceremonies/
 │   │   ├── index.ts               # setUpCeremonyCommands()
 │   │   ├── list.ts                # List ceremonies
-│   │   ├── show.ts                # Ceremony details
 │   │   ├── create.ts              # Create ceremonies (coordinators)
 │   │   ├── contribute.ts          # Contribute to ceremonies
 │   │   └── finalize.ts            # Finalize ceremonies (coordinators)
 │   ├── participants/
 │   │   ├── index.ts               # setUpParticipantCommands()
-│   │   ├── list.ts                # List participants
-│   │   └── add.ts                 # Add participants to ceremony
-│   └── contributions/
-│       ├── index.ts               # setUpContributionCommands()
-│       ├── list.ts                # List contributions
-│       └── verify.ts              # Verify contributions
+│   │   └── list.ts                # List participants
+│   ├── perpetual-powers-of-tau/
+│   │   ├── index.ts               # setUpPerpetualPowersOfTauCommands()
+│   │   ├── auto-contribute.ts     # Automated contribution flow
+│   │   ├── beacon.ts              # Beacon randomness generation
+│   │   ├── contribute.ts          # Manual contribution
+│   │   ├── download.ts            # Download challenge files
+│   │   ├── generate-download-url.ts # Generate download URLs
+│   │   ├── generate-upload-url.ts # Generate upload URLs
+│   │   ├── generate-urls.ts       # Generate both URLs
+│   │   ├── new.ts                 # Start new ceremony
+│   │   ├── post-record.ts         # Post contribution records
+│   │   ├── upload.ts              # Upload contribution files
+│   │   └── verify.ts              # Verify contributions
+│   └── setup/
+│       ├── index.ts               # setUpSetupCommands()
+│       └── token.ts               # GitHub token configuration
 ├── build/                         # Compiled JavaScript
+├── images/                        # Documentation images
+├── output/                        # Generated ceremony files
 ├── package.json                   # Dependencies (Commander.js, axios)
 └── tsconfig.json                  # TypeScript ES modules config
 ```
@@ -143,6 +140,33 @@ brebaje-cli participants add <ceremony-id> <user-id> # Add participant
 ```bash
 brebaje-cli contributions list [ceremony-id] # List contributions
 brebaje-cli contributions verify <id>        # Verify contribution
+```
+
+#### Setup Commands
+
+```bash
+brebaje-cli setup gh-token <github_classic_token> # Configure GitHub token for contribution records
+```
+
+#### Perpetual Powers of Tau Commands
+
+```bash
+# Basic ceremony operations
+brebaje-cli ppot new                         # Initialize new ceremony
+brebaje-cli ppot download <url>              # Download challenge file from URL
+brebaje-cli ppot contribute                  # Make contribution manually
+brebaje-cli ppot upload <uploadUrl>          # Upload contribution file
+brebaje-cli ppot verify <ptauFile>           # Verify Powers of Tau file
+brebaje-cli ppot post-record [-t <token>]    # Post contribution record to GitHub Gist
+
+# Automated contribution flow
+brebaje-cli ppot auto-contribute [jsonPath]  # Complete flow: download → contribute → upload → post-record
+
+# Coordinator tools
+brebaje-cli ppot generate-upload-url <filename> [-e <minutes>]     # Generate upload URL
+brebaje-cli ppot generate-download-url <filename> [-e <minutes>]   # Generate download URL
+brebaje-cli ppot generate-urls <downloadFilename> [options]        # Generate both URLs with JSON output
+brebaje-cli ppot beacon <inputFile> <beacon> <iterations> <name>   # Apply beacon to finalize ceremony
 ```
 
 ### CLI Development
@@ -344,16 +368,22 @@ pnpm format
 ### Completed ✅
 
 - CLI basic structure implemented with ceremonies and participants commands
-- Logger system with consistent formatting
+- Logger system with consistent formatting (`ScriptLogger`)
 - TypeScript compilation with ES modules
-- Command placeholders functional
-- Global installation capability
-- Auth command structure added with login, logout, status, whoami placeholders
-- Auth directory structure created with index.ts and github.ts files
+- Global installation capability via `pnpm link --global`
+- Auth command structure with GitHub OAuth implementation
+- **Perpetual Powers of Tau full implementation** with 12 commands:
+  - Complete ceremony workflow (new, download, contribute, upload, verify, post-record)
+  - Automated contribution flow (`auto-contribute`)
+  - Coordinator tools (generate URLs, beacon application)
+  - Social media integration (Twitter/X sharing)
+- **Setup commands** for GitHub token configuration
+- **File organization** with proper module separation
+- **Documentation images** and output directories
 
 ### Next Steps (Pending Implementation)
 
-#### 1. Complete Command Structure
+#### 1. Backend Integration Commands
 
 - [ ] Implement auth commands (login, logout, status, whoami)
 - [ ] Implement user commands (profile, ceremonies, contributions)
@@ -363,7 +393,7 @@ pnpm format
 
 #### 2. HTTP Client Integration
 
-- [ ] Add axios and dotenv dependencies
+- [ ] Add axios and dotenv dependencies to package.json
 - [ ] Create comprehensive API client (`src/utils/api.ts`)
 - [ ] Implement authentication token management (`src/utils/auth.ts`)
 - [ ] Configure environment variables for backend URL
@@ -377,15 +407,15 @@ pnpm format
 
 #### 4. API Connectivity
 
-- [ ] Connect all commands to their respective backend endpoints
+- [ ] Connect backend integration commands to their respective endpoints
 - [ ] Implement proper error handling for network requests
 - [ ] Add request/response validation
 - [ ] Handle authentication errors gracefully
 
 #### 5. Testing & Validation
 
-- [ ] Test complete authentication flow
-- [ ] Test all commands with running backend (port 8067)
+- [ ] Test complete authentication flow with backend
+- [ ] Test all backend integration commands with running backend (port 8067)
 - [ ] Validate data persistence in SQLite database
 - [ ] Add comprehensive command-line argument validation
 
@@ -395,7 +425,6 @@ pnpm format
 - [ ] Implement ceremony status monitoring
 - [ ] Add batch operation capabilities
 - [ ] Create ceremony template system
-- [ ] Add contribution verification tools
 
 ### Backend API Endpoints (Available)
 
@@ -458,3 +487,60 @@ brebaje-cli ceremonies contribute 1 --entropy "my-secret"
 brebaje-cli user ceremonies
 brebaje-cli user contributions
 ```
+
+## CLI Critical Issues & Improvement Plan
+
+### 🚨 **Critical Security & Reliability Issues Found:**
+
+#### 1. **Token Storage Security**
+
+- GitHub tokens stored in plain text files without encryption
+- No secure credential management system
+- Risk: Token exposure in filesystem, logs, or process memory
+
+#### 2. **Error Handling Gaps**
+
+- Inconsistent error handling across commands
+- Network operations lack proper timeout/retry logic
+- File operations missing validation and cleanup
+
+#### 3. **File Management Issues**
+
+- No proper cleanup of temporary files
+- Large file operations could exhaust disk space
+- Missing file lock mechanisms for concurrent operations
+
+#### 4. **Environment Configuration**
+
+- Hardcoded default values scattered across files
+- No centralized configuration validation
+- Missing environment variable documentation
+
+#### 5. **Network & Upload Reliability**
+
+- No upload progress tracking for large files
+- Missing retry logic for failed uploads
+- No validation of pre-signed URL expiration
+
+### 🔧 **Recommended Fixes:**
+
+#### **High Priority (Security & Reliability)**
+
+1. **Secure token storage** using OS keychain/credential manager
+2. **Comprehensive error handling** with retry logic and user-friendly messages
+3. **File cleanup mechanisms** and disk space checks
+4. **Upload progress tracking** and resume capability
+5. **Configuration validation** and centralized env management
+
+#### **Medium Priority (UX & Robustness)**
+
+1. **Command input validation** and sanitization
+2. **Concurrent operation safety** with file locking
+3. **Better logging** with different verbosity levels
+4. **Health checks** for external dependencies (snarkjs, network)
+
+#### **Low Priority (Features)**
+
+1. **Interactive prompts** for better UX
+2. **Command aliases** and shortcuts
+3. **Configuration wizard** for first-time setup
