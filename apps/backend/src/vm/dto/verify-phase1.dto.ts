@@ -12,4 +12,18 @@ export class VerifyPhase1Dto {
     description: 'Path to ptau file in S3 bucket',
   })
   lastPtauStoragePath: string;
+
+  @ApiProperty({
+    example: 'coordinator@example.com',
+    description: 'Email address for verification completion notifications',
+    required: false,
+  })
+  coordinatorEmail?: string;
+
+  @ApiProperty({
+    example: 'https://api.myapp.com/webhooks/verification-complete',
+    description: 'Webhook URL to POST verification results',
+    required: false,
+  })
+  webhookUrl?: string;
 }

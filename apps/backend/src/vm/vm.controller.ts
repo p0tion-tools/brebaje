@@ -1,12 +1,16 @@
 import { Controller, Post, Get, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { VmService } from './vm.service';
+import { VerificationMonitoringService } from './verification-monitoring.service';
 import { VerifyPhase1Dto } from './dto/verify-phase1.dto';
 
 @ApiTags('vm')
 @Controller('vm')
 export class VmController {
-  constructor(private readonly vmService: VmService) {}
+  constructor(
+    private readonly vmService: VmService,
+    private readonly verificationMonitoringService: VerificationMonitoringService,
+  ) {}
 
   @Post('verify')
   @ApiOperation({ summary: 'Start Phase 1 verification (Powers of Tau) on VM' })
@@ -22,12 +26,28 @@ export class VmController {
     // Start verification (don't wait for completion)
     const commandId = await this.vmService.runCommandUsingSSM(verifyDto.instanceId, commands);
 
+    // Start monitoring for completion notifications
+    const notificationConfig = {
+      coordinatorEmail: verifyDto.coordinatorEmail,
+      webhookUrl: verifyDto.webhookUrl,
+    };
+
+    this.verificationMonitoringService.startMonitoring(
+      commandId,
+      verifyDto.instanceId,
+      verifyDto.coordinatorEmail || verifyDto.webhookUrl ? notificationConfig : undefined,
+    );
+
     // Return immediately with command tracking info
     return {
       commandId,
       instanceId: verifyDto.instanceId,
       message: 'Phase 1 verification started',
       statusUrl: `/vm/verify/status/${commandId}?instanceId=${verifyDto.instanceId}`,
+      monitoring:
+        verifyDto.coordinatorEmail || verifyDto.webhookUrl
+          ? 'Notifications will be sent when verification completes'
+          : 'No notifications configured',
     };
   }
 
@@ -64,5 +84,12 @@ export class VmController {
       status: 'running',
       message: 'Verification in progress',
     };
+  }
+
+  @Get('monitoring/status')
+  @ApiOperation({ summary: 'Get monitoring service status' })
+  @ApiResponse({ status: 200, description: 'Monitoring service status' })
+  async getMonitoringStatus() {
+    return this.verificationMonitoringService.getMonitoringStatus();
   }
 }
