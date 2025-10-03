@@ -79,6 +79,9 @@ importers:
       "@nestjs/platform-express":
         specifier: ^11.0.1
         version: 11.1.5(@nestjs/common@11.1.5(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)
+      "@nestjs/schedule":
+        specifier: ^4.0.0
+        version: 4.1.2(@nestjs/common@11.1.5(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)
       "@nestjs/sequelize":
         specifier: ^11.0.0
         version: 11.0.0(@nestjs/common@11.1.5(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)(reflect-metadata@0.2.2)(rxjs@7.8.2)(sequelize-typescript@2.1.6(@types/node@22.17.0)(@types/validator@13.15.2)(reflect-metadata@0.2.2)(sequelize@6.37.7(sqlite3@5.1.7)))(sequelize@6.37.7(sqlite3@5.1.7))
@@ -2060,6 +2063,15 @@ packages:
       "@nestjs/common": ^11.0.0
       "@nestjs/core": ^11.0.0
 
+  "@nestjs/schedule@4.1.2":
+    resolution:
+      {
+        integrity: sha512-hCTQ1lNjIA5EHxeu8VvQu2Ed2DBLS1GSC6uKPYlBiQe6LL9a7zfE9iVSK+zuK8E2odsApteEBmfAQchc8Hx0Gg==,
+      }
+    peerDependencies:
+      "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+      "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
+
   "@nestjs/schematics@11.0.7":
     resolution:
       {
@@ -3694,6 +3706,12 @@ packages:
     resolution:
       {
         integrity: sha512-ugo316mmTYBl2g81zDFnZ7cfxlut3o+/EQdaP7J8QN2kY6lJ22hmQYCK5EHcJHbrW+dkCGSCPgbG8JtYj6qSrg==,
+      }
+
+  "@types/luxon@3.4.2":
+    resolution:
+      {
+        integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==,
       }
 
   "@types/mdast@4.0.4":
@@ -5673,6 +5691,12 @@ packages:
     resolution:
       {
         integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==,
+      }
+
+  cron@3.2.1:
+    resolution:
+      {
+        integrity: sha512-w2n5l49GMmmkBFEsH9FIDhjZ1n1QgTMOCMGuQtOXs5veNiosZmso6bQGuqOJSYAXXrG84WQFVneNk+Yt0Ua9iw==,
       }
 
   cross-spawn@7.0.6:
@@ -8991,6 +9015,13 @@ packages:
       }
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  luxon@3.5.0:
+    resolution:
+      {
+        integrity: sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==,
+      }
+    engines: { node: ">=12" }
 
   magic-string@0.30.17:
     resolution:
@@ -12694,6 +12725,13 @@ packages:
       }
     hasBin: true
 
+  uuid@11.0.3:
+    resolution:
+      {
+        integrity: sha512-d0z310fCWv5dJwnX1Y/MncBAqGMKEzlBb1AOf7z9K8ALnd0utBX/msg/fA0+sbyN1ihbMsLhrBlnl1ak7Wa0rg==,
+      }
+    hasBin: true
+
   uuid@8.0.0:
     resolution:
       {
@@ -15052,6 +15090,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  "@nestjs/schedule@4.1.2(@nestjs/common@11.1.5(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)":
+    dependencies:
+      "@nestjs/common": 11.1.5(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      "@nestjs/core": 11.1.5(@nestjs/common@11.1.5(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.5)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      cron: 3.2.1
+      uuid: 11.0.3
+
   "@nestjs/schematics@11.0.7(chokidar@4.0.3)(typescript@5.8.3)":
     dependencies:
       "@angular-devkit/core": 19.2.15(chokidar@4.0.3)
@@ -16247,6 +16292,8 @@ snapshots:
   "@types/jsonwebtoken@9.0.7":
     dependencies:
       "@types/node": 20.19.9
+
+  "@types/luxon@3.4.2": {}
 
   "@types/mdast@4.0.4":
     dependencies:
@@ -17574,6 +17621,11 @@ snapshots:
 
   create-require@1.1.1: {}
 
+  cron@3.2.1:
+    dependencies:
+      "@types/luxon": 3.4.2
+      luxon: 3.5.0
+
   cross-spawn@7.0.6:
     dependencies:
       path-key: 3.1.1
@@ -17920,7 +17972,7 @@ snapshots:
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1)
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.57.1)
       eslint-plugin-react: 7.37.5(eslint@8.57.1)
       eslint-plugin-react-hooks: 5.0.0-canary-7118f5dd7-20230705(eslint@8.57.1)
@@ -17958,7 +18010,7 @@ snapshots:
       tinyglobby: 0.2.14
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -17973,7 +18025,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
     dependencies:
       "@rtsao/scc": 1.1.0
       array-includes: 3.1.9
@@ -20034,6 +20086,8 @@ snapshots:
   lucide-react@0.525.0(react@18.3.1):
     dependencies:
       react: 18.3.1
+
+  luxon@3.5.0: {}
 
   magic-string@0.30.17:
     dependencies:
@@ -22672,6 +22726,8 @@ snapshots:
       which-typed-array: 1.1.19
 
   uuid@10.0.0: {}
+
+  uuid@11.0.3: {}
 
   uuid@8.0.0: {}
 
