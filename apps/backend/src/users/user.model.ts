@@ -78,3 +78,17 @@ export class User extends Model implements UserAttributes {
   @HasMany(() => Participant, 'userId')
   declare participants: Participant[];
 }
+
+/**
+ * User model with multi-provider OAuth support
+ *
+ * User lookup strategy: (displayName + provider) composite key
+ *
+ * For optimal performance, consider adding this database index:
+ * CREATE INDEX idx_user_provider_displayname ON users(provider, displayName);
+ *
+ * This index dramatically improves login performance and enables:
+ * - Fast provider-specific user lookups
+ * - Efficient authentication queries
+ * - Prevention of duplicate users per provider
+ */

@@ -110,14 +110,16 @@ export class AuthService {
 
       let user: User;
       try {
-        user = await this.usersService.findByGithubId(result.id);
+        user = await this.usersService.findByProviderAndDisplayName(
+          result.login,
+          UserProvider.GITHUB,
+        );
       } catch {
         // User not found, create one
         const _user: CreateUserDto = {
-          displayName: result.login || result.id.toString(),
+          displayName: result.login,
           avatarUrl: result.avatar_url,
           provider: UserProvider.GITHUB,
-          githubId: result.id,
         };
         user = await this.usersService.create(_user);
       }
