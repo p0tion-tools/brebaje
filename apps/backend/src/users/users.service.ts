@@ -13,6 +13,7 @@ import { InjectModel } from '@nestjs/sequelize';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './user.model';
+import { UserProvider } from '../types/enums';
 
 @Injectable()
 export class UsersService {
@@ -71,10 +72,10 @@ export class UsersService {
     }
   }
 
-  async findByGithubId(githubId: number) {
+  async findByProviderAndDisplayName(displayName: string, provider: UserProvider) {
     try {
       const user = await this.userModel.findOne({
-        where: { githubId },
+        where: { displayName, provider },
       });
       if (!user) {
         throw new Error('User not found');

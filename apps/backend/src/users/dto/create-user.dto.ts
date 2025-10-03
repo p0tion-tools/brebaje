@@ -1,11 +1,11 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { UserProvider } from 'src/types/enums';
 import { UserAttributes } from '../user.model';
 
 export class CreateUserDto implements Partial<UserAttributes> {
   @ApiProperty({
-    description: 'The display name of the user',
+    description: 'The display name of the user (provider-specific stable username)',
     example: 'NicoSerranoP',
   })
   @IsString()
@@ -21,18 +21,9 @@ export class CreateUserDto implements Partial<UserAttributes> {
   avatarUrl?: string;
 
   @ApiProperty({
-    description: 'The provider of the user',
+    description: 'The OAuth provider of the user',
     example: UserProvider.GITHUB,
   })
   @IsEnum(UserProvider)
   provider: UserProvider;
-
-  @ApiProperty({
-    description: 'The GitHub user ID',
-    example: 123456,
-    required: false,
-  })
-  @IsOptional()
-  @IsNumber()
-  githubId?: number;
 }

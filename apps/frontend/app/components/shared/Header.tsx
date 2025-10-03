@@ -6,13 +6,29 @@ import Link from "next/link";
 import { Icons } from "./Icons";
 import { Modal } from "../ui/Modal";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 
 export const Header = () => {
+  const router = useRouter();
   const isLoggedIn = false;
   const [isOpenLoginModal, setIsOpenLoginModal] = useState(false);
   const [selectedLoginMethod, setSelectedLoginMethod] = useState<
     "github" | "ethereum" | "bandada" | null
   >(null);
+
+  const handleGithubLogin = async () => {
+    try {
+      // Call backend to get GitHub OAuth URL
+      const response = await fetch(process.env.NEXT_PUBLIC_GITHUB_AUTH_URL!);
+      const data = await response.json();
+      console.log(data);
+
+      // Redirect to GitHub OAuth
+      router.push(data.authUrl);
+    } catch (error) {
+      console.error("GitHub OAuth initialization failed:", error);
+    }
+  };
 
   return (
     <>
@@ -38,7 +54,7 @@ export const Header = () => {
                 variant={selectedLoginMethod === "github" ? "yellow" : "white"}
                 fontWeight="regular"
                 size="xs"
-                onClick={() => setSelectedLoginMethod("github")}
+                onClick={handleGithubLogin}
                 icon={<Icons.Github />}
               >
                 Github
