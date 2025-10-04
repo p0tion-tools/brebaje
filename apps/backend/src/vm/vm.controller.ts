@@ -4,6 +4,7 @@ import { VmService } from './vm.service';
 import { VerificationMonitoringService } from './verification-monitoring.service';
 import { VerifyPhase1Dto } from './dto/verify-phase1.dto';
 import { SetupVmDto } from './dto/setup-vm.dto';
+import { VmLifecycleDto } from './dto/vm-lifecycle.dto';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -109,6 +110,136 @@ export class VmController {
       status: 'running',
       message: 'Verification in progress',
     };
+  }
+
+  @Get('command/output/:commandId')
+  @ApiOperation({ summary: 'Get command output and logs' })
+  @ApiParam({ name: 'commandId', description: 'SSM Command ID' })
+  @ApiQuery({ name: 'instanceId', description: 'EC2 Instance ID' })
+  @ApiResponse({ status: 200, description: 'Command output retrieved successfully' })
+  @ApiResponse({ status: 400, description: 'Command not found or still running' })
+  async getCommandOutput(
+    @Param('commandId') commandId: string,
+    @Query('instanceId') instanceId: string,
+  ) {
+    try {
+      const status = await this.vmService.retrieveCommandStatus(instanceId, commandId);
+      const output = await this.vmService.retrieveCommandOutput(instanceId, commandId);
+
+      return {
+        commandId,
+        instanceId,
+        status,
+        output: {
+          stdout: output,
+          timestamp: new Date().toISOString(),
+        },
+        note:
+          status === 'InProgress'
+            ? 'Command is still running, output may be partial'
+            : 'Command completed',
+      };
+    } catch (error: any) {
+      return {
+        commandId,
+        instanceId,
+        error: error.message,
+        note: 'Failed to retrieve command output. Command may not exist or be too old.',
+      };
+    }
+  }
+
+  @Post('start')
+  @ApiOperation({ summary: 'Start an EC2 instance' })
+  @ApiResponse({ status: 200, description: 'Instance start command sent successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to start instance' })
+  async startInstance(@Body() lifecycleDto: VmLifecycleDto) {
+    try {
+      await this.vmService.startEC2Instance(lifecycleDto.instanceId);
+      return {
+        instanceId: lifecycleDto.instanceId,
+        action: 'start',
+        status: 'success',
+        message: 'Instance start command sent. It may take 1-2 minutes to boot.',
+      };
+    } catch (error: any) {
+      return {
+        instanceId: lifecycleDto.instanceId,
+        action: 'start',
+        status: 'error',
+        message: error.message,
+      };
+    }
+  }
+
+  @Post('stop')
+  @ApiOperation({ summary: 'Stop an EC2 instance' })
+  @ApiResponse({ status: 200, description: 'Instance stop command sent successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to stop instance' })
+  async stopInstance(@Body() lifecycleDto: VmLifecycleDto) {
+    try {
+      await this.vmService.stopEC2Instance(lifecycleDto.instanceId);
+      return {
+        instanceId: lifecycleDto.instanceId,
+        action: 'stop',
+        status: 'success',
+        message: 'Instance stop command sent. It may take 1-2 minutes to shut down.',
+      };
+    } catch (error: any) {
+      return {
+        instanceId: lifecycleDto.instanceId,
+        action: 'stop',
+        status: 'error',
+        message: error.message,
+      };
+    }
+  }
+
+  @Post('terminate')
+  @ApiOperation({ summary: 'Terminate an EC2 instance (PERMANENT)' })
+  @ApiResponse({ status: 200, description: 'Instance terminate command sent successfully' })
+  @ApiResponse({ status: 400, description: 'Failed to terminate instance' })
+  async terminateInstance(@Body() lifecycleDto: VmLifecycleDto) {
+    try {
+      await this.vmService.terminateEC2Instance(lifecycleDto.instanceId);
+      return {
+        instanceId: lifecycleDto.instanceId,
+        action: 'terminate',
+        status: 'success',
+        message: 'Instance terminate command sent. This action is PERMANENT and cannot be undone.',
+        warning: 'All data on the instance will be lost permanently.',
+      };
+    } catch (error: any) {
+      return {
+        instanceId: lifecycleDto.instanceId,
+        action: 'terminate',
+        status: 'error',
+        message: error.message,
+      };
+    }
+  }
+
+  @Get('status/:instanceId')
+  @ApiOperation({ summary: 'Check if an EC2 instance is running' })
+  @ApiParam({ name: 'instanceId', description: 'EC2 Instance ID' })
+  @ApiResponse({ status: 200, description: 'Instance status retrieved successfully' })
+  async getInstanceStatus(@Param('instanceId') instanceId: string) {
+    try {
+      const isRunning = await this.vmService.checkIfRunning(instanceId);
+      return {
+        instanceId,
+        isRunning,
+        status: isRunning ? 'running' : 'not running',
+        timestamp: new Date().toISOString(),
+      };
+    } catch (error: any) {
+      return {
+        instanceId,
+        status: 'error',
+        message: error.message,
+        timestamp: new Date().toISOString(),
+      };
+    }
   }
 
   @Get('monitoring/status')
