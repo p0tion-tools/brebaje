@@ -161,28 +161,22 @@ describe('Coordinator (e2e)', () => {
   });
 
   it('should create a bucket in S3', async () => {
-    const response = await fetch(`${TEST_URL}/storage/ceremony/${ceremonyId}/bucket`, {
+    const url = new URL('/storage/bucket', TEST_URL);
+    url.searchParams.set('id', String(ceremonyId));
+
+    const response = await fetch(url, {
       method: 'POST',
     });
 
-    // For testing purposes, we verify the expected bucket name generation
-    // even if actual AWS operations fail due to missing credentials
+    const body = (await response.json()) as { bucketName: string };
+
     const expectedBucketName = getBucketName(
       AWS_CEREMONY_BUCKET_POSTFIX,
       projectDto.name,
       ceremonyDto.description,
     );
 
-    if (response.ok) {
-      const body = (await response.json()) as { bucketName: string };
-      expect(body.bucketName).toBe(expectedBucketName);
-    } else {
-      // Test should pass even if AWS credentials are not configured
-      expect(response.status).toBe(500); // Server error (no credentials)
-      console.log(
-        `Test skipped - AWS error (status ${response.status}). Expected bucket name: ${expectedBucketName}`,
-      );
-    }
+    expect(body.bucketName).toBe(expectedBucketName);
   });
 
   it(
