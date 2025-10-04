@@ -1,5 +1,5 @@
 import { Body, Controller, Post, Delete, Query, Param } from '@nestjs/common';
-import { ApiOperation } from '@nestjs/swagger';
+import { ApiOperation, ApiQuery, ApiResponse } from '@nestjs/swagger';
 import { StorageService } from './storage.service';
 import {
   CompleteMultiPartUploadData,
@@ -11,34 +11,45 @@ import {
 export class StorageController {
   constructor(private readonly storageService: StorageService) {}
 
-  @ApiOperation({ summary: 'Create and setup S3 bucket for ceremony' })
-  @Post('ceremony/:id/bucket')
-  createAndSetupBucket(@Param('id') ceremonyId: number) {
+  @ApiOperation({
+    summary:
+      'Create a S3 bucket for the ceremony. If the bucket already exists, it will be reused.',
+  })
+  @ApiQuery({ name: 'id', type: 'number' })
+  @ApiResponse({ status: 200, description: 'Return the bucket name.' })
+  @Post('/bucket')
+  createAndSetupBucket(@Query('id') ceremonyId: number) {
     return this.storageService.createAndSetupBucket(ceremonyId);
   }
 
-  @ApiOperation({ summary: 'Delete S3 bucket for ceremony' })
-  @Delete('ceremony/:id/bucket')
-  deleteCeremonyBucket(@Param('id') ceremonyId: number) {
+  @ApiOperation({ summary: 'Delete the S3 bucket for the ceremony' })
+  @ApiQuery({ name: 'id', type: 'number' })
+  @ApiResponse({ status: 200, description: 'Bucket deleted successfully.' })
+  @Delete('/bucket')
+  deleteCeremonyBucket(@Query('id') ceremonyId: number) {
     return this.storageService.deleteCeremonyBucket(ceremonyId);
   }
 
   @ApiOperation({ summary: 'Check if object exists in ceremony bucket' })
-  @Post('storage/:id/object/exists')
-  checkIfObjectExists(@Param('id') ceremonyId: number, @Body() data: ObjectKeyDto) {
+  @ApiQuery({ name: 'id', type: 'number' })
+  @Post('object/exists')
+  checkIfObjectExists(@Query('id') ceremonyId: number, @Body() data: ObjectKeyDto) {
     return this.storageService.checkIfObjectExists(data, ceremonyId);
   }
 
   @ApiOperation({ summary: 'Generate pre-signed URL for object download' })
-  @Post('ceremony/:id/object/presigned-url')
-  generateGetObjectPreSignedUrl(@Param('id') ceremonyId: number, @Body() data: ObjectKeyDto) {
+  @ApiQuery({ name: 'id', type: 'number' })
+  @Post('object/presigned-url')
+  generateGetObjectPreSignedUrl(@Query('id') ceremonyId: number, @Body() data: ObjectKeyDto) {
     return this.storageService.generateGetObjectPreSignedUrl(data, ceremonyId);
   }
 
   @ApiOperation({ summary: 'Start multipart upload for large files' })
-  @Post('ceremony/:id/multipart/start')
+  @ApiQuery({ name: 'id', type: 'number' })
+  @ApiQuery({ name: 'userId', type: 'string' })
+  @Post('multipart/start')
   startMultipartUpload(
-    @Param('id') ceremonyId: number,
+    @Query('id') ceremonyId: number,
     @Query('userId') userId: string,
     @Body() data: ObjectKeyDto,
   ) {
@@ -46,9 +57,11 @@ export class StorageController {
   }
 
   @ApiOperation({ summary: 'Generate pre-signed URLs for multipart upload parts' })
-  @Post('ceremony/:id/multipart/urls')
+  @ApiQuery({ name: 'id', type: 'number' })
+  @ApiQuery({ name: 'userId', type: 'string' })
+  @Post('multipart/urls')
   generatePreSignedUrlsParts(
-    @Param('id') ceremonyId: number,
+    @Query('id') ceremonyId: number,
     @Query('userId') userId: string,
     @Body() data: GeneratePreSignedUrlsPartsData,
   ) {
@@ -56,9 +69,11 @@ export class StorageController {
   }
 
   @ApiOperation({ summary: 'Complete multipart upload' })
-  @Post('ceremony/:id/multipart/complete')
+  @ApiQuery({ name: 'id', type: 'number' })
+  @ApiQuery({ name: 'userId', type: 'string' })
+  @Post('multipart/complete')
   completeMultipartUpload(
-    @Param('id') ceremonyId: number,
+    @Query('id') ceremonyId: number,
     @Query('userId') userId: string,
     @Body() data: CompleteMultiPartUploadData,
   ) {
