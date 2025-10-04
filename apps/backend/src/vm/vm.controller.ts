@@ -42,6 +42,9 @@ export class VmController {
       verifyDto.lastPtauStoragePath,
     );
 
+    // Extract filename from storage path for notifications
+    const ptauFilename = verifyDto.lastPtauStoragePath.split('/').pop() || 'unknown.ptau';
+
     // Start verification (don't wait for completion)
     const commandId = await this.vmService.runCommandUsingSSM(verifyDto.instanceId, commands);
 
@@ -56,6 +59,7 @@ export class VmController {
       verifyDto.instanceId,
       verifyDto.coordinatorEmail || verifyDto.webhookUrl ? notificationConfig : undefined,
       verifyDto.autoStop,
+      ptauFilename,
     );
 
     // Return immediately with command tracking info

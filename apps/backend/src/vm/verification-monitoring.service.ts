@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
+import axios from 'axios';
 import { VmService } from './vm.service';
+import { DISCORD_WEBHOOK_URL } from '../utils/constants';
 
 @Injectable()
 export class VerificationMonitoringService {
@@ -11,6 +13,7 @@ export class VerificationMonitoringService {
       notificationConfig?: any;
       startTime: Date;
       autoStop?: boolean;
+      ptauFilename?: string;
     }
   >();
 
@@ -22,25 +25,28 @@ export class VerificationMonitoringService {
    * @param instanceId <string> - EC2 instance ID.
    * @param notificationConfig <any> - Optional notification configuration.
    * @param autoStop <boolean> - Whether to automatically stop instance when verification completes.
+   * @param ptauFilename <string> - Optional ptau filename being verified.
    */
   startMonitoring(
     commandId: string,
     instanceId: string,
     notificationConfig?: any,
     autoStop?: boolean,
+    ptauFilename?: string,
   ) {
     this.activeVerifications.set(commandId, {
       instanceId,
       notificationConfig,
       startTime: new Date(),
       autoStop,
+      ptauFilename,
     });
   }
 
   /**
    * CRON job to check verification status every 10 minutes.
    */
-  @Cron('*/10 * * * *') // Every 10 minutes
+  @Cron('*/1 * * * *') // Every 10 minutes
   async checkVerificationStatus() {
     if (this.activeVerifications.size === 0) {
       return; // No active verifications to check
@@ -70,6 +76,11 @@ export class VerificationMonitoringService {
           // Send notifications if configured
           if (config.notificationConfig) {
             await this.sendNotification(config.notificationConfig, result, commandId, status);
+          }
+
+          // Send Discord notification
+          if (DISCORD_WEBHOOK_URL) {
+            await this.sendDiscordNotification(result, commandId, status, config.ptauFilename);
           }
 
           // Auto-stop instance if enabled
@@ -129,6 +140,46 @@ export class VerificationMonitoringService {
       // - SNS topic publication
     } catch (error) {
       console.error(`[VerificationMonitor] Failed to send notification for ${commandId}:`, error);
+    }
+  }
+
+  /**
+   * Send Discord notification when verification completes.
+   * @param result <number> - HTTP status code (200/400).
+   * @param commandId <string> - Command ID for reference.
+   * @param status <string> - SSM command status.
+   * @param ptauFilename <string> - Optional ptau filename being verified.
+   */
+  private async sendDiscordNotification(
+    result: number,
+    commandId: string,
+    status: string,
+    ptauFilename?: string,
+  ) {
+    try {
+      const success = result === 200;
+      const message = {
+        content:
+          `🔍 **VM Verification ${success ? 'Complete ✅' : 'Failed ❌'}**\n` +
+          `• File: ${ptauFilename ? `\`${ptauFilename}\`` : 'Unknown'}\n` +
+          `• Status: ${success ? `The current ${ptauFilename || 'file'} has been verified` : `Verification failed - ${status}`}\n` +
+          `• Command: \`${commandId}\`\n` +
+          `• Time: <t:${Math.floor(Date.now() / 1000)}:F>`,
+      };
+
+      await axios.post(DISCORD_WEBHOOK_URL, message, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        timeout: 10000, // 10 second timeout
+      });
+
+      console.log(`[VerificationMonitor] Discord notification sent for ${commandId}`);
+    } catch (error) {
+      console.error(
+        `[VerificationMonitor] Failed to send Discord notification for ${commandId}:`,
+        error,
+      );
     }
   }
 
