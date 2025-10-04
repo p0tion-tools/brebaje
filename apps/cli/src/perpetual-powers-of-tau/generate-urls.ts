@@ -16,6 +16,7 @@ export async function generateUrlsPerpetualPowersOfTau(
     outputPath?: string;
     downloadExpiration?: number;
     uploadExpiration?: number;
+    instanceId?: string;
   } = {},
 ): Promise<void> {
   try {
@@ -158,6 +159,10 @@ export async function generateUrlsPerpetualPowersOfTau(
         s3_key_field: uploadKey,
         expiration: uploadExpiry.toISOString(),
         upload_url: uploadUrl,
+      },
+      vm_info: {
+        instance_id: options.instanceId || null,
+        bucket_name: S3_BUCKET,
       },
     };
 
