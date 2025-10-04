@@ -30,6 +30,7 @@
     "@aws-sdk/client-ssm": "3.882.0",
     "@aws-sdk/s3-request-presigner": "3.896.0",
     "@brebaje/actions": "0.0.0",
+    "axios": "^1.11.0",
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
