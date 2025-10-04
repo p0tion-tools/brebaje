@@ -416,11 +416,24 @@ export class VmService {
    * @returns Array<string> - the list of commands for contribution verification.
    */
   vmVerificationPhase1Command(bucketName: string, lastPtauStoragePath: string): Array<string> {
+    // Extract filename from path (e.g., "Cardano-PPOT/pot10_0008.ptau" -> "pot10_0008.ptau")
+    const filename = lastPtauStoragePath.split('/').pop() || 'unknown.ptau';
+
+    // Generate verification log filename with timestamp
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const verificationLogName = `verification-${filename}-${timestamp}.log`;
+    const s3LogPath = `verification-logs/${verificationLogName}`;
+
     return [
       `source /etc/profile`,
-      `aws s3 cp s3://${bucketName}/${lastPtauStoragePath} /var/tmp/lastPtau.ptau > /var/tmp/log.txt`,
-      `snarkjs powersoftau verify /var/tmp/lastPtau.ptau 2>&1`,
-      `rm /var/tmp/lastPtau.ptau /var/tmp/log.txt &>/dev/null`,
+      // Download with original filename
+      `aws s3 cp s3://${bucketName}/${lastPtauStoragePath} /var/tmp/${filename} > /var/tmp/download.log`,
+      // Run verification and save output to log
+      `snarkjs powersoftau verify /var/tmp/${filename} > /var/tmp/${verificationLogName} 2>&1`,
+      // Upload verification log to S3
+      `aws s3 cp /var/tmp/${verificationLogName} s3://${bucketName}/${s3LogPath}`,
+      // Clean up all temporary files
+      `rm /var/tmp/${filename} /var/tmp/${verificationLogName} /var/tmp/download.log &>/dev/null`,
     ];
   }
 
