@@ -134,16 +134,23 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
       (value) => parseInt(value, 10),
       60,
     )
+    .option("--instance-id <instanceId>", "EC2 Instance ID for VM verification (optional)")
     .action(
       async (
         downloadFilename: string,
-        options: { output?: string; downloadExpiration: number; uploadExpiration: number },
+        options: {
+          output?: string;
+          downloadExpiration: number;
+          uploadExpiration: number;
+          instanceId?: string;
+        },
       ) => {
         const { generateUrlsPerpetualPowersOfTau } = await import("./generate-urls.js");
         await generateUrlsPerpetualPowersOfTau(downloadFilename, {
           outputPath: options.output,
           downloadExpiration: options.downloadExpiration,
           uploadExpiration: options.uploadExpiration,
+          instanceId: options.instanceId,
         });
       },
     );
