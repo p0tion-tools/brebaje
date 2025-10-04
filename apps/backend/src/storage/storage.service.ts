@@ -3,13 +3,18 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
+  ForbiddenException,
 } from '@nestjs/common';
-import { getBucketName } from '@brebaje/actions';
-import { CeremoniesService } from 'src/ceremonies/ceremonies.service';
 import {
+  CompleteMultipartUploadCommand,
   CreateBucketCommand,
+  CreateMultipartUploadCommand,
+  GetObjectCommand,
+  HeadObjectCommand,
   PutBucketCorsCommand,
   PutPublicAccessBlockCommand,
+  UploadPartCommand,
   S3Client,
   S3ServiceException,
   BucketAlreadyExists,
@@ -18,8 +23,11 @@ import {
   DeleteBucketCommand,
   PutObjectCommand,
   DeleteObjectCommand,
-  GetObjectCommand,
 } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
+import { getBucketName } from '@brebaje/actions';
+import { CeremoniesService } from '../ceremonies/ceremonies.service';
+import { ParticipantsService } from '../participants/participants.service';
 import {
   AWS_ACCESS_KEY_ID,
   AWS_CEREMONY_BUCKET_POSTFIX,
@@ -27,13 +35,21 @@ import {
   AWS_S3_CORS_ORIGINS,
   AWS_SECRET_ACCESS_KEY,
   AWS_WAIT_TIME,
-} from 'src/utils/constants';
+} from '../utils/constants';
+import {
+  CompleteMultiPartUploadData,
+  GeneratePreSignedUrlsPartsData,
+  ObjectKeyDto,
+} from './dto/storage-dto';
 
 @Injectable()
 export class StorageService {
   private readonly logger = new Logger(StorageService.name);
 
-  constructor(private readonly ceremoniesService: CeremoniesService) {}
+  constructor(
+    private readonly ceremoniesService: CeremoniesService,
+    private readonly participantsService: ParticipantsService,
+  ) {}
 
   getS3Client() {
     return new S3Client({
@@ -149,6 +165,40 @@ export class StorageService {
     await this.deleteBucket(s3, bucketName);
   }
 
+  async startMultipartUpload(data: ObjectKeyDto, ceremonyId: number, userId: string) {
+    const { objectKey } = data;
+    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
+    if (!ceremony) {
+      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
+    }
+
+    const bucketName = getBucketName(
+      AWS_CEREMONY_BUCKET_POSTFIX,
+      ceremony.project.name,
+      ceremony.description,
+    );
+
+    const s3 = this.getS3Client();
+
+    const command = new CreateMultipartUploadCommand({
+      Bucket: bucketName,
+      Key: objectKey,
+      ACL: 'private',
+    });
+
+    try {
+      const response = await s3.send(command);
+      if (response.$metadata.httpStatusCode === 200 && response.UploadId) {
+        this.logger.debug(
+          `Multi-part upload identifier: ${response.UploadId}. Requested by ${userId}`,
+        );
+        return { uploadId: response.UploadId };
+      }
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
   async uploadObject(
     bucketName: string,
     objectKey: string,
@@ -176,6 +226,155 @@ export class StorageService {
       }
 
       this.logger.log(`Successfully uploaded ${objectKey} to bucket ${bucketName}`);
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  async generatePreSignedUrlsParts(
+    data: GeneratePreSignedUrlsPartsData,
+    ceremonyId: number,
+    userId: string,
+  ) {
+    const { objectKey, uploadId, numberOfParts } = data;
+    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
+    if (!ceremony) {
+      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
+    }
+
+    const bucketName = getBucketName(
+      AWS_CEREMONY_BUCKET_POSTFIX,
+      ceremony.project.name,
+      ceremony.description,
+    );
+
+    const s3 = this.getS3Client();
+    const parts: string[] = [];
+
+    for (let i = 0; i < numberOfParts; i += 1) {
+      const command = new UploadPartCommand({
+        Bucket: bucketName,
+        Key: objectKey,
+        PartNumber: i + 1,
+        UploadId: uploadId,
+      });
+
+      try {
+        const url = await getSignedUrl(s3, command, {
+          expiresIn: Number(process.env.AWS_PRESIGNED_URL_EXPIRATION) || 3600,
+        });
+
+        if (url) {
+          parts.push(url);
+        }
+      } catch (error) {
+        this.handleErrors(error as Error);
+      }
+    }
+
+    return { parts };
+  }
+
+  async completeMultipartUpload(
+    data: CompleteMultiPartUploadData,
+    ceremonyId: number,
+    userId: string,
+  ) {
+    const { objectKey, uploadId, parts } = data;
+    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
+    if (!ceremony) {
+      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
+    }
+
+    const bucketName = getBucketName(
+      AWS_CEREMONY_BUCKET_POSTFIX,
+      ceremony.project.name,
+      ceremony.description,
+    );
+
+    const s3 = this.getS3Client();
+
+    const command = new CompleteMultipartUploadCommand({
+      Bucket: bucketName,
+      Key: objectKey,
+      UploadId: uploadId,
+      MultipartUpload: { Parts: parts },
+    });
+
+    try {
+      const response = await s3.send(command);
+
+      if (response.$metadata.httpStatusCode === 200 && response.Location) {
+        this.logger.debug(
+          `Multi-part upload ${uploadId} completed. Object location: ${response.Location}`,
+        );
+        return { location: response.Location };
+      } else {
+        throw new InternalServerErrorException('The multi-part upload has not been completed.');
+      }
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  async checkIfObjectExists(data: ObjectKeyDto, ceremonyId: number) {
+    const { objectKey } = data;
+    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
+    if (!ceremony) {
+      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
+    }
+
+    const bucketName = getBucketName(
+      AWS_CEREMONY_BUCKET_POSTFIX,
+      ceremony.project.name,
+      ceremony.description,
+    );
+
+    const s3 = this.getS3Client();
+    const command = new HeadObjectCommand({ Bucket: bucketName, Key: objectKey });
+
+    try {
+      const response = await s3.send(command);
+      if (response.$metadata.httpStatusCode === 200 && response.ETag) {
+        this.logger.log(`Object ${objectKey} found in bucket ${bucketName}`);
+        return { result: true };
+      }
+    } catch (error: unknown) {
+      const awsError = error as { $metadata?: { httpStatusCode?: number } };
+      if (awsError.$metadata?.httpStatusCode === 403) {
+        throw new ForbiddenException('Missing permissions to access object');
+      }
+      // Object not found - return false instead of throwing error
+    }
+
+    return { result: false };
+  }
+
+  async generateGetObjectPreSignedUrl(data: ObjectKeyDto, ceremonyId: number) {
+    const { objectKey } = data;
+    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
+    if (!ceremony) {
+      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
+    }
+
+    const bucketName = getBucketName(
+      AWS_CEREMONY_BUCKET_POSTFIX,
+      ceremony.project.name,
+      ceremony.description,
+    );
+
+    const s3 = this.getS3Client();
+    const command = new GetObjectCommand({ Bucket: bucketName, Key: objectKey });
+
+    try {
+      const url = await getSignedUrl(s3, command, {
+        expiresIn: Number(process.env.AWS_PRESIGNED_URL_EXPIRATION) || 3600,
+      });
+
+      if (url) {
+        this.logger.debug(`Generated pre-signed url: ${url}`);
+        return { url };
+      }
     } catch (error) {
       this.handleErrors(error as Error);
     }

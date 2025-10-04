@@ -114,12 +114,18 @@ export class VmService {
     const index = pot - 1;
     let potSize = 144;
 
-    if (powersOfTauFiles[index]) {
-      potSize = powersOfTauFiles[index].size;
+    const selectedFile = powersOfTauFiles[index];
+    if (selectedFile) {
+      potSize = selectedFile.size;
     } else {
       // fallback to the biggest ptau file.
+
       const lastIndex = powersOfTauFiles.length - 1;
-      potSize = powersOfTauFiles[lastIndex].size;
+
+      const lastFile = powersOfTauFiles[lastIndex];
+      if (lastFile) {
+        potSize = lastFile.size;
+      }
     }
 
     return Math.ceil(2 * convertBytesOrKbToGb(zKeySizeInBytes, true) + potSize) + 8;
