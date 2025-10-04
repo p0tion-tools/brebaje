@@ -3,6 +3,7 @@ import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/
 import { VmService } from './vm.service';
 import { VerificationMonitoringService } from './verification-monitoring.service';
 import { VerifyPhase1Dto } from './dto/verify-phase1.dto';
+import { SetupVmDto } from './dto/setup-vm.dto';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -48,6 +49,30 @@ export class VmController {
         verifyDto.coordinatorEmail || verifyDto.webhookUrl
           ? 'Notifications will be sent when verification completes'
           : 'No notifications configured',
+    };
+  }
+
+  @Post('setup')
+  @ApiOperation({ summary: 'Setup VM with Node.js, snarkjs and cache dependencies' })
+  @ApiResponse({ status: 201, description: 'VM setup started successfully' })
+  @ApiResponse({ status: 400, description: 'Bad Request' })
+  async setupVm(@Body() setupDto: SetupVmDto) {
+    // Generate setup commands
+    const commands = this.vmService.vmDependenciesAndCacheArtifactsCommand(
+      setupDto.zKeyPath || '',
+      setupDto.potPath || '',
+    );
+
+    // Start setup (don't wait for completion)
+    const commandId = await this.vmService.runCommandUsingSSM(setupDto.instanceId, commands);
+
+    // Return immediately with command tracking info
+    return {
+      commandId,
+      instanceId: setupDto.instanceId,
+      message: 'VM setup started',
+      statusUrl: `/vm/verify/status/${commandId}?instanceId=${setupDto.instanceId}`,
+      note: 'This will install Node.js v22.17.1, snarkjs, and cache any provided artifacts',
     };
   }
 
