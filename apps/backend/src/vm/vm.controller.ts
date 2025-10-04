@@ -19,6 +19,23 @@ export class VmController {
   @ApiResponse({ status: 201, description: 'Verification started successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   async startVerification(@Body() verifyDto: VerifyPhase1Dto) {
+    // TODO: Implement auto-start functionality for complete lifecycle automation
+    // if (verifyDto.autoStop) {
+    //   const isRunning = await this.vmService.checkIfRunning(verifyDto.instanceId);
+    //   if (!isRunning) {
+    //     await this.vmService.startEC2Instance(verifyDto.instanceId);
+    //     console.log(`Auto-started instance ${verifyDto.instanceId} for verification`);
+    //   }
+    // }
+
+    // TODO: Handle boot time issues - implement retry logic for SSM commands
+    // When instance is starting, SSM commands will fail for 2-3 minutes during boot.
+    // Option B: Catch SSM failures and implement retry mechanism:
+    // - Try SSM command immediately
+    // - If fails due to instance not ready, add to pending verification queue
+    // - Let existing CRON monitoring service retry verification once instance is ready
+    // - This provides complete automation: auto-start → wait for ready → verify → auto-stop
+
     // Generate Phase 1 verification commands
     const commands = this.vmService.vmVerificationPhase1Command(
       verifyDto.bucketName,
@@ -38,6 +55,7 @@ export class VmController {
       commandId,
       verifyDto.instanceId,
       verifyDto.coordinatorEmail || verifyDto.webhookUrl ? notificationConfig : undefined,
+      verifyDto.autoStop,
     );
 
     // Return immediately with command tracking info
@@ -50,6 +68,9 @@ export class VmController {
         verifyDto.coordinatorEmail || verifyDto.webhookUrl
           ? 'Notifications will be sent when verification completes'
           : 'No notifications configured',
+      autoStop: verifyDto.autoStop
+        ? 'Instance will be automatically stopped when verification completes'
+        : 'Instance will remain running after verification',
     };
   }
 

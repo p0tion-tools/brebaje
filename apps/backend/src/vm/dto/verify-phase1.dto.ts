@@ -1,4 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
+import { IsOptional, IsBoolean } from 'class-validator';
 
 export class VerifyPhase1Dto {
   @ApiProperty({ example: 'i-1234567890abcdef0', description: 'EC2 Instance ID' })
@@ -26,4 +27,13 @@ export class VerifyPhase1Dto {
     required: false,
   })
   webhookUrl?: string;
+
+  @ApiProperty({
+    description: 'Automatically stop the instance when verification completes',
+    example: true,
+    required: false,
+  })
+  @IsOptional()
+  @IsBoolean()
+  autoStop?: boolean;
 }

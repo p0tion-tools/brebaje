@@ -10,6 +10,7 @@ export class VerificationMonitoringService {
       instanceId: string;
       notificationConfig?: any;
       startTime: Date;
+      autoStop?: boolean;
     }
   >();
 
@@ -20,12 +21,19 @@ export class VerificationMonitoringService {
    * @param commandId <string> - SSM command ID to monitor.
    * @param instanceId <string> - EC2 instance ID.
    * @param notificationConfig <any> - Optional notification configuration.
+   * @param autoStop <boolean> - Whether to automatically stop instance when verification completes.
    */
-  startMonitoring(commandId: string, instanceId: string, notificationConfig?: any) {
+  startMonitoring(
+    commandId: string,
+    instanceId: string,
+    notificationConfig?: any,
+    autoStop?: boolean,
+  ) {
     this.activeVerifications.set(commandId, {
       instanceId,
       notificationConfig,
       startTime: new Date(),
+      autoStop,
     });
   }
 
@@ -62,6 +70,21 @@ export class VerificationMonitoringService {
           // Send notifications if configured
           if (config.notificationConfig) {
             await this.sendNotification(config.notificationConfig, result, commandId, status);
+          }
+
+          // Auto-stop instance if enabled
+          if (config.autoStop) {
+            try {
+              await this.vmService.stopEC2Instance(config.instanceId);
+              console.log(
+                `[VerificationMonitor] Auto-stopped instance ${config.instanceId} after verification ${commandId} completed`,
+              );
+            } catch (error) {
+              console.error(
+                `[VerificationMonitor] Failed to auto-stop instance ${config.instanceId}:`,
+                error,
+              );
+            }
           }
 
           // Remove from monitoring
