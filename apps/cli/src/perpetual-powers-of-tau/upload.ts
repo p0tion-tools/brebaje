@@ -68,9 +68,39 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
       process.exit(1);
     }
 
-    // Validate pre-signed URL
+    // Validate pre-signed URL and check expiration
     try {
-      new URL(uploadUrl);
+      const url = new URL(uploadUrl);
+
+      // Check if URL has expiration parameter
+      const expires = url.searchParams.get("X-Amz-Expires");
+      const date = url.searchParams.get("X-Amz-Date");
+
+      if (expires && date) {
+        // Parse expiration: X-Amz-Date format is YYYYMMDDTHHMMSSZ
+        const year = parseInt(date.substring(0, 4));
+        const month = parseInt(date.substring(4, 6)) - 1; // Month is 0-indexed
+        const day = parseInt(date.substring(6, 8));
+        const hour = parseInt(date.substring(9, 11));
+        const minute = parseInt(date.substring(11, 13));
+        const second = parseInt(date.substring(13, 15));
+
+        const urlDate = new Date(Date.UTC(year, month, day, hour, minute, second));
+        const expirationDate = new Date(urlDate.getTime() + parseInt(expires) * 1000);
+        const now = new Date();
+
+        if (now >= expirationDate) {
+          console.error(`❌ Error: Upload URL has expired!`);
+          console.error(`URL expired at: ${expirationDate.toISOString()}`);
+          console.error(`Current time: ${now.toISOString()}`);
+          console.error(`\n💡 Please generate new URLs with:`);
+          console.error(`   brebaje-cli ppot generate-urls <filename>`);
+          process.exit(1);
+        }
+
+        const timeLeft = Math.floor((expirationDate.getTime() - now.getTime()) / 1000 / 60);
+        console.log(`⏰ Upload URL expires in ${timeLeft} minutes`);
+      }
     } catch {
       console.error(`❌ Error: Invalid upload URL format: ${uploadUrl}`);
       process.exit(1);
@@ -84,9 +114,23 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
 
     try {
       execSync(uploadCommand, { stdio: "inherit" });
-    } catch (error) {
+    } catch (error: any) {
       console.error("❌ Upload failed during file transfer");
-      console.error("Please check your internet connection and try again");
+
+      // Check if it's likely an expiration error (common HTTP status codes)
+      const errorOutput = error.stderr?.toString() || error.stdout?.toString() || "";
+      if (
+        errorOutput.includes("403") ||
+        errorOutput.includes("Forbidden") ||
+        errorOutput.includes("RequestTimeTooSkewed") ||
+        errorOutput.includes("expired")
+      ) {
+        console.error("🕐 This appears to be an expired URL error");
+        console.error("💡 Please generate new URLs with:");
+        console.error("   brebaje-cli ppot generate-urls <filename>");
+      } else {
+        console.error("Please check your internet connection and try again");
+      }
       process.exit(1);
     }
 

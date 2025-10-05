@@ -2,9 +2,39 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
   try {
     console.log(`Downloading Powers of Tau file from: ${url}`);
 
-    // Validate URL format
+    // Validate URL format and check expiration
     try {
-      new URL(url);
+      const urlObj = new URL(url);
+
+      // Check if URL has expiration parameter (AWS pre-signed URL)
+      const expires = urlObj.searchParams.get("X-Amz-Expires");
+      const date = urlObj.searchParams.get("X-Amz-Date");
+
+      if (expires && date) {
+        // Parse expiration: X-Amz-Date format is YYYYMMDDTHHMMSSZ
+        const year = parseInt(date.substring(0, 4));
+        const month = parseInt(date.substring(4, 6)) - 1; // Month is 0-indexed
+        const day = parseInt(date.substring(6, 8));
+        const hour = parseInt(date.substring(9, 11));
+        const minute = parseInt(date.substring(11, 13));
+        const second = parseInt(date.substring(13, 15));
+
+        const urlDate = new Date(Date.UTC(year, month, day, hour, minute, second));
+        const expirationDate = new Date(urlDate.getTime() + parseInt(expires) * 1000);
+        const now = new Date();
+
+        if (now >= expirationDate) {
+          console.error(`❌ Error: Download URL has expired!`);
+          console.error(`URL expired at: ${expirationDate.toISOString()}`);
+          console.error(`Current time: ${now.toISOString()}`);
+          console.error(`\n💡 Please generate new URLs with:`);
+          console.error(`   brebaje-cli ppot generate-urls <filename>`);
+          process.exit(1);
+        }
+
+        const timeLeft = Math.floor((expirationDate.getTime() - now.getTime()) / 1000 / 60);
+        console.log(`⏰ Download URL expires in ${timeLeft} minutes`);
+      }
     } catch {
       console.error(`❌ Error: Invalid URL format: ${url}`);
       process.exit(1);
@@ -87,7 +117,9 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
     } else if (errorMessage.includes("404")) {
       console.error(`❌ Error: File not found (404) at the specified URL`);
     } else if (errorMessage.includes("403")) {
-      console.error(`❌ Error: Access forbidden (403) - check URL permissions`);
+      console.error(`❌ Error: Access forbidden (403) - likely expired URL`);
+      console.error(`💡 Please generate new URLs with:`);
+      console.error(`   brebaje-cli ppot generate-urls <filename>`);
     } else if (errorMessage.includes("Command failed")) {
       console.error(`❌ Download failed: wget command execution failed`);
       console.error(`Please check the URL and your network connection`);
