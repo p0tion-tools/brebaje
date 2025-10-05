@@ -4,10 +4,10 @@
  * @param filterString - String to filter files (e.g., "_record.txt")
  * @returns The newest matching file name, or null if no files found
  */
-export function getNewerFile(directory: string, filterString: string): string | null {
-  const fs = require("fs");
-  const path = require("path");
+import fs from "fs";
+import path from "path";
 
+export function getNewerFile(directory: string, filterString: string): string | null {
   try {
     // Check if directory exists
     if (!fs.existsSync(directory)) {
@@ -53,9 +53,6 @@ export function getNewerFile(directory: string, filterString: string): string | 
  * @throws Error with specific user guidance if file not found or invalid
  */
 export function getUrlsJson(inputDir: string = "input", providedPath?: string): string {
-  const fs = require("fs");
-  const path = require("path");
-
   let ceremonyUrlsPath: string;
 
   if (providedPath) {
