@@ -464,7 +464,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
           repositoryUrl,
           repoToken,
         );
-        console.log(`✅ Pull request link generated: ${pullRequestUrl}`);
+        console.log(`✅ Pull request link generated`);
       } catch (prError: any) {
         console.warn(`⚠️ Could not create pull request automatically: ${prError.message}`);
 
@@ -555,19 +555,26 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
 #Cardano #ZK #Catalyst`;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
-    console.log(`\n🎊 Success! Your contribution has been posted:`);
-    console.log(`📋 Official repository: ${repositoryContributionUrl}`);
-    console.log(`👁️ Public gist (social): ${gistUrl}`);
-    if (pullRequestUrl) {
-      console.log(`🔄 Create pull request: ${pullRequestUrl}`);
-    }
+    console.log(`\n🎊 Success! Your contribution has been posted:\n`);
     console.log(`📊 Contribution Index: ${ceremonyIndex}`);
     console.log(`👤 Contributor: ${contributorName} (${githubUsername})`);
-    console.log(`💡 All links verify your contribution publicly.`);
+    console.log(`👁️ Public gist (social): ${gistUrl}`);
+    console.log(`\n👇 PLEASE, OPEN THE GENERATED LINKS 👇👇👇`);
+
+    if (pullRequestUrl) {
+      console.log(`\n🔄 Create pull request:\n ${pullRequestUrl}`);
+    }
 
     console.log(`\n🐦 Share on Twitter/X:`);
     console.log(`${twitterUrl}`);
-    console.log(`\n📱 Click the link above to share your contribution on social media!`);
+    console.log(
+      `\n⚠️  You must open the pull request link above and click "Create pull request" to submit your contribution to the ceremony!`,
+    );
+    console.log(
+      `⚠️  Please click the Twitter/X link above to share your contribution and help promote the ceremony!`,
+    );
+    console.log(`💡 All links verify your contribution publicly.`);
+    console.log(`\nThank you for contributing! :)`);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     console.error("❌ Failed to post contribution record:", errorMessage);
