@@ -44,3 +44,73 @@ export function getNewerFile(directory: string, filterString: string): string | 
     throw new Error(`Failed to get newest file: ${errorMessage}`);
   }
 }
+
+/**
+ * Gets ceremony URLs JSON file from input directory with comprehensive validation
+ * @param inputDir - Input directory path (default: "input")
+ * @param providedPath - Optional specific file path to use instead of searching
+ * @returns Full path to the valid ceremony URLs JSON file
+ * @throws Error with specific user guidance if file not found or invalid
+ */
+export function getUrlsJson(inputDir: string = "input", providedPath?: string): string {
+  const fs = require("fs");
+  const path = require("path");
+
+  let ceremonyUrlsPath: string;
+
+  if (providedPath) {
+    // Use provided path
+    ceremonyUrlsPath = providedPath;
+  } else {
+    // Check input folder for ceremony-urls JSON files
+    if (!fs.existsSync(inputDir)) {
+      console.error(
+        `❌ Error: No ceremony URLs JSON file provided and ${inputDir}/ folder not found`,
+      );
+      console.error(`Please either:`);
+      console.error(`  1. Provide JSON file path as argument`);
+      console.error(`  2. Place ceremony URLs JSON file in ${inputDir}/ folder`);
+      process.exit(1);
+    }
+
+    const jsonFiles = fs
+      .readdirSync(inputDir)
+      .filter((file: string) => file.startsWith("ceremony-urls-") && file.endsWith(".json"));
+
+    if (jsonFiles.length === 0) {
+      console.error(`❌ Error: No ceremony URLs JSON file found in ${inputDir}/ folder`);
+      console.error(`Please either:`);
+      console.error(`  1. Provide JSON file path as argument`);
+      console.error(
+        `  2. Generate URLs: brebaje-cli ppot generate-urls <filename> -o ${inputDir}/ceremony-urls-<name>.json`,
+      );
+      process.exit(1);
+    }
+
+    if (jsonFiles.length > 1) {
+      console.warn(`⚠️ Multiple ceremony URLs JSON files found in ${inputDir}/ folder:`);
+      jsonFiles.forEach((file: string) => console.warn(`  - ${file}`));
+      console.log(`📅 Automatically selecting the newest file...`);
+
+      // Use getNewerFile to select the newest ceremony URLs file
+      const newestFile = getNewerFile(inputDir, jsonFiles[0]);
+      if (!newestFile) {
+        console.error(`❌ Error: Could not determine newest ceremony URLs file`);
+        process.exit(1);
+      }
+
+      ceremonyUrlsPath = path.join(inputDir, newestFile);
+      console.log(`✅ Using newest file: ${newestFile}`);
+    } else {
+      ceremonyUrlsPath = path.join(inputDir, jsonFiles[0]);
+    }
+  }
+
+  // Check if file exists
+  if (!fs.existsSync(ceremonyUrlsPath)) {
+    console.error(`❌ Error: Ceremony URLs file not found: ${ceremonyUrlsPath}`);
+    process.exit(1);
+  }
+
+  return ceremonyUrlsPath;
+}

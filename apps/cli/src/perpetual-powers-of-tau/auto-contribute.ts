@@ -1,3 +1,5 @@
+import { getUrlsJson } from "../utils/file_handling.js";
+
 interface CeremonyUrls {
   download_info: {
     field_name: string;
@@ -13,63 +15,78 @@ interface CeremonyUrls {
   };
 }
 
+// Function to validate GitHub tokens and configuration
+function validateTokensAndConfig(): void {
+  // Get tokens from environment
+  const gistToken = process.env.GITHUB_TOKEN;
+  const repoToken = process.env.GITHUB_TOKEN_SCOPED;
+  const repositoryUrl = process.env.CEREMONY_REPOSITORY_URL;
+
+  // Validate classic token for gists
+  if (!gistToken) {
+    console.error(`🔑 GitHub classic token required for gist creation.`);
+    console.error(`You can provide it by:`);
+    console.error(`  1. Using: brebaje-cli setup gh-token <your-classic-token>`);
+    console.error(`  2. Create a classic token at: https://github.com/settings/tokens`);
+    console.error(`     (Select 'gist' scope only)`);
+    process.exit(1);
+  }
+
+  // Validate classic token format
+  const classicTokenPattern = /^ghp_[A-Za-z0-9]{36}$/;
+  if (!classicTokenPattern.test(gistToken)) {
+    console.error(`❌ Invalid GitHub classic token format.`);
+    console.error(`Expected format: ghp_[36 characters]`);
+    console.error(`Please check your token and reconfigure using: brebaje-cli setup gh-token`);
+    process.exit(1);
+  }
+
+  // Validate fine-grained token for repository operations
+  if (!repoToken) {
+    console.error(`🔑 GitHub fine-grained token required for repository operations.`);
+    console.error(`You can set it up by:`);
+    console.error(`  1. Using: brebaje-cli setup gh-token-scoped <your-fine-grained-token>`);
+    console.error(`  2. Create a fine-grained token at: https://github.com/settings/tokens`);
+    console.error(`     (Scope to your forked ceremony repository with Contents + PR permissions)`);
+    process.exit(1);
+  }
+
+  // Validate fine-grained token format
+  const fineGrainedTokenPattern = /^github_pat_[A-Za-z0-9_]{82}$/;
+  if (!fineGrainedTokenPattern.test(repoToken)) {
+    console.error(`❌ Invalid GitHub fine-grained token format.`);
+    console.error(`Expected format: github_pat_[82 characters]`);
+    console.error(
+      `Please check your token and reconfigure using: brebaje-cli setup gh-token-scoped`,
+    );
+    process.exit(1);
+  }
+
+  // Validate repository URL
+  if (!repositoryUrl) {
+    console.error(`🏗️ Ceremony repository URL required.`);
+    console.error(`You can set it up by:`);
+    console.error(`  1. Using: brebaje-cli setup ceremony-repo <your-forked-repo-url>`);
+    console.error(`     Example: https://github.com/your-username/ceremony-repo-fork`);
+    process.exit(1);
+  }
+
+  console.log(`✅ Token and configuration validation passed`);
+}
+
 export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Promise<void> {
   try {
     console.log(`🚀 Starting auto-contribute process...`);
     console.log(`This will: download → contribute → upload → post-record`);
     console.log(`=`.repeat(60));
 
+    // Validate tokens and configuration before starting
+    console.log(`🔐 Validating GitHub tokens and configuration...`);
+    validateTokensAndConfig();
+
     // Find ceremony URLs JSON file
     const fs = await import("fs");
-    const path = await import("path");
-
-    let ceremonyUrlsPath: string;
-
-    if (jsonPath) {
-      // Use provided path
-      ceremonyUrlsPath = jsonPath;
-    } else {
-      // Check input folder for ceremony-urls JSON files
-      const inputDir = "input";
-      if (!fs.existsSync(inputDir)) {
-        console.error(`❌ Error: No ceremony URLs JSON file provided and input/ folder not found`);
-        console.error(`Please either:`);
-        console.error(`  1. Provide JSON file path: brebaje-cli ppot auto-contribute <json-path>`);
-        console.error(`  2. Place ceremony URLs JSON file in input/ folder`);
-        process.exit(1);
-      }
-
-      const jsonFiles = fs
-        .readdirSync(inputDir)
-        .filter((file) => file.startsWith("ceremony-urls-") && file.endsWith(".json"));
-
-      if (jsonFiles.length === 0) {
-        console.error(`❌ Error: No ceremony URLs JSON file found in input/ folder`);
-        console.error(`Please either:`);
-        console.error(`  1. Provide JSON file path: brebaje-cli ppot auto-contribute <json-path>`);
-        console.error(
-          `  2. Generate URLs: brebaje-cli ppot generate-urls <filename> -o input/ceremony-urls-<name>.json`,
-        );
-        process.exit(1);
-      }
-
-      if (jsonFiles.length > 1) {
-        console.error(`❌ Error: Multiple ceremony URLs JSON files found in input/ folder:`);
-        jsonFiles.forEach((file) => console.error(`  - ${file}`));
-        console.error(
-          `Please specify which one to use: brebaje-cli ppot auto-contribute input/<filename>.json`,
-        );
-        process.exit(1);
-      }
-
-      ceremonyUrlsPath = path.join(inputDir, jsonFiles[0]);
-    }
-
-    // Check if file exists
-    if (!fs.existsSync(ceremonyUrlsPath)) {
-      console.error(`❌ Error: Ceremony URLs file not found: ${ceremonyUrlsPath}`);
-      process.exit(1);
-    }
+    const ceremonyUrlsPath = getUrlsJson("input", jsonPath);
 
     // Read and parse JSON file
     let ceremonyUrls: CeremonyUrls;
@@ -139,8 +156,13 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
       await postRecordPerpetualPowersOfTau();
       console.log(`✅ Record posted`);
     } catch (error) {
-      console.warn(`⚠️  Record posting failed:`, error);
-      console.warn(`You can manually post your record later using: brebaje-cli ppot post-record`);
+      console.error(`❌ Record posting failed unexpectedly:`, error);
+      console.error(`This shouldn't happen since tokens were validated. Please check:`);
+      console.error(`  1. Network connectivity`);
+      console.error(`  2. Token permissions are still valid`);
+      console.error(`  3. Repository access`);
+      console.error(`You can retry with: brebaje-cli ppot post-record`);
+      throw error; // Re-throw since this indicates a serious issue
     }
 
     // Success summary
@@ -149,7 +171,7 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
     console.log(`✅ Challenge file downloaded`);
     console.log(`✅ Contribution made and saved`);
     console.log(`✅ Contribution uploaded to ceremony`);
-    console.log(`✅ Record posted publicly (if GitHub token provided)`);
+    console.log(`✅ Record posted publicly to GitHub`);
     console.log(`\n💡 Your contribution is now part of the ceremony!`);
 
     // Cleanup suggestion

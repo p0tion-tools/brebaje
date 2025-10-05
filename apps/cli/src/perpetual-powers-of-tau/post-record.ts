@@ -1,4 +1,4 @@
-import { getNewerFile } from "../utils/file_handling.js";
+import { getNewerFile, getUrlsJson } from "../utils/file_handling.js";
 
 // Function to prompt user for input
 async function promptUser(question: string): Promise<string> {
@@ -342,36 +342,24 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     let index = parseInt(match[2]);
 
     // Try to find ceremony URLs JSON file in input directory to get the correct index
-    const inputDir = "input";
     let ceremonyIndex = index; // fallback to record file index
 
-    if (fs.existsSync(inputDir)) {
-      const inputFiles = fs.readdirSync(inputDir);
-      const ceremonyUrlsFiles = inputFiles.filter(
-        (file) => file.startsWith("ceremony-urls-") && file.endsWith(".json"),
-      );
+    try {
+      const ceremonyUrlsPath = getUrlsJson("input");
+      const ceremonyUrlsContent = fs.readFileSync(ceremonyUrlsPath, "utf-8");
+      const ceremonyUrls = JSON.parse(ceremonyUrlsContent);
 
-      if (ceremonyUrlsFiles.length > 0) {
-        try {
-          const ceremonyUrlsFile = ceremonyUrlsFiles[0]; // Use the first one found
-          const ceremonyUrlsPath = path.join(inputDir, ceremonyUrlsFile);
-          const ceremonyUrlsContent = fs.readFileSync(ceremonyUrlsPath, "utf-8");
-          const ceremonyUrls = JSON.parse(ceremonyUrlsContent);
-
-          // Extract index from upload_info.field_name (e.g., "pot10_0013.ptau" -> 0013)
-          if (ceremonyUrls.upload_info && ceremonyUrls.upload_info.field_name) {
-            const uploadMatch = ceremonyUrls.upload_info.field_name.match(/pot\d+_(\d+)\.ptau/);
-            if (uploadMatch) {
-              ceremonyIndex = parseInt(uploadMatch[1]);
-              console.log(`📋 Using ceremony index ${ceremonyIndex} from ${ceremonyUrlsFile}`);
-            }
-          }
-        } catch (error) {
-          console.warn(
-            `⚠️ Could not parse ceremony URLs file, using index from record file: ${index}`,
-          );
+      // Extract index from upload_info.field_name (e.g., "pot10_0013.ptau" -> 0013)
+      if (ceremonyUrls.upload_info && ceremonyUrls.upload_info.field_name) {
+        const uploadMatch = ceremonyUrls.upload_info.field_name.match(/pot\d+_(\d+)\.ptau/);
+        if (uploadMatch) {
+          ceremonyIndex = parseInt(uploadMatch[1]);
+          console.log(`📋 Using ceremony index ${ceremonyIndex} from ceremony URLs file`);
         }
       }
+    } catch (error) {
+      // getUrlsJson throws and exits on critical errors, so this handles JSON parsing errors
+      console.warn(`⚠️ Could not parse ceremony URLs file, using index from record file: ${index}`);
     }
 
     const recordFilePath = path.join(outputDir, recordFile);
