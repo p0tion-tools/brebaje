@@ -111,7 +111,6 @@ export async function setupGitHubToken(githubToken: string): Promise<void> {
     process.exit(1);
   }
 }
-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;
 
 export async function setupGitHubTokenScoped(githubTokenScoped: string): Promise<void> {
   try {
