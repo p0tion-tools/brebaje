@@ -96,7 +96,7 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
     // Build command with optional name parameter
     let command = `npx snarkjs powersoftau contribute ${inputFilePath} ${outputFile}`;
     if (contributorName) {
-      command += ` --name "${contributorName}"`;
+      command += ` --name="${contributorName}"`;
     }
     console.log(`Running: ${command}`);
 
