@@ -1,19 +1,17 @@
-import { config } from "dotenv";
-
-// Load environment variables
-config();
-
-// Environment variables
-const AWS_ACCESS_KEY_ID = process.env.AWS_ACCESS_KEY_ID;
-const AWS_SECRET_ACCESS_KEY = process.env.AWS_SECRET_ACCESS_KEY;
-const AWS_REGION = process.env.AWS_REGION || "us-east-1";
-const S3_BUCKET = process.env.S3_BUCKET || "cardano-trusted-setup-test";
-const S3_PREFIX = process.env.S3_PREFIX || "Cardano-PPOT/";
+import { loadConfig } from "../utils/config.js";
 
 export async function generateDownloadUrlPerpetualPowersOfTau(
   filename: string,
   expirationMinutes: number = 1440, // 24 hours default for downloads
 ): Promise<void> {
+  // Load configuration
+  const config = loadConfig();
+  const AWS_ACCESS_KEY_ID = config.AWS_ACCESS_KEY_ID;
+  const AWS_SECRET_ACCESS_KEY = config.AWS_SECRET_ACCESS_KEY;
+  const AWS_REGION = config.AWS_REGION;
+  const S3_BUCKET = config.S3_BUCKET;
+  const S3_PREFIX = config.S3_PREFIX;
+
   try {
     console.log(`🔗 Generating pre-signed download URL for: ${filename}`);
 

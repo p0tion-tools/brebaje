@@ -1,4 +1,5 @@
 import { getNewerFile, getUrlsJson } from "../utils/file_handling.js";
+import { loadConfig } from "../utils/config.js";
 
 // Function to prompt user for input
 async function promptUser(question: string): Promise<string> {
@@ -368,18 +369,19 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     // Read the record file content
     const recordContent = fs.readFileSync(recordFilePath, "utf-8");
 
-    // Get tokens and configuration from environment
-    const gistToken = githubToken || process.env.GITHUB_TOKEN;
-    const repoToken = process.env.GITHUB_TOKEN_SCOPED;
-    const repositoryUrl = process.env.CEREMONY_REPOSITORY_URL;
-    const contributorName = process.env.CONTRIBUTOR_NAME;
+    // Get tokens and configuration from global/local config
+    const config = loadConfig();
+    const gistToken = githubToken || config.GITHUB_TOKEN;
+    const repoToken = config.GITHUB_TOKEN_SCOPED;
+    const repositoryUrl = config.CEREMONY_REPOSITORY_URL;
+    const contributorName = config.CONTRIBUTOR_NAME;
 
     // Validate required tokens and configuration
     if (!gistToken) {
       console.error(`🔑 GitHub classic token required for gist creation.`);
       console.error(`You can provide it by:`);
       console.error(`  1. Setting GITHUB_TOKEN environment variable`);
-      console.error(`  2. Using: brebaje-cli setup gh-token <your-classic-token>`);
+      console.error(`  2. Using: brebaje-cli config gh-token <your-classic-token>`);
       console.error(`  3. Create a classic token at: https://github.com/settings/tokens`);
       console.error(`     (Select 'gist' scope only)`);
       process.exit(1);
@@ -388,7 +390,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     if (!repoToken) {
       console.error(`🔑 GitHub fine-grained token required for repository operations.`);
       console.error(`You can set it up by:`);
-      console.error(`  1. Using: brebaje-cli setup gh-token-scoped <your-fine-grained-token>`);
+      console.error(`  1. Using: brebaje-cli config gh-token-scoped <your-fine-grained-token>`);
       console.error(`  2. Create a fine-grained token at: https://github.com/settings/tokens`);
       console.error(
         `     (Scope to your forked ceremony repository with Contents + PR permissions)`,
@@ -399,7 +401,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     if (!repositoryUrl) {
       console.error(`🏗️ Ceremony repository URL required.`);
       console.error(`You can set it up by:`);
-      console.error(`  1. Using: brebaje-cli setup ceremony-repo <your-forked-repo-url>`);
+      console.error(`  1. Using: brebaje-cli config ceremony-repo <your-forked-repo-url>`);
       console.error(`     Example: https://github.com/your-username/ceremony-repo-fork`);
       process.exit(1);
     }
@@ -407,8 +409,8 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     if (!contributorName) {
       console.error(`👤 Contributor name required for ceremony records.`);
       console.error(`You can set it up by:`);
-      console.error(`  1. Using: brebaje-cli setup name "Your Full Name"`);
-      console.error(`     Example: brebaje-cli setup name "John Doe"`);
+      console.error(`  1. Using: brebaje-cli config name "Your Full Name"`);
+      console.error(`     Example: brebaje-cli config name "John Doe"`);
       process.exit(1);
     }
 
@@ -487,7 +489,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
         } else if (prError.request) {
           console.warn(`📡 Network error - no response received`);
         } else {
-          console.warn(`⚙️  Request setup error:`, prError.message);
+          console.warn(`⚙️  Request config error:`, prError.message);
         }
 
         console.warn(`💡 You can manually create a PR from your fork to the original repository.`);

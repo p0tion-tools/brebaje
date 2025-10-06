@@ -1,13 +1,7 @@
-import { config } from "dotenv";
 import { ScriptLogger } from "../utils/logger.js";
-
-// Load environment variables
-config();
+import { loadConfig } from "../utils/config.js";
 
 const logger = new ScriptLogger("CLI:VM:Verify");
-
-// Environment variables
-const BREBAJE_API_URL = process.env.BREBAJE_API_URL || "http://localhost:3000";
 
 interface CeremonyUrls {
   download_info: {
@@ -29,6 +23,10 @@ interface CeremonyUrls {
 }
 
 export async function verifyVm(jsonPath?: string): Promise<void> {
+  // Load configuration
+  const config = loadConfig();
+  const BREBAJE_API_URL = config.BREBAJE_API_URL;
+
   try {
     logger.log("🔍 Starting VM verification process...");
     console.log(`=`.repeat(60));

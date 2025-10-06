@@ -1,13 +1,6 @@
 import { Command } from "commander";
-import { config } from "dotenv";
 import * as snarkjs from "snarkjs";
-
-// Load environment variables
-config();
-
-// Environment variables
-const CEREMONY_POWER = parseInt(process.env.CEREMONY_POWER || "12");
-const CEREMONY_ELLIPTIC_CURVE = process.env.CEREMONY_ELLIPTIC_CURVE || "bn128";
+import { loadConfig } from "../utils/config.js";
 
 export function setUpPerpetualPowersOfTau(program: Command): void {
   const ppotCommand = program

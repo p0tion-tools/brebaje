@@ -1,22 +1,20 @@
-import { config } from "dotenv";
-
-// Load environment variables
-config();
-
-// Environment variables
-const CEREMONY_POWER = parseInt(process.env.CEREMONY_POWER || "12");
+import { loadConfig } from "../utils/config.js";
 
 export async function contributePerpetualPowersOfTau(name?: string): Promise<void> {
   try {
     console.log(`Contributing to perpetual powers of tau ceremony...`);
 
-    // Determine contributor name from parameter or environment variable
-    const contributorName = name || process.env.CONTRIBUTOR_NAME;
+    // Load configuration
+    const config = loadConfig();
+    const CEREMONY_POWER = parseInt(config.CEREMONY_POWER);
+
+    // Determine contributor name from parameter or global/local config
+    const contributorName = name || config.CONTRIBUTOR_NAME;
     if (contributorName) {
       console.log(`👤 Contributor name: ${contributorName}`);
     } else {
       console.log(
-        `👤 No contributor name specified (use --name flag or setup: brebaje-cli setup name "Your Name")`,
+        `👤 No contributor name specified (use --name flag or config: brebaje-cli config name "Your Name")`,
       );
     }
 
@@ -60,11 +58,10 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
     }
 
     // Find the file with highest contribution index for the ceremony power
-    const ceremonyPower = parseInt(process.env.CEREMONY_POWER || "12");
-    const matchingPowerFiles = contributionFiles.filter((f) => f.power === ceremonyPower);
+    const matchingPowerFiles = contributionFiles.filter((f) => f.power === CEREMONY_POWER);
 
     if (matchingPowerFiles.length === 0) {
-      console.error(`❌ Error: No ceremony files found for power ${ceremonyPower}`);
+      console.error(`❌ Error: No ceremony files found for power ${CEREMONY_POWER}`);
       console.error(
         `Available powers: ${[...new Set(contributionFiles.map((f) => f.power))].join(", ")}`,
       );
@@ -88,7 +85,7 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
 
     // Calculate next increment
     const nextIncrement = (latestFile.index + 1).toString().padStart(4, "0");
-    const outputFile = path.join(outputDir, `pot${ceremonyPower}_${nextIncrement}.ptau`);
+    const outputFile = path.join(outputDir, `pot${CEREMONY_POWER}_${nextIncrement}.ptau`);
 
     // Run snarkjs CLI command for contribution and capture output
     const { execSync } = await import("child_process");
@@ -125,7 +122,7 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
     // Save contribution log to record file
     console.log("📝 Saving contribution record...");
 
-    const recordFileName = `pot${ceremonyPower}_${nextIncrement}_record.txt`;
+    const recordFileName = `pot${CEREMONY_POWER}_${nextIncrement}_record.txt`;
     const recordFilePath = path.join(outputDir, recordFileName);
 
     try {
@@ -139,7 +136,7 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
         ``,
         `File: ${path.basename(outputFile)}`,
         `Size: ${stats.size} bytes (${(stats.size / (1024 * 1024)).toFixed(2)} MB)`,
-        `Ceremony Power: ${ceremonyPower}`,
+        `Ceremony Power: ${CEREMONY_POWER}`,
         `Contribution Index: ${latestFile.index + 1}`,
         `Previous File: ${latestFile.file}`,
         `Generated: ${timestamp}`,

@@ -1,4 +1,5 @@
 import { getUrlsJson } from "../utils/file_handling.js";
+import { loadConfig } from "../utils/config.js";
 
 interface CeremonyUrls {
   download_info: {
@@ -17,17 +18,18 @@ interface CeremonyUrls {
 
 // Function to validate GitHub tokens and configuration
 function validateTokensAndConfig(): void {
-  // Get tokens and configuration from environment
-  const gistToken = process.env.GITHUB_TOKEN;
-  const repoToken = process.env.GITHUB_TOKEN_SCOPED;
-  const repositoryUrl = process.env.CEREMONY_REPOSITORY_URL;
-  const contributorName = process.env.CONTRIBUTOR_NAME;
+  // Get tokens and configuration from global/local config
+  const config = loadConfig();
+  const gistToken = config.GITHUB_TOKEN;
+  const repoToken = config.GITHUB_TOKEN_SCOPED;
+  const repositoryUrl = config.CEREMONY_REPOSITORY_URL;
+  const contributorName = config.CONTRIBUTOR_NAME;
 
   // Validate classic token for gists
   if (!gistToken) {
     console.error(`🔑 GitHub classic token required for gist creation.`);
     console.error(`You can provide it by:`);
-    console.error(`  1. Using: brebaje-cli setup gh-token <your-classic-token>`);
+    console.error(`  1. Using: brebaje-cli config gh-token <your-classic-token>`);
     console.error(`  2. Create a classic token at: https://github.com/settings/tokens`);
     console.error(`     (Select 'gist' scope only)`);
     process.exit(1);
@@ -38,7 +40,7 @@ function validateTokensAndConfig(): void {
   if (!classicTokenPattern.test(gistToken)) {
     console.error(`❌ Invalid GitHub classic token format.`);
     console.error(`Expected format: ghp_[36 characters]`);
-    console.error(`Please check your token and reconfigure using: brebaje-cli setup gh-token`);
+    console.error(`Please check your token and reconfigure using: brebaje-cli config gh-token`);
     process.exit(1);
   }
 
@@ -46,7 +48,7 @@ function validateTokensAndConfig(): void {
   if (!repoToken) {
     console.error(`🔑 GitHub fine-grained token required for repository operations.`);
     console.error(`You can set it up by:`);
-    console.error(`  1. Using: brebaje-cli setup gh-token-scoped <your-fine-grained-token>`);
+    console.error(`  1. Using: brebaje-cli config gh-token-scoped <your-fine-grained-token>`);
     console.error(`  2. Create a fine-grained token at: https://github.com/settings/tokens`);
     console.error(`     (Scope to your forked ceremony repository with Contents + PR permissions)`);
     process.exit(1);
@@ -58,7 +60,7 @@ function validateTokensAndConfig(): void {
     console.error(`❌ Invalid GitHub fine-grained token format.`);
     console.error(`Expected format: github_pat_[82 characters]`);
     console.error(
-      `Please check your token and reconfigure using: brebaje-cli setup gh-token-scoped`,
+      `Please check your token and reconfigure using: brebaje-cli config gh-token-scoped`,
     );
     process.exit(1);
   }
@@ -67,7 +69,7 @@ function validateTokensAndConfig(): void {
   if (!repositoryUrl) {
     console.error(`🏗️ Ceremony repository URL required.`);
     console.error(`You can set it up by:`);
-    console.error(`  1. Using: brebaje-cli setup ceremony-repo <your-forked-repo-url>`);
+    console.error(`  1. Using: brebaje-cli config ceremony-repo <your-forked-repo-url>`);
     console.error(`     Example: https://github.com/your-username/ceremony-repo-fork`);
     process.exit(1);
   }
@@ -76,8 +78,8 @@ function validateTokensAndConfig(): void {
   if (!contributorName) {
     console.error(`👤 Contributor name required for ceremony records.`);
     console.error(`You can set it up by:`);
-    console.error(`  1. Using: brebaje-cli setup name "Your Full Name"`);
-    console.error(`     Example: brebaje-cli setup name "John Doe"`);
+    console.error(`  1. Using: brebaje-cli config name "Your Full Name"`);
+    console.error(`     Example: brebaje-cli config name "John Doe"`);
     process.exit(1);
   }
 
@@ -141,8 +143,9 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
     console.log(`\n🔧 Step 2/4: Making contribution...`);
     try {
       const { contributePerpetualPowersOfTau } = await import("./contribute.js");
-      // Use CONTRIBUTOR_NAME from environment for auto-contribute workflow
-      const contributorName = process.env.CONTRIBUTOR_NAME;
+      // Use CONTRIBUTOR_NAME from global/local config for auto-contribute workflow
+      const config = loadConfig();
+      const contributorName = config.CONTRIBUTOR_NAME;
       await contributePerpetualPowersOfTau(contributorName);
       console.log(`✅ Contribution completed`);
     } catch (error) {

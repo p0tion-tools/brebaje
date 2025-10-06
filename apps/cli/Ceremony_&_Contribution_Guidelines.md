@@ -184,23 +184,25 @@ To submit contribution records to the ceremony repository, you need a **GitHub f
 7. Click "Generate token"
 8. **Important**: Copy the token immediately (you won't see it again)
 
-### Step 3: Configure CLI Setup
+### Step 3: Configure CLI
 
-Configure all required settings using the setup commands:
+Configure all required settings using the config commands:
 
 ```bash
 # Set your full name for contribution records
-brebaje-cli setup name "Your Full Name"
+brebaje-cli config name "Your Full Name"
 
 # Set your forked ceremony repository URL
-brebaje-cli setup ceremony-repo https://github.com/YOUR-USERNAME/ceremony-repo-name
+brebaje-cli config ceremony-repo https://github.com/YOUR-USERNAME/ceremony-repo-name
 
 # Configure GitHub classic token for gist sharing
-brebaje-cli setup gh-token ghp_your_classic_token_here
+brebaje-cli config gh-token ghp_your_classic_token_here
 
 # Configure fine-grained token for repository operations
-brebaje-cli setup gh-token-scoped github_pat_your_fine_grained_token_here
+brebaje-cli config gh-token-scoped github_pat_your_fine_grained_token_here
 ```
+
+> **📝 Note for existing users**: If you previously used `setup` commands, your local configuration will continue to work. To migrate to the new global configuration system, run: `brebaje-cli config migrate`
 
 Replace the placeholders with your actual values:
 
@@ -315,9 +317,13 @@ apps/cli/
 ├── output/              # Your contributions saved here
 │   ├── pot12_0006.ptau
 │   └── pot12_0006_record.txt
-├── .env                 # Your configuration (keep private!)
 └── ceremony-urls.json   # URLs file from coordinator
 ```
+
+**Configuration location:**
+
+- Global config: `~/.brebaje/.env` (recommended, works from any directory)
+- Local config: `apps/cli/.env` (development only, keep private!)
 
 **What gets submitted to GitHub:**
 
