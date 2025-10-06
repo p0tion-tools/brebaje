@@ -4,7 +4,7 @@
 
 **The perpetual powers of tau ceremony**
 
-The perpetual powers of tau (also known as the phase-1 trusted setup) is a cryptographic prelude used to derive the proving and verification keys required by Zero-Knowledge protocols. The trusted setup is important for Cardano because it lays the secure foundations for running applications that rely on Zero-Knowledge proofs. In our journey of developing applications, we found that most robust ceremonies target elliptic curves different from those used by Cardano ( the bls12-381 elliptic curve). This ceremony will construct partial zk-SNARK parameters for circuits up to depth 2^27 using the BLS12-381 elliptic curve construction, which will be practically suitable for almost circuits available out there.
+The perpetual powers of tau (also known as the phase-1 trusted setup) is a cryptographic prelude used to derive the proving and verification keys required by Zero-Knowledge protocols. The trusted setup is important for Cardano because it lays the secure foundations for running applications that rely on Zero-Knowledge proofs. In our journey of developing applications, we found that most robust ceremonies target elliptic curves different from those used by Cardano ( the bls12-381 elliptic curve). This ceremony will construct partial zk-SNARK parameters for circuits up to depth 2^24 using the BLS12-381 elliptic curve construction, which will be practically suitable for almost circuits available out there.
 
 **How does it works?**
 
@@ -137,9 +137,25 @@ brebaje-cli --help
 
 ## Configuration for Contribution
 
-### Create GitHub Personal Access Token
+### Step 1: Fork the Ceremony Repository
 
-To post contribution records, you need a **GitHub classic personal access token** (not a fine-grained token):
+Before creating tokens, you must fork the official ceremony repository to your GitHub account:
+
+1. Go to the official ceremony repository (URL will be provided by coordinators)
+2. Click the **"Fork"** button in the top-right corner
+3. Select your GitHub account as the destination
+4. Keep the repository **public** (required for token access)
+5. Note your fork URL: `https://github.com/YOUR-USERNAME/ceremony-repo-name`
+
+**Important**: You will use YOUR FORK URL in the setup commands, not the original repository URL.
+
+### Step 2: Create GitHub Tokens
+
+The CLI requires **two different GitHub tokens** for complete functionality:
+
+#### Create Classic Token (For Gist Sharing)
+
+To post contribution records publicly, you need a **GitHub classic personal access token**:
 
 ![GitHub Token Creation](./images/github-token-creation.jpg)
 
@@ -153,15 +169,45 @@ To post contribution records, you need a **GitHub classic personal access token*
 
 ![GitHub Token Permissions](./images/github-token-permissions.jpg)
 
-### Configure GitHub Token
+#### Create Fine-grained Token (For Repository Operations)
 
-Once you have your GitHub classic token, configure it using the CLI:
+To submit contribution records to the ceremony repository, you need a **GitHub fine-grained personal access token**:
+
+1. Go to [GitHub Settings > Developer settings > Personal access tokens > Fine-grained tokens](https://github.com/settings/tokens?type=beta)
+2. Click "Generate new token"
+3. Give it a descriptive name (e.g., "Brebaje CLI - Repository Access")
+4. Set expiration (recommend 90 days or custom)
+5. **Resource access**: Select "Selected repositories" and choose YOUR FORKED ceremony repository
+6. **Repository permissions**: Select the following:
+   - ✅ **Contents**: Read and write
+   - ✅ **Pull requests**: Read and write
+7. Click "Generate token"
+8. **Important**: Copy the token immediately (you won't see it again)
+
+### Step 3: Configure CLI Setup
+
+Configure all required settings using the setup commands:
 
 ```bash
-brebaje-cli setup gh-token <github_classic_token>
+# Set your full name for contribution records
+brebaje-cli setup name "Your Full Name"
+
+# Set your forked ceremony repository URL
+brebaje-cli setup ceremony-repo https://github.com/YOUR-USERNAME/ceremony-repo-name
+
+# Configure GitHub classic token for gist sharing
+brebaje-cli setup gh-token ghp_your_classic_token_here
+
+# Configure fine-grained token for repository operations
+brebaje-cli setup gh-token-scoped github_pat_your_fine_grained_token_here
 ```
 
-Replace `<github_classic_token>` with your actual GitHub token.
+Replace the placeholders with your actual values:
+
+- `YOUR-USERNAME`: Your GitHub username
+- `ceremony-repo-name`: The actual ceremony repository name
+- `ghp_your_classic_token_here`: Your GitHub classic token
+- `github_pat_your_fine_grained_token_here`: Your GitHub fine-grained token
 
 ### Receive Ceremony URLs from Coordinator
 
@@ -209,11 +255,23 @@ This command will automatically:
 1. 📥 Download the challenge file
 2. 🔧 Make your contribution
 3. 📤 Upload your contribution
-4. 📋 Post your contribution record to GitHub Gist
+4. 📋 Post your contribution record to GitHub Gist and ceremony repository
+5. 🔗 Generate pull request links for official submission
 
-### Share Your Contribution on Social Media
+### Complete Your Contribution Submission
 
-After posting your contribution record, the CLI will automatically generate a Twitter/X sharing link. Simply copy and click the provided Twitter link to share your participation in the ceremony with the Cardano community!
+**CRITICAL**: After the auto-contribute command completes, you MUST open the generated links to finalize your contribution:
+
+1. **Open the Pull Request Link**: The CLI will display a pull request URL like:
+   ```
+   🔄 Create pull request:
+   https://github.com/original-ceremony-repo/compare/main...your-username:main?expand=1&title=...
+   ```
+2. **Click "Create pull request"** on the GitHub page to officially submit your contribution to the ceremony
+
+3. **Share on Social Media**: Click the generated Twitter/X link to share your participation with the Cardano community
+
+**Your contribution is NOT complete until you create the pull request!**
 
 ### Manual Step-by-Step Process
 
@@ -236,9 +294,15 @@ After posting your contribution record, the CLI will automatically generate a Tw
    ```
 
 4. **Post contribution record:**
+
    ```bash
    brebaje-cli ppot post-record
    ```
+
+5. **Complete submission by opening generated links:**
+   - Open the pull request URL displayed in the terminal
+   - Click "Create pull request" on GitHub to submit officially
+   - Share your contribution using the provided Twitter/X link
 
 ## File Structure After Contribution
 
@@ -251,8 +315,17 @@ apps/cli/
 ├── output/              # Your contributions saved here
 │   ├── pot12_0006.ptau
 │   └── pot12_0006_record.txt
+├── .env                 # Your configuration (keep private!)
 └── ceremony-urls.json   # URLs file from coordinator
 ```
+
+**What gets submitted to GitHub:**
+
+- **Gist**: Public sharing link with your contribution record
+- **Repository**: Official folder in your forked ceremony repo containing:
+  - `pot12_0006_record.txt` - Your contribution record
+  - `response_resume.md` - Contribution metadata and hardware info
+- **Pull Request**: Official submission from your fork to the original ceremony repository
 
 ## Troubleshooting
 
