@@ -368,10 +368,11 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     // Read the record file content
     const recordContent = fs.readFileSync(recordFilePath, "utf-8");
 
-    // Get tokens from environment
+    // Get tokens and configuration from environment
     const gistToken = githubToken || process.env.GITHUB_TOKEN;
     const repoToken = process.env.GITHUB_TOKEN_SCOPED;
     const repositoryUrl = process.env.CEREMONY_REPOSITORY_URL;
+    const contributorName = process.env.CONTRIBUTOR_NAME;
 
     // Validate required tokens and configuration
     if (!gistToken) {
@@ -403,6 +404,14 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
       process.exit(1);
     }
 
+    if (!contributorName) {
+      console.error(`👤 Contributor name required for ceremony records.`);
+      console.error(`You can set it up by:`);
+      console.error(`  1. Using: brebaje-cli setup name "Your Full Name"`);
+      console.error(`     Example: brebaje-cli setup name "John Doe"`);
+      process.exit(1);
+    }
+
     // Get GitHub username from scoped token
     let githubUsername: string;
     try {
@@ -413,14 +422,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
       process.exit(1);
     }
 
-    // Prompt user for contributor name
-    console.log(`\n📝 Please provide your information for the contribution record:`);
-    const contributorName = await promptUser("Enter your full name: ");
-
-    if (!contributorName) {
-      console.error(`❌ Contributor name is required.`);
-      process.exit(1);
-    }
+    console.log(`👤 Contributor name: ${contributorName}`);
 
     // Optional: Prompt for hardware information
     const hardwareInfo = await promptUser(

@@ -17,10 +17,11 @@ interface CeremonyUrls {
 
 // Function to validate GitHub tokens and configuration
 function validateTokensAndConfig(): void {
-  // Get tokens from environment
+  // Get tokens and configuration from environment
   const gistToken = process.env.GITHUB_TOKEN;
   const repoToken = process.env.GITHUB_TOKEN_SCOPED;
   const repositoryUrl = process.env.CEREMONY_REPOSITORY_URL;
+  const contributorName = process.env.CONTRIBUTOR_NAME;
 
   // Validate classic token for gists
   if (!gistToken) {
@@ -68,6 +69,15 @@ function validateTokensAndConfig(): void {
     console.error(`You can set it up by:`);
     console.error(`  1. Using: brebaje-cli setup ceremony-repo <your-forked-repo-url>`);
     console.error(`     Example: https://github.com/your-username/ceremony-repo-fork`);
+    process.exit(1);
+  }
+
+  // Validate contributor name
+  if (!contributorName) {
+    console.error(`👤 Contributor name required for ceremony records.`);
+    console.error(`You can set it up by:`);
+    console.error(`  1. Using: brebaje-cli setup name "Your Full Name"`);
+    console.error(`     Example: brebaje-cli setup name "John Doe"`);
     process.exit(1);
   }
 
@@ -131,7 +141,9 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
     console.log(`\n🔧 Step 2/4: Making contribution...`);
     try {
       const { contributePerpetualPowersOfTau } = await import("./contribute.js");
-      await contributePerpetualPowersOfTau();
+      // Use CONTRIBUTOR_NAME from environment for auto-contribute workflow
+      const contributorName = process.env.CONTRIBUTOR_NAME;
+      await contributePerpetualPowersOfTau(contributorName);
       console.log(`✅ Contribution completed`);
     } catch (error) {
       console.error(`❌ Contribution failed:`, error);

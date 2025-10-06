@@ -32,4 +32,13 @@ export function setUpSetupCommands(program: Command): void {
       const { setupCeremonyRepository } = await import("./ceremony-repo.js");
       await setupCeremonyRepository(repositoryUrl);
     });
+
+  setupCommand
+    .command("name")
+    .description("Configure contributor name for ceremony contributions")
+    .argument("<full_name>", "Your full name for contribution records")
+    .action(async (fullName: string) => {
+      const { setupContributorName } = await import("./name.js");
+      await setupContributorName(fullName);
+    });
 }

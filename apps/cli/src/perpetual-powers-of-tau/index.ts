@@ -35,9 +35,10 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
   ppotCommand
     .command("contribute")
     .description("Make a contribution to the perpetual powers of tau ceremony")
-    .action(async () => {
+    .option("--name <name>", "Contributor name (uses CONTRIBUTOR_NAME from env if not provided)")
+    .action(async (options: { name?: string }) => {
       const { contributePerpetualPowersOfTau } = await import("./contribute.js");
-      await contributePerpetualPowersOfTau();
+      await contributePerpetualPowersOfTau(options.name);
     });
 
   ppotCommand

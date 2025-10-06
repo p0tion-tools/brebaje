@@ -6,9 +6,19 @@ config();
 // Environment variables
 const CEREMONY_POWER = parseInt(process.env.CEREMONY_POWER || "12");
 
-export async function contributePerpetualPowersOfTau(): Promise<void> {
+export async function contributePerpetualPowersOfTau(name?: string): Promise<void> {
   try {
     console.log(`Contributing to perpetual powers of tau ceremony...`);
+
+    // Determine contributor name from parameter or environment variable
+    const contributorName = name || process.env.CONTRIBUTOR_NAME;
+    if (contributorName) {
+      console.log(`👤 Contributor name: ${contributorName}`);
+    } else {
+      console.log(
+        `👤 No contributor name specified (use --name flag or setup: brebaje-cli setup name "Your Name")`,
+      );
+    }
 
     const fs = await import("fs");
     const path = await import("path");
@@ -83,7 +93,11 @@ export async function contributePerpetualPowersOfTau(): Promise<void> {
     // Run snarkjs CLI command for contribution and capture output
     const { execSync } = await import("child_process");
 
-    const command = `npx snarkjs powersoftau contribute ${inputFilePath} ${outputFile}`;
+    // Build command with optional name parameter
+    let command = `npx snarkjs powersoftau contribute ${inputFilePath} ${outputFile}`;
+    if (contributorName) {
+      command += ` --name "${contributorName}"`;
+    }
     console.log(`Running: ${command}`);
 
     // Run snarkjs with inherited stdio for interactive input
@@ -119,7 +133,7 @@ export async function contributePerpetualPowersOfTau(): Promise<void> {
       const stats = fs.statSync(outputFile);
 
       // Create record content with contribution log
-      const recordContent = [
+      const recordLines = [
         `Contribution Record`,
         `==================`,
         ``,
@@ -129,6 +143,14 @@ export async function contributePerpetualPowersOfTau(): Promise<void> {
         `Contribution Index: ${latestFile.index + 1}`,
         `Previous File: ${latestFile.file}`,
         `Generated: ${timestamp}`,
+      ];
+
+      // Add contributor name if provided
+      if (contributorName) {
+        recordLines.push(`Contributor: ${contributorName}`);
+      }
+
+      recordLines.push(
         ``,
         `Contribution Log:`,
         `================`,
@@ -136,7 +158,9 @@ export async function contributePerpetualPowersOfTau(): Promise<void> {
         ``,
         `This record contains the output from the snarkjs contribution command`,
         `including cryptographic hashes for verification purposes.`,
-      ].join("\n");
+      );
+
+      const recordContent = recordLines.join("\n");
 
       // Write record file
       fs.writeFileSync(recordFilePath, recordContent, "utf-8");
