@@ -132,11 +132,17 @@ export async function verifyVm(jsonPath?: string): Promise<void> {
 
     // Make API request
     try {
+      // Import https module for SSL configuration
+      const https = await import("https");
+
       const response = await axios.post(`${BREBAJE_API_URL}/vm/verify`, verificationPayload, {
         headers: {
           "Content-Type": "application/json",
         },
         timeout: 30000, // 30 second timeout
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false, // Bypass self-signed certificate verification
+        }),
       });
 
       // Success response
