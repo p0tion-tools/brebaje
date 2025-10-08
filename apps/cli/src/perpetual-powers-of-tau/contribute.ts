@@ -1,4 +1,97 @@
 import { loadConfig } from "../utils/config.js";
+import crypto from "crypto";
+import readline from "readline";
+
+/**
+ * Validates user-provided entropy input for strength
+ */
+function validateUserEntropy(input: string): { valid: boolean; warnings: string[] } {
+  const warnings: string[] = [];
+  const MIN_LENGTH = 60;
+
+  // Check minimum length
+  if (input.length < MIN_LENGTH) {
+    return { valid: false, warnings: [`Input must be at least ${MIN_LENGTH} characters`] };
+  }
+
+  // Check for common weak patterns
+  const weakPatterns = [
+    { pattern: /^(.)\1+$/, message: "Avoid repeating the same character" },
+    { pattern: /^(01|10|012|123|234|345|456|567|678|789)+$/, message: "Avoid simple sequences" },
+    { pattern: /^(abc|xyz|qwerty|asdf)+/i, message: "Avoid keyboard patterns" },
+    { pattern: /^(password|secret|random|entropy)/i, message: "Avoid common words" },
+  ];
+
+  for (const { pattern, message } of weakPatterns) {
+    if (pattern.test(input)) {
+      warnings.push(`⚠️  Weak pattern detected: ${message}`);
+    }
+  }
+
+  return { valid: true, warnings };
+}
+
+/**
+ * Generates secure entropy by combining user input with OS randomness
+ */
+async function generateSecureEntropy(): Promise<string> {
+  return new Promise((resolve, reject) => {
+    const rl = readline.createInterface({
+      input: process.stdin,
+      output: process.stdout,
+    });
+
+    console.log("\n🔐 Secure Entropy Generation");
+    console.log("━".repeat(50));
+    console.log("Your input will be combined with OS randomness and hashed.");
+    console.log("This ensures maximum entropy for your contribution.\n");
+
+    rl.question("Please provide random text (minimum 60 characters):\n> ", (userInput) => {
+      rl.close();
+
+      // Validate user input
+      const validation = validateUserEntropy(userInput);
+
+      if (!validation.valid) {
+        console.error(`\n❌ ${validation.warnings[0]}`);
+        reject(new Error(validation.warnings[0]));
+        return;
+      }
+
+      // Show warnings but continue
+      if (validation.warnings.length > 0) {
+        validation.warnings.forEach((warning) => console.warn(warning));
+        console.log("Consider using a more random input for better security.\n");
+      }
+
+      try {
+        // Get high-resolution timestamp (nanoseconds since process start)
+        const timestamp = process.hrtime.bigint().toString();
+
+        // Generate 256 bytes (2048 bits) of OS randomness (equivalent to xxd -p -l 256 /dev/urandom)
+        const osRandom = crypto.randomBytes(256);
+
+        // Combine timestamp + user input + OS randomness
+        const combined = timestamp + userInput + osRandom.toString("hex");
+
+        // Hash with SHA256
+        const entropyHash = crypto.createHash("sha256").update(combined).digest("hex");
+
+        // Clear sensitive data from memory (best effort)
+        userInput = "";
+
+        console.log("✅ Adding high-resolution timestamp...");
+        console.log("✅ Combining with OS randomness...");
+        console.log("✅ Entropy generated successfully\n");
+
+        resolve(entropyHash);
+      } catch (error) {
+        console.error("❌ Failed to generate entropy:", error);
+        reject(error);
+      }
+    });
+  });
+}
 
 export async function contributePerpetualPowersOfTau(name?: string): Promise<void> {
   try {
@@ -87,19 +180,32 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
     const nextIncrement = (latestFile.index + 1).toString().padStart(4, "0");
     const outputFile = path.join(outputDir, `pot${CEREMONY_POWER}_${nextIncrement}.ptau`);
 
+    // Generate secure entropy
+    let entropy: string;
+    try {
+      entropy = await generateSecureEntropy();
+    } catch (error) {
+      console.error("❌ Entropy generation failed");
+      throw error;
+    }
+
     // Run snarkjs CLI command for contribution and capture output
     const { execSync } = await import("child_process");
 
-    // Build command with optional name parameter
+    // Build command with name and entropy parameters
     let command = `npx snarkjs powersoftau contribute ${inputFilePath} ${outputFile}`;
     if (contributorName) {
       command += ` --name="${contributorName}"`;
     }
-    console.log(`Running: ${command}`);
+    command += ` -e="${entropy}"`;
 
-    // Run snarkjs with inherited stdio for interactive input
+    console.log(
+      `Running: npx snarkjs powersoftau contribute ${inputFilePath} ${outputFile}${contributorName ? ` --name="${contributorName}"` : ""} -e=[REDACTED]`,
+    );
+
+    // Run snarkjs with piped stdio
     try {
-      execSync(command, { stdio: "inherit" });
+      execSync(command, { stdio: "pipe" });
     } catch (error: any) {
       console.error("❌ Contribution command failed");
       throw error;
