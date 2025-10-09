@@ -1,5 +1,7 @@
 import { getUrlsJson } from "../utils/file_handling.js";
 import { loadConfig } from "../utils/config.js";
+import { ScriptLogger } from "../utils/logger.js";
+import { banner, infoBox, warningBox } from "../utils/visual.js";
 
 interface CeremonyUrls {
   download_info: {
@@ -18,6 +20,8 @@ interface CeremonyUrls {
 
 // Function to validate GitHub tokens and configuration
 function validateTokensAndConfig(): void {
+  const logger = new ScriptLogger("CLI:AutoContribute:Validation");
+
   // Get tokens and configuration from global/local config
   const config = loadConfig();
   const gistToken = config.GITHUB_TOKEN;
@@ -27,73 +31,89 @@ function validateTokensAndConfig(): void {
 
   // Validate classic token for gists
   if (!gistToken) {
-    console.error(`🔑 GitHub classic token required for gist creation.`);
-    console.error(`You can provide it by:`);
-    console.error(`  1. Using: brebaje-cli config gh-token <your-classic-token>`);
-    console.error(`  2. Create a classic token at: https://github.com/settings/tokens`);
-    console.error(`     (Select 'gist' scope only)`);
+    warningBox("GitHub Classic Token Required", [
+      "Classic token required for gist creation.",
+      "You can provide it by:",
+      "  1. Using: brebaje-cli config gh-token <your-classic-token>",
+      "  2. Create a classic token at: https://github.com/settings/tokens",
+      "     (Select 'gist' scope only)",
+    ]);
     process.exit(1);
   }
 
   // Validate classic token format
   const classicTokenPattern = /^ghp_[A-Za-z0-9]{36}$/;
   if (!classicTokenPattern.test(gistToken)) {
-    console.error(`❌ Invalid GitHub classic token format.`);
-    console.error(`Expected format: ghp_[36 characters]`);
-    console.error(`Please check your token and reconfigure using: brebaje-cli config gh-token`);
+    logger.error("Invalid GitHub classic token format");
+    logger.error("Expected format: ghp_[36 characters]");
+    logger.error("Please check your token and reconfigure using: brebaje-cli config gh-token");
     process.exit(1);
   }
 
   // Validate fine-grained token for repository operations
   if (!repoToken) {
-    console.error(`🔑 GitHub fine-grained token required for repository operations.`);
-    console.error(`You can set it up by:`);
-    console.error(`  1. Using: brebaje-cli config gh-token-scoped <your-fine-grained-token>`);
-    console.error(`  2. Create a fine-grained token at: https://github.com/settings/tokens`);
-    console.error(`     (Scope to your forked ceremony repository with Contents + PR permissions)`);
+    warningBox("GitHub Fine-Grained Token Required", [
+      "Fine-grained token required for repository operations.",
+      "You can set it up by:",
+      "  1. Using: brebaje-cli config gh-token-scoped <your-fine-grained-token>",
+      "  2. Create a fine-grained token at: https://github.com/settings/tokens",
+      "     (Scope to your forked ceremony repository with Contents + PR permissions)",
+    ]);
     process.exit(1);
   }
 
   // Validate fine-grained token format
   const fineGrainedTokenPattern = /^github_pat_[A-Za-z0-9_]{82}$/;
   if (!fineGrainedTokenPattern.test(repoToken)) {
-    console.error(`❌ Invalid GitHub fine-grained token format.`);
-    console.error(`Expected format: github_pat_[82 characters]`);
-    console.error(
-      `Please check your token and reconfigure using: brebaje-cli config gh-token-scoped`,
+    logger.error("Invalid GitHub fine-grained token format");
+    logger.error("Expected format: github_pat_[82 characters]");
+    logger.error(
+      "Please check your token and reconfigure using: brebaje-cli config gh-token-scoped",
     );
     process.exit(1);
   }
 
   // Validate repository URL
   if (!repositoryUrl) {
-    console.error(`🏗️ Ceremony repository URL required.`);
-    console.error(`You can set it up by:`);
-    console.error(`  1. Using: brebaje-cli config ceremony-repo <your-forked-repo-url>`);
-    console.error(`     Example: https://github.com/your-username/ceremony-repo-fork`);
+    warningBox("Ceremony Repository URL Required", [
+      "Repository URL required for ceremony operations.",
+      "You can set it up by:",
+      "  1. Using: brebaje-cli config ceremony-repo <your-forked-repo-url>",
+      "     Example: https://github.com/your-username/ceremony-repo-fork",
+    ]);
     process.exit(1);
   }
 
   // Validate contributor name
   if (!contributorName) {
-    console.error(`👤 Contributor name required for ceremony records.`);
-    console.error(`You can set it up by:`);
-    console.error(`  1. Using: brebaje-cli config name "Your Full Name"`);
-    console.error(`     Example: brebaje-cli config name "John Doe"`);
+    warningBox("Contributor Name Required", [
+      "Contributor name required for ceremony records.",
+      "You can set it up by:",
+      '  1. Using: brebaje-cli config name "Your Full Name"',
+      '     Example: brebaje-cli config name "John Doe"',
+    ]);
     process.exit(1);
   }
 
-  console.log(`✅ Token and configuration validation passed`);
+  logger.success("Token and configuration validation passed");
 }
 
 export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Promise<void> {
+  const logger = new ScriptLogger("CLI:AutoContribute");
+
   try {
-    console.log(`🚀 Starting auto-contribute process...`);
-    console.log(`This will: download → contribute → upload → post-record`);
-    console.log(`=`.repeat(60));
+    banner("🚀 Perpetual Powers of Tau Auto-Contribute", "Complete ceremony contribution workflow");
+
+    infoBox("Process Overview", [
+      "This will perform the complete contribution workflow:",
+      "  1. Download challenge file",
+      "  2. Generate contribution",
+      "  3. Upload contribution file",
+      "  4. Post contribution record to GitHub",
+    ]);
 
     // Validate tokens and configuration before starting
-    console.log(`🔐 Validating GitHub tokens and configuration...`);
+    logger.progress("Validating GitHub tokens and configuration...");
     validateTokensAndConfig();
 
     // Find ceremony URLs JSON file

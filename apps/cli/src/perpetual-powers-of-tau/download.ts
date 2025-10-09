@@ -1,6 +1,12 @@
+import { ScriptLogger } from "../utils/logger.js";
+import { status, fileSize, warningBox, infoBox, link } from "../utils/visual.js";
+
 export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
+  const logger = new ScriptLogger("CLI:PPOT:Download");
+
   try {
-    console.log(`Downloading Powers of Tau file from: ${url}`);
+    logger.header("Download Powers of Tau");
+    link("Downloading from", url);
 
     // Validate URL format and check expiration
     try {
@@ -24,19 +30,22 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
         const now = new Date();
 
         if (now >= expirationDate) {
-          console.error(`❌ Error: Download URL has expired!`);
-          console.error(`URL expired at: ${expirationDate.toISOString()}`);
-          console.error(`Current time: ${now.toISOString()}`);
-          console.error(`\n💡 Please generate new URLs with:`);
-          console.error(`   brebaje-cli ppot generate-urls <filename>`);
+          logger.error("Download URL has expired!");
+          warningBox("URL Expired", [
+            `URL expired at: ${expirationDate.toISOString()}`,
+            `Current time: ${now.toISOString()}`,
+            "",
+            "Please generate new URLs with:",
+            "   brebaje-cli ppot generate-urls <filename>",
+          ]);
           process.exit(1);
         }
 
         const timeLeft = Math.floor((expirationDate.getTime() - now.getTime()) / 1000 / 60);
-        console.log(`⏰ Download URL expires in ${timeLeft} minutes`);
+        status("warning", `Download URL expires in ${timeLeft} minutes`);
       }
     } catch {
-      console.error(`❌ Error: Invalid URL format: ${url}`);
+      logger.error(`Invalid URL format: ${url}`);
       process.exit(1);
     }
 
@@ -54,8 +63,8 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
     const filename = path.basename(urlPath);
 
     if (!filename || !filename.includes(".")) {
-      console.error(`❌ Error: Cannot extract filename from URL: ${url}`);
-      console.error(`Please provide a URL with a valid filename`);
+      logger.error(`Cannot extract filename from URL: ${url}`);
+      warningBox("Invalid Filename", ["Please provide a URL with a valid filename"]);
       process.exit(1);
     }
 
@@ -67,44 +76,48 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
     try {
       execSync("which wget", { stdio: "pipe" });
     } catch {
-      console.error("❌ Error: wget is not installed or not available in PATH");
-      console.error("Please install wget to download files:");
-      console.error("  Ubuntu/Debian: sudo apt-get install wget");
-      console.error("  macOS: brew install wget");
-      console.error("  Windows: Download from https://eternallybored.org/misc/wget/");
+      logger.error("wget is not installed or not available in PATH");
+      warningBox("Missing Dependency", [
+        "Please install wget to download files:",
+        "  Ubuntu/Debian: sudo apt-get install wget",
+        "  macOS: brew install wget",
+        "  Windows: Download from https://eternallybored.org/misc/wget/",
+      ]);
       process.exit(1);
     }
 
     // Check if output file already exists
     if (fs.existsSync(outputFile)) {
-      console.log(`⚠️  File already exists: ${outputFile}`);
-      console.log(`Using --continue to resume download if incomplete...`);
+      status("warning", `File already exists: ${outputFile}`);
+      logger.log("Using --continue to resume download if incomplete...");
     }
 
     // Run wget command with progress bar and resume capability
     const command = `wget --continue --progress=bar --show-progress -O "${outputFile}" "${url}"`;
-    console.log(`Running: ${command}`);
+    status("running", "Starting download...");
+    logger.log(`Running: ${command}`);
 
     execSync(command, { stdio: "inherit" });
 
     // Verify file was downloaded and has content
     const stats = fs.statSync(outputFile);
     if (stats.size === 0) {
-      console.error(`❌ Error: Downloaded file is empty: ${outputFile}`);
+      logger.error(`Downloaded file is empty: ${outputFile}`);
       fs.unlinkSync(outputFile); // Clean up empty file
       process.exit(1);
     }
 
-    console.log(`✅ Download completed successfully: ${outputFile}`);
-    console.log(`File size: ${(stats.size / (1024 * 1024)).toFixed(2)} MB`);
+    logger.success("Download completed successfully!");
 
-    // Verify it's a .ptau file
     const fileExtension = path.extname(outputFile);
-    if (fileExtension === ".ptau") {
-      console.log(`✅ File appears to be a valid .ptau file`);
-    } else {
-      console.log(`⚠️  Warning: File extension is not .ptau (${fileExtension})`);
-    }
+    const isValidPtau = fileExtension === ".ptau";
+
+    infoBox("Download Complete", [
+      `File: ${outputFile}`,
+      `Size: ${fileSize(stats.size)}`,
+      `Extension: ${fileExtension}`,
+      isValidPtau ? "✓ Valid .ptau file" : `⚠ Warning: Not a .ptau file (${fileExtension})`,
+    ]);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
 
@@ -112,19 +125,26 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
       errorMessage.includes("Name or service not known") ||
       errorMessage.includes("Host not found")
     ) {
-      console.error(`❌ Network Error: Cannot reach the download URL`);
-      console.error(`Please check your internet connection and URL validity`);
+      logger.error("Network Error: Cannot reach the download URL");
+      warningBox("Network Error", ["Please check your internet connection and URL validity"]);
     } else if (errorMessage.includes("404")) {
-      console.error(`❌ Error: File not found (404) at the specified URL`);
+      logger.error("File not found (404) at the specified URL");
     } else if (errorMessage.includes("403")) {
-      console.error(`❌ Error: Access forbidden (403) - likely expired URL`);
-      console.error(`💡 Please generate new URLs with:`);
-      console.error(`   brebaje-cli ppot generate-urls <filename>`);
+      logger.error("Access forbidden (403) - likely expired URL");
+      warningBox("Access Forbidden", [
+        "This is likely an expired URL",
+        "",
+        "Please generate new URLs with:",
+        "   brebaje-cli ppot generate-urls <filename>",
+      ]);
     } else if (errorMessage.includes("Command failed")) {
-      console.error(`❌ Download failed: wget command execution failed`);
-      console.error(`Please check the URL and your network connection`);
+      logger.error("Download failed: wget command execution failed");
+      warningBox("Download Failed", ["Please check the URL and your network connection"]);
     } else {
-      console.error("❌ Failed to download Powers of Tau file:", error);
+      logger.error(
+        "Failed to download Powers of Tau file",
+        error instanceof Error ? error : undefined,
+      );
     }
     process.exit(1);
   }
