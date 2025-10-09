@@ -228,6 +228,11 @@ export class AuthService {
       });
       this.logger.debug(`Auth result: ${JSON.stringify(result)}`);
 
+      // Check if result is an error
+      if (result instanceof Error) {
+        throw result;
+      }
+
       this.logger.log('GitHub OAuth authentication completed successfully');
       return result;
     } catch (error) {
