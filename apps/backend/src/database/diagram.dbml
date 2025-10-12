@@ -87,6 +87,10 @@ Table circuits {
   averageContributionComputationTime int
   averageFullContributionTime int
   averageVerifyContributionTime int
+  completedContributions int [not null, default: 0]
+  failedContributions int [not null, default: 0]
+  currentContributor int
+  contributors json [note: 'Array of participant contributors ids']
   compiler json
   template json
   verification json [not null]

@@ -5,6 +5,8 @@ import {
   Logger,
   NotFoundException,
   ForbiddenException,
+  Inject,
+  forwardRef,
 } from '@nestjs/common';
 import {
   CompleteMultipartUploadCommand,
@@ -47,7 +49,9 @@ export class StorageService {
   private readonly logger = new Logger(StorageService.name);
 
   constructor(
+    @Inject(forwardRef(() => CeremoniesService))
     private readonly ceremoniesService: CeremoniesService,
+    @Inject(forwardRef(() => ParticipantsService))
     private readonly participantsService: ParticipantsService,
   ) {}
 
@@ -132,7 +136,7 @@ export class StorageService {
   async getCeremonyBucketName(ceremonyId: number) {
     const ceremony = await this.ceremoniesService.findOne(ceremonyId);
     if (!ceremony) {
-      throw new InternalServerErrorException(`Ceremony with ID ${ceremonyId} not found`);
+      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
     }
 
     return getBucketName(AWS_CEREMONY_BUCKET_POSTFIX, ceremony.project.name, ceremony.description);
@@ -150,33 +154,29 @@ export class StorageService {
   }
 
   async deleteCeremonyBucket(ceremonyId: number) {
-    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
-    if (!ceremony) {
-      throw new InternalServerErrorException(`Ceremony with ID ${ceremonyId} not found`);
-    }
-
+    const bucketName = await this.getCeremonyBucketName(ceremonyId);
     const s3 = this.getS3Client();
-    const bucketName = getBucketName(
-      AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project.name,
-      ceremony.description,
-    );
 
     await this.deleteBucket(s3, bucketName);
   }
 
   async startMultipartUpload(data: ObjectKeyDto, ceremonyId: number, userId: string) {
     const { objectKey } = data;
-    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
-    if (!ceremony) {
-      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
-    }
+    const bucketName = await this.getCeremonyBucketName(ceremonyId);
 
-    const bucketName = getBucketName(
-      AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project.name,
-      ceremony.description,
+    /*
+    // Check if the user is a current contributor.
+    const participant = await this.participantsService.findParticipantOfCeremony(
+      userId,
+      ceremonyId,
     );
+    if (participant && !isCoordinator && participant.status !== ParticipantStatus.FINALIZING) {
+      // Check pre-condition.
+      await this.checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(participant);
+      // Check the validity of the uploaded file.
+      await this.checkUploadingFileValidity(ceremony.circuits, participant, objectKey);
+    }
+    */
 
     const s3 = this.getS3Client();
 
@@ -205,8 +205,7 @@ export class StorageService {
     data: string,
     isPublic: boolean = false,
   ): Promise<void> {
-    // Prepare AWS S3 client instance.
-    const client = this.getS3Client();
+    const s3 = this.getS3Client();
 
     // Prepare command with the data directly
     const command = new PutObjectCommand({
@@ -219,7 +218,7 @@ export class StorageService {
 
     try {
       // Execute upload directly using S3 SDK
-      const response = await client.send(command);
+      const response = await s3.send(command);
 
       if (response.$metadata.httpStatusCode !== 200) {
         throw new InternalServerErrorException(`Failed to upload file ${objectKey} to S3`);
@@ -237,16 +236,21 @@ export class StorageService {
     userId: string,
   ) {
     const { objectKey, uploadId, numberOfParts } = data;
-    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
-    if (!ceremony) {
-      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
-    }
+    const bucketName = await this.getCeremonyBucketName(ceremonyId);
 
-    const bucketName = getBucketName(
-      AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project.name,
-      ceremony.description,
+    /*
+    // Check if the user is a current contributor.
+    const participant = await this.participantsService.findParticipantOfCeremony(
+      userId,
+      ceremonyId,
     );
+    const ceremony = await this.ceremoniesService.findById(ceremonyId);
+    const isCoordinator = ceremony.coordinatorId === userId;
+    if (participant && !isCoordinator) {
+      // Check pre-condition.
+      await this.checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(participant);
+    }
+    */
 
     const s3 = this.getS3Client();
     const parts: string[] = [];
@@ -278,19 +282,10 @@ export class StorageService {
   async completeMultipartUpload(
     data: CompleteMultiPartUploadData,
     ceremonyId: number,
-    userId: string,
+    userId: string, // TODO: migrate p0tion logic to here
   ) {
     const { objectKey, uploadId, parts } = data;
-    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
-    if (!ceremony) {
-      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
-    }
-
-    const bucketName = getBucketName(
-      AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project.name,
-      ceremony.description,
-    );
+    const bucketName = await this.getCeremonyBucketName(ceremonyId);
 
     const s3 = this.getS3Client();
 
@@ -319,16 +314,7 @@ export class StorageService {
 
   async checkIfObjectExists(data: ObjectKeyDto, ceremonyId: number) {
     const { objectKey } = data;
-    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
-    if (!ceremony) {
-      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
-    }
-
-    const bucketName = getBucketName(
-      AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project.name,
-      ceremony.description,
-    );
+    const bucketName = await this.getCeremonyBucketName(ceremonyId);
 
     const s3 = this.getS3Client();
     const command = new HeadObjectCommand({ Bucket: bucketName, Key: objectKey });
@@ -352,16 +338,7 @@ export class StorageService {
 
   async generateGetObjectPreSignedUrl(data: ObjectKeyDto, ceremonyId: number) {
     const { objectKey } = data;
-    const ceremony = await this.ceremoniesService.findOne(ceremonyId);
-    if (!ceremony) {
-      throw new NotFoundException(`Ceremony with ID ${ceremonyId} not found`);
-    }
-
-    const bucketName = getBucketName(
-      AWS_CEREMONY_BUCKET_POSTFIX,
-      ceremony.project.name,
-      ceremony.description,
-    );
+    const bucketName = await this.getCeremonyBucketName(ceremonyId);
 
     const s3 = this.getS3Client();
     const command = new GetObjectCommand({ Bucket: bucketName, Key: objectKey });
