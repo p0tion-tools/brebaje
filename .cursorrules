@@ -1,0 +1,247 @@
+# Cursor Rules for Brebaje
+
+This file provides guidance for Cursor AI when working with code in this repository.
+
+## Project Overview
+
+Brebaje is a zero-knowledge proof ceremony management platform built with a NestJS backend and Next.js frontend. The project manages trusted setup ceremonies for zkSNARK circuits, handling user authentication, ceremony coordination, and participant contributions.
+
+## Architecture
+
+This is a monorepo using pnpm workspaces with two main applications:
+
+- **Backend (`apps/backend/`)**: NestJS API with SQLite database using Sequelize ORM
+- **Frontend (`apps/frontend/`)**: Next.js application with TailwindCSS and React Query
+
+### Key Domain Models
+
+The system revolves around zero-knowledge proof ceremonies:
+
+- **Users**: Authenticated via GitHub OAuth, stored with provider info
+- **Projects**: Container for related ceremonies, managed by coordinators
+- **Ceremonies**: Time-bounded events with phases (SCHEDULED → OPENED → CLOSED → FINALIZED)
+- **Circuits**: Individual zkSNARK circuits within ceremonies requiring trusted setup
+- **Participants**: Users enrolled in ceremonies with contribution tracking
+- **Contributions**: Cryptographic contributions to circuit trusted setup
+
+### Database Schema
+
+The database schema is defined in `apps/backend/src/database/diagram.dbml` and automatically generates:
+
+- TypeScript enums (`src/types/enums.ts`)
+- Sequelize models
+- Database migration SQL
+
+### Authentication Flow
+
+Uses GitHub device flow OAuth:
+
+1. Frontend gets GitHub client ID from backend
+2. User completes GitHub OAuth device flow
+3. Backend exchanges token for user info, creates/finds user record
+4. JWT token issued for session management
+
+## Common Commands
+
+### Root Level (Monorepo)
+
+```bash
+# Install dependencies
+pnpm install
+
+# Run linting across all packages
+pnpm lint
+
+# Run tests across all packages
+pnpm test
+
+# Format code across all packages
+pnpm prettier:fix
+
+# Generate documentation
+pnpm docs:generate
+
+# Serve documentation with live reload
+pnpm docs:serve
+```
+
+### Backend Development
+
+```bash
+cd apps/backend
+
+# Start development server with hot reload
+pnpm start:dev
+
+# Build the application
+pnpm build
+
+# Run tests
+pnpm test
+
+# Run tests with coverage
+pnpm test:cov
+
+# Run E2E tests
+pnpm test:e2e
+
+# Lint TypeScript files
+pnpm lint
+
+# Database schema operations
+pnpm convert              # Convert DBML to SQL
+pnpm setup-dml-to-database  # Generate models from schema
+```
+
+### Frontend Development
+
+```bash
+cd apps/frontend
+
+# Start development server
+pnpm dev
+
+# Build for production
+pnpm build
+
+# Start production server
+pnpm start
+
+# Lint code
+pnpm lint
+
+# Format code
+pnpm format
+```
+
+## Development Workflow
+
+1. **Database Changes**: Update `apps/backend/src/database/diagram.dbml` then run `pnpm convert` and `pnpm setup-dml-to-database`
+2. **API Development**: Follow NestJS module pattern - create controller, service, DTOs, and tests
+3. **Frontend Features**: Use React Query hooks for API calls, TailwindCSS for styling
+4. **Testing**: Write unit tests alongside new features, run E2E tests for critical flows
+5. **Documentation**: All public TypeScript exports must have TSDoc comments (enforced by pre-commit hooks)
+
+## TSDoc Documentation Standards
+
+All public TypeScript exports must include TSDoc comments. The pre-commit hook enforces this automatically.
+
+### Basic TSDoc Format
+
+```typescript
+/**
+ * Brief description of the function/class.
+ * 
+ * @param paramName - Description of the parameter
+ * @returns Description of the return value
+ * @throws {ErrorType} When this error occurs
+ * @example
+ * ```typescript
+ * const result = myFunction('example');
+ * console.log(result); // 'Hello example!'
+ * ```
+ */
+export function myFunction(paramName: string): string {
+  return `Hello ${paramName}!`;
+}
+```
+
+### Class Documentation
+
+```typescript
+/**
+ * A service for managing user authentication.
+ * 
+ * @example
+ * ```typescript
+ * const authService = new AuthService();
+ * const user = await authService.login('username', 'password');
+ * ```
+ */
+export class AuthService {
+  /**
+   * Authenticates a user with credentials.
+   * 
+   * @param username - The user's username
+   * @param password - The user's password
+   * @returns Promise resolving to user data
+   * @throws {AuthenticationError} When credentials are invalid
+   */
+  async login(username: string, password: string): Promise<User> {
+    // Implementation...
+  }
+}
+```
+
+### Common TSDoc Tags
+
+- `@param` - Function parameters
+- `@returns` - Return value description
+- `@throws` - Possible exceptions
+- `@example` - Usage examples
+- `@deprecated` - Mark as deprecated
+- `@since` - Version when added
+- `@see` - Related documentation
+
+### Validation
+
+- **Pre-commit**: TSDoc syntax is validated before commits
+- **ESLint**: Run `pnpm lint` to check documentation compliance
+- **Auto-fix**: Use `pnpm lint:fix` to fix formatting issues
+
+## Key Dependencies
+
+### Backend
+
+- **NestJS**: Main framework with decorators and dependency injection
+- **Sequelize**: ORM with TypeScript support via sequelize-typescript
+- **JWT**: Authentication tokens via @nestjs/jwt
+- **SQLite**: Development database (sqlite3)
+
+### Frontend
+
+- **Next.js 14**: React framework with app router
+- **TanStack Query**: Server state management and caching
+- **TailwindCSS**: Utility-first CSS framework
+- **Lucide React**: Icon library
+
+### Documentation
+
+- **TypeDoc**: Automated TypeScript documentation generation
+- **TSDoc**: Standardized documentation comments with ESLint enforcement
+- **ESLint TSDoc Plugin**: Pre-commit validation of documentation syntax
+
+## Project Structure Notes
+
+- Backend follows standard NestJS module structure with feature-based organization
+- Frontend uses Next.js app router with components organized by feature
+- Database models are auto-generated from DBML schema
+- Shared types are centralized in `apps/backend/src/types/`
+- API routes follow RESTful conventions with OpenAPI documentation
+
+## Code Style Guidelines
+
+- Use TypeScript strict mode
+- Follow ESLint and Prettier configurations
+- Write TSDoc comments for all public exports
+- Use meaningful variable and function names
+- Prefer composition over inheritance
+- Write tests for new features
+- Use proper error handling with custom error types
+
+## File Naming Conventions
+
+- **Components**: PascalCase (e.g., `UserProfile.tsx`)
+- **Services**: camelCase with `.service.ts` suffix (e.g., `auth.service.ts`)
+- **Controllers**: camelCase with `.controller.ts` suffix (e.g., `users.controller.ts`)
+- **DTOs**: camelCase with `.dto.ts` suffix (e.g., `create-user.dto.ts`)
+- **Types**: camelCase with `.types.ts` suffix (e.g., `user.types.ts`)
+- **Tests**: Same as source file with `.spec.ts` or `.test.ts` suffix
+
+## Git Workflow
+
+- Use conventional commits (feat:, fix:, docs:, etc.)
+- Create feature branches from `main`
+- Write descriptive commit messages
+- Ensure all tests pass before merging
+- TSDoc validation runs automatically on pre-commit

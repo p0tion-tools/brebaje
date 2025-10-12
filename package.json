@@ -1,6 +1,7 @@
 {
   "name": "root",
   "private": true,
+  "type": "module",
   "workspaces": [
     "packages/*"
   ],
@@ -13,15 +14,19 @@
   "devDependencies": {
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@eslint/js": "^9.32.0",
     "@typescript-eslint/eslint-plugin": "^8.35.1",
     "@typescript-eslint/parser": "^8.35.1",
     "eslint": "^9.30.1",
     "eslint-config-prettier": "^10.0.1",
     "eslint-plugin-prettier": "^5.2.2",
+    "eslint-plugin-tsdoc": "^0.2.2",
     "husky": "^9.1.7",
     "lerna": "^8.2.3",
     "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
+    "typedoc": "^0.26.0",
+    "typedoc-plugin-missing-exports": "^4.1.2",
     "typescript": "^5.9.2"
   },
   "scripts": {
@@ -31,7 +36,9 @@
     "prettier:fix": "prettier --write .",
     "prepare": "husky",
     "test": "lerna run test --stream",
-    "build": "lerna run build --ignore=website"
+    "build": "lerna run build --ignore=website",
+    "docs:generate": "typedoc",
+    "docs:serve": "typedoc --watch"
   },
   "lint-staged": {
     "**/*": "prettier --write --ignore-unknown"

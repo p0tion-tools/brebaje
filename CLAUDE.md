@@ -279,6 +279,12 @@ pnpm test
 
 # Format code across all packages
 pnpm prettier:fix
+
+# Generate documentation
+pnpm docs:generate
+
+# Serve documentation with live reload
+pnpm docs:serve
 ```
 
 ### Backend Development
@@ -336,6 +342,7 @@ pnpm format
 2. **API Development**: Follow NestJS module pattern - create controller, service, DTOs, and tests
 3. **Frontend Features**: Use React Query hooks for API calls, TailwindCSS for styling
 4. **Testing**: Write unit tests alongside new features, run E2E tests for critical flows
+5. **Documentation**: All public TypeScript exports must have TSDoc comments (enforced by pre-commit hooks)
 
 ## Key Dependencies
 
@@ -352,6 +359,79 @@ pnpm format
 - **TanStack Query**: Server state management and caching
 - **TailwindCSS**: Utility-first CSS framework
 - **Lucide React**: Icon library
+
+### Documentation
+
+- **TypeDoc**: Automated TypeScript documentation generation
+- **TSDoc**: Standardized documentation comments with ESLint enforcement
+- **ESLint TSDoc Plugin**: Pre-commit validation of documentation syntax
+
+## TSDoc Documentation Standards
+
+All public TypeScript exports must include TSDoc comments. The pre-commit hook enforces this automatically.
+
+### Basic TSDoc Format
+
+```typescript
+/**
+ * Brief description of the function/class.
+ * 
+ * @param paramName - Description of the parameter
+ * @returns Description of the return value
+ * @throws {ErrorType} When this error occurs
+ * @example
+ * ```typescript
+ * const result = myFunction('example');
+ * console.log(result); // 'Hello example!'
+ * ```
+ */
+export function myFunction(paramName: string): string {
+  return `Hello ${paramName}!`;
+}
+```
+
+### Class Documentation
+
+```typescript
+/**
+ * A service for managing user authentication.
+ * 
+ * @example
+ * ```typescript
+ * const authService = new AuthService();
+ * const user = await authService.login('username', 'password');
+ * ```
+ */
+export class AuthService {
+  /**
+   * Authenticates a user with credentials.
+   * 
+   * @param username - The user's username
+   * @param password - The user's password
+   * @returns Promise resolving to user data
+   * @throws {AuthenticationError} When credentials are invalid
+   */
+  async login(username: string, password: string): Promise<User> {
+    // Implementation...
+  }
+}
+```
+
+### Common TSDoc Tags
+
+- `@param` - Function parameters
+- `@returns` - Return value description
+- `@throws` - Possible exceptions
+- `@example` - Usage examples
+- `@deprecated` - Mark as deprecated
+- `@since` - Version when added
+- `@see` - Related documentation
+
+### Validation
+
+- **Pre-commit**: TSDoc syntax is validated before commits
+- **ESLint**: Run `pnpm lint` to check documentation compliance
+- **Auto-fix**: Use `pnpm lint:fix` to fix formatting issues
 
 ## Project Structure Notes
 

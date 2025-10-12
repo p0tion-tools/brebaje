@@ -1,0 +1,31 @@
+{
+  "entryPoints": ["apps/backend/src", "apps/frontend/src"],
+  "out": "docs/api",
+  "name": "Brebaje API Documentation",
+  "includeVersion": true,
+  "excludeExternals": true,
+  "excludePrivate": true,
+  "excludeProtected": true,
+  "excludeInternal": true,
+  "readme": "docs/TSDOC_GUIDE.md",
+  "plugin": ["typedoc-plugin-missing-exports"],
+  "theme": "default",
+  "navigation": {
+    "includeCategories": true,
+    "includeGroups": true
+  },
+  "categorizeByGroup": true,
+  "defaultCategory": "Other",
+  "categoryOrder": [
+    "Authentication",
+    "Ceremonies", 
+    "Circuits",
+    "Contributions",
+    "Participants",
+    "Projects",
+    "Storage",
+    "Utils",
+    "Types",
+    "Other"
+  ]
+}
