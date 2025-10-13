@@ -129,6 +129,33 @@ export class Circuit extends Model implements CircuitAttributes {
   declare averageVerifyContributionTime?: number;
 
   @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  declare completedContributions: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+    defaultValue: 0,
+  })
+  declare failedContributions: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: true,
+  })
+  declare currentContributor: number;
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+    comment: 'Array of participant contributors ids',
+  })
+  declare contributors: number[];
+
+  @Column({
     type: DataType.JSON,
     allowNull: true,
   })
