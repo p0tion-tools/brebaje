@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { Cron } from '@nestjs/schedule';
-import axios from 'axios';
 import { VmService } from './vm.service';
 import { DISCORD_WEBHOOK_URL } from '../utils/constants';
+import { fetchWithTimeout } from '../utils';
 
 @Injectable()
 export class VerificationMonitoringService {
@@ -167,12 +167,19 @@ export class VerificationMonitoringService {
           `• Time: <t:${Math.floor(Date.now() / 1000)}:F>`,
       };
 
-      await axios.post(DISCORD_WEBHOOK_URL, message, {
-        headers: {
-          'Content-Type': 'application/json',
+      const response = await fetchWithTimeout(
+        DISCORD_WEBHOOK_URL,
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(message),
         },
-        timeout: 10000, // 10 second timeout
-      });
+        10000,
+      );
+
+      if (!response.ok) {
+        throw new Error(`Discord webhook failed: ${response.status} ${response.statusText}`);
+      }
 
       console.log(`[VerificationMonitor] Discord notification sent for ${commandId}`);
     } catch (error) {

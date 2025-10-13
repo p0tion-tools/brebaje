@@ -1,5 +1,6 @@
 import { getNewerFile, getUrlsJson } from "../utils/file_handling.js";
 import { loadConfig } from "../utils/config.js";
+import { fetchWithTimeout } from "../utils/http.js";
 
 // Function to prompt user for input
 async function promptUser(question: string): Promise<string> {
@@ -19,25 +20,20 @@ async function promptUser(question: string): Promise<string> {
 
 // Function to get GitHub username from API
 async function getGitHubUsername(token: string): Promise<string> {
-  const axios = await import("axios");
+  const response = await fetchWithTimeout("https://api.github.com/user", {
+    headers: {
+      Authorization: `Bearer ${token}`,
+      "User-Agent": "brebaje-cli",
+      Accept: "application/vnd.github.v3+json",
+    },
+  });
 
-  try {
-    const response = await axios.default.get("https://api.github.com/user", {
-      headers: {
-        Authorization: `Bearer ${token}`,
-        "User-Agent": "brebaje-cli",
-        Accept: "application/vnd.github.v3+json",
-      },
-    });
-
-    return response.data.login;
-  } catch (error: any) {
-    console.error(
-      "❌ Failed to fetch GitHub username:",
-      error.response?.data?.message || error.message,
-    );
-    throw error;
+  if (!response.ok) {
+    throw new Error(`Failed to get GitHub username: ${response.status}`);
   }
+
+  const data = await response.json();
+  return data.login;
 }
 
 // Function to get original repository from forked repository
@@ -47,42 +43,35 @@ async function getOriginalRepository(
   forkedRepoUrl: string,
   token: string,
 ): Promise<{ originalOwner: string; originalRepo: string }> {
-  const axios = await import("axios");
-
-  let originalOwner: string;
-  let originalRepo: string;
-
-  try {
-    const repoResponse = await axios.default.get(
-      `https://api.github.com/repos/${forkedOwner}/${forkedRepo}`,
-      {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "User-Agent": "brebaje-cli",
-          Accept: "application/vnd.github.v3+json",
-        },
+  const response = await fetchWithTimeout(
+    `https://api.github.com/repos/${forkedOwner}/${forkedRepo}`,
+    {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "User-Agent": "brebaje-cli",
+        Accept: "application/vnd.github.v3+json",
       },
-    );
+    },
+  );
 
-    if (repoResponse.data.fork && repoResponse.data.parent) {
-      // This is a fork, use the parent as the original repository
-      originalOwner = repoResponse.data.parent.owner.login;
-      originalRepo = repoResponse.data.parent.name;
-    } else {
-      // This is not a fork, so it might be the original repository itself
-      // In this case, we can't create a PR (you can't create PR to yourself)
-      throw new Error(`Repository ${forkedRepoUrl} is not a fork. Cannot create pull request.`);
-    }
-  } catch (error: any) {
-    if (error.response?.status === 404) {
-      throw new Error(
-        `Repository ${forkedRepoUrl} not found or not accessible with provided token.`,
-      );
-    }
-    throw error;
+  if (response.status === 404) {
+    throw new Error(`Repository ${forkedRepoUrl} not found or not accessible.`);
   }
 
-  return { originalOwner, originalRepo };
+  if (!response.ok) {
+    throw new Error(`Failed to get repository info: ${response.status}`);
+  }
+
+  const data = await response.json();
+
+  if (data.fork && data.parent) {
+    return {
+      originalOwner: data.parent.owner.login,
+      originalRepo: data.parent.name,
+    };
+  } else {
+    throw new Error(`Repository ${forkedRepoUrl} is not a fork. Cannot create pull request.`);
+  }
 }
 
 // Function to create gist (existing functionality)
@@ -92,8 +81,6 @@ async function createGist(
   index: number,
   token: string,
 ): Promise<string> {
-  const axios = await import("axios");
-
   console.log(`🔗 Creating public gist for social sharing...`);
 
   const gistData = {
@@ -106,16 +93,23 @@ async function createGist(
     },
   };
 
-  const response = await axios.default.post("https://api.github.com/gists", gistData, {
+  const response = await fetchWithTimeout("https://api.github.com/gists", {
+    method: "POST",
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
       "User-Agent": "brebaje-cli",
       Accept: "application/vnd.github.v3+json",
     },
+    body: JSON.stringify(gistData),
   });
 
-  return response.data.html_url;
+  if (!response.ok) {
+    throw new Error(`Failed to create gist: ${response.status}`);
+  }
+
+  const data = await response.json();
+  return data.html_url;
 }
 
 // Function to generate response_resume.md content
@@ -164,8 +158,6 @@ async function createRepositoryContribution(
   repositoryUrl: string,
   token: string,
 ): Promise<string> {
-  const axios = await import("axios");
-
   console.log(`📁 Creating repository contribution...`);
 
   // Parse repository URL to get owner and repo
@@ -184,18 +176,23 @@ async function createRepositoryContribution(
     content: Buffer.from(recordContent).toString("base64"),
   };
 
-  await axios.default.put(
+  const recordResponse = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}/contents/${recordPath}`,
-    recordFileData,
     {
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         "User-Agent": "brebaje-cli",
         Accept: "application/vnd.github.v3+json",
       },
+      body: JSON.stringify(recordFileData),
     },
   );
+
+  if (!recordResponse.ok) {
+    throw new Error(`Failed to upload record file: ${recordResponse.status}`);
+  }
 
   console.log(`✅ Record file uploaded: ${recordPath}`);
 
@@ -217,18 +214,23 @@ async function createRepositoryContribution(
     content: Buffer.from(resumeContent).toString("base64"),
   };
 
-  await axios.default.put(
+  const resumeResponse = await fetchWithTimeout(
     `https://api.github.com/repos/${owner}/${repo}/contents/${resumePath}`,
-    resumeFileData,
     {
+      method: "PUT",
       headers: {
         Authorization: `Bearer ${token}`,
         "Content-Type": "application/json",
         "User-Agent": "brebaje-cli",
         Accept: "application/vnd.github.v3+json",
       },
+      body: JSON.stringify(resumeFileData),
     },
   );
+
+  if (!resumeResponse.ok) {
+    throw new Error(`Failed to upload resume file: ${resumeResponse.status}`);
+  }
 
   console.log(`✅ Response resume uploaded: ${resumePath}`);
 

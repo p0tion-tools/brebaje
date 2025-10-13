@@ -1,5 +1,6 @@
 import { ScriptLogger } from "../utils/logger.js";
 import { loadConfig } from "../utils/config.js";
+import { fetchWithTimeout } from "../utils/http.js";
 
 const logger = new ScriptLogger("CLI:VM:Verify");
 
@@ -120,63 +121,50 @@ export async function verifyVm(jsonPath?: string): Promise<void> {
 
     logger.log("🚀 Sending verification request to backend...");
 
-    // Import axios dynamically
-    let axios: any;
-    try {
-      axios = (await import("axios")).default;
-    } catch (error) {
-      logger.error("❌ Error: axios not found");
-      logger.error("Please install axios: pnpm add axios");
-      process.exit(1);
-    }
-
     // Make API request
     try {
-      // Import https module for SSL configuration
-      const https = await import("https");
-
-      const response = await axios.post(`${BREBAJE_API_URL}/vm/verify`, verificationPayload, {
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetchWithTimeout(
+        `${BREBAJE_API_URL}/vm/verify`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(verificationPayload),
         },
-        timeout: 30000, // 30 second timeout
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: false, // Bypass self-signed certificate verification
-        }),
-      });
+        30000, // 30 second timeout
+      );
+
+      if (!response.ok) {
+        throw new Error(`Verification request failed: ${response.status}`);
+      }
+
+      const data = await response.json();
 
       // Success response
       logger.success("✅ Verification request sent successfully!");
       console.log(`=`.repeat(60));
-      logger.log(`📋 Command ID: ${response.data.commandId}`);
-      logger.log(`🔗 Status URL: ${BREBAJE_API_URL}${response.data.statusUrl}`);
+      logger.log(`📋 Command ID: ${data.commandId}`);
+      logger.log(`🔗 Status URL: ${BREBAJE_API_URL}${data.statusUrl}`);
 
-      if (response.data.autoStop) {
-        logger.log(`⏹️  Auto-stop: ${response.data.autoStop}`);
+      if (data.autoStop) {
+        logger.log(`⏹️  Auto-stop: ${data.autoStop}`);
       }
 
-      if (response.data.monitoring) {
-        logger.log(`📬 Monitoring: ${response.data.monitoring}`);
+      if (data.monitoring) {
+        logger.log(`📬 Monitoring: ${data.monitoring}`);
       }
 
       console.log(`=`.repeat(60));
       logger.log("💡 You can check verification status with:");
-      logger.log(`   curl "${BREBAJE_API_URL}${response.data.statusUrl}"`);
+      logger.log(`   curl "${BREBAJE_API_URL}${data.statusUrl}"`);
     } catch (error: any) {
-      if (error.response) {
-        // API error response
-        logger.failure(`❌ API Error (${error.response.status}): ${error.response.statusText}`);
-        if (error.response.data) {
-          logger.error(`Details: ${JSON.stringify(error.response.data, null, 2)}`);
-        }
-      } else if (error.request) {
-        // Network error
-        logger.failure("❌ Network error: Could not connect to backend");
-        logger.error(`Make sure backend is running at: ${BREBAJE_API_URL}`);
-      } else {
-        // Other error
-        logger.failure(`❌ Error: ${error.message}`);
+      // Simplified error handling
+      logger.failure(`❌ Verification request failed: ${error.message}`);
+      if (error.message.includes("timeout")) {
+        logger.error("The request timed out - the server may be unavailable");
       }
+      logger.error(`Make sure backend is running at: ${BREBAJE_API_URL}`);
       process.exit(1);
     }
   } catch (error) {
