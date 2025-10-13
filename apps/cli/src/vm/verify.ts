@@ -165,23 +165,23 @@ export async function verifyVm(jsonPath?: string): Promise<void> {
     } catch (error: any) {
       if (error.response) {
         // API error response
-        logger.failure(`❌ API Error`, `(${error.response.status}): ${error.response.statusText}`);
+        logger.failure(`❌ API Error (${error.response.status}): ${error.response.statusText}`);
         if (error.response.data) {
           logger.error(`Details: ${JSON.stringify(error.response.data, null, 2)}`);
         }
       } else if (error.request) {
         // Network error
-        logger.failure("❌ Network error: Could not connect to backend", error.message);
+        logger.failure("❌ Network error: Could not connect to backend");
         logger.error(`Make sure backend is running at: ${BREBAJE_API_URL}`);
       } else {
         // Other error
-        logger.failure(`❌ Error:`, error.message);
+        logger.failure(`❌ Error: ${error.message}`);
       }
       process.exit(1);
     }
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
-    logger.failure(`❌ Failed to start VM verification:`, errorMessage);
+    logger.failure(`❌ Failed to start VM verification: ${errorMessage}`);
     process.exit(1);
   }
 }

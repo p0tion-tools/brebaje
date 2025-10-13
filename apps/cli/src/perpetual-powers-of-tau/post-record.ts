@@ -1,9 +1,5 @@
 import { getNewerFile, getUrlsJson } from "../utils/file_handling.js";
 import { loadConfig } from "../utils/config.js";
-import { ScriptLogger } from "../utils/logger.js";
-import { status, warningBox, link } from "../utils/visual.js";
-
-const logger = new ScriptLogger("CLI:PPOT:PostRecord");
 
 // Function to prompt user for input
 async function promptUser(question: string): Promise<string> {
@@ -36,7 +32,10 @@ async function getGitHubUsername(token: string): Promise<string> {
 
     return response.data.login;
   } catch (error: any) {
-    logger.error("Failed to fetch GitHub username", error.response?.data?.message || error.message);
+    console.error(
+      "❌ Failed to fetch GitHub username:",
+      error.response?.data?.message || error.message,
+    );
     throw error;
   }
 }
@@ -95,7 +94,7 @@ async function createGist(
 ): Promise<string> {
   const axios = await import("axios");
 
-  status("running", "Creating public gist for social sharing...");
+  console.log(`🔗 Creating public gist for social sharing...`);
 
   const gistData = {
     description: `Powers of Tau Contribution Record - Index ${index}`,
@@ -167,7 +166,7 @@ async function createRepositoryContribution(
 ): Promise<string> {
   const axios = await import("axios");
 
-  status("running", "Creating repository contribution...");
+  console.log(`📁 Creating repository contribution...`);
 
   // Parse repository URL to get owner and repo
   const repoMatch = repositoryUrl.match(/github\.com\/([^\/]+)\/([^\/]+)$/);
@@ -198,7 +197,7 @@ async function createRepositoryContribution(
     },
   );
 
-  logger.success(`Record file uploaded: ${recordPath}`);
+  console.log(`✅ Record file uploaded: ${recordPath}`);
 
   // Generate response_resume.md content
   const resumeContent = generateResponseResume(
@@ -231,7 +230,7 @@ async function createRepositoryContribution(
     },
   );
 
-  logger.success(`Response resume uploaded: ${resumePath}`);
+  console.log(`✅ Response resume uploaded: ${resumePath}`);
 
   return `https://github.com/${owner}/${repo}/tree/main/${folderName}`;
 }
@@ -245,7 +244,7 @@ async function createPullRequest(
   forkedRepoUrl: string,
   token: string,
 ): Promise<string> {
-  status("running", "Creating pull request link to original ceremony repository...");
+  console.log(`🔄 Creating pull request link to original ceremony repository...`);
 
   // Parse forked repository URL to get owner and repo
   const forkedMatch = forkedRepoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)$/);
@@ -302,8 +301,7 @@ The contribution record can be independently verified and this PR adds the offic
 
 export async function postRecordPerpetualPowersOfTau(githubToken?: string): Promise<void> {
   try {
-    logger.header("Post Contribution Record");
-    status("running", "Posting contribution record...");
+    console.log(`📤 Posting contribution record...`);
 
     const fs = await import("fs");
     const path = await import("path");
@@ -311,10 +309,8 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     // Check if output directory exists
     const outputDir = "output";
     if (!fs.existsSync(outputDir)) {
-      logger.error(`Output directory does not exist: ${outputDir}`);
-      warningBox("Missing Output Directory", [
-        "Please make a contribution first using the contribute command.",
-      ]);
+      console.error(`❌ Error: Output directory does not exist: ${outputDir}`);
+      console.error(`Please make a contribution first using the contribute command.`);
       process.exit(1);
     }
 
@@ -322,18 +318,16 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     const recordFile = getNewerFile(outputDir, "_record.txt");
 
     if (recordFile === null) {
-      logger.error(`No record files found in ${outputDir} directory`);
-      warningBox("No Record Files", [
-        "Please make a contribution first using the contribute command.",
-      ]);
+      console.error(`❌ Error: No record files found in ${outputDir} directory`);
+      console.error(`Please make a contribution first using the contribute command.`);
       process.exit(1);
     }
 
     // Validate record file format
     const match = recordFile.match(/pot(\d+)_(\d+)_record\.txt/);
     if (!match) {
-      logger.error(`Invalid record file format: ${recordFile}`);
-      warningBox("Invalid File Format", ["Expected format: pot<power>_<index>_record.txt"]);
+      console.error(`❌ Error: Invalid record file format: ${recordFile}`);
+      console.error(`Expected format: pot<power>_<index>_record.txt`);
       process.exit(1);
     }
 
@@ -394,33 +388,29 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     }
 
     if (!repoToken) {
-      logger.error("GitHub fine-grained token required for repository operations.");
-      warningBox("Missing Fine-grained Token", [
-        "You can set it up by:",
-        "  1. Using: brebaje-cli config gh-token-scoped <your-fine-grained-token>",
-        "  2. Create a fine-grained token at: https://github.com/settings/tokens",
-        "     (Scope to your forked ceremony repository with Contents + PR permissions)",
-      ]);
+      console.error(`🔑 GitHub fine-grained token required for repository operations.`);
+      console.error(`You can set it up by:`);
+      console.error(`  1. Using: brebaje-cli config gh-token-scoped <your-fine-grained-token>`);
+      console.error(`  2. Create a fine-grained token at: https://github.com/settings/tokens`);
+      console.error(
+        `     (Scope to your forked ceremony repository with Contents + PR permissions)`,
+      );
       process.exit(1);
     }
 
     if (!repositoryUrl) {
-      logger.error("Ceremony repository URL required.");
-      warningBox("Missing Repository URL", [
-        "You can set it up by:",
-        "  1. Using: brebaje-cli config ceremony-repo <your-forked-repo-url>",
-        "     Example: https://github.com/your-username/ceremony-repo-fork",
-      ]);
+      console.error(`🏗️ Ceremony repository URL required.`);
+      console.error(`You can set it up by:`);
+      console.error(`  1. Using: brebaje-cli config ceremony-repo <your-forked-repo-url>`);
+      console.error(`     Example: https://github.com/your-username/ceremony-repo-fork`);
       process.exit(1);
     }
 
     if (!contributorName) {
-      logger.error("Contributor name required for ceremony records.");
-      warningBox("Missing Contributor Name", [
-        "You can set it up by:",
-        '  1. Using: brebaje-cli config name "Your Full Name"',
-        '     Example: brebaje-cli config name "John Doe"',
-      ]);
+      console.error(`👤 Contributor name required for ceremony records.`);
+      console.error(`You can set it up by:`);
+      console.error(`  1. Using: brebaje-cli config name "Your Full Name"`);
+      console.error(`     Example: brebaje-cli config name "John Doe"`);
       process.exit(1);
     }
 
@@ -428,20 +418,20 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     let githubUsername: string;
     try {
       githubUsername = await getGitHubUsername(repoToken);
-      logger.log(`GitHub username: ${githubUsername}`);
+      console.log(`👤 GitHub username: ${githubUsername}`);
     } catch (error) {
-      logger.error("Failed to get GitHub username. Please check your fine-grained token.");
+      console.error(`❌ Failed to get GitHub username. Please check your fine-grained token.`);
       process.exit(1);
     }
 
-    logger.log(`Contributor name: ${contributorName}`);
+    console.log(`👤 Contributor name: ${contributorName}`);
 
     // Optional: Prompt for hardware information
     const hardwareInfo = await promptUser(
       "Enter hardware information (optional, press Enter to skip): ",
     );
 
-    logger.log("Starting dual posting workflow...");
+    console.log(`\n🚀 Starting dual posting workflow...`);
 
     let gistUrl: string;
     let repositoryContributionUrl: string;
@@ -450,7 +440,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     try {
       // Create gist for social sharing
       gistUrl = await createGist(recordFile, recordContent, ceremonyIndex, gistToken);
-      logger.success(`Gist created: ${gistUrl}`);
+      console.log(`✅ Gist created: ${gistUrl}`);
 
       // Create repository contribution
       repositoryContributionUrl = await createRepositoryContribution(
@@ -465,7 +455,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
         repositoryUrl,
         repoToken,
       );
-      logger.success(`Repository contribution created: ${repositoryContributionUrl}`);
+      console.log(`✅ Repository contribution created: ${repositoryContributionUrl}`);
 
       // Create pull request to original repository
       try {
@@ -478,31 +468,31 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
           repositoryUrl,
           repoToken,
         );
-        logger.success("Pull request link generated");
+        console.log(`✅ Pull request link generated`);
       } catch (prError: any) {
-        logger.warn(`Could not create pull request automatically: ${prError.message}`);
+        console.warn(`⚠️ Could not create pull request automatically: ${prError.message}`);
 
         // Log detailed error information for debugging
         if (prError.response) {
           const status = prError.response.status;
           const data = prError.response.data;
-          logger.warn(`HTTP Status: ${status}`);
-          logger.warn(`Error Details: ${JSON.stringify(data, null, 2)}`);
+          console.warn(`📊 HTTP Status: ${status}`);
+          console.warn(`📋 Error Details:`, JSON.stringify(data, null, 2));
 
           if (status === 403) {
-            logger.warn("This is likely a permissions issue. The token needs:");
-            logger.warn(
-              "   - 'Pull requests: Write' permission on the original ceremony repository",
+            console.warn(`🔍 This is likely a permissions issue. The token needs:`);
+            console.warn(
+              `   - 'Pull requests: Write' permission on the original ceremony repository`,
             );
-            logger.warn("   - Repository must be included in the fine-grained token scope");
+            console.warn(`   - Repository must be included in the fine-grained token scope`);
           }
         } else if (prError.request) {
-          logger.warn("Network error - no response received");
+          console.warn(`📡 Network error - no response received`);
         } else {
-          logger.warn(`Request config error: ${prError.message}`);
+          console.warn(`⚙️  Request config error:`, prError.message);
         }
 
-        logger.info("You can manually create a PR from your fork to the original repository.");
+        console.warn(`💡 You can manually create a PR from your fork to the original repository.`);
         pullRequestUrl = null;
       }
     } catch (error: any) {
@@ -511,31 +501,31 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
         const message = error.response.data?.message || "Unknown error";
 
         if (status === 401) {
-          logger.error("Authentication Error: Invalid GitHub token");
-          logger.error("Please check your tokens have correct permissions");
+          console.error(`❌ Authentication Error: Invalid GitHub token`);
+          console.error(`Please check your tokens have correct permissions`);
         } else if (status === 403) {
-          logger.error("Permission Error: Token lacks required permissions");
-          logger.error(
-            "Gist token needs 'gist' scope, repository token needs 'Contents' and 'Pull requests'",
+          console.error(`❌ Permission Error: Token lacks required permissions`);
+          console.error(
+            `Gist token needs 'gist' scope, repository token needs 'Contents' and 'Pull requests'`,
           );
         } else if (status === 404) {
-          logger.error("Not Found Error: Check repository URL and token permissions");
+          console.error(`❌ Not Found Error: Check repository URL and token permissions`);
         } else if (status === 422) {
-          logger.error(`Validation Error: ${message}`);
-          logger.error("This might mean the file already exists or path is invalid");
+          console.error(`❌ Validation Error: ${message}`);
+          console.error(`This might mean the file already exists or path is invalid`);
         } else {
-          logger.error(`GitHub API Error (${status}): ${message}`);
+          console.error(`❌ GitHub API Error (${status}): ${message}`);
         }
       } else if (error.request) {
-        logger.error("Network Error: Cannot reach GitHub API");
-        logger.error("Please check your internet connection");
+        console.error(`❌ Network Error: Cannot reach GitHub API`);
+        console.error(`Please check your internet connection`);
       } else {
-        logger.error(`Request Error: ${error.message}`);
+        console.error(`❌ Request Error: ${error.message}`);
       }
 
-      logger.info("You can manually create files at:");
-      logger.info("   Gist: https://gist.github.com/");
-      logger.info(`   Repository: ${repositoryUrl}`);
+      console.error(`💡 You can manually create files at:`);
+      console.error(`   Gist: https://gist.github.com/`);
+      console.error(`   Repository: ${repositoryUrl}`);
       process.exit(1);
     }
 
@@ -554,8 +544,8 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
         ceremonyUrl = `https://github.com/${originalOwner}/${originalRepo}`;
       }
     } catch (error) {
-      logger.warn(
-        "Could not determine original ceremony repository, using fork URL for social sharing.",
+      console.warn(
+        `⚠️ Could not determine original ceremony repository, using fork URL for social sharing.`,
       );
     }
 
@@ -569,27 +559,29 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
 #Cardano #ZK #Catalyst`;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;
 
-    logger.success("Success! Your contribution has been posted:");
-    logger.log(`Contribution Index: ${ceremonyIndex}`);
-    logger.log(`Contributor: ${contributorName} (${githubUsername})`);
-    logger.log(`Public gist (social): ${gistUrl}`);
-    logger.log("PLEASE, OPEN THE GENERATED LINKS");
+    console.log(`\n🎊 Success! Your contribution has been posted:\n`);
+    console.log(`📊 Contribution Index: ${ceremonyIndex}`);
+    console.log(`👤 Contributor: ${contributorName} (${githubUsername})`);
+    console.log(`👁️ Public gist (social): ${gistUrl}`);
+    console.log(`\n👇 PLEASE, OPEN THE GENERATED LINKS 👇👇👇`);
 
     if (pullRequestUrl) {
-      link("Create pull request", pullRequestUrl);
+      console.log(`\n🔄 Create pull request:\n ${pullRequestUrl}`);
     }
 
-    link("Share on Twitter/X", twitterUrl);
-    logger.warn(
-      "You must open the pull request link above and click 'Create pull request' to submit your contribution to the ceremony!",
+    console.log(`\n🐦 Share on Twitter/X:`);
+    console.log(`${twitterUrl}`);
+    console.log(
+      `\n⚠️  You must open the pull request link above and click "Create pull request" to submit your contribution to the ceremony!`,
     );
-    logger.warn(
-      "Please click the Twitter/X link above to share your contribution and help promote the ceremony!",
+    console.log(
+      `⚠️  Please click the Twitter/X link above to share your contribution and help promote the ceremony!`,
     );
-    logger.info("All links verify your contribution publicly.");
-    logger.success("Thank you for contributing! :)");
+    console.log(`💡 All links verify your contribution publicly.`);
+    console.log(`\nThank you for contributing! :)`);
   } catch (error) {
-    logger.error("Failed to post contribution record", error instanceof Error ? error : undefined);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("❌ Failed to post contribution record:", errorMessage);
     process.exit(1);
   }
 }

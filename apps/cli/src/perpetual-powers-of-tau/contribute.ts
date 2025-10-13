@@ -1,8 +1,6 @@
 import { loadConfig } from "../utils/config.js";
 import crypto from "crypto";
 import readline from "readline";
-import { ScriptLogger } from "../utils/logger.js";
-import { section, warningBox, infoBox } from "../utils/visual.js";
 
 /**
  * Validates user-provided entropy input for strength
@@ -43,13 +41,10 @@ async function generateSecureEntropy(): Promise<string> {
       output: process.stdout,
     });
 
-    section("🔐 Secure Entropy Generation");
-
-    infoBox("Entropy Security", [
-      "Your input will be combined with OS randomness and hashed.",
-      "This ensures maximum entropy for your contribution.",
-      "Minimum input length: 60 characters",
-    ]);
+    console.log("\n🔐 Secure Entropy Generation");
+    console.log("━".repeat(50));
+    console.log("Your input will be combined with OS randomness and hashed.");
+    console.log("This ensures maximum entropy for your contribution.\n");
 
     rl.question("Please provide random text (minimum 60 characters):\n> ", (userInput) => {
       rl.close();
@@ -58,18 +53,15 @@ async function generateSecureEntropy(): Promise<string> {
       const validation = validateUserEntropy(userInput);
 
       if (!validation.valid) {
-        const logger = new ScriptLogger("CLI:Contribute:Entropy");
-        logger.error(validation.warnings[0]);
+        console.error(`\n❌ ${validation.warnings[0]}`);
         reject(new Error(validation.warnings[0]));
         return;
       }
 
       // Show warnings but continue
       if (validation.warnings.length > 0) {
-        warningBox("Entropy Quality Warnings", [
-          ...validation.warnings,
-          "Consider using a more random input for better security.",
-        ]);
+        validation.warnings.forEach((warning) => console.warn(warning));
+        console.log("Consider using a more random input for better security.\n");
       }
 
       try {

@@ -48,7 +48,7 @@ export class ScriptLogger {
     );
   }
 
-  failure(message: string, error: any): void {
+  failure(message: string): void {
     console.log(
       `${this.formatTimestamp()} ${this.formatContext()} ${chalk.red("❌")} ${chalk.red(message)}`,
     );

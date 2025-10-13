@@ -1,12 +1,6 @@
-import { ScriptLogger } from "../utils/logger.js";
-import { status, fileSize, warningBox, infoBox } from "../utils/visual.js";
-
 export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<void> {
-  const logger = new ScriptLogger("CLI:PPOT:Upload");
-
   try {
-    logger.header("Upload Contribution");
-    logger.progress("Starting upload using pre-signed URL...");
+    console.log(`Uploading contribution using pre-signed URL...`);
 
     const fs = await import("fs");
     const path = await import("path");
@@ -14,10 +8,8 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
     // Check if output directory exists
     const outputDir = "output";
     if (!fs.existsSync(outputDir)) {
-      logger.error(`Output directory does not exist: ${outputDir}`);
-      warningBox("Missing Output Directory", [
-        "Please make a contribution first using the contribute command.",
-      ]);
+      console.error(`❌ Error: Output directory does not exist: ${outputDir}`);
+      console.error(`Please make a contribution first using the contribute command.`);
       process.exit(1);
     }
 
@@ -26,10 +18,8 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
     const ptauFiles = files.filter((file) => file.endsWith(".ptau"));
 
     if (ptauFiles.length === 0) {
-      logger.error(`No .ptau files found in ${outputDir} directory`);
-      warningBox("No Contribution Files Found", [
-        "Please make a contribution first using the contribute command.",
-      ]);
+      console.error(`❌ Error: No .ptau files found in ${outputDir} directory`);
+      console.error(`Please make a contribution first using the contribute command.`);
       process.exit(1);
     }
 
@@ -46,11 +36,10 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
     }
 
     if (contributionFiles.length === 0) {
-      logger.error("No valid contribution files found with format pot<power>_<index>.ptau");
-      warningBox("Invalid File Format", [
-        `Found files: ${ptauFiles.join(", ")}`,
-        "Expected format: pot<power>_<index>.ptau",
-      ]);
+      console.error(
+        `❌ Error: No valid contribution files found with format pot<power>_<index>.ptau`,
+      );
+      console.error(`Found files: ${ptauFiles.join(", ")}`);
       process.exit(1);
     }
 
@@ -62,8 +51,8 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
     const filePath = path.join(outputDir, latestFile.file);
     const fileStats = fs.statSync(filePath);
 
-    status("success", `Found contribution file: ${latestFile.file}`);
-    logger.log(`File size: ${fileSize(fileStats.size)}`);
+    console.log(`Found contribution file: ${latestFile.file}`);
+    console.log(`File size: ${(fileStats.size / (1024 * 1024)).toFixed(2)} MB`);
 
     // Check if curl is available
     const { execSync } = await import("child_process");
@@ -71,13 +60,11 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
     try {
       execSync("which curl", { stdio: "pipe" });
     } catch {
-      logger.error("curl is not installed or not available in PATH");
-      warningBox("Missing Dependency", [
-        "Please install curl to upload files:",
-        "  Ubuntu/Debian: sudo apt-get install curl",
-        "  macOS: curl is pre-installed",
-        "  Windows: Download from https://curl.se/windows/",
-      ]);
+      console.error("❌ Error: curl is not installed or not available in PATH");
+      console.error("Please install curl to upload files:");
+      console.error("  Ubuntu/Debian: sudo apt-get install curl");
+      console.error("  macOS: curl is pre-installed");
+      console.error("  Windows: Download from https://curl.se/windows/");
       process.exit(1);
     }
 
@@ -103,35 +90,32 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
         const now = new Date();
 
         if (now >= expirationDate) {
-          logger.error("Upload URL has expired!");
-          warningBox("URL Expired", [
-            `URL expired at: ${expirationDate.toISOString()}`,
-            `Current time: ${now.toISOString()}`,
-            "",
-            "Please generate new URLs with:",
-            "   brebaje-cli ppot generate-urls <filename>",
-          ]);
+          console.error(`❌ Error: Upload URL has expired!`);
+          console.error(`URL expired at: ${expirationDate.toISOString()}`);
+          console.error(`Current time: ${now.toISOString()}`);
+          console.error(`\n💡 Please generate new URLs with:`);
+          console.error(`   brebaje-cli ppot generate-urls <filename>`);
           process.exit(1);
         }
 
         const timeLeft = Math.floor((expirationDate.getTime() - now.getTime()) / 1000 / 60);
-        status("warning", `Upload URL expires in ${timeLeft} minutes`);
+        console.log(`⏰ Upload URL expires in ${timeLeft} minutes`);
       }
     } catch {
-      logger.error(`Invalid upload URL format: ${uploadUrl}`);
+      console.error(`❌ Error: Invalid upload URL format: ${uploadUrl}`);
       process.exit(1);
     }
 
     // Upload file using curl with pre-signed URL
-    status("running", "Uploading contribution file...");
+    console.log("📤 Uploading contribution file...");
 
     const uploadCommand = `curl -X PUT -T "${filePath}" --progress-bar "${uploadUrl}"`;
-    logger.log(`Running: ${uploadCommand}`);
+    console.log(`Running: ${uploadCommand}`);
 
     try {
       execSync(uploadCommand, { stdio: "inherit" });
     } catch (error: any) {
-      logger.error("Upload failed during file transfer");
+      console.error("❌ Upload failed during file transfer");
 
       // Check if it's likely an expiration error (common HTTP status codes)
       const errorOutput = error.stderr?.toString() || error.stdout?.toString() || "";
@@ -141,28 +125,22 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
         errorOutput.includes("RequestTimeTooSkewed") ||
         errorOutput.includes("expired")
       ) {
-        warningBox("URL Expired", [
-          "This appears to be an expired URL error",
-          "",
-          "Please generate new URLs with:",
-          "   brebaje-cli ppot generate-urls <filename>",
-        ]);
+        console.error("🕐 This appears to be an expired URL error");
+        console.error("💡 Please generate new URLs with:");
+        console.error("   brebaje-cli ppot generate-urls <filename>");
       } else {
-        warningBox("Upload Failed", ["Please check your internet connection and try again"]);
+        console.error("Please check your internet connection and try again");
       }
       process.exit(1);
     }
 
-    logger.success("File uploaded successfully!");
-
-    infoBox("Upload Complete", [
-      `Uploaded: ${latestFile.file}`,
-      `Your contribution index: ${latestFile.index}`,
-      "",
-      "Please notify the ceremony coordinator that your contribution is ready.",
-    ]);
+    console.log("✅ File uploaded successfully!");
+    console.log(`📁 Uploaded: ${latestFile.file}`);
+    console.log(`📊 Your contribution index: ${latestFile.index}`);
+    console.log(`💡 Please notify the ceremony coordinator that your contribution is ready.`);
   } catch (error) {
-    logger.error("Failed to upload contribution", error instanceof Error ? error : undefined);
+    const errorMessage = error instanceof Error ? error.message : String(error);
+    console.error("❌ Failed to upload contribution:", errorMessage);
     process.exit(1);
   }
 }

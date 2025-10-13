@@ -1,6 +1,4 @@
 import { loadConfig } from "../utils/config.js";
-import { ScriptLogger } from "../utils/logger.js";
-import { banner, keyValue, json, infoBox, warningBox } from "../utils/visual.js";
 
 export async function generateUrlsPerpetualPowersOfTau(
   downloadFilename: string,
@@ -23,26 +21,14 @@ export async function generateUrlsPerpetualPowersOfTau(
     const downloadExpirationMinutes = options.downloadExpiration || 1440; // 24 hours default
     const uploadExpirationMinutes = options.uploadExpiration || 60; // 1 hour default
 
-    const logger = new ScriptLogger("CLI:GenerateUrls");
-
-    banner(
-      "🔗 Generate Ceremony URL Pair",
-      "Create download & upload URLs for ceremony coordination",
-    );
-
-    logger.info(`Download file: ${downloadFilename}`);
+    console.log(`🔗 Generating URL pair for ceremony coordination`);
+    console.log(`📥 Download file: ${downloadFilename}`);
 
     // Validate download filename format
     const filenameRegex = /^pot\d+_\d+\.ptau$/;
     if (!filenameRegex.test(downloadFilename)) {
-      logger.error(`Invalid filename format: ${downloadFilename}`);
-
-      warningBox("Invalid Filename Format", [
-        "Expected format: pot<power>_<index>.ptau",
-        "Example: pot12_0005.ptau",
-        "Power: ceremony power (12, 15, 20, etc.)",
-        "Index: zero-padded contribution number",
-      ]);
+      console.error(`❌ Error: Invalid filename format: ${downloadFilename}`);
+      console.error(`Expected format: pot<power>_<index>.ptau (e.g., pot12_0005.ptau)`);
       process.exit(1);
     }
 

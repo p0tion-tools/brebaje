@@ -2,10 +2,6 @@ import { config as dotenvConfig } from "dotenv";
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from "fs";
 import { homedir } from "os";
 import { join } from "path";
-import { ScriptLogger } from "./logger.js";
-import { status, infoBox } from "./visual.js";
-
-const logger = new ScriptLogger("CLI:Config");
 
 // Global configuration interface
 export interface BrebajeConfig {
@@ -66,9 +62,9 @@ export function hasConfigDirectory(): boolean {
 export function ensureConfigDirectory(): void {
   if (!hasConfigDirectory()) {
     mkdirSync(GLOBAL_CONFIG_DIR, { recursive: true });
-    status("success", `Created global config directory: ${GLOBAL_CONFIG_DIR}`);
+    console.log(`📁 Created global config directory: ${GLOBAL_CONFIG_DIR}`);
   } else {
-    logger.log(`Directory already exists: ${GLOBAL_CONFIG_DIR}`);
+    console.log(`📁 Directory already exists: ${GLOBAL_CONFIG_DIR}`);
   }
 }
 
@@ -165,8 +161,8 @@ export function loadConfig(): BrebajeConfig {
     dotenvConfig({ path: GLOBAL_CONFIG_PATH });
   } else if (existsSync(LOCAL_CONFIG_PATH)) {
     // Fallback to local config with migration warning
-    status("warning", "Using local .env file. Consider migrating to global config:");
-    logger.info("brebaje-cli config migrate");
+    console.log("⚠️  Using local .env file. Consider migrating to global config:");
+    console.log(`   brebaje-cli config migrate`);
     dotenvConfig({ path: LOCAL_CONFIG_PATH });
   }
 
@@ -258,8 +254,8 @@ export function migrateLocalToGlobal(): void {
   const localContent = readFileSync(LOCAL_CONFIG_PATH, "utf-8");
   writeFileSync(GLOBAL_CONFIG_PATH, localContent, "utf-8");
 
-  logger.success(`Migrated local config to ${GLOBAL_CONFIG_PATH}`);
-  infoBox("Migration Complete", ["You can now remove the local .env file if desired"]);
+  console.log(`✅ Migrated local config to ${GLOBAL_CONFIG_PATH}`);
+  console.log(`💡 You can now remove the local .env file if desired`);
 
   // Clear cache to force reload
   configCache = null;
@@ -277,5 +273,5 @@ export function resetConfig(): void {
   // Clear cache to force reload
   configCache = null;
 
-  logger.success(`Reset config to defaults at ${GLOBAL_CONFIG_PATH}`);
+  console.log(`✅ Reset config to defaults at ${GLOBAL_CONFIG_PATH}`);
 }
