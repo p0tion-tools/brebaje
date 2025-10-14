@@ -51,6 +51,37 @@ else
     exit 1
 fi
 
+# Check wget
+echo "🔍 Checking wget..."
+if command_exists wget; then
+    echo "✅ wget is available"
+else
+    echo "❌ wget not found"
+    echo "   wget is required for downloading ceremony files"
+    echo "   Please install wget for your platform:"
+    echo "   Ubuntu/Debian: sudo apt-get install wget"
+    echo "   CentOS/RHEL: sudo yum install wget"
+    echo "   Fedora: sudo dnf install wget"
+    echo "   macOS: brew install wget"
+    echo "   Windows: https://eternallybored.org/misc/wget/"
+    echo "   Alpine: apk add wget"
+    exit 1
+fi
+
+# Check snarkjs
+echo "🔍 Checking snarkjs..."
+if command_exists snarkjs; then
+    SNARKJS_VERSION=$(snarkjs --version 2>/dev/null | head -1 | awk '{print $2}' || echo "unknown")
+    echo "✅ snarkjs $SNARKJS_VERSION is available"
+else
+    echo "❌ snarkjs not found"
+    echo "   snarkjs is required for Powers of Tau ceremony operations"
+    echo "   Install snarkjs globally: npm install -g snarkjs"
+    echo "   Or with yarn: yarn global add snarkjs"
+    echo "   More info: https://github.com/iden3/snarkjs"
+    exit 1
+fi
+
 # Check and configure pnpm global bin directory
 echo "🔍 Checking pnpm global configuration..."
 PNPM_GLOBAL_BIN=$(pnpm config get global-bin-dir 2>/dev/null)
@@ -86,37 +117,6 @@ else
     echo "   echo 'export PATH=\"$PNPM_GLOBAL_BIN:\$PATH\"' >> ~/.bashrc"
     echo "   echo 'export PATH=\"$PNPM_GLOBAL_BIN:\$PATH\"' >> ~/.zshrc"
     echo "   Then restart your terminal or run: source ~/.bashrc (or ~/.zshrc)"
-fi
-
-# Check wget
-echo "🔍 Checking wget..."
-if command_exists wget; then
-    echo "✅ wget is available"
-else
-    echo "❌ wget not found"
-    echo "   wget is required for downloading ceremony files"
-    echo "   Please install wget for your platform:"
-    echo "   Ubuntu/Debian: sudo apt-get install wget"
-    echo "   CentOS/RHEL: sudo yum install wget"
-    echo "   Fedora: sudo dnf install wget"
-    echo "   macOS: brew install wget"
-    echo "   Windows: https://eternallybored.org/misc/wget/"
-    echo "   Alpine: apk add wget"
-    exit 1
-fi
-
-# Check snarkjs
-echo "🔍 Checking snarkjs..."
-if command_exists snarkjs; then
-    SNARKJS_VERSION=$(snarkjs --version 2>/dev/null | head -1 | awk '{print $2}' || echo "unknown")
-    echo "✅ snarkjs $SNARKJS_VERSION is available"
-else
-    echo "❌ snarkjs not found"
-    echo "   snarkjs is required for Powers of Tau ceremony operations"
-    echo "   Install snarkjs globally: npm install -g snarkjs"
-    echo "   Or with yarn: yarn global add snarkjs"
-    echo "   More info: https://github.com/iden3/snarkjs"
-    exit 1
 fi
 
 echo ""
