@@ -44,9 +44,9 @@ export class VerificationMonitoringService {
   }
 
   /**
-   * CRON job to check verification status every 10 minutes.
+   * CRON job to check verification status every 5 minutes.
    */
-  @Cron('*/1 * * * *') // Every 10 minutes
+  @Cron('*/5 * * * *') // Every 5 minutes
   async checkVerificationStatus() {
     if (this.activeVerifications.size === 0) {
       return; // No active verifications to check
@@ -206,17 +206,3 @@ export class VerificationMonitoringService {
     };
   }
 }
-
-// NOTE: For production scale and robustness, consider upgrading to Redis-based
-// job queues (Bull/BullMQ) which provide:
-// - Persistent job storage (survives server restarts)
-// - Intelligent retry logic with exponential backoff
-// - Better resource efficiency (event-driven vs polling)
-// - Built-in concurrency control and priority queues
-// - Production monitoring tools (Bull Dashboard)
-// - Clustering support for multiple server instances
-// - Smart scheduling based on estimated completion times
-// Redis approach would be more suitable for:
-// - High-volume verification workloads
-// - Multi-server deployments
-// - Critical production environments requiring maximum reliability
