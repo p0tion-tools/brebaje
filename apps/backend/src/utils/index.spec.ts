@@ -128,7 +128,7 @@ describe('fetchWithTimeout', () => {
     expect(result).toBe(mockResponse);
   });
 
-  it('should merge existing signal with abort controller signal', async () => {
+  it('should override any existing signal with a new AbortController signal', async () => {
     const existingController = new AbortController();
     const mockResponse = new Response('test data', { status: 200 });
     mockFetch.mockResolvedValueOnce(mockResponse);
