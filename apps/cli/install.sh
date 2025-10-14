@@ -105,6 +105,20 @@ else
     exit 1
 fi
 
+# Check snarkjs
+echo "🔍 Checking snarkjs..."
+if command_exists snarkjs; then
+    SNARKJS_VERSION=$(snarkjs --version 2>/dev/null | head -1 | awk '{print $2}' || echo "unknown")
+    echo "✅ snarkjs $SNARKJS_VERSION is available"
+else
+    echo "❌ snarkjs not found"
+    echo "   snarkjs is required for Powers of Tau ceremony operations"
+    echo "   Install snarkjs globally: npm install -g snarkjs"
+    echo "   Or with yarn: yarn global add snarkjs"
+    echo "   More info: https://github.com/iden3/snarkjs"
+    exit 1
+fi
+
 echo ""
 echo "📦 Installing dependencies..."
 pnpm install
