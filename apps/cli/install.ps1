@@ -240,11 +240,17 @@ if (Test-Command "pnpm") {
 
 # Check wget
 Write-InfoMsg "Checking wget..."
-# Check for actual wget.exe, not PowerShell alias
-$wgetPath = Get-Command wget.exe -ErrorAction SilentlyContinue
-if ($wgetPath) {
-    Write-Success "wget is available"
-} else {
+# Check for actual wget.exe binary, not PowerShell alias
+try {
+    $wgetExe = Get-Command wget.exe -CommandType Application -ErrorAction Stop
+    # Test if it's actually wget by checking version
+    $testResult = & $wgetExe.Source --version 2>$null
+    if ($testResult -match "GNU Wget") {
+        Write-Success "wget is available"
+    } else {
+        throw "Not real wget"
+    }
+} catch {
     Write-ErrorMsg "wget not found"
     Write-ProgressMsg "Attempting to install wget..."
     
@@ -252,9 +258,19 @@ if ($wgetPath) {
     if ($installed) {
         # Refresh PATH
         Refresh-Path
-        $wgetPath = Get-Command wget.exe -ErrorAction SilentlyContinue
-        if ($wgetPath) {
-            Write-Success "wget installed successfully"
+        try {
+            $wgetExe = Get-Command wget.exe -CommandType Application -ErrorAction Stop
+            $testResult = & $wgetExe.Source --version 2>$null
+            if ($testResult -match "GNU Wget") {
+                Write-Success "wget installed successfully"
+            } else {
+                throw "Installation verification failed"
+            }
+        } catch {
+            Write-ErrorMsg "wget installation verification failed"
+            Write-Host "wget is required for downloading ceremony files" -ForegroundColor Red
+            Write-Host "Please install wget manually from: https://eternallybored.org/misc/wget/" -ForegroundColor Red
+            exit 1
         }
     } else {
         Write-ErrorMsg "Failed to install wget automatically"
