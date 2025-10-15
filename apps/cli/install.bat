@@ -49,19 +49,51 @@ if errorlevel 1 (
 
 echo WSL is already installed.
 
-REM Simple Ubuntu check
+REM Check for any WSL distributions
 echo Checking Ubuntu distribution...
-wsl -l -v > wsl_check.txt
+wsl --list >nul 2>&1
+if errorlevel 1 (
+    echo No WSL distributions found. Installing Ubuntu...
+    wsl --install -d Ubuntu
+    
+    if errorlevel 1 (
+        echo ERROR: Ubuntu installation failed
+        echo Try manually: wsl --install -d Ubuntu
+        pause
+        exit /b 1
+    )
+    
+    echo Ubuntu installation initiated.
+    echo Please complete Ubuntu setup and run this script again.
+    pause
+    exit /b 0
+)
+
+REM Check specifically for Ubuntu
+wsl -l -v > wsl_check.txt 2>&1
 type wsl_check.txt | find /i "ubuntu" >nul
 if errorlevel 1 (
-    echo Ubuntu not found. Installing...
+    echo Ubuntu not found in installed distributions.
+    echo Available distributions:
+    type wsl_check.txt
+    echo.
+    echo Installing Ubuntu...
     wsl --install -d Ubuntu
+    
+    if errorlevel 1 (
+        echo ERROR: Ubuntu installation failed
+        echo Try manually: wsl --install -d Ubuntu
+        pause
+        exit /b 1
+    )
+    
     echo Please complete Ubuntu setup and run this script again.
     pause
     exit /b 0
 )
 
 del wsl_check.txt
+echo Ubuntu found!
 
 REM Convert Windows path to WSL path
 set "WSL_PATH=/mnt/c%PROJECT_DIR:~2%"
