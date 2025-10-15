@@ -240,7 +240,9 @@ if (Test-Command "pnpm") {
 
 # Check wget
 Write-InfoMsg "Checking wget..."
-if (Test-Command "wget") {
+# Check for actual wget.exe, not PowerShell alias
+$wgetPath = Get-Command wget.exe -ErrorAction SilentlyContinue
+if ($wgetPath) {
     Write-Success "wget is available"
 } else {
     Write-ErrorMsg "wget not found"
@@ -250,7 +252,8 @@ if (Test-Command "wget") {
     if ($installed) {
         # Refresh PATH
         Refresh-Path
-        if (Test-Command "wget") {
+        $wgetPath = Get-Command wget.exe -ErrorAction SilentlyContinue
+        if ($wgetPath) {
             Write-Success "wget installed successfully"
         }
     } else {
