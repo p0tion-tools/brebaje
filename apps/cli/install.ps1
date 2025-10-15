@@ -362,7 +362,13 @@ try {
         Write-Success "Global bin directory is in PATH"
     } else {
         Write-WarningMsg "Global bin directory not in PATH"
-        Write-Host "After installation, you may need to add this to your PATH:" -ForegroundColor Yellow
+        Write-ProgressMsg "Adding global bin directory to PATH for this session..."
+        
+        # Add to current session PATH
+        $env:PATH = $env:PATH + ";" + $pnpmGlobalBin
+        Write-Success "Added $pnpmGlobalBin to PATH for this session"
+        
+        Write-Host "Note: You may need to add this to your permanent PATH:" -ForegroundColor Yellow
         Write-Host "  $pnpmGlobalBin" -ForegroundColor Yellow
     }
 } catch {
