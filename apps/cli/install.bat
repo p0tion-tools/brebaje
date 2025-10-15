@@ -53,8 +53,12 @@ if errorlevel 1 (
 
 REM Check if Ubuntu is available
 echo Checking Ubuntu distribution...
-wsl --list | findstr -i "ubuntu" >nul
-if errorlevel 1 (
+wsl --list --verbose > temp_wsl_list.txt 2>&1
+findstr /i "ubuntu" temp_wsl_list.txt >nul 2>&1
+set "ubuntu_found=%errorlevel%"
+del temp_wsl_list.txt >nul 2>&1
+
+if %ubuntu_found% neq 0 (
     echo Ubuntu distribution not found. Installing Ubuntu...
     wsl --install -d Ubuntu
     
