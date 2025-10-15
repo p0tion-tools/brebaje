@@ -417,8 +417,16 @@ try {
         # Verify CLI is accessible
         Write-InfoMsg "Verifying CLI accessibility..."
         
-        # Refresh PATH
+        # Refresh PATH multiple times to ensure we get the latest
         Refresh-Path
+        Start-Sleep -Seconds 1
+        
+        # Also add the pnpm global bin to current session if not already there
+        $pnpmGlobalBin = pnpm config get global-bin-dir 2>$null
+        if ($pnpmGlobalBin -and $env:PATH -notlike "*$pnpmGlobalBin*") {
+            $env:PATH = $env:PATH + ";" + $pnpmGlobalBin
+            Write-InfoMsg "Added pnpm global bin to current session PATH"
+        }
         
         if (Test-Command "brebaje-cli") {
             Write-Success "brebaje-cli is accessible in PATH"
