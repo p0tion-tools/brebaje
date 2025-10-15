@@ -110,10 +110,28 @@ function Compare-Version {
         [string]$Required
     )
     try {
-        $currentVersion = [System.Version]::Parse($Current -replace '^v', '')
-        $requiredVersion = [System.Version]::Parse($Required)
-        return $currentVersion -ge $requiredVersion
+        # Clean up version strings
+        $cleanCurrent = $Current -replace '^v', '' -replace '\s.*$', ''
+        $cleanRequired = $Required -replace '^v', '' -replace '\s.*$', ''
+        
+        # Split version parts
+        $currentParts = $cleanCurrent.Split('.') | ForEach-Object { [int]$_ }
+        $requiredParts = $cleanRequired.Split('.') | ForEach-Object { [int]$_ }
+        
+        # Pad arrays to same length
+        $maxLength = [Math]::Max($currentParts.Length, $requiredParts.Length)
+        while ($currentParts.Length -lt $maxLength) { $currentParts += 0 }
+        while ($requiredParts.Length -lt $maxLength) { $requiredParts += 0 }
+        
+        # Compare each part
+        for ($i = 0; $i -lt $maxLength; $i++) {
+            if ($currentParts[$i] -gt $requiredParts[$i]) { return $true }
+            if ($currentParts[$i] -lt $requiredParts[$i]) { return $false }
+        }
+        
+        return $true  # Equal versions
     } catch {
+        Write-Host "Version comparison failed: Current='$Current', Required='$Required'" -ForegroundColor Yellow
         return $false
     }
 }
