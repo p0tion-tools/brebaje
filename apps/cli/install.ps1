@@ -67,8 +67,10 @@ function Install-Package {
     
     if ($packageManagers['winget'] -and $WingetId) {
         Write-ProgressMsg "Installing $PackageName using winget..."
+        Write-Host "This may take a few minutes..." -ForegroundColor Yellow
         try {
-            winget install --id $WingetId --accept-package-agreements --accept-source-agreements --silent
+            $result = winget install --id $WingetId --accept-package-agreements --accept-source-agreements --silent
+            Write-InfoMsg "winget installation completed for $PackageName"
             return $true
         } catch {
             Write-ErrorMsg "winget installation failed for $PackageName"
@@ -77,8 +79,10 @@ function Install-Package {
     
     if ($packageManagers['chocolatey'] -and $ChocoName) {
         Write-ProgressMsg "Installing $PackageName using chocolatey..."
+        Write-Host "This may take a few minutes..." -ForegroundColor Yellow
         try {
-            choco install $ChocoName -y
+            $result = choco install $ChocoName -y
+            Write-InfoMsg "chocolatey installation completed for $PackageName"
             return $true
         } catch {
             Write-ErrorMsg "chocolatey installation failed for $PackageName"
@@ -253,24 +257,77 @@ try {
 } catch {
     Write-ErrorMsg "wget not found"
     Write-ProgressMsg "Attempting to install wget..."
+    Write-Host "wget is required for downloading ceremony files" -ForegroundColor Cyan
+    Write-Host "Installing wget (this may take a few minutes)..." -ForegroundColor Cyan
     
     $installed = Install-Package -PackageName "wget" -WingetId "JernejSimoncic.Wget" -ChocoName "wget" -FallbackUrl "https://eternallybored.org/misc/wget/"
     if ($installed) {
         # Refresh PATH
         Refresh-Path
+        Write-InfoMsg "Verifying wget installation and PATH configuration..."
+        
         try {
             $wgetExe = Get-Command wget.exe -CommandType Application -ErrorAction Stop
             $testResult = & $wgetExe.Source --version 2>$null
             if ($testResult -match "GNU Wget") {
-                Write-Success "wget installed successfully"
+                Write-Success "wget installed successfully and available in PATH"
             } else {
                 throw "Installation verification failed"
             }
         } catch {
-            Write-ErrorMsg "wget installation verification failed"
-            Write-Host "wget is required for downloading ceremony files" -ForegroundColor Red
-            Write-Host "Please install wget manually from: https://eternallybored.org/misc/wget/" -ForegroundColor Red
-            exit 1
+            # wget not found in PATH, try to locate and add it
+            Write-WarningMsg "wget installed but not found in PATH, attempting to fix..."
+            
+            # Common wget installation paths
+            $commonPaths = @(
+                "${env:ProgramFiles}\GnuWin32\bin",
+                "${env:ProgramFiles(x86)}\GnuWin32\bin",
+                "${env:ProgramFiles}\wget\bin",
+                "${env:LOCALAPPDATA}\Microsoft\WinGet\Packages\JernejSimoncic.Wget_Microsoft.Winget.Source_8wekyb3d8bbwe",
+                "$env:ChocolateyInstall\bin"
+            )
+            
+            $wgetFound = $false
+            foreach ($path in $commonPaths) {
+                $wgetPath = Join-Path $path "wget.exe"
+                if (Test-Path $wgetPath) {
+                    Write-InfoMsg "Found wget at: $path"
+                    
+                    # Add to current session PATH
+                    if ($env:PATH -notlike "*$path*") {
+                        $env:PATH = $env:PATH + ";" + $path
+                        Write-Success "Added $path to current session PATH"
+                    }
+                    
+                    # Test wget again
+                    try {
+                        $testResult = & $wgetPath --version 2>$null
+                        if ($testResult -match "GNU Wget") {
+                            Write-Success "wget is now working correctly"
+                            $wgetFound = $true
+                            
+                            # Add to permanent user PATH
+                            $userPath = [Environment]::GetEnvironmentVariable("PATH", "User")
+                            if ($userPath -notlike "*$path*") {
+                                $newUserPath = $userPath + ";" + $path
+                                [Environment]::SetEnvironmentVariable("PATH", $newUserPath, "User")
+                                Write-Success "Added wget to permanent user PATH"
+                            }
+                            break
+                        }
+                    } catch {
+                        continue
+                    }
+                }
+            }
+            
+            if (-not $wgetFound) {
+                Write-ErrorMsg "wget installation verification failed"
+                Write-Host "wget is required for downloading ceremony files" -ForegroundColor Red
+                Write-Host "Please install wget manually from: https://eternallybored.org/misc/wget/" -ForegroundColor Red
+                Write-Host "And ensure it's added to your PATH environment variable" -ForegroundColor Red
+                exit 1
+            }
         }
     } else {
         Write-ErrorMsg "Failed to install wget automatically"
