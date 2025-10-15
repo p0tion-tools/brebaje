@@ -56,15 +56,20 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
 
     // Check if curl is available
     const { execSync } = await import("child_process");
+    const os = await import("os");
+
+    const isWindows = os.platform() === "win32";
+    const curlCommand = isWindows ? "curl.exe" : "curl";
+    const checkCommand = isWindows ? "where curl.exe" : "which curl";
 
     try {
-      execSync("which curl", { stdio: "pipe" });
+      execSync(checkCommand, { stdio: "pipe" });
     } catch {
       console.error("❌ Error: curl is not installed or not available in PATH");
       console.error("Please install curl to upload files:");
       console.error("  Ubuntu/Debian: sudo apt-get install curl");
       console.error("  macOS: curl is pre-installed");
-      console.error("  Windows: Download from https://curl.se/windows/");
+      console.error("  Windows: Run install.ps1 or install via winget install curl.curl");
       process.exit(1);
     }
 
@@ -109,7 +114,7 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
     // Upload file using curl with pre-signed URL
     console.log("📤 Uploading contribution file...");
 
-    const uploadCommand = `curl -X PUT -T "${filePath}" --progress-bar "${uploadUrl}"`;
+    const uploadCommand = `${curlCommand} -X PUT -T "${filePath}" --progress-bar "${uploadUrl}"`;
     console.log(`Running: ${uploadCommand}`);
 
     try {
