@@ -1,5 +1,4 @@
 @echo off
-setlocal enabledelayedexpansion
 
 echo.
 echo ========================================
@@ -16,9 +15,9 @@ if errorlevel 1 (
     exit /b 1
 )
 
-REM Get current directory (where the batch file is located)
-set "SCRIPT_DIR=%~dp0"
-set "PROJECT_DIR=%SCRIPT_DIR%"
+REM Get current directory
+set SCRIPT_DIR=%~dp0
+set PROJECT_DIR=%SCRIPT_DIR%
 
 echo Current project directory: %PROJECT_DIR%
 
@@ -32,12 +31,11 @@ if errorlevel 1 (
     echo After restart, please run this script again.
     echo.
     
-    REM Install WSL2 with Ubuntu
     wsl --install -d Ubuntu
     
     if errorlevel 1 (
         echo ERROR: Failed to install WSL2
-        echo Please install WSL2 manually: https://docs.microsoft.com/en-us/windows/wsl/install
+        echo Please install WSL2 manually
         pause
         exit /b 1
     )
@@ -47,32 +45,23 @@ if errorlevel 1 (
     echo Please restart your computer and run this script again.
     pause
     exit /b 0
-) else (
-    echo WSL is already installed.
 )
 
-REM Check if Ubuntu is available
-echo Checking Ubuntu distribution...
-wsl --list --verbose > temp_wsl_list.txt 2>&1
-findstr /i "ubuntu" temp_wsl_list.txt >nul 2>&1
-set "ubuntu_found=%errorlevel%"
-del temp_wsl_list.txt >nul 2>&1
+echo WSL is already installed.
 
-if %ubuntu_found% neq 0 (
-    echo Ubuntu distribution not found. Installing Ubuntu...
+REM Simple Ubuntu check
+echo Checking Ubuntu distribution...
+wsl -l -v > wsl_check.txt
+type wsl_check.txt | find /i "ubuntu" >nul
+if errorlevel 1 (
+    echo Ubuntu not found. Installing...
     wsl --install -d Ubuntu
-    
-    if errorlevel 1 (
-        echo ERROR: Failed to install Ubuntu distribution
-        pause
-        exit /b 1
-    )
-    
-    echo Ubuntu installation completed.
-    echo Please complete the Ubuntu setup (create username/password) and run this script again.
+    echo Please complete Ubuntu setup and run this script again.
     pause
     exit /b 0
 )
+
+del wsl_check.txt
 
 REM Convert Windows path to WSL path
 set "WSL_PATH=/mnt/c%PROJECT_DIR:~2%"
