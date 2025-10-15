@@ -63,15 +63,20 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
 
     // Check if wget is available
     const { execSync } = await import("child_process");
+    const os = await import("os");
+
+    const isWindows = os.platform() === "win32";
+    const wgetCommand = isWindows ? "wget.exe" : "wget";
+    const checkCommand = isWindows ? "where wget.exe" : "which wget";
 
     try {
-      execSync("which wget", { stdio: "pipe" });
+      execSync(checkCommand, { stdio: "pipe" });
     } catch {
       console.error("❌ Error: wget is not installed or not available in PATH");
       console.error("Please install wget to download files:");
       console.error("  Ubuntu/Debian: sudo apt-get install wget");
       console.error("  macOS: brew install wget");
-      console.error("  Windows: Download from https://eternallybored.org/misc/wget/");
+      console.error("  Windows: Run install.ps1 or install via winget install JernejSimoncic.Wget");
       process.exit(1);
     }
 
@@ -82,7 +87,7 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
     }
 
     // Run wget command with progress bar and resume capability
-    const command = `wget --continue --progress=bar --show-progress -O "${outputFile}" "${url}"`;
+    const command = `${wgetCommand} --continue --progress=bar --show-progress -O "${outputFile}" "${url}"`;
     console.log(`Running: ${command}`);
 
     execSync(command, { stdio: "inherit" });
