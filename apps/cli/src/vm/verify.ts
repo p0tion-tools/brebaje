@@ -157,7 +157,13 @@ export async function verifyVm(jsonPath?: string): Promise<void> {
 
       console.log(`=`.repeat(60));
       logger.log("💡 You can check verification status with:");
-      logger.log(`   curl "${BREBAJE_API_URL}${data.statusUrl}"`);
+
+      // Check if Windows for curl command suggestion
+      const os = await import("os");
+      const isWindows = os.platform() === "win32";
+      const curlCommand = isWindows ? "curl.exe" : "curl";
+
+      logger.log(`   ${curlCommand} "${BREBAJE_API_URL}${data.statusUrl}"`);
     } catch (error: any) {
       // Simplified error handling
       logger.failure(`❌ Verification request failed: ${error.message}`);

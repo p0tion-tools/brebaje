@@ -14,6 +14,11 @@ export const fetchWithTimeout = async (
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
 
   try {
+    // For HTTPS URLs with potential self-signed certificates, disable SSL verification
+    if (url.startsWith("https://") && process.env.NODE_TLS_REJECT_UNAUTHORIZED !== "0") {
+      process.env.NODE_TLS_REJECT_UNAUTHORIZED = "0";
+    }
+
     const response = await fetch(url, {
       ...options,
       signal: controller.signal,
