@@ -51,6 +51,11 @@ export class ParticipantsService {
       const participant = await this.participantModel.findOne({
         where: { userId: userId, ceremonyId: ceremonyId },
       });
+
+      if (!participant) {
+        throw new NotFoundException('Participant not found');
+      }
+
       return participant;
     } catch (error) {
       this.handleErrors(error as Error);
