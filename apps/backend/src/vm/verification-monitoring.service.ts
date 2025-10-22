@@ -3,6 +3,7 @@ import { Cron } from '@nestjs/schedule';
 import { VmService } from './vm.service';
 import { DISCORD_WEBHOOK_URL } from '../utils/constants';
 import { fetchWithTimeout } from '../utils';
+import { NotificationConfig } from '../types/declarations';
 
 @Injectable()
 export class VerificationMonitoringService {
@@ -10,7 +11,7 @@ export class VerificationMonitoringService {
     string,
     {
       instanceId: string;
-      notificationConfig?: any;
+      notificationConfig?: NotificationConfig;
       startTime: Date;
       autoStop?: boolean;
       ptauFilename?: string;
@@ -23,14 +24,14 @@ export class VerificationMonitoringService {
    * Start monitoring a verification job.
    * @param commandId <string> - SSM command ID to monitor.
    * @param instanceId <string> - EC2 instance ID.
-   * @param notificationConfig <any> - Optional notification configuration.
+   * @param notificationConfig <NotificationConfig> - Optional notification configuration.
    * @param autoStop <boolean> - Whether to automatically stop instance when verification completes.
    * @param ptauFilename <string> - Optional ptau filename being verified.
    */
   startMonitoring(
     commandId: string,
     instanceId: string,
-    notificationConfig?: any,
+    notificationConfig?: NotificationConfig,
     autoStop?: boolean,
     ptauFilename?: string,
   ) {
@@ -75,7 +76,7 @@ export class VerificationMonitoringService {
 
           // Send notifications if configured
           if (config.notificationConfig) {
-            await this.sendNotification(config.notificationConfig, result, commandId, status);
+            this.sendNotification(config.notificationConfig, result, commandId, status);
           }
 
           // Send Discord notification
@@ -115,13 +116,13 @@ export class VerificationMonitoringService {
 
   /**
    * Send notification when verification completes.
-   * @param notificationConfig <any> - Notification configuration.
+   * @param notificationConfig <NotificationConfig> - Notification configuration.
    * @param result <number> - HTTP status code (200/400).
    * @param commandId <string> - Command ID for reference.
    * @param status <string> - SSM command status.
    */
   private sendNotification(
-    notificationConfig: any,
+    notificationConfig: NotificationConfig,
     result: number,
     commandId: string,
     status: string,
