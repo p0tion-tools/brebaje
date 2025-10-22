@@ -2,6 +2,7 @@ import { Controller, Post, Get, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { VmService } from './vm.service';
 import { VerificationMonitoringService } from './verification-monitoring.service';
+import { StorageService } from '../storage/storage.service';
 import { VerifyPhase1Dto } from './dto/verify-phase1.dto';
 import { SetupVmDto } from './dto/setup-vm.dto';
 import { VmLifecycleDto } from './dto/vm-lifecycle.dto';
@@ -12,6 +13,7 @@ export class VmController {
   constructor(
     private readonly vmService: VmService,
     private readonly verificationMonitoringService: VerificationMonitoringService,
+    private readonly storageService: StorageService,
   ) {}
 
   @Post('verify')
@@ -36,9 +38,12 @@ export class VmController {
     // - Let existing CRON monitoring service retry verification once instance is ready
     // - This provides complete automation: auto-start → wait for ready → verify → auto-stop
 
+    // Get bucket name from ceremony
+    const bucketName = await this.storageService.getCeremonyBucketName(verifyDto.ceremonyId);
+
     // Generate Phase 1 verification commands
     const commands = this.vmService.vmVerificationPhase1Command(
-      verifyDto.bucketName,
+      bucketName,
       verifyDto.lastPtauStoragePath,
     );
 
