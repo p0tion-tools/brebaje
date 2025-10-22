@@ -120,7 +120,7 @@ export class VerificationMonitoringService {
    * @param commandId <string> - Command ID for reference.
    * @param status <string> - SSM command status.
    */
-  private async sendNotification(
+  private sendNotification(
     notificationConfig: any,
     result: number,
     commandId: string,
