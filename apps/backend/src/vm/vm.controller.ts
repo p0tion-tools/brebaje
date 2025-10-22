@@ -53,6 +53,9 @@ export class VmController {
     // Start verification (don't wait for completion)
     const commandId = await this.vmService.runCommandUsingSSM(verifyDto.instanceId, commands);
 
+    // Check if notifications are configured
+    const hasNotificationConfig = !!(verifyDto.coordinatorEmail || verifyDto.webhookUrl);
+
     // Start monitoring for completion notifications
     const notificationConfig = {
       coordinatorEmail: verifyDto.coordinatorEmail,
@@ -62,7 +65,7 @@ export class VmController {
     this.verificationMonitoringService.startMonitoring(
       commandId,
       verifyDto.instanceId,
-      verifyDto.coordinatorEmail || verifyDto.webhookUrl ? notificationConfig : undefined,
+      hasNotificationConfig ? notificationConfig : undefined,
       verifyDto.autoStop,
       ptauFilename,
     );
@@ -73,10 +76,9 @@ export class VmController {
       instanceId: verifyDto.instanceId,
       message: 'Phase 1 verification started',
       statusUrl: `/vm/verify/status/${commandId}?instanceId=${verifyDto.instanceId}`,
-      monitoring:
-        verifyDto.coordinatorEmail || verifyDto.webhookUrl
-          ? 'Notifications will be sent when verification completes'
-          : 'No notifications configured',
+      monitoring: hasNotificationConfig
+        ? 'Notifications will be sent when verification completes'
+        : 'No notifications configured',
       autoStop: verifyDto.autoStop
         ? 'Instance will be automatically stopped when verification completes'
         : 'Instance will remain running after verification',
