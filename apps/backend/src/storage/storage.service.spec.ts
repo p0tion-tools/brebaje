@@ -128,7 +128,7 @@ describe('StorageService', () => {
     it('should throw InternalServerErrorException if ceremony not found', async () => {
       ceremoniesService.findOne.mockResolvedValue(null as never);
 
-      await expect(service.createAndSetupBucket(999)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.createAndSetupBucket(999)).rejects.toThrow(NotFoundException);
     });
   });
 
@@ -145,7 +145,7 @@ describe('StorageService', () => {
     it('should throw InternalServerErrorException if ceremony not found', async () => {
       ceremoniesService.findOne.mockResolvedValue(null as never);
 
-      await expect(service.deleteCeremonyBucket(999)).rejects.toThrow(InternalServerErrorException);
+      await expect(service.deleteCeremonyBucket(999)).rejects.toThrow(NotFoundException);
     });
   });
 

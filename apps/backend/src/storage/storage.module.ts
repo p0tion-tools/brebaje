@@ -1,18 +1,14 @@
-import { Module } from '@nestjs/common';
-import { SequelizeModule } from '@nestjs/sequelize';
+import { Module, forwardRef } from '@nestjs/common';
 import { StorageController } from './storage.controller';
 import { StorageService } from './storage.service';
-import { CeremoniesService } from '../ceremonies/ceremonies.service';
-import { ParticipantsService } from '../participants/participants.service';
-import { Ceremony } from '../ceremonies/ceremony.model';
-import { Participant } from '../participants/participant.model';
-import { User } from '../users/user.model';
-import { UsersService } from '../users/users.service';
+import { CeremoniesModule } from '../ceremonies/ceremonies.module';
+import { ParticipantsModule } from '../participants/participants.module';
+import { UsersModule } from '../users/users.module';
 
 @Module({
   controllers: [StorageController],
-  imports: [SequelizeModule.forFeature([Ceremony, Participant, User])],
-  providers: [StorageService, CeremoniesService, ParticipantsService, UsersService],
+  imports: [forwardRef(() => CeremoniesModule), forwardRef(() => ParticipantsModule), UsersModule],
+  providers: [StorageService],
   exports: [StorageService],
 })
 export class StorageModule {}

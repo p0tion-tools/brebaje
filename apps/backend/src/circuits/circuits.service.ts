@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, Inject, forwardRef } from '@nestjs/common';
 import { CreateCircuitDto } from './dto/create-circuit.dto';
 import { UpdateCircuitDto } from './dto/update-circuit.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -13,6 +13,7 @@ export class CircuitsService {
     @InjectModel(Circuit)
     private readonly circuitModel: typeof Circuit,
     private readonly vmService: VmService,
+    @Inject(forwardRef(() => StorageService))
     private readonly storageService: StorageService,
   ) {}
 
@@ -69,6 +70,11 @@ export class CircuitsService {
   findAll() {
     return this.circuitModel.findAll();
   }
+
+  findAllByCeremonyId(ceremonyId: number) {
+    return this.circuitModel.findAll({ where: { ceremonyId } });
+  }
+
   findOne(id: number) {
     return this.circuitModel.findOne({ where: { id } });
   }
