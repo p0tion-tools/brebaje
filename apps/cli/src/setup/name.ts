@@ -1,3 +1,5 @@
+import fs from "fs";
+
 export async function setupContributorName(fullName: string): Promise<void> {
   try {
     console.log("👤 Setting up contributor name for ceremony contributions...");
@@ -9,8 +11,6 @@ export async function setupContributorName(fullName: string): Promise<void> {
     }
 
     const cleanName = fullName.trim();
-
-    const fs = await import("fs");
     const envExamplePath = ".env.example";
     const envPath = ".env";
 

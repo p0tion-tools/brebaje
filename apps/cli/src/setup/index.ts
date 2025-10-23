@@ -1,4 +1,7 @@
 import { Command } from "commander";
+import { setupGitHubToken, setupGitHubTokenScoped } from "./token.js";
+import { setupCeremonyRepository } from "./ceremony-repo.js";
+import { setupContributorName } from "./name.js";
 
 export function setUpSetupCommands(program: Command): void {
   const setupCommand = program.command("setup").description("Configuration and setup commands");
@@ -8,7 +11,6 @@ export function setUpSetupCommands(program: Command): void {
     .description("Configure GitHub classic token for gist creation")
     .argument("<github_token>", "GitHub personal access token (classic)")
     .action(async (githubToken: string) => {
-      const { setupGitHubToken } = await import("./token.js");
       await setupGitHubToken(githubToken);
     });
 
@@ -17,7 +19,6 @@ export function setUpSetupCommands(program: Command): void {
     .description("Configure fine-grained GitHub token for ceremony repository operations")
     .argument("<github_token_scoped>", "GitHub fine-grained personal access token")
     .action(async (githubTokenScoped: string) => {
-      const { setupGitHubTokenScoped } = await import("./token.js");
       await setupGitHubTokenScoped(githubTokenScoped);
     });
 
@@ -29,7 +30,6 @@ export function setUpSetupCommands(program: Command): void {
       "GitHub repository URL (e.g., https://github.com/owner/ceremony-repo)",
     )
     .action(async (repositoryUrl: string) => {
-      const { setupCeremonyRepository } = await import("./ceremony-repo.js");
       await setupCeremonyRepository(repositoryUrl);
     });
 
@@ -38,7 +38,6 @@ export function setUpSetupCommands(program: Command): void {
     .description("Configure contributor name for ceremony contributions")
     .argument("<full_name>", "Your full name for contribution records")
     .action(async (fullName: string) => {
-      const { setupContributorName } = await import("./name.js");
       await setupContributorName(fullName);
     });
 }

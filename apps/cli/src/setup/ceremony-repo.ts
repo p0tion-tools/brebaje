@@ -1,3 +1,5 @@
+import fs from "fs";
+
 function validateRepositoryUrl(url: string): boolean {
   // Validate GitHub repository URL format
   const urlPattern = /^https:\/\/github\.com\/[A-Za-z0-9._-]+\/[A-Za-z0-9._-]+\/?$/;
@@ -15,8 +17,6 @@ export async function setupCeremonyRepository(repositoryUrl: string): Promise<vo
       console.error("Example: https://github.com/your-username/ceremony-repo-fork");
       process.exit(1);
     }
-
-    const fs = await import("fs");
     const envExamplePath = ".env.example";
     const envPath = ".env";
 

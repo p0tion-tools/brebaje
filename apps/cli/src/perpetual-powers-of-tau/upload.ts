@@ -1,9 +1,11 @@
+import fs from "fs";
+import path from "path";
+import { execSync } from "child_process";
+import os from "os";
+
 export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<void> {
   try {
     console.log(`Uploading contribution using pre-signed URL...`);
-
-    const fs = await import("fs");
-    const path = await import("path");
 
     // Check if output directory exists
     const outputDir = "output";
@@ -55,8 +57,6 @@ export async function uploadPerpetualPowersOfTau(uploadUrl: string): Promise<voi
     console.log(`File size: ${(fileStats.size / (1024 * 1024)).toFixed(2)} MB`);
 
     // Check if curl is available
-    const { execSync } = await import("child_process");
-    const os = await import("os");
 
     const isWindows = os.platform() === "win32";
     const curlCommand = isWindows ? "curl.exe" : "curl";

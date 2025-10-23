@@ -1,3 +1,6 @@
+import fs from "fs";
+import path from "path";
+import os from "os";
 import { ScriptLogger } from "../utils/logger.js";
 import { loadConfig } from "../utils/config.js";
 import { fetchWithTimeout } from "../utils/http.js";
@@ -33,8 +36,6 @@ export async function verifyVm(jsonPath?: string): Promise<void> {
     console.log(`=`.repeat(60));
 
     // Find ceremony URLs JSON file
-    const fs = await import("fs");
-    const path = await import("path");
 
     let ceremonyUrlsPath: string;
 
@@ -159,7 +160,6 @@ export async function verifyVm(jsonPath?: string): Promise<void> {
       logger.log("💡 You can check verification status with:");
 
       // Check if Windows for curl command suggestion
-      const os = await import("os");
       const isWindows = os.platform() === "win32";
       const curlCommand = isWindows ? "curl.exe" : "curl";
 
