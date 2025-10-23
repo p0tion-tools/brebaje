@@ -25,7 +25,7 @@ describe('AuthService', () => {
         {
           provide: UsersService,
           useValue: {
-            findByGithubId: jest.fn(),
+            findByProviderAndDisplayName: jest.fn(),
             create: jest.fn(),
           },
         },
@@ -211,7 +211,7 @@ describe('AuthService', () => {
       });
 
       // Mock existing user found
-      (usersService.findByGithubId as jest.Mock).mockResolvedValue(mockUser);
+      (usersService.findByProviderAndDisplayName as jest.Mock).mockResolvedValue(mockUser);
 
       const result = await service.authWithGithub(deviceFlowToken);
 
@@ -221,7 +221,10 @@ describe('AuthService', () => {
         },
       });
 
-      expect(usersService.findByGithubId).toHaveBeenCalledWith(mockGithubUser.id);
+      expect(usersService.findByProviderAndDisplayName).toHaveBeenCalledWith(
+        UserProvider.GITHUB,
+        mockGithubUser.login,
+      );
       expect(jwtService.signAsync).toHaveBeenCalledWith({ user: mockUser });
 
       expect(result).toEqual({
@@ -238,7 +241,9 @@ describe('AuthService', () => {
       });
 
       // Mock user not found, then created
-      (usersService.findByGithubId as jest.Mock).mockRejectedValue(new Error('User not found'));
+      (usersService.findByProviderAndDisplayName as jest.Mock).mockRejectedValue(
+        new Error('User not found'),
+      );
       (usersService.create as jest.Mock).mockResolvedValue(mockUser);
 
       const result = await service.authWithGithub(deviceFlowToken);
@@ -249,7 +254,10 @@ describe('AuthService', () => {
         },
       });
 
-      expect(usersService.findByGithubId).toHaveBeenCalledWith(mockGithubUser.id);
+      expect(usersService.findByProviderAndDisplayName).toHaveBeenCalledWith(
+        UserProvider.GITHUB,
+        mockGithubUser.login,
+      );
 
       expect(usersService.create).toHaveBeenCalledWith({
         displayName: mockGithubUser.login,
@@ -280,7 +288,9 @@ describe('AuthService', () => {
       });
 
       // Mock user not found, then created
-      (usersService.findByGithubId as jest.Mock).mockRejectedValue(new Error('User not found'));
+      (usersService.findByProviderAndDisplayName as jest.Mock).mockRejectedValue(
+        new Error('User not found'),
+      );
       (usersService.create as jest.Mock).mockResolvedValue(mockUser);
 
       await service.authWithGithub(deviceFlowToken);
@@ -352,7 +362,9 @@ describe('AuthService', () => {
         creationTime: Date.now(),
       };
 
-      (usersService.findByGithubId as jest.Mock).mockRejectedValue(new Error('User not found'));
+      (usersService.findByProviderAndDisplayName as jest.Mock).mockRejectedValue(
+        new Error('User not found'),
+      );
       (usersService.create as jest.Mock).mockResolvedValue(mockCreatedUser);
 
       // Test the current implementation (step 3 of the full flow)
