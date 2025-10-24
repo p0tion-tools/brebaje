@@ -150,6 +150,51 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     );
 
   ppotCommand
+    .command("generate-urls-unsafe")
+    .description(
+      "Generate both download and upload URLs without checking file existence (coordinators only)",
+    )
+    .argument("<downloadFilename>", "Filename to download (e.g., pot12_0005.ptau)")
+    .option(
+      "-o, --output <path>",
+      "Output JSON file path (default: ceremony-urls-<filename>.json in current folder)",
+    )
+    .option(
+      "--download-expiration <minutes>",
+      "Download URL expiration time in minutes (default: 1440 = 24 hours)",
+      (value) => parseInt(value, 10),
+      1440,
+    )
+    .option(
+      "--upload-expiration <minutes>",
+      "Upload URL expiration time in minutes (default: 60 = 1 hour)",
+      (value) => parseInt(value, 10),
+      60,
+    )
+    .option("--instance-id <instanceId>", "EC2 Instance ID for VM verification (optional)")
+    .action(
+      async (
+        downloadFilename: string,
+        options: {
+          output?: string;
+          downloadExpiration: number;
+          uploadExpiration: number;
+          instanceId?: string;
+        },
+      ) => {
+        const { generateUrlsUnsafePerpetualPowersOfTau } = await import(
+          "./generate-urls-unsafe.js"
+        );
+        await generateUrlsUnsafePerpetualPowersOfTau(downloadFilename, {
+          outputPath: options.output,
+          downloadExpiration: options.downloadExpiration,
+          uploadExpiration: options.uploadExpiration,
+          instanceId: options.instanceId,
+        });
+      },
+    );
+
+  ppotCommand
     .command("beacon")
     .description("Apply beacon to finalize a Powers of Tau ceremony")
     .argument("<inputFile>", "Path to the input .ptau file")
