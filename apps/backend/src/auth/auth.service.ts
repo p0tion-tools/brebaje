@@ -100,13 +100,18 @@ export class AuthService {
     return { clientId, clientSecret, callbackUrl };
   }
 
+  private async fetchGithubUser(accessToken: string): Promise<GithubUser> {
+    const response = await fetch('https://api.github.com/user', {
+      headers: {
+        Authorization: `token ${accessToken}`,
+      },
+    });
+    return response.json() as Promise<GithubUser>;
+  }
+
   async authWithGithub(deviceFlowTokenDto: DeviceFlowTokenDto): Promise<AuthResponseDto | Error> {
     try {
-      const result = (await fetch('https://api.github.com/user', {
-        headers: {
-          Authorization: `token ${deviceFlowTokenDto.access_token}`,
-        },
-      }).then((res) => res.json())) as GithubUser;
+      const result = await this.fetchGithubUser(deviceFlowTokenDto.access_token);
 
       let user: User;
       try {

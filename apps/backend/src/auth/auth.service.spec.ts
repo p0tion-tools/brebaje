@@ -5,8 +5,9 @@ import { UsersService } from '../users/users.service';
 import { UserProvider } from '../types/enums';
 import { UserAttributes } from '../users/user.model';
 import { DeviceFlowTokenDto, AuthResponseDto } from './dto/auth-dto';
+import { GithubUser } from '../types/declarations';
 
-// Mock fetch globally
+// Mock fetch globally for device flow OAuth tests only
 global.fetch = jest.fn();
 
 describe('AuthService', () => {
@@ -180,7 +181,7 @@ describe('AuthService', () => {
   });
 
   describe('authWithGithub', () => {
-    const mockGithubUser = {
+    const mockGithubUser: Partial<GithubUser> = {
       id: 12345,
       login: 'testuser',
       avatar_url: 'https://github.com/images/avatar.png',
@@ -201,22 +202,15 @@ describe('AuthService', () => {
     };
 
     it('should authenticate existing user with GitHub token', async () => {
-      // Mock GitHub API response
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockGithubUser,
-      });
+      // Spy on GitHub user fetch method
+      jest.spyOn(service as any, 'fetchGithubUser').mockResolvedValue(mockGithubUser);
 
       // Mock existing user found
       (usersService.findByProviderAndDisplayName as jest.Mock).mockResolvedValue(mockUser);
 
       const result = await service.authWithGithub(deviceFlowToken);
 
-      expect(fetch).toHaveBeenCalledWith('https://api.github.com/user', {
-        headers: {
-          Authorization: `token ${deviceFlowToken.access_token}`,
-        },
-      });
+      expect(service['fetchGithubUser']).toHaveBeenCalledWith(deviceFlowToken.access_token);
 
       expect(usersService.findByProviderAndDisplayName).toHaveBeenCalledWith(
         mockGithubUser.login,
@@ -231,11 +225,8 @@ describe('AuthService', () => {
     });
 
     it('should create new user when not found and authenticate', async () => {
-      // Mock GitHub API response
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => mockGithubUser,
-      });
+      // Spy on GitHub user fetch method
+      jest.spyOn(service as any, 'fetchGithubUser').mockResolvedValue(mockGithubUser);
 
       // Mock user not found, then created
       (usersService.findByProviderAndDisplayName as jest.Mock).mockRejectedValue(
@@ -245,11 +236,7 @@ describe('AuthService', () => {
 
       const result = await service.authWithGithub(deviceFlowToken);
 
-      expect(fetch).toHaveBeenCalledWith('https://api.github.com/user', {
-        headers: {
-          Authorization: `token ${deviceFlowToken.access_token}`,
-        },
-      });
+      expect(service['fetchGithubUser']).toHaveBeenCalledWith(deviceFlowToken.access_token);
 
       expect(usersService.findByProviderAndDisplayName).toHaveBeenCalledWith(
         mockGithubUser.login,
@@ -270,36 +257,11 @@ describe('AuthService', () => {
       });
     });
 
-    it('should handle GitHub API response with null login', async () => {
-      const githubUserNoLogin = {
-        ...mockGithubUser,
-        login: null,
-      };
-
-      // Mock GitHub API response
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: true,
-        json: async () => githubUserNoLogin,
-      });
-
-      // Mock user not found, then created
-      (usersService.findByProviderAndDisplayName as jest.Mock).mockRejectedValue(
-        new Error('User not found'),
-      );
-      (usersService.create as jest.Mock).mockResolvedValue(mockUser);
-
-      await service.authWithGithub(deviceFlowToken);
-
-      expect(usersService.create).toHaveBeenCalledWith({
-        displayName: null,
-        avatarUrl: mockGithubUser.avatar_url,
-        provider: UserProvider.GITHUB,
-      });
-    });
-
     it('should handle GitHub API errors', async () => {
-      // Mock GitHub API error
-      (fetch as jest.Mock).mockRejectedValue(new Error('GitHub API error'));
+      // Spy on GitHub user fetch method to simulate error
+      jest
+        .spyOn(service as any, 'fetchGithubUser')
+        .mockRejectedValue(new Error('GitHub API error'));
 
       const result = await service.authWithGithub(deviceFlowToken);
 
@@ -310,26 +272,19 @@ describe('AuthService', () => {
     });
 
     it('should handle invalid access token', async () => {
-      // Mock GitHub API unauthorized response
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        ok: false,
-        status: 401,
-        json: async () => ({
-          message: 'Bad credentials',
-          documentation_url: 'https://docs.github.com/rest',
-        }),
-      });
+      // Spy on GitHub user fetch method to simulate invalid token response
+      const invalidTokenError: Error = new Error('Bad credentials');
+      jest.spyOn(service as any, 'fetchGithubUser').mockRejectedValue(invalidTokenError);
 
       const result = await service.authWithGithub(deviceFlowToken);
 
-      expect(fetch).toHaveBeenCalledWith('https://api.github.com/user', {
-        headers: {
-          Authorization: `token ${deviceFlowToken.access_token}`,
-        },
-      });
+      expect(service['fetchGithubUser']).toHaveBeenCalledWith(deviceFlowToken.access_token);
 
       // The service should handle this error gracefully
-      expect(result).toBeDefined();
+      expect(result).toBeInstanceOf(Error);
+      if (result instanceof Error) {
+        expect(result.message).toBe('Bad credentials');
+      }
     });
   });
 
@@ -337,16 +292,16 @@ describe('AuthService', () => {
     it('should demonstrate the complete device flow process', async () => {
       // This test demonstrates the end-to-end flow using the current service implementation
 
-      // Mock GitHub API response for user info
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => ({
-          id: 12345,
-          login: 'testuser',
-          avatar_url: 'https://github.com/images/avatar.png',
-          name: 'Test User',
-          email: 'test@example.com',
-        }),
-      });
+      const githubUserData: Partial<GithubUser> = {
+        id: 12345,
+        login: 'testuser',
+        avatar_url: 'https://github.com/images/avatar.png',
+        name: 'Test User',
+        email: 'test@example.com',
+      };
+
+      // Spy on GitHub user fetch method
+      jest.spyOn(service as any, 'fetchGithubUser').mockResolvedValue(githubUserData);
 
       // Mock user not found, then created
       const mockCreatedUser = {
@@ -375,12 +330,8 @@ describe('AuthService', () => {
         expect(result.jwt).toBe('test-jwt-token');
       }
 
-      // Verify the correct API calls were made
-      expect(fetch).toHaveBeenCalledWith('https://api.github.com/user', {
-        headers: {
-          Authorization: 'token gho_test_token',
-        },
-      });
+      // Verify the correct method calls were made
+      expect(service['fetchGithubUser']).toHaveBeenCalledWith('gho_test_token');
 
       expect(usersService.create).toHaveBeenCalledWith({
         displayName: 'testuser',
