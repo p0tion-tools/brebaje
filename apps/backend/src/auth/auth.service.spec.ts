@@ -499,4 +499,186 @@ describe('AuthService', () => {
       expect(cleanupSpy).toHaveBeenCalled();
     });
   });
+
+  describe('authenticateWithGithubCode', () => {
+    beforeEach(() => {
+      // Set up required environment variables
+      process.env.GITHUB_CLIENT_ID = 'test_client_id';
+      process.env.GITHUB_CLIENT_SECRET = 'test_client_secret';
+      process.env.GITHUB_OAUTH_APP_CALLBACK = 'https://app.example.com/auth/callback';
+
+      // Reset fetch mock
+      (fetch as jest.Mock).mockClear();
+    });
+
+    afterEach(() => {
+      // Clean up environment variables
+      delete process.env.GITHUB_CLIENT_ID;
+      delete process.env.GITHUB_CLIENT_SECRET;
+      delete process.env.GITHUB_OAUTH_APP_CALLBACK;
+    });
+
+    it('should successfully authenticate with valid code and state', async () => {
+      const validState = 'valid_state_token';
+      const authCode = 'auth_code_123';
+      const mockTokenResponse = {
+        access_token: 'gho_test_access_token',
+        token_type: 'bearer',
+        scope: 'read:user user:email',
+      };
+      const mockUser: UserAttributes = {
+        id: 1,
+        displayName: 'testuser',
+        provider: UserProvider.GITHUB,
+        creationTime: Date.now(),
+      };
+
+      const mockAuthResult: AuthResponseDto = {
+        user: mockUser as any, // Cast to User for interface compatibility
+        jwt: 'test-jwt-token',
+      };
+
+      // Spy on validateState to return true
+      jest.spyOn(service as any, 'validateState').mockReturnValue(true);
+
+      // Mock GitHub token exchange
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockTokenResponse,
+      });
+
+      // Spy on authWithGithub to return mock result
+      jest.spyOn(service, 'authWithGithub').mockResolvedValue(mockAuthResult);
+
+      const result = await service.authenticateWithGithubCode(authCode, validState);
+
+      expect(service['validateState']).toHaveBeenCalledWith(validState);
+      expect(fetch).toHaveBeenCalledWith('https://github.com/login/oauth/access_token', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          client_id: 'test_client_id',
+          client_secret: 'test_client_secret',
+          code: authCode,
+        }),
+      });
+      expect(service.authWithGithub).toHaveBeenCalledWith({
+        access_token: mockTokenResponse.access_token,
+        token_type: mockTokenResponse.token_type,
+      });
+      expect(result).toEqual(mockAuthResult);
+    });
+
+    it('should throw UnauthorizedException for invalid state', async () => {
+      const invalidState = 'invalid_state';
+      const authCode = 'auth_code_123';
+
+      // Spy on validateState to return false
+      jest.spyOn(service as any, 'validateState').mockReturnValue(false);
+
+      await expect(service.authenticateWithGithubCode(authCode, invalidState)).rejects.toThrow(
+        'Invalid or expired OAuth state parameter',
+      );
+
+      expect(service['validateState']).toHaveBeenCalledWith(invalidState);
+    });
+
+    it('should throw UnauthorizedException for missing state', async () => {
+      const authCode = 'auth_code_123';
+
+      // Spy on validateState to return false for empty string
+      jest.spyOn(service as any, 'validateState').mockReturnValue(false);
+
+      await expect(service.authenticateWithGithubCode(authCode)).rejects.toThrow(
+        'Invalid or expired OAuth state parameter',
+      );
+
+      expect(service['validateState']).toHaveBeenCalledWith('');
+    });
+
+    it('should throw BadRequestException when GitHub token exchange fails', async () => {
+      const validState = 'valid_state_token';
+      const authCode = 'auth_code_123';
+
+      // Spy on validateState to return true
+      jest.spyOn(service as any, 'validateState').mockReturnValue(true);
+
+      // Mock GitHub token exchange failure
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 400,
+        statusText: 'Bad Request',
+      });
+
+      await expect(service.authenticateWithGithubCode(authCode, validState)).rejects.toThrow(
+        'Failed to exchange authorization code for access token',
+      );
+    });
+
+    it('should throw BadRequestException when GitHub returns OAuth error', async () => {
+      const validState = 'valid_state_token';
+      const authCode = 'invalid_auth_code';
+      const errorResponse = {
+        error: 'bad_verification_code',
+        error_description: 'The code passed is incorrect or expired.',
+      };
+
+      // Spy on validateState to return true
+      jest.spyOn(service as any, 'validateState').mockReturnValue(true);
+
+      // Mock GitHub token exchange with error response
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => errorResponse,
+      });
+
+      await expect(service.authenticateWithGithubCode(authCode, validState)).rejects.toThrow(
+        'GitHub OAuth error: The code passed is incorrect or expired.',
+      );
+    });
+
+    it('should handle authWithGithub returning an Error', async () => {
+      const validState = 'valid_state_token';
+      const authCode = 'auth_code_123';
+      const mockTokenResponse = {
+        access_token: 'gho_test_access_token',
+        token_type: 'bearer',
+      };
+      const authError = new Error('Authentication failed');
+
+      // Spy on validateState to return true
+      jest.spyOn(service as any, 'validateState').mockReturnValue(true);
+
+      // Mock GitHub token exchange
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockTokenResponse,
+      });
+
+      // Spy on authWithGithub to return error
+      jest.spyOn(service, 'authWithGithub').mockResolvedValue(authError);
+
+      await expect(service.authenticateWithGithubCode(authCode, validState)).rejects.toThrow(
+        'Authentication failed',
+      );
+    });
+
+    it('should wrap unexpected errors in BadRequestException', async () => {
+      const validState = 'valid_state_token';
+      const authCode = 'auth_code_123';
+
+      // Spy on validateState to return true
+      jest.spyOn(service as any, 'validateState').mockReturnValue(true);
+
+      // Mock fetch to throw network error
+      (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+
+      await expect(service.authenticateWithGithubCode(authCode, validState)).rejects.toThrow(
+        'Authentication failed: Network error',
+      );
+    });
+  });
 });
