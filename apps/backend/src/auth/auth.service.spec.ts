@@ -413,4 +413,90 @@ describe('AuthService', () => {
       });
     });
   });
+
+  describe('getGithubAuthUrl', () => {
+    beforeEach(() => {
+      // Set up required environment variables
+      process.env.GITHUB_CLIENT_ID = 'test_client_id';
+      process.env.GITHUB_CLIENT_SECRET = 'test_client_secret';
+      process.env.GITHUB_OAUTH_APP_CALLBACK = 'https://app.example.com/auth/callback';
+    });
+
+    afterEach(() => {
+      // Clean up environment variables
+      delete process.env.GITHUB_CLIENT_ID;
+      delete process.env.GITHUB_CLIENT_SECRET;
+      delete process.env.GITHUB_OAUTH_APP_CALLBACK;
+    });
+
+    it('should generate GitHub OAuth authorization URL with correct parameters', () => {
+      const result = service.getGithubAuthUrl();
+
+      expect(result).toHaveProperty('authUrl');
+      expect(result).toHaveProperty('state');
+
+      const url = new URL(result.authUrl);
+      expect(url.origin + url.pathname).toBe('https://github.com/login/oauth/authorize');
+
+      const params = url.searchParams;
+      expect(params.get('client_id')).toBe('test_client_id');
+      expect(params.get('redirect_uri')).toBe('https://app.example.com/auth/callback');
+      expect(params.get('scope')).toBe('read:user user:email');
+      expect(params.get('state')).toBe(result.state);
+    });
+
+    it('should generate unique state parameter', () => {
+      const result1 = service.getGithubAuthUrl();
+      const result2 = service.getGithubAuthUrl();
+
+      expect(result1.state).not.toBe(result2.state);
+      expect(result1.state).toHaveLength(64); // 32 bytes hex = 64 characters
+      expect(result2.state).toHaveLength(64);
+    });
+
+    it('should store state in internal state store', () => {
+      const result = service.getGithubAuthUrl();
+
+      // Access private stateStore to verify state is stored
+      const stateStore = service['stateStore'] as Map<string, { timestamp: number }>;
+      expect(stateStore.has(result.state)).toBe(true);
+
+      const storedState = stateStore.get(result.state);
+      expect(storedState).toHaveProperty('timestamp');
+      expect(typeof storedState?.timestamp).toBe('number');
+    });
+
+    it('should throw error when GITHUB_CLIENT_ID is missing', () => {
+      delete process.env.GITHUB_CLIENT_ID;
+
+      expect(() => service.getGithubAuthUrl()).toThrow(
+        'GITHUB_CLIENT_ID environment variable is required',
+      );
+    });
+
+    it('should throw error when GITHUB_CLIENT_SECRET is missing', () => {
+      delete process.env.GITHUB_CLIENT_SECRET;
+
+      expect(() => service.getGithubAuthUrl()).toThrow(
+        'GITHUB_CLIENT_SECRET environment variable is required',
+      );
+    });
+
+    it('should throw error when GITHUB_OAUTH_APP_CALLBACK is missing', () => {
+      delete process.env.GITHUB_OAUTH_APP_CALLBACK;
+
+      expect(() => service.getGithubAuthUrl()).toThrow(
+        'GITHUB_OAUTH_APP_CALLBACK environment variable is required',
+      );
+    });
+
+    it('should call cleanupExpiredStates before generating URL', () => {
+      // Spy on the private cleanupExpiredStates method
+      const cleanupSpy = jest.spyOn(service as any, 'cleanupExpiredStates');
+
+      service.getGithubAuthUrl();
+
+      expect(cleanupSpy).toHaveBeenCalled();
+    });
+  });
 });
