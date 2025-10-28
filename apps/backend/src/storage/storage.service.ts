@@ -40,8 +40,11 @@ import {
 } from '../utils/constants';
 import {
   CompleteMultiPartUploadData,
+  ETagWithPartNumber,
   GeneratePreSignedUrlsPartsData,
   ObjectKeyDto,
+  TemporaryStoreCurrentContributionUploadedChunkData,
+  TemporaryStoreUploadIdDto,
 } from './dto/storage-dto';
 
 @Injectable()
@@ -398,6 +401,74 @@ export class StorageService {
       this.logger.error(`Failed to download ${objectKey} from bucket ${bucketName}:`, error);
       this.handleErrors(error as Error);
     }
+  }
+
+  async temporaryStoreCurrentContributionUploadedChunkData(
+    data: TemporaryStoreCurrentContributionUploadedChunkData,
+    ceremonyId: number,
+    userId: string,
+  ) {
+    const { chunk } = data;
+
+    // Get participant
+    const participant = await this.participantsService.findByUserIdAndCeremonyId(
+      userId,
+      ceremonyId,
+    );
+
+    if (!participant) {
+      throw new NotFoundException('Participant not found');
+    }
+
+    // Get current tempContributionData or initialize
+    const tempData = (participant.tempContributionData as {
+      uploadId?: string;
+      chunks?: Array<ETagWithPartNumber>;
+    }) || { chunks: [] };
+
+    // Add the new chunk
+    if (!tempData.chunks) {
+      tempData.chunks = [];
+    }
+    tempData.chunks.push(chunk);
+
+    // Update participant
+    await participant.update({ tempContributionData: tempData });
+
+    return { success: true };
+  }
+
+  async temporaryStoreCurrentContributionMultiPartUploadId(
+    data: TemporaryStoreUploadIdDto,
+    ceremonyId: number,
+    userId: string,
+  ) {
+    const { uploadId } = data;
+
+    // Get participant
+    const participant = await this.participantsService.findByUserIdAndCeremonyId(
+      userId,
+      ceremonyId,
+    );
+
+    if (!participant) {
+      throw new NotFoundException('Participant not found');
+    }
+
+    // Get current tempContributionData or initialize
+    const tempData =
+      (participant.tempContributionData as {
+        uploadId?: string;
+        chunks?: Array<ETagWithPartNumber>;
+      }) || {};
+
+    // Store the uploadId
+    tempData.uploadId = uploadId;
+
+    // Update participant
+    await participant.update({ tempContributionData: tempData });
+
+    return { success: true };
   }
 
   handleErrors(error: Error): never {

@@ -1,5 +1,5 @@
 import { GenericBar } from "cli-progress";
-import { createReadStream } from "fs";
+import { createReadStream, createWriteStream } from "fs";
 import https from "https";
 import mime from "mime-types";
 import fetchretry from "@adobe/node-fetch-retry";
@@ -156,8 +156,8 @@ export const completeMultiPartUploadAPI = async (
   uploadId: string,
   parts: Array<ETagWithPartNumber>,
 ) => {
-  const url = new URL(`${process.env.API_URL}/storage/complete-multipart-upload`);
-  url.search = new URLSearchParams({ ceremonyId: ceremonyId.toString() }).toString();
+  const url = new URL(`${process.env.API_URL}/storage/multipart/complete`);
+  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -187,7 +187,7 @@ export const temporaryStoreCurrentContributionUploadedChunkDataAPI = async (
   const url = new URL(
     `${process.env.API_URL}/storage/temporary-store-current-contribution-uploaded-chunk-data`,
   );
-  url.search = new URLSearchParams({ ceremonyId: ceremonyId.toString() }).toString();
+  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
   const result = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -221,8 +221,8 @@ export const generatePreSignedUrlsPartsAPI = async (
   ceremonyId: number,
   token: string,
 ) => {
-  const url = new URL(`${process.env.API_URL}/storage/generate-pre-signed-urls-parts`);
-  url.search = new URLSearchParams({ ceremonyId: ceremonyId.toString() }).toString();
+  const url = new URL(`${process.env.API_URL}/storage/multipart/urls`);
+  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -251,8 +251,8 @@ export const openMultiPartUploadAPI = async (
   ceremonyId: number,
   token: string,
 ) => {
-  const url = new URL(`${process.env.API_URL}/storage/start-multipart-upload`);
-  url.search = new URLSearchParams({ ceremonyId: ceremonyId.toString() }).toString();
+  const url = new URL(`${process.env.API_URL}/storage/multipart/start`);
+  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -280,7 +280,7 @@ export const temporaryStoreCurrentContributionMultiPartUploadIdAPI = async (
   const url = new URL(
     `${process.env.API_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
   );
-  url.search = new URLSearchParams({ ceremonyId: ceremonyId.toString() }).toString();
+  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
   const result = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -382,3 +382,194 @@ export const multiPartUploadAPI = async (
     partNumbersAndETagsZkey,
   );
 };
+
+/**
+ * Return a pre-signed url for a given object contained inside the provided AWS S3 bucket in order to perform a GET request.
+ * @param accessToken <string> - the access token for authentication.
+ * @param ceremonyId <number> - the unique identifier of the ceremony.
+ * @param objectKey <string> - the storage path that locates the artifact to be downloaded in the bucket.
+ * @returns <Promise<string>> - the pre-signed url w/ GET request permissions for specified object key.
+ */
+export const generateGetObjectPreSignedUrlAPI = async (
+  accessToken: string,
+  ceremonyId: number,
+  objectKey: string,
+) => {
+  const url = new URL(`${process.env.API_URL}/storage/object/presigned-url`);
+  url.search = new URLSearchParams({
+    id: ceremonyId.toString(),
+  }).toString();
+  const result = (await fetch(url.toString(), {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({
+      objectKey,
+    }),
+  }).then((res) => res.json())) as { url: string };
+  return result.url;
+};
+
+/**
+ * Check if a specified object exist in a given AWS S3 bucket.
+ * @param accessToken <string> - the access token for authentication.
+ * @param ceremonyId <number> - the unique identifier of the ceremony.
+ * @param objectKey <string> - the storage path that locates the artifact to be downloaded in the bucket.
+ * @returns <Promise<boolean>> - true if and only if the object exists, otherwise false.
+ */
+export const checkIfObjectExistAPI = async (
+  accessToken: string,
+  ceremonyId: number,
+  objectKey: string,
+) => {
+  const url = new URL(`${process.env.API_URL}/storage/object/exists`);
+  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
+  const result = (await fetch(url.toString(), {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+      "Content-Type": "application/json",
+    },
+    method: "POST",
+    body: JSON.stringify({
+      objectKey,
+    }),
+  }).then((res) => res.json())) as { result: boolean };
+  return result.result;
+};
+
+/**
+ * Download an artifact from S3 (only for authorized users)
+ * @param accessToken <string> - the access token for authentication.
+ * @param ceremonyId <number> - the unique identifier of the ceremony.
+ * @param storagePath <string> - Path to the artifact in the bucket.
+ * @param localPath <string> - Path to the local file where the artifact will be saved.
+ */
+export const downloadCeremonyArtifact = async (
+  accessToken: string,
+  ceremonyId: number,
+  storagePath: string,
+  localPath: string,
+) => {
+  // Request pre-signed url to make GET download request.
+  const getPreSignedUrl = await generateGetObjectPreSignedUrlAPI(
+    accessToken,
+    ceremonyId,
+    storagePath,
+  );
+
+  // Make fetch to get info about the artifact.
+  const response = await fetchretry(getPreSignedUrl, {
+    retryOptions: {
+      retryInitialDelay: 500,
+      socketTimeout: 60000,
+      retryMaxDuration: 300000,
+    },
+  });
+
+  if (response.status !== 200 && !response.ok)
+    throw new Error(
+      `There was an error while downloading the object ${storagePath} from ceremony ${ceremonyId}. Please check the function inputs and try again.`,
+    );
+
+  const content: any = response.body;
+  // Prepare stream.
+  const writeStream = createWriteStream(localPath);
+
+  // Write chunk by chunk.
+  for await (const chunk of content) {
+    writeStream.write(chunk);
+  }
+
+  // Close stream
+  writeStream.end();
+};
+
+/**
+ * Get R1CS file path tied to a particular circuit of a ceremony in the storage.
+ * @notice each R1CS file in the storage must be stored in the following path: `circuits/<circuitPrefix>/<completeR1csFilename>`.
+ * nb. This is a rule that must be satisfied. This is NOT an optional convention.
+ * @param circuitPrefix <string> - the prefix of the circuit.
+ * @param completeR1csFilename <string> - the complete R1CS filename (name + ext).
+ * @returns <string> - the storage path of the R1CS file.
+ */
+export const getR1csStorageFilePath = (
+  circuitPrefix: string,
+  completeR1csFilename: string,
+): string => `circuits/${circuitPrefix}/${completeR1csFilename}`;
+
+/**
+ * Get WASM file path tied to a particular circuit of a ceremony in the storage.
+ * @notice each WASM file in the storage must be stored in the following path: `circuits/<circuitPrefix>/<completeWasmFilename>`.
+ * nb. This is a rule that must be satisfied. This is NOT an optional convention.
+ * @param circuitPrefix <string> - the prefix of the circuit.
+ * @param completeWasmFilename <string> - the complete WASM filename (name + ext).
+ * @returns <string> - the storage path of the WASM file.
+ */
+export const getWasmStorageFilePath = (
+  circuitPrefix: string,
+  completeWasmFilename: string,
+): string => `circuits/${circuitPrefix}/${completeWasmFilename}`;
+
+/**
+ * Get PoT file path in the storage.
+ * @notice each PoT file in the storage must be stored in the following path: `pot/<completePotFilename>`.
+ * nb. This is a rule that must be satisfied. This is NOT an optional convention.
+ * @param completePotFilename <string> - the complete PoT filename (name + ext).
+ * @returns <string> - the storage path of the PoT file.
+ */
+export const getPotStorageFilePath = (completePotFilename: string): string =>
+  `pot/${completePotFilename}`;
+
+/**
+ * Get zKey file path tied to a particular circuit of a ceremony in the storage.
+ * @notice each zKey file in the storage must be stored in the following path: `circuits/<circuitPrefix>/contributions/<completeZkeyFilename>`.
+ * nb. This is a rule that must be satisfied. This is NOT an optional convention.
+ * @param circuitPrefix <string> - the prefix of the circuit.
+ * @param completeZkeyFilename <string> - the complete zKey filename (name + ext).
+ * @returns <string> - the storage path of the zKey file.
+ */
+export const getZkeyStorageFilePath = (
+  circuitPrefix: string,
+  completeZkeyFilename: string,
+): string => `circuits/${circuitPrefix}/contributions/${completeZkeyFilename}`;
+
+/**
+ * Get verification key file path tied to a particular circuit of a ceremony in the storage.
+ * @notice each verification key file in the storage must be stored in the following path: `circuits/<circuitPrefix>/<completeVerificationKeyFilename>`.
+ * nb. This is a rule that must be satisfied. This is NOT an optional convention.
+ * @param circuitPrefix <string> - the prefix of the circuit.
+ * @param completeVerificationKeyFilename <string> - the complete verification key filename (name + ext).
+ * @returns <string> - the storage path of the verification key file.
+ */
+export const getVerificationKeyStorageFilePath = (
+  circuitPrefix: string,
+  completeVerificationKeyFilename: string,
+): string => `circuits/${circuitPrefix}/${completeVerificationKeyFilename}`;
+
+/**
+ * Get verifier contract file path tied to a particular circuit of a ceremony in the storage.
+ * @notice each verifier contract file in the storage must be stored in the following path: `circuits/<circuitPrefix>/<completeVerifierContractFilename>`.
+ * nb. This is a rule that must be satisfied. This is NOT an optional convention.
+ * @param circuitPrefix <string> - the prefix of the circuit.
+ * @param completeVerifierContractFilename <string> - the complete verifier contract filename (name + ext).
+ * @returns <string> - the storage path of the verifier contract file.
+ */
+export const getVerifierContractStorageFilePath = (
+  circuitPrefix: string,
+  completeVerifierContractFilename: string,
+): string => `circuits/${circuitPrefix}/${completeVerifierContractFilename}`;
+
+/**
+ * Get transcript file path tied to a particular circuit of a ceremony in the storage.
+ * @notice each R1CS file in the storage must be stored in the following path: `circuits/<circuitPrefix>/transcripts/<completeTranscriptFilename>`.
+ * nb. This is a rule that must be satisfied. This is NOT an optional convention.
+ * @param circuitPrefix <string> - the prefix of the circuit.
+ * @param completeTranscriptFilename <string> - the complete transcript filename (name + ext).
+ * @returns <string> - the storage path of the transcript file.
+ */
+export const getTranscriptStorageFilePath = (
+  circuitPrefix: string,
+  completeTranscriptFilename: string,
+): string => `circuits/${circuitPrefix}/transcripts/${completeTranscriptFilename}`;
