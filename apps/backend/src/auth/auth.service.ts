@@ -1,5 +1,5 @@
 import { Injectable, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { DeviceFlowTokenDto } from './dto/auth-dto';
+import { DeviceFlowTokenDto, AuthResponseDto } from './dto/auth-dto';
 import type { GithubOAuthResponse, GithubUser } from '../types/declarations';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
@@ -100,7 +100,7 @@ export class AuthService {
     return { clientId, clientSecret, callbackUrl };
   }
 
-  async authWithGithub(deviceFlowTokenDto: DeviceFlowTokenDto) {
+  async authWithGithub(deviceFlowTokenDto: DeviceFlowTokenDto): Promise<AuthResponseDto | Error> {
     try {
       const result = (await fetch('https://api.github.com/user', {
         headers: {

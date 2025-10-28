@@ -19,3 +19,8 @@ export class DeviceFlowTokenDto {
   @IsString()
   token_type: string;
 }
+
+export interface AuthResponseDto {
+  user: User;
+  jwt: string;
+}
