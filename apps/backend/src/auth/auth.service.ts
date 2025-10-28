@@ -106,6 +106,12 @@ export class AuthService {
         Authorization: `token ${accessToken}`,
       },
     });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+    }
+
     return response.json() as Promise<GithubUser>;
   }
 

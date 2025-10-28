@@ -180,6 +180,79 @@ describe('AuthService', () => {
     });
   });
 
+  describe('fetchGithubUser', () => {
+    beforeEach(() => {
+      // Reset fetch mock for each test
+      (fetch as jest.Mock).mockClear();
+    });
+
+    it('should make successful API call with proper headers', async () => {
+      const mockGithubUserResponse: Partial<GithubUser> = {
+        id: 12345,
+        login: 'testuser',
+        avatar_url: 'https://github.com/images/avatar.png',
+        name: 'Test User',
+        email: 'test@example.com',
+      };
+
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => mockGithubUserResponse,
+      });
+
+      const result = await service['fetchGithubUser']('test_access_token');
+
+      expect(fetch).toHaveBeenCalledWith('https://api.github.com/user', {
+        headers: {
+          Authorization: 'token test_access_token',
+        },
+      });
+      expect(result).toEqual(mockGithubUserResponse);
+    });
+
+    it('should handle HTTP 401 unauthorized error', async () => {
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 401,
+        json: async () => ({
+          message: 'Bad credentials',
+          documentation_url: 'https://docs.github.com/rest',
+        }),
+      });
+
+      await expect(service['fetchGithubUser']('invalid_token')).rejects.toThrow();
+    });
+
+    it('should handle HTTP 404 not found error', async () => {
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: false,
+        status: 404,
+        json: async () => ({
+          message: 'Not Found',
+        }),
+      });
+
+      await expect(service['fetchGithubUser']('test_token')).rejects.toThrow();
+    });
+
+    it('should handle network failures', async () => {
+      (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
+
+      await expect(service['fetchGithubUser']('test_token')).rejects.toThrow('Network error');
+    });
+
+    it('should handle invalid JSON response', async () => {
+      (fetch as jest.Mock).mockResolvedValueOnce({
+        ok: true,
+        json: async () => {
+          throw new Error('Invalid JSON');
+        },
+      });
+
+      await expect(service['fetchGithubUser']('test_token')).rejects.toThrow('Invalid JSON');
+    });
+  });
+
   describe('authWithGithub', () => {
     const mockGithubUser: Partial<GithubUser> = {
       id: 12345,
