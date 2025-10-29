@@ -6,8 +6,7 @@ import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserProvider } from '../types/enums';
 import { randomBytes } from 'crypto';
-import { response } from 'express';
-import { User } from 'src/users/user.model';
+import { User } from '../users/user.model';
 
 @Injectable()
 export class AuthService {
