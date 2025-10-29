@@ -2,7 +2,7 @@ import { Body, Controller, Get, Post, Query, BadRequestException, Res } from '@n
 import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { DeviceFlowTokenDto } from './dto/auth-dto';
+import { DeviceFlowTokenDto, GenerateNonceDto, VerifySignatureDto } from './dto/auth-dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -67,5 +67,44 @@ export class AuthController {
       const errorUrl = `http://localhost:3001/auth/github/authorize-login?error=${encodeURIComponent(errorMessage)}`;
       return res.redirect(errorUrl);
     }
+  }
+
+  @Post('cardano/generate-nonce')
+  @ApiOperation({ summary: 'Generate nonce for Cardano wallet ownership proof' })
+  @ApiResponse({
+    status: 200,
+    description: 'Nonce generated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        nonce: { type: 'string', description: 'Unique nonce to be signed by wallet' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid wallet address' })
+  async generateCardanoNonce(@Body() generateNonceDto: GenerateNonceDto) {
+    return this.authService.generateCardanoNonce(generateNonceDto.userAddress);
+  }
+
+  @Post('cardano/verify-signature')
+  @ApiOperation({ summary: 'Verify wallet signature and authenticate user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Signature verified and user authenticated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        user: { type: 'object', description: 'User information' },
+        jwt: { type: 'string', description: 'JWT authentication token' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid signature or wallet address' })
+  @ApiResponse({ status: 404, description: 'No nonce found for this address' })
+  async verifyCardanoSignature(@Body() verifySignatureDto: VerifySignatureDto) {
+    return this.authService.verifyCardanoNonce(
+      verifySignatureDto.userAddress,
+      verifySignatureDto.signature,
+    );
   }
 }
