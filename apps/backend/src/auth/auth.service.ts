@@ -7,11 +7,13 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserProvider } from '../types/enums';
 import { randomBytes } from 'crypto';
 import { User } from '../users/user.model';
+import { generateNonce } from '@meshsdk/core';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   private readonly stateStore = new Map<string, { timestamp: number }>();
+  private readonly nonceStore = new Map<string, string[]>();
 
   constructor(
     private readonly jwtService: JwtService,
@@ -257,5 +259,34 @@ export class AuthService {
     }
   }
 
-  async getUserInfoFromCardano() {}
+  async generateCardanoNonce(userAddress: string) {
+    this.logger.log(`Generating Cardano nonce for address: ${userAddress.substring(0, 8)}...`);
+
+    // Check if address exists in nonceStore, if not create empty array
+    if (!this.nonceStore.has(userAddress)) {
+      this.nonceStore.set(userAddress, []);
+    }
+
+    const usedNonces = this.nonceStore.get(userAddress)!;
+
+    // Generate initial nonce
+    let nonce = generateNonce('Sign to prove wallet ownership: ');
+
+    // Keep generating new nonces while current one is already used
+    // Loop breaks when we find a unique nonce (not in usedNonces array)
+    while (usedNonces.includes(nonce)) {
+      nonce = generateNonce('Sign to prove wallet ownership: ');
+    }
+
+    // Add new unique nonce to the list
+    usedNonces.push(nonce);
+
+    this.logger.debug(
+      `Stored nonce for address: ${userAddress.substring(0, 8)}..., total nonces: ${usedNonces.length}`,
+    );
+
+    return { nonce };
+  }
+
+  // async getUserInfoFromCardano() {}
 }
