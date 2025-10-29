@@ -26,6 +26,7 @@ export class UsersService {
     try {
       const user = await this.userModel.create({
         displayName: createUserDto.displayName,
+        walletAddress: createUserDto.walletAddress,
         creationTime: Date.now(),
         lastSignInTime: Date.now(),
         lastUpdated: Date.now(),
@@ -76,6 +77,20 @@ export class UsersService {
     try {
       const user = await this.userModel.findOne({
         where: { displayName, provider },
+      });
+      if (!user) {
+        throw new Error('User not found');
+      }
+      return user;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  async findByWalletAddressAndProvider(walletAddress: string, provider: UserProvider) {
+    try {
+      const user = await this.userModel.findOne({
+        where: { walletAddress, provider },
       });
       if (!user) {
         throw new Error('User not found');

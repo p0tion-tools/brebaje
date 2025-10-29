@@ -7,6 +7,7 @@ import { Participant } from 'src/participants/participant.model';
 export interface UserAttributes {
   id?: number;
   displayName: string;
+  walletAddress?: string;
   creationTime: number;
   lastSignInTime?: number;
   lastUpdated?: number;
@@ -18,6 +19,7 @@ export type UserPk = 'id';
 export type UserId = User[UserPk];
 export type UserOptionalAttributes =
   | 'id'
+  | 'walletAddress'
   | 'lastSignInTime'
   | 'lastUpdated'
   | 'avatarUrl'
@@ -64,6 +66,12 @@ export class User extends Model implements UserAttributes {
     allowNull: true,
   })
   declare avatarUrl?: string;
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare walletAddress?: string;
 
   @Column({
     type: DataType.ENUM(...Object.values(UserProvider)),

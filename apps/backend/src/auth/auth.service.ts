@@ -7,7 +7,7 @@ import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserProvider } from '../types/enums';
 import { randomBytes } from 'crypto';
 import { User } from '../users/user.model';
-import { generateNonce } from '@meshsdk/core';
+import { generateNonce, checkSignature, DataSignature } from '@meshsdk/core';
 
 @Injectable()
 export class AuthService {
@@ -286,6 +286,78 @@ export class AuthService {
     );
 
     return { nonce };
+  }
+
+  async verifyCardanoNonce(
+    userAddress: string,
+    signature: DataSignature,
+  ): Promise<AuthResponseDto | Error> {
+    this.logger.log(`Verifying Cardano signature for address: ${userAddress.substring(0, 8)}...`);
+
+    // Check if address exists in nonceStore
+    if (!this.nonceStore.has(userAddress)) {
+      this.logger.warn(`No nonces found for address: ${userAddress.substring(0, 8)}...`);
+      throw new BadRequestException('No nonce found for this address');
+    }
+
+    const usedNonces = this.nonceStore.get(userAddress)!;
+
+    // Get the latest (most recent) nonce for this address
+    if (usedNonces.length === 0) {
+      this.logger.warn(`No nonces available for address: ${userAddress.substring(0, 8)}...`);
+      throw new BadRequestException('No nonce available for verification');
+    }
+
+    const latestNonce = usedNonces[usedNonces.length - 1];
+    this.logger.debug(`Using latest nonce for verification: ${latestNonce.substring(0, 8)}...`);
+
+    // Verify the signature using Mesh SDK
+    const isValidSignature = checkSignature(latestNonce, signature, userAddress);
+
+    this.logger.debug(`Signature verification result: ${isValidSignature}`);
+
+    if (!isValidSignature) {
+      this.logger.warn(`Invalid signature for address: ${userAddress.substring(0, 8)}...`);
+      throw new BadRequestException('Invalid signature provided');
+    }
+
+    // Signature is valid, authenticate or create user
+    try {
+      let user: User;
+
+      try {
+        // Try to find existing user by wallet address and CARDANO provider
+        user = await this.usersService.findByWalletAddressAndProvider(
+          userAddress,
+          UserProvider.CARDANO,
+        );
+        this.logger.debug(
+          `Found existing Cardano user for address: ${userAddress.substring(0, 8)}...`,
+        );
+      } catch {
+        // User not found, create new one
+        this.logger.debug(
+          `Creating new Cardano user for address: ${userAddress.substring(0, 8)}...`,
+        );
+        const createUserData: CreateUserDto = {
+          displayName: `Cardano User ${userAddress.substring(0, 8)}`,
+          walletAddress: userAddress,
+          provider: UserProvider.CARDANO,
+        };
+        user = await this.usersService.create(createUserData);
+      }
+
+      // Generate JWT token
+      const jwt = await this.jwtService.signAsync({ user });
+
+      this.logger.log(
+        `Cardano authentication successful for address: ${userAddress.substring(0, 8)}...`,
+      );
+      return { user, jwt };
+    } catch (error) {
+      this.logger.error(`Cardano authentication failed: ${(error as Error).message}`);
+      return error as Error;
+    }
   }
 
   // async getUserInfoFromCardano() {}

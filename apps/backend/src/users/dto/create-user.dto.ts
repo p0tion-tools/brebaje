@@ -12,6 +12,16 @@ export class CreateUserDto implements Partial<UserAttributes> {
   displayName: string;
 
   @ApiProperty({
+    description: 'The wallet address of the user (for Cardano authentication)',
+    example:
+      'addr1qx2fxv2umyhttkxyxp8x0dlpdt3k6cwng5pxj3jhsydzer3jcu5d8ps7zex2k2xt3uqxgjqnnj0vs2qd4a3s2rw5tkqqpyr0x8',
+    required: false,
+  })
+  @IsOptional()
+  @IsString()
+  walletAddress?: string;
+
+  @ApiProperty({
     description: 'The avatar URL of the user',
     example: 'https://example.com/avatar.png',
     required: false,
