@@ -13,7 +13,7 @@ export const Header = () => {
   const isLoggedIn = false;
   const [isOpenLoginModal, setIsOpenLoginModal] = useState(false);
   const [selectedLoginMethod, setSelectedLoginMethod] = useState<
-    "github" | "ethereum" | "bandada" | null
+    "github" | "ethereum" | "bandada" | "cardano" | null
   >(null);
 
   const handleGithubLogin = async () => {
@@ -49,7 +49,7 @@ export const Header = () => {
                 Login to your account to continue
               </span>
             </div>
-            <div className="grid grid-cols-3 gap-4">
+            <div className="grid grid-cols-2 gap-4">
               <Button
                 variant={selectedLoginMethod === "github" ? "yellow" : "white"}
                 fontWeight="regular"
@@ -79,6 +79,15 @@ export const Header = () => {
                 icon={<Icons.Bandada />}
               >
                 Bandada
+              </Button>
+              <Button
+                variant={selectedLoginMethod === "cardano" ? "yellow" : "white"}
+                fontWeight="regular"
+                size="xs"
+                onClick={() => setSelectedLoginMethod("cardano")}
+                icon={<Icons.Cardano />}
+              >
+                Cardano
               </Button>
             </div>
           </div>
