@@ -88,3 +88,8 @@ export type CircuitVerificationType =
       serverOrVm: 'vm';
       vm: VMConfiguration;
     };
+
+export type NotificationConfig = {
+  coordinatorEmail?: string;
+  webhookUrl?: string;
+};

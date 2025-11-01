@@ -79,6 +79,9 @@ importers:
       "@nestjs/platform-express":
         specifier: ^11.0.1
         version: 11.1.5(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)
+      "@nestjs/schedule":
+        specifier: ^4.0.0
+        version: 4.1.2(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)
       "@nestjs/sequelize":
         specifier: ^11.0.0
         version: 11.0.0(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)(reflect-metadata@0.2.2)(rxjs@7.8.2)(sequelize-typescript@2.1.6(@types/node@22.17.0)(@types/validator@13.15.2)(reflect-metadata@0.2.2)(sequelize@6.37.7(sqlite3@5.1.7)))(sequelize@6.37.7(sqlite3@5.1.7))
@@ -194,6 +197,31 @@ importers:
       typescript-eslint:
         specifier: ^8.20.0
         version: 8.38.0(eslint@9.32.0(jiti@2.5.1))(typescript@5.9.2)
+
+  apps/cli:
+    dependencies:
+      aws-sdk:
+        specifier: ^2.1692.0
+        version: 2.1692.0
+      commander:
+        specifier: ^11.0.0
+        version: 11.1.0
+      dotenv:
+        specifier: ^17.2.1
+        version: 17.2.1
+      snarkjs:
+        specifier: ^0.7.5
+        version: 0.7.5
+    devDependencies:
+      "@types/node":
+        specifier: ^20.8.9
+        version: 20.19.9
+      ts-node:
+        specifier: ^10.9.1
+        version: 10.9.2(@swc/core@1.13.3)(@types/node@20.19.9)(typescript@5.9.2)
+      typescript:
+        specifier: ^5.2.2
+        version: 5.9.2
 
   apps/frontend:
     dependencies:
@@ -2035,6 +2063,15 @@ packages:
       "@nestjs/common": ^11.0.0
       "@nestjs/core": ^11.0.0
 
+  "@nestjs/schedule@4.1.2":
+    resolution:
+      {
+        integrity: sha512-hCTQ1lNjIA5EHxeu8VvQu2Ed2DBLS1GSC6uKPYlBiQe6LL9a7zfE9iVSK+zuK8E2odsApteEBmfAQchc8Hx0Gg==,
+      }
+    peerDependencies:
+      "@nestjs/common": ^8.0.0 || ^9.0.0 || ^10.0.0
+      "@nestjs/core": ^8.0.0 || ^9.0.0 || ^10.0.0
+
   "@nestjs/schematics@11.0.7":
     resolution:
       {
@@ -3671,6 +3708,12 @@ packages:
         integrity: sha512-ugo316mmTYBl2g81zDFnZ7cfxlut3o+/EQdaP7J8QN2kY6lJ22hmQYCK5EHcJHbrW+dkCGSCPgbG8JtYj6qSrg==,
       }
 
+  "@types/luxon@3.4.2":
+    resolution:
+      {
+        integrity: sha512-TifLZlFudklWlMBfhubvgqTXRzLDI5pCbGa4P8a3wPyUQSW+1xQ5eDsreP9DWHX3tjq1ke96uYG/nwundroWcA==,
+      }
+
   "@types/mdast@4.0.4":
     resolution:
       {
@@ -4713,6 +4756,13 @@ packages:
       }
     engines: { node: ">= 0.4" }
 
+  aws-sdk@2.1692.0:
+    resolution:
+      {
+        integrity: sha512-x511uiJ/57FIsbgUe5csJ13k3uzu25uWQE+XqfBis/sB0SFoiElJWXRkgEAUh0U6n40eT3ay5Ue4oPkRMu1LYw==,
+      }
+    engines: { node: ">= 10.0.0" }
+
   axe-core@4.10.3:
     resolution:
       {
@@ -4937,6 +4987,12 @@ packages:
     resolution:
       {
         integrity: sha512-E+XQCRwSbaaiChtv6k6Dwgc+bx+Bs6vuKJHHl5kox/BaKbhiXzqQOwK4cO22yElGp2OCmjwVhT3HmxgyPGnJfQ==,
+      }
+
+  buffer@4.9.2:
+    resolution:
+      {
+        integrity: sha512-xq+q3SRMOxGivLhBNaUdC64hDTQwejJ+H0T/NB1XMtTVEwNTrfFF3gAxiyW0Bu/xWEGhjVKgUcMhCrUy2+uCWg==,
       }
 
   buffer@5.7.1:
@@ -5375,6 +5431,13 @@ packages:
         integrity: sha512-Fu4hJdvzeylCfQPp9SGWidpzrMs7tTrlu6Vb8XGaRGck8QSNZJJp538Wrb60Lax4fPwR64ViY468OIUTbRlGZg==,
       }
 
+  commander@11.1.0:
+    resolution:
+      {
+        integrity: sha512-yPVavfyCcRhmorC7rWlkHn15b4wDVgVmBA7kV4QVBsF7kv/9TKJAbAXVTxvTnwP8HHKjRCJDClKbciiYS7p0DQ==,
+      }
+    engines: { node: ">=16" }
+
   commander@14.0.0:
     resolution:
       {
@@ -5634,6 +5697,12 @@ packages:
     resolution:
       {
         integrity: sha512-dcKFX3jn0MpIaXjisoRvexIJVEKzaq7z2rZKxf+MSr9TkdmHmsU4m2lcLojrj/FHl8mk5VxMmYA+ftRkP/3oKQ==,
+      }
+
+  cron@3.2.1:
+    resolution:
+      {
+        integrity: sha512-w2n5l49GMmmkBFEsH9FIDhjZ1n1QgTMOCMGuQtOXs5veNiosZmso6bQGuqOJSYAXXrG84WQFVneNk+Yt0Ua9iw==,
       }
 
   cross-spawn@7.0.6:
@@ -6519,6 +6588,13 @@ packages:
       {
         integrity: sha512-GWkBvjiSZK87ELrYOSESUYeVIc9mvLLf/nXalMOS5dYrgZq9o5OVkbZAVM06CVxYsCwH9BDZFPlQTlPA1j4ahA==,
       }
+
+  events@1.1.1:
+    resolution:
+      {
+        integrity: sha512-kEcvvCBByWXGnZy6JUlgAp2gBIUjfCAV6P6TgT1/aaQKcmuAEC4OZTV1I4EWQLz2gxZw76atuVyvHhTxvi0Flw==,
+      }
+    engines: { node: ">=0.4.x" }
 
   events@3.3.0:
     resolution:
@@ -7516,6 +7592,12 @@ packages:
       }
     engines: { node: ">=0.10.0" }
 
+  ieee754@1.1.13:
+    resolution:
+      {
+        integrity: sha512-4vf7I2LYV/HaWerSo3XmlMkp5eZ83i+/CDluXi/IGTs/O1sejBNhTtnxzmRZfvOUqj7lZjqHkeTvpgSFDlWZTg==,
+      }
+
   ieee754@1.2.1:
     resolution:
       {
@@ -7690,6 +7772,13 @@ packages:
       {
         integrity: sha512-hmbYhX/9MUMF5uh7tOXyK/n0ZvWpad5caBA17GsC6vyuCqaWliRG5K1qS9inmUhEMaOBIW7/whAnSwveW/LtZw==,
       }
+
+  is-arguments@1.2.0:
+    resolution:
+      {
+        integrity: sha512-7bVbi0huj/wrIAOzb8U1aszg9kdi3KN/CyU19CTI7tAoZYEZoL9yCDXpbXN+uPsuWnP02cyug1gleqq+TU+YCA==,
+      }
+    engines: { node: ">= 0.4" }
 
   is-array-buffer@3.0.5:
     resolution:
@@ -8386,6 +8475,13 @@ packages:
       }
     hasBin: true
 
+  jmespath@0.16.0:
+    resolution:
+      {
+        integrity: sha512-9FzQjJ7MATs1tSpnco1K6ayiYE3figslrXA72G2HQ/n76RzvYlofyi5QM+iX4YRs/pu3yzxlVQSST23+dMDknw==,
+      }
+    engines: { node: ">= 0.6.0" }
+
   js-sha3@0.8.0:
     resolution:
       {
@@ -8925,6 +9021,13 @@ packages:
       }
     peerDependencies:
       react: ^16.5.1 || ^17.0.0 || ^18.0.0 || ^19.0.0
+
+  luxon@3.5.0:
+    resolution:
+      {
+        integrity: sha512-rh+Zjr6DNfUYR3bPwJEnuwDdqMbxZW7LOQfUN4B54+Cl+0o5zaU9RJ6bcidfDtC1cWCZXQ+nvX8bf6bAji37QQ==,
+      }
+    engines: { node: ">=12" }
 
   magic-string@0.30.17:
     resolution:
@@ -10670,6 +10773,12 @@ packages:
         integrity: sha512-todwxLMY7/heScKmntwQG8CXVkWUOdYxIvY2s0VWAAMh/nd8SoYiRaKjlr7+iCs984f2P8zvrfWcDDYVb73NfA==,
       }
 
+  punycode@1.3.2:
+    resolution:
+      {
+        integrity: sha512-RofWgt/7fL5wP1Y7fxE7/EmTLzQVnB0ycyibJ0OOHIlJqTNzglYFxVwETOcIoJqJmpDXJ9xImDv+Fq34F/d4Dw==,
+      }
+
   punycode@2.3.1:
     resolution:
       {
@@ -10689,6 +10798,14 @@ packages:
         integrity: sha512-YWWTjgABSKcvs/nWBi9PycY/JiPJqOD4JA6o9Sej2AtvSGarXxKC3OQSk4pAarbdQlKAh5D4FCQkJNkW+GAn3w==,
       }
     engines: { node: ">=0.6" }
+
+  querystring@0.2.0:
+    resolution:
+      {
+        integrity: sha512-X/xY82scca2tau62i9mDyU9K+I+djTMUsvwf7xnUX5GLvVzgJybOJf4Y6o9Zx3oJK/LSXg5tTZBjwzqVPaPO2g==,
+      }
+    engines: { node: ">=0.4.x" }
+    deprecated: The querystring API is considered Legacy. new code should use the URLSearchParams API instead.
 
   queue-microtask@1.2.3:
     resolution:
@@ -11132,6 +11249,12 @@ packages:
     resolution:
       {
         integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==,
+      }
+
+  sax@1.2.1:
+    resolution:
+      {
+        integrity: sha512-8I2a3LovHTOpm7NV5yOyO8IHqgVsfK4+UuySrXU8YXkSRX7k6hCV9b3HrkKCr3nMpgj+0bmocaJJWpvp1oc7ZA==,
       }
 
   scheduler@0.23.2:
@@ -12583,16 +12706,42 @@ packages:
         integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==,
       }
 
+  url@0.10.3:
+    resolution:
+      {
+        integrity: sha512-hzSUW2q06EqL1gKM/a+obYHLIO6ct2hwPuviqTTOcfFVc61UbfJ2Q32+uGL/HCPxKqrdGB5QUwIe7UqlDgwsOQ==,
+      }
+
   util-deprecate@1.0.2:
     resolution:
       {
         integrity: sha512-EPD5q1uXyFxJpCrLnCc1nHnq3gOa6DZBocAIiI2TaSCA7VCJ1UJDMagCzIkXNsUYfD1daK//LTEQ8xiIbrHtcw==,
       }
 
+  util@0.12.5:
+    resolution:
+      {
+        integrity: sha512-kZf/K6hEIrWHI6XqOFUiiMa+79wE/D8Q+NCNAWclkyg3b4d2k7s0QGepNjiABc+aR3N1PAyHL7p6UcLY6LmrnA==,
+      }
+
   uuid@10.0.0:
     resolution:
       {
         integrity: sha512-8XkAphELsDnEGrDxUOHB3RGvXz6TeuYSGEZBOjtTtPm2lwhGBjLgOzLHB63IUWfBpNucQjND6d3AOudO+H3RWQ==,
+      }
+    hasBin: true
+
+  uuid@11.0.3:
+    resolution:
+      {
+        integrity: sha512-d0z310fCWv5dJwnX1Y/MncBAqGMKEzlBb1AOf7z9K8ALnd0utBX/msg/fA0+sbyN1ihbMsLhrBlnl1ak7Wa0rg==,
+      }
+    hasBin: true
+
+  uuid@8.0.0:
+    resolution:
+      {
+        integrity: sha512-jOXGuXZAWdsTH7eZLtyXMqUb9EcWMGZNbL9YcGBJl4MH4nrxHmZJhEHvyLFrkxo+28uLb/NYRcStH48fnD0Vzw==,
       }
     hasBin: true
 
@@ -12892,6 +13041,20 @@ packages:
         integrity: sha512-v2UQ+50TNf2rNHJ8NyWttfm/EJUBWMJcx6ZTYZr6Qp52uuegWw/lBkCtCbnYZEmPRNL61m+u67dAmGxo+HTULA==,
       }
     engines: { node: ">=8" }
+
+  xml2js@0.6.2:
+    resolution:
+      {
+        integrity: sha512-T4rieHaC1EXcES0Kxxj4JWgaUQHDk+qwHcYOCFHfiwKz7tOVPLq7Hjq9dM1WCMhylqMEfP7hMcOIChvotiZegA==,
+      }
+    engines: { node: ">=4.0.0" }
+
+  xmlbuilder@11.0.1:
+    resolution:
+      {
+        integrity: sha512-fDlsI/kFEx7gLvbecc0/ohLG50fugQp8ryHzMTuW9vSa1GJ0XYWKnhsUx7oie3G98+r56aTQIUB4kht42R3JvA==,
+      }
+    engines: { node: ">=4.0" }
 
   xtend@4.0.2:
     resolution:
@@ -14935,6 +15098,13 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
+  "@nestjs/schedule@4.1.2(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)":
+    dependencies:
+      "@nestjs/common": 11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      "@nestjs/core": 11.1.5(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/platform-express@11.1.5)(reflect-metadata@0.2.2)(rxjs@7.8.2)
+      cron: 3.2.1
+      uuid: 11.0.3
+
   "@nestjs/schematics@11.0.7(chokidar@4.0.3)(typescript@5.8.3)":
     dependencies:
       "@angular-devkit/core": 19.2.15(chokidar@4.0.3)
@@ -16099,7 +16269,7 @@ snapshots:
 
   "@types/graceful-fs@4.1.9":
     dependencies:
-      "@types/node": 22.17.0
+      "@types/node": 20.19.9
 
   "@types/hast@3.0.4":
     dependencies:
@@ -16131,6 +16301,8 @@ snapshots:
   "@types/jsonwebtoken@9.0.7":
     dependencies:
       "@types/node": 20.19.9
+
+  "@types/luxon@3.4.2": {}
 
   "@types/mdast@4.0.4":
     dependencies:
@@ -16845,6 +17017,19 @@ snapshots:
     dependencies:
       possible-typed-array-names: 1.1.0
 
+  aws-sdk@2.1692.0:
+    dependencies:
+      buffer: 4.9.2
+      events: 1.1.1
+      ieee754: 1.1.13
+      jmespath: 0.16.0
+      querystring: 0.2.0
+      sax: 1.2.1
+      url: 0.10.3
+      util: 0.12.5
+      uuid: 8.0.0
+      xml2js: 0.6.2
+
   axe-core@4.10.3: {}
 
   axios@1.11.0:
@@ -17019,6 +17204,12 @@ snapshots:
   buffer-equal-constant-time@1.0.1: {}
 
   buffer-from@1.1.2: {}
+
+  buffer@4.9.2:
+    dependencies:
+      base64-js: 1.5.1
+      ieee754: 1.2.1
+      isarray: 1.0.0
 
   buffer@5.7.1:
     dependencies:
@@ -17269,6 +17460,8 @@ snapshots:
 
   comma-separated-tokens@2.0.3: {}
 
+  commander@11.1.0: {}
+
   commander@14.0.0: {}
 
   commander@2.20.3: {}
@@ -17438,6 +17631,11 @@ snapshots:
       - ts-node
 
   create-require@1.1.1: {}
+
+  cron@3.2.1:
+    dependencies:
+      "@types/luxon": 3.4.2
+      luxon: 3.5.0
 
   cross-spawn@7.0.6:
     dependencies:
@@ -18075,6 +18273,8 @@ snapshots:
   eventemitter3@4.0.7: {}
 
   eventemitter3@5.0.1: {}
+
+  events@1.1.1: {}
 
   events@3.3.0: {}
 
@@ -18798,6 +18998,8 @@ snapshots:
     dependencies:
       safer-buffer: 2.1.2
 
+  ieee754@1.1.13: {}
+
   ieee754@1.2.1: {}
 
   ignore-walk@6.0.5:
@@ -18902,6 +19104,11 @@ snapshots:
     dependencies:
       is-alphabetical: 2.0.1
       is-decimal: 2.0.1
+
+  is-arguments@1.2.0:
+    dependencies:
+      call-bound: 1.0.4
+      has-tostringtag: 1.0.2
 
   is-array-buffer@3.0.5:
     dependencies:
@@ -19514,6 +19721,8 @@ snapshots:
 
   jiti@2.5.1: {}
 
+  jmespath@0.16.0: {}
+
   js-sha3@0.8.0: {}
 
   js-tokens@4.0.0: {}
@@ -19888,6 +20097,8 @@ snapshots:
   lucide-react@0.525.0(react@18.3.1):
     dependencies:
       react: 18.3.1
+
+  luxon@3.5.0: {}
 
   magic-string@0.30.17:
     dependencies:
@@ -21181,6 +21392,8 @@ snapshots:
       end-of-stream: 1.4.5
       once: 1.4.0
 
+  punycode@1.3.2: {}
+
   punycode@2.3.1: {}
 
   pure-rand@6.1.0: {}
@@ -21188,6 +21401,8 @@ snapshots:
   qs@6.14.0:
     dependencies:
       side-channel: 1.1.0
+
+  querystring@0.2.0: {}
 
   queue-microtask@1.2.3: {}
 
@@ -21494,6 +21709,8 @@ snapshots:
       is-regex: 1.2.1
 
   safer-buffer@2.1.2: {}
+
+  sax@1.2.1: {}
 
   scheduler@0.23.2:
     dependencies:
@@ -22244,7 +22461,6 @@ snapshots:
       yn: 3.1.1
     optionalDependencies:
       "@swc/core": 1.13.3
-    optional: true
 
   ts-node@10.9.2(@swc/core@1.13.3)(@types/node@22.17.0)(typescript@5.9.2):
     dependencies:
@@ -22505,9 +22721,26 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
+  url@0.10.3:
+    dependencies:
+      punycode: 1.3.2
+      querystring: 0.2.0
+
   util-deprecate@1.0.2: {}
 
+  util@0.12.5:
+    dependencies:
+      inherits: 2.0.4
+      is-arguments: 1.2.0
+      is-generator-function: 1.1.0
+      is-typed-array: 1.1.15
+      which-typed-array: 1.1.19
+
   uuid@10.0.0: {}
+
+  uuid@11.0.3: {}
+
+  uuid@8.0.0: {}
 
   uuid@8.3.2: {}
 
@@ -22732,6 +22965,13 @@ snapshots:
       sort-keys: 2.0.0
       type-fest: 0.4.1
       write-json-file: 3.2.0
+
+  xml2js@0.6.2:
+    dependencies:
+      sax: 1.2.1
+      xmlbuilder: 11.0.1
+
+  xmlbuilder@11.0.1: {}
 
   xtend@4.0.2: {}
 

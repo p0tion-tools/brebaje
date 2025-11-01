@@ -61,9 +61,9 @@ export class VmService {
 
       'touch ${MARKER_FILE}',
       'sudo yum update -y',
-      'curl -O https://nodejs.org/dist/v16.13.0/node-v16.13.0-linux-x64.tar.xz',
-      'tar -xf node-v16.13.0-linux-x64.tar.xz',
-      'mv node-v16.13.0-linux-x64 nodejs',
+      'curl -O https://nodejs.org/dist/v22.17.1/node-v22.17.1-linux-x64.tar.xz',
+      'tar -xf node-v22.17.1-linux-x64.tar.xz',
+      'mv node-v22.17.1-linux-x64 nodejs',
       'sudo mv nodejs /opt/',
       "echo 'export NODEJS_HOME=/opt/nodejs' >> /etc/profile",
       "echo 'export PATH=$NODEJS_HOME/bin:$PATH' >> /etc/profile",
@@ -76,29 +76,6 @@ export class VmService {
       "INSTANCE_ID=$(ec2-metadata -i | awk '{print $2}')",
       `aws sns publish --topic-arn ${AWS_SNS_TOPIC_ARN} --message "$INSTANCE_ID" --region ${AWS_REGION}`,
       'fi',
-    ];
-  }
-
-  /**
-   * Return the list of commands for verification of a phase 2 contribution.
-   * @dev this method generates the verification transcript as well.
-   * @param bucketName <string> - the name of the AWS S3 bucket.
-   * @param lastZkeyStoragePath <string> - the last zKey storage path.
-   * @param verificationTranscriptStoragePathAndFilename <string> - the verification transcript storage path.
-   * @returns Array<string> - the list of commands for contribution verification.
-   */
-  vmVerificationPhase2Command(
-    bucketName: string,
-    lastZkeyStoragePath: string,
-    verificationTranscriptStoragePathAndFilename: string,
-  ): Array<string> {
-    return [
-      `source /etc/profile`,
-      `aws s3 cp s3://${bucketName}/${lastZkeyStoragePath} /var/tmp/lastZKey.zkey > /var/tmp/log.txt`,
-      `snarkjs zkvi /var/tmp/genesisZkey.zkey /var/tmp/pot.ptau /var/tmp/lastZKey.zkey > /var/tmp/verification_transcript.log`,
-      `aws s3 cp /var/tmp/verification_transcript.log s3://${bucketName}/${verificationTranscriptStoragePathAndFilename} &>/dev/null`,
-      `/var/tmp/blake3.bin /var/tmp/verification_transcript.log | awk '{print $1}'`,
-      `rm /var/tmp/lastZKey.zkey /var/tmp/verification_transcript.log /var/tmp/log.txt &>/dev/null`,
     ];
   }
 
@@ -436,5 +413,78 @@ export class VmService {
         `Something went wrong when trying to retrieve the command ${commandId} status on the EC2 instance (${instanceId}). More details ${error}`,
       );
     }
+  }
+
+  /**
+   * Return the list of commands for verification of a phase 1 contribution (Powers of Tau).
+   * @param bucketName <string> - the name of the AWS S3 bucket.
+   * @param lastPtauStoragePath <string> - the last ptau storage path.
+   * @returns Array<string> - the list of commands for contribution verification.
+   */
+  vmVerificationPhase1Command(bucketName: string, lastPtauStoragePath: string): Array<string> {
+    // Extract filename from path (e.g., "Cardano-PPOT/pot10_0008.ptau" -> "pot10_0008.ptau")
+    const filename = lastPtauStoragePath.split('/').pop() || 'unknown.ptau';
+
+    // Generate verification log filename with timestamp
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const verificationLogName = `verification-${filename}-${timestamp}.log`;
+    const s3LogPath = `verification-logs/${verificationLogName}`;
+
+    return [
+      `source /etc/profile`,
+      // Download with original filename
+      `aws s3 cp s3://${bucketName}/${lastPtauStoragePath} /var/tmp/${filename} > /var/tmp/download.log`,
+      // Run verification and save output to log
+      `snarkjs powersoftau verify /var/tmp/${filename} > /var/tmp/${verificationLogName} 2>&1`,
+      // Upload verification log to S3
+      `aws s3 cp /var/tmp/${verificationLogName} s3://${bucketName}/${s3LogPath}`,
+      // Clean up all temporary files
+      `rm /var/tmp/${filename} /var/tmp/${verificationLogName} /var/tmp/download.log &>/dev/null`,
+    ];
+  }
+
+  /**
+   * Return the list of commands for verification of a phase 2 contribution.
+   * @dev this method generates the verification transcript as well.
+   * @param bucketName <string> - the name of the AWS S3 bucket.
+   * @param lastZkeyStoragePath <string> - the last zKey storage path.
+   * @param verificationTranscriptStoragePathAndFilename <string> - the verification transcript storage path.
+   * @returns Array<string> - the list of commands for contribution verification.
+   */
+  vmVerificationPhase2Command(
+    bucketName: string,
+    lastZkeyStoragePath: string,
+    verificationTranscriptStoragePathAndFilename: string,
+  ): Array<string> {
+    return [
+      `source /etc/profile`,
+      `aws s3 cp s3://${bucketName}/${lastZkeyStoragePath} /var/tmp/lastZKey.zkey > /var/tmp/log.txt`,
+      `snarkjs zkvi /var/tmp/genesisZkey.zkey /var/tmp/pot.ptau /var/tmp/lastZKey.zkey > /var/tmp/verification_transcript.log`,
+      `aws s3 cp /var/tmp/verification_transcript.log s3://${bucketName}/${verificationTranscriptStoragePathAndFilename} &>/dev/null`,
+      `/var/tmp/blake3.bin /var/tmp/verification_transcript.log | awk '{print $1}'`,
+      `rm /var/tmp/lastZKey.zkey /var/tmp/verification_transcript.log /var/tmp/log.txt &>/dev/null`,
+    ];
+  }
+
+  /**
+   * Evaluate verification command results and return HTTP status code.
+   * @dev this method interprets SSM command execution results for verification operations.
+   * @param commandOutput <string> - the stdout from the verification command.
+   * @param commandStatus <string> - the execution status from SSM.
+   * @returns <number> - HTTP status code (200 for success, 400 for verification failure).
+   */
+  evaluateVerificationResult(commandOutput: string, commandStatus: string): number {
+    // Check if SSM command executed successfully
+    if (commandStatus !== 'Success') {
+      return 400; // Bad Request - command execution failed
+    }
+
+    // Check for snarkjs error patterns in output
+    if (commandOutput.includes('[ERROR]')) {
+      return 400; // Bad Request - verification failed
+    }
+
+    // If command succeeded and no errors found, verification passed
+    return 200; // OK - verification successful
   }
 }
