@@ -1,10 +1,10 @@
+import { scriptLoggerTitle } from "src/utils/constant.js";
 import { GLOBAL_CONFIG_DIR, GLOBAL_CONFIG_PATH, hasGlobalConfig } from "../utils/config.js";
 import { ScriptLogger } from "../utils/logger.js";
-import { statSync } from "fs";
-
-const logger = new ScriptLogger("CLI:Config:Path");
 
 export function showConfigPath(): void {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Config:Path`);
+
   try {
     logger.log("🔍 Checking global configuration...");
 

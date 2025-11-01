@@ -1,14 +1,10 @@
+import { ContributeOptions } from "src/utils/types.js";
 import { ScriptLogger } from "../utils/logger.js";
-
-const logger = new ScriptLogger("CLI:Contribute");
-
-interface ContributeOptions {
-  ceremony?: string;
-  entropy?: string;
-  auth?: string;
-}
+import { scriptLoggerTitle } from "src/utils/constant.js";
 
 export async function contribute(options: ContributeOptions) {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Contribute`);
+
   logger.log("Contributing to ceremony...");
 
   if (options.ceremony) {

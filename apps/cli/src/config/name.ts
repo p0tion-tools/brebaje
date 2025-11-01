@@ -1,9 +1,10 @@
+import { scriptLoggerTitle } from "src/utils/constant.js";
 import { setConfig } from "../utils/config.js";
 import { ScriptLogger } from "../utils/logger.js";
 
-const logger = new ScriptLogger("CLI:Config:Name");
-
 export async function setupContributorNameGlobal(fullName: string): Promise<void> {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Config:Name`);
+
   try {
     logger.log("👤 Setting up contributor name for ceremony contributions...");
 

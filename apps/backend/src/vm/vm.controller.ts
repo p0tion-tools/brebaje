@@ -65,7 +65,7 @@ export class VmController {
     this.verificationMonitoringService.startMonitoring(
       commandId,
       verifyDto.instanceId,
-      hasNotificationConfig ? notificationConfig : undefined,
+      notificationConfig,
       verifyDto.autoStop,
       ptauFilename,
     );
@@ -171,11 +171,12 @@ export class VmController {
             ? 'Command is still running, output may be partial'
             : 'Command completed',
       };
-    } catch (error: any) {
+    } catch (error) {
+      const e = error as Error;
       return {
         commandId,
         instanceId,
-        error: error.message,
+        error: e.message,
         note: 'Failed to retrieve command output. Command may not exist or be too old.',
       };
     }
@@ -194,12 +195,13 @@ export class VmController {
         status: 'success',
         message: 'Instance start command sent. It may take 1-2 minutes to boot.',
       };
-    } catch (error: any) {
+    } catch (error) {
+      const e = error as Error;
       return {
         instanceId: lifecycleDto.instanceId,
         action: 'start',
         status: 'error',
-        message: error.message,
+        message: e.message,
       };
     }
   }
@@ -217,12 +219,13 @@ export class VmController {
         status: 'success',
         message: 'Instance stop command sent. It may take 1-2 minutes to shut down.',
       };
-    } catch (error: any) {
+    } catch (error) {
+      const e = error as Error;
       return {
         instanceId: lifecycleDto.instanceId,
         action: 'stop',
         status: 'error',
-        message: error.message,
+        message: e.message,
       };
     }
   }
@@ -241,12 +244,13 @@ export class VmController {
         message: 'Instance terminate command sent. This action is PERMANENT and cannot be undone.',
         warning: 'All data on the instance will be lost permanently.',
       };
-    } catch (error: any) {
+    } catch (error) {
+      const e = error as Error;
       return {
         instanceId: lifecycleDto.instanceId,
         action: 'terminate',
         status: 'error',
-        message: error.message,
+        message: e.message,
       };
     }
   }
@@ -264,11 +268,12 @@ export class VmController {
         status: isRunning ? 'running' : 'not running',
         timestamp: new Date().toISOString(),
       };
-    } catch (error: any) {
+    } catch (error) {
+      const e = error as Error;
       return {
         instanceId,
         status: 'error',
-        message: error.message,
+        message: e.message,
         timestamp: new Date().toISOString(),
       };
     }
@@ -277,7 +282,7 @@ export class VmController {
   @Get('monitoring/status')
   @ApiOperation({ summary: 'Get monitoring service status' })
   @ApiResponse({ status: 200, description: 'Monitoring service status' })
-  async getMonitoringStatus() {
+  getMonitoringStatus() {
     return this.verificationMonitoringService.getMonitoringStatus();
   }
 }

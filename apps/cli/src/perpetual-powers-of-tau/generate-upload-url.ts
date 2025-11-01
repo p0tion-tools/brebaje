@@ -1,4 +1,6 @@
+import { S3 } from "aws-sdk";
 import { loadConfig } from "../utils/config.js";
+import { writeFileSync } from "fs";
 
 export async function generateUploadUrlPerpetualPowersOfTau(
   filename: string,
@@ -41,28 +43,13 @@ export async function generateUploadUrlPerpetualPowersOfTau(
       process.exit(1);
     }
 
-    // Check if AWS SDK is available
-    let AWS: any;
-    try {
-      AWS = await import("aws-sdk");
-    } catch (error) {
-      console.error(`❌ Error: AWS SDK not found`);
-      console.error(`Please install aws-sdk:`);
-      console.error(`  npm install aws-sdk`);
-      console.error(`  # or`);
-      console.error(`  npm install @aws-sdk/client-s3 @aws-sdk/s3-request-presigner`);
-      console.error(`  (for AWS SDK v3)`);
-      process.exit(1);
-    }
-
-    // Configure AWS
-    AWS.default.config.update({
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    const s3 = new S3({
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY_ID,
+        secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      },
       region: AWS_REGION,
     });
-
-    const s3 = new AWS.default.S3();
 
     // Generate pre-signed URL for PUT operation
     const key = `${S3_PREFIX}${filename}`;
@@ -98,7 +85,6 @@ export async function generateUploadUrlPerpetualPowersOfTau(
       console.log(`⚠️  This URL allows uploading ONLY to the specified file path.`);
 
       // Optional: Save URL to file for easy sharing
-      const fs = await import("fs");
       const urlFilename = `upload-url-${filename.replace(".ptau", "")}.txt`;
       const urlContent = [
         `Pre-signed Upload URL for ${filename}`,
@@ -112,7 +98,7 @@ export async function generateUploadUrlPerpetualPowersOfTau(
         `brebaje-cli ppot upload "${uploadUrl}"`,
       ].join("\n");
 
-      fs.writeFileSync(urlFilename, urlContent, "utf-8");
+      writeFileSync(urlFilename, urlContent, "utf-8");
       console.log(`📝 URL saved to: ${urlFilename}`);
     } catch (awsError: any) {
       console.error(`❌ AWS Error: ${awsError.message}`);

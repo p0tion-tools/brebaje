@@ -1,11 +1,13 @@
 import { getNewerFile, getUrlsJson } from "../utils/file_handling.js";
 import { loadConfig } from "../utils/config.js";
 import { fetchWithTimeout } from "../utils/http.js";
+import { createInterface } from "readline";
+import { existsSync, readFileSync } from "fs";
+import { join } from "path";
 
 // Function to prompt user for input
 async function promptUser(question: string): Promise<string> {
-  const readline = await import("readline");
-  const rl = readline.createInterface({
+  const rl = createInterface({
     input: process.stdin,
     output: process.stdout,
   });
@@ -305,12 +307,9 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
   try {
     console.log(`📤 Posting contribution record...`);
 
-    const fs = await import("fs");
-    const path = await import("path");
-
     // Check if output directory exists
     const outputDir = "output";
-    if (!fs.existsSync(outputDir)) {
+    if (!existsSync(outputDir)) {
       console.error(`❌ Error: Output directory does not exist: ${outputDir}`);
       console.error(`Please make a contribution first using the contribute command.`);
       process.exit(1);
@@ -342,7 +341,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
 
     try {
       const ceremonyUrlsPath = getUrlsJson("input");
-      const ceremonyUrlsContent = fs.readFileSync(ceremonyUrlsPath, "utf-8");
+      const ceremonyUrlsContent = readFileSync(ceremonyUrlsPath, "utf-8");
       const ceremonyUrls = JSON.parse(ceremonyUrlsContent);
 
       // Extract index from upload_info.field_name (e.g., "pot10_0013.ptau" -> 0013)
@@ -365,11 +364,11 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
       console.warn(`⚠️ Could not parse ceremony URLs file, using index from record file: ${index}`);
     }
 
-    const recordFilePath = path.join(outputDir, recordFile);
+    const recordFilePath = join(outputDir, recordFile);
     console.log(`Found record file: ${recordFile}`);
 
     // Read the record file content
-    const recordContent = fs.readFileSync(recordFilePath, "utf-8");
+    const recordContent = readFileSync(recordFilePath, "utf-8");
 
     // Get tokens and configuration from global/local config
     const config = loadConfig();

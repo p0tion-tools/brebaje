@@ -1,4 +1,6 @@
+import { writeFileSync } from "fs";
 import { loadConfig } from "../utils/config.js";
+import { S3 } from "aws-sdk";
 
 export async function generateDownloadUrlPerpetualPowersOfTau(
   filename: string,
@@ -41,28 +43,13 @@ export async function generateDownloadUrlPerpetualPowersOfTau(
       process.exit(1);
     }
 
-    // Check if AWS SDK is available
-    let AWS: any;
-    try {
-      AWS = await import("aws-sdk");
-    } catch (error) {
-      console.error(`❌ Error: AWS SDK not found`);
-      console.error(`Please install aws-sdk:`);
-      console.error(`  pnpm add aws-sdk`);
-      console.error(`  # or`);
-      console.error(`  npm install @aws-sdk/client-s3 @aws-sdk/s3-request-presigner`);
-      console.error(`  (for AWS SDK v3)`);
-      process.exit(1);
-    }
-
-    // Configure AWS
-    AWS.default.config.update({
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    const s3 = new S3({
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY_ID,
+        secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      },
       region: AWS_REGION,
     });
-
-    const s3 = new AWS.default.S3();
 
     // Generate pre-signed URL for GET operation
     const key = `${S3_PREFIX}${filename}`;
@@ -103,7 +90,6 @@ export async function generateDownloadUrlPerpetualPowersOfTau(
       console.log(`⚠️  This URL allows downloading ONLY the specified file.`);
 
       // Optional: Save URL to file for easy sharing
-      const fs = await import("fs");
       const urlFilename = `download-url-${filename.replace(".ptau", "")}.txt`;
       const urlContent = [
         `Pre-signed Download URL for ${filename}`,
@@ -117,7 +103,7 @@ export async function generateDownloadUrlPerpetualPowersOfTau(
         `brebaje-cli ppot download "${downloadUrl}"`,
       ].join("\n");
 
-      fs.writeFileSync(urlFilename, urlContent, "utf-8");
+      writeFileSync(urlFilename, urlContent, "utf-8");
       console.log(`📝 URL saved to: ${urlFilename}`);
     } catch (awsError: any) {
       console.error(`❌ AWS Error: ${awsError.message}`);

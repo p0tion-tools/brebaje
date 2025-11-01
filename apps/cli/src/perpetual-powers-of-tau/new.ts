@@ -1,5 +1,7 @@
-import * as snarkjs from "snarkjs";
 import { loadConfig } from "../utils/config.js";
+import { existsSync, mkdirSync, statSync, writeFileSync } from "fs";
+import { basename, join } from "path";
+import { execSync } from "child_process";
 
 export async function newPerpetualPowersOfTau(): Promise<void> {
   try {
@@ -13,19 +15,14 @@ export async function newPerpetualPowersOfTau(): Promise<void> {
     );
 
     // Create output directory if it doesn't exist
-    const fs = await import("fs");
-    const path = await import("path");
-
     const outputDir = "output";
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    if (!existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true });
     }
 
-    const outputFile = path.join(outputDir, `pot${CEREMONY_POWER}_0000.ptau`);
+    const outputFile = join(outputDir, `pot${CEREMONY_POWER}_0000.ptau`);
 
     // Run snarkjs CLI command
-    const { execSync } = await import("child_process");
-
     const command = `npx snarkjs powersoftau new ${CEREMONY_ELLIPTIC_CURVE} ${CEREMONY_POWER} ${outputFile}`;
     console.log(`Running: ${command}`);
 
@@ -48,18 +45,18 @@ export async function newPerpetualPowersOfTau(): Promise<void> {
     console.log("📝 Saving ceremony initialization record...");
 
     const recordFileName = `pot${CEREMONY_POWER}_0000_init_record.txt`;
-    const recordFilePath = path.join(outputDir, recordFileName);
+    const recordFilePath = join(outputDir, recordFileName);
 
     try {
       const timestamp = new Date().toISOString();
-      const stats = fs.statSync(outputFile);
+      const stats = statSync(outputFile);
 
       // Create record content with ceremony initialization log
       const recordLines = [
         `Ceremony Initialization Record`,
         `============================`,
         ``,
-        `File: ${path.basename(outputFile)}`,
+        `File: ${basename(outputFile)}`,
         `Size: ${stats.size} bytes (${(stats.size / (1024 * 1024)).toFixed(2)} MB)`,
         `Ceremony Power: ${CEREMONY_POWER}`,
         `Elliptic Curve: ${CEREMONY_ELLIPTIC_CURVE}`,
@@ -77,7 +74,7 @@ export async function newPerpetualPowersOfTau(): Promise<void> {
       const recordContent = recordLines.join("\n");
 
       // Write record file
-      fs.writeFileSync(recordFilePath, recordContent, "utf-8");
+      writeFileSync(recordFilePath, recordContent, "utf-8");
 
       console.log(`✅ Initialization record saved: ${recordFileName}`);
     } catch (error) {

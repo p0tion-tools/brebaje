@@ -1,4 +1,6 @@
+import { S3 } from "aws-sdk";
 import { loadConfig } from "../utils/config.js";
+import { writeFileSync } from "fs";
 
 export async function generateUrlsUnsafePerpetualPowersOfTau(
   downloadFilename: string,
@@ -71,25 +73,13 @@ export async function generateUrlsUnsafePerpetualPowersOfTau(
       process.exit(1);
     }
 
-    // Check if AWS SDK is available
-    let AWS: any;
-    try {
-      AWS = await import("aws-sdk");
-    } catch (error) {
-      console.error(`❌ Error: AWS SDK not found`);
-      console.error(`Please install aws-sdk:`);
-      console.error(`  pnpm add aws-sdk`);
-      process.exit(1);
-    }
-
-    // Configure AWS
-    AWS.default.config.update({
-      accessKeyId: AWS_ACCESS_KEY_ID,
-      secretAccessKey: AWS_SECRET_ACCESS_KEY,
+    const s3 = new S3({
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY_ID,
+        secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      },
       region: AWS_REGION,
     });
-
-    const s3 = new AWS.default.S3();
 
     // Generate download URL
     console.log(`📥 Generating download URL...`);
@@ -130,8 +120,6 @@ export async function generateUrlsUnsafePerpetualPowersOfTau(
     const outputFilename =
       options.outputPath || `ceremony-urls-${downloadFilename.replace(".ptau", "")}.json`;
 
-    const fs = await import("fs");
-
     // Create JSON structure
     const downloadExpiry = new Date(Date.now() + downloadExpirationSeconds * 1000);
     const uploadExpiry = new Date(Date.now() + uploadExpirationSeconds * 1000);
@@ -156,7 +144,7 @@ export async function generateUrlsUnsafePerpetualPowersOfTau(
     };
 
     // Save to JSON file
-    fs.writeFileSync(outputFilename, JSON.stringify(urlData, null, 2), "utf-8");
+    writeFileSync(outputFilename, JSON.stringify(urlData, null, 2), "utf-8");
 
     // Success output
     console.log(`✅ URL pair generated successfully! (UNSAFE MODE)`);

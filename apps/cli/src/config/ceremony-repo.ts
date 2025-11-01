@@ -1,7 +1,6 @@
+import { scriptLoggerTitle } from "src/utils/constant.js";
 import { setConfig } from "../utils/config.js";
 import { ScriptLogger } from "../utils/logger.js";
-
-const logger = new ScriptLogger("CLI:Config:CeremonyRepo");
 
 function validateRepositoryUrl(url: string): boolean {
   // Validate GitHub repository URL format
@@ -10,6 +9,8 @@ function validateRepositoryUrl(url: string): boolean {
 }
 
 export async function setupCeremonyRepositoryGlobal(repositoryUrl: string): Promise<void> {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Config:CeremonyRepo`);
+
   try {
     logger.log("🔧 Setting up ceremony repository...");
 

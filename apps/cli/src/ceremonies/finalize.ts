@@ -1,12 +1,10 @@
+import { FinalizeOptions } from "src/utils/types.js";
 import { ScriptLogger } from "../utils/logger.js";
-
-const logger = new ScriptLogger("CLI:Finalize");
-
-interface FinalizeOptions {
-  auth?: string;
-}
+import { scriptLoggerTitle } from "src/utils/constant.js";
 
 export async function finalize(options: FinalizeOptions) {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Finalize`);
+
   logger.log("Finalizing ceremony...");
 
   if (options.auth) {

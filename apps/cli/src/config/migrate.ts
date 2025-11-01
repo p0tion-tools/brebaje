@@ -1,9 +1,10 @@
+import { scriptLoggerTitle } from "src/utils/constant.js";
 import { migrateLocalToGlobal, hasLocalConfig, hasGlobalConfig } from "../utils/config.js";
 import { ScriptLogger } from "../utils/logger.js";
 
-const logger = new ScriptLogger("CLI:Config:Migrate");
-
 export function migrateConfig(): void {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Config:Migrate`);
+
   try {
     logger.log("🚚 Migrating local configuration to global...");
 

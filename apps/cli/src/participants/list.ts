@@ -1,12 +1,10 @@
+import { scriptLoggerTitle } from "src/utils/constant.js";
 import { ScriptLogger } from "../utils/logger.js";
-
-const logger = new ScriptLogger("CLI:ListParticipants");
-
-interface ListParticipantsOptions {
-  ceremony?: string;
-}
+import { ListParticipantsOptions } from "src/utils/types.js";
 
 export async function list(options: ListParticipantsOptions) {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}ListParticipants`);
+
   logger.log("Listing participants...");
 
   if (options.ceremony) {

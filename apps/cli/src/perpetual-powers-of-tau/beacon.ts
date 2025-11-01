@@ -1,3 +1,7 @@
+import { execSync } from "child_process";
+import { existsSync, mkdirSync } from "fs";
+import { basename, extname, join } from "path";
+
 export async function applyBeaconPerpetualPowersOfTau(
   inputFilePath: string,
   beaconHex: string,
@@ -11,16 +15,14 @@ export async function applyBeaconPerpetualPowersOfTau(
     console.log(`Name: ${name}`);
 
     // Check if input file exists
-    const fs = await import("fs");
-    if (!fs.existsSync(inputFilePath)) {
+    if (!existsSync(inputFilePath)) {
       console.error(`❌ Error: File does not exist: ${inputFilePath}`);
       console.error(`Please provide a valid path to the .ptau file.`);
       process.exit(1);
     }
 
     // Validate file extension
-    const path = await import("path");
-    const fileExtension = path.extname(inputFilePath);
+    const fileExtension = extname(inputFilePath);
     if (fileExtension !== ".ptau") {
       console.error(`❌ Error: Invalid file extension. Expected .ptau, got: ${fileExtension}`);
       process.exit(1);
@@ -43,24 +45,22 @@ export async function applyBeaconPerpetualPowersOfTau(
 
     // Create output directory if it doesn't exist
     const outputDir = "output";
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    if (!existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true });
     }
 
     // Generate output filename based on input filename
-    const inputFileName = path.basename(inputFilePath, ".ptau");
-    const outputFile = path.join(outputDir, `${inputFileName}_beacon.ptau`);
+    const inputFileName = basename(inputFilePath, ".ptau");
+    const outputFile = join(outputDir, `${inputFileName}_beacon.ptau`);
 
     // Run snarkjs CLI command for beacon
-    const { execSync } = await import("child_process");
-
     const command = `npx snarkjs powersoftau beacon ${inputFilePath} ${outputFile} ${beaconHex} ${iterations} -n="${name}"`;
     console.log(`Running: ${command}`);
 
     execSync(command, { stdio: "inherit" });
 
     console.log(`✅ Beacon applied successfully: ${outputFile}`);
-    console.log(`Input: ${path.basename(inputFilePath)} -> Output: ${path.basename(outputFile)}`);
+    console.log(`Input: ${basename(inputFilePath)} -> Output: ${basename(outputFile)}`);
     console.log(`The ceremony is now finalized with the beacon.`);
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

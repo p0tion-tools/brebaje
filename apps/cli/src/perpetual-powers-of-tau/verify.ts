@@ -1,17 +1,19 @@
+import { execSync } from "child_process";
+import { existsSync } from "fs";
+import path from "path";
+
 export async function verifyPerpetualPowersOfTau(ptauFilePath: string): Promise<void> {
   try {
     console.log(`Verifying Powers of Tau file: ${ptauFilePath}`);
 
     // Check if input file exists
-    const fs = await import("fs");
-    if (!fs.existsSync(ptauFilePath)) {
+    if (!existsSync(ptauFilePath)) {
       console.error(`❌ Error: File does not exist: ${ptauFilePath}`);
       console.error(`Please provide a valid path to the .ptau file.`);
       process.exit(1);
     }
 
     // Validate file extension
-    const path = await import("path");
     const fileExtension = path.extname(ptauFilePath);
     if (fileExtension !== ".ptau") {
       console.error(`❌ Error: Invalid file extension. Expected .ptau, got: ${fileExtension}`);
@@ -19,8 +21,6 @@ export async function verifyPerpetualPowersOfTau(ptauFilePath: string): Promise<
     }
 
     // Run snarkjs CLI command for verification
-    const { execSync } = await import("child_process");
-
     const command = `npx snarkjs powersoftau verify ${ptauFilePath}`;
     console.log(`Running: ${command}`);
 

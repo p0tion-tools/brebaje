@@ -57,10 +57,11 @@ export const fetchWithTimeout = async (
     });
     return response;
   } catch (error) {
-    if (error.name === 'AbortError') {
+    const e = error as Error;
+    if (e.name === 'AbortError') {
       throw new Error(`Request timeout after ${timeoutMs}ms`);
     }
-    throw error;
+    throw e;
   } finally {
     clearTimeout(timeoutId);
   }

@@ -1,4 +1,5 @@
 import { Command } from "commander";
+import { verifyVm } from "./verify";
 
 export function setUpVmCommands(program: Command): void {
   const vmCommand = program.command("vm").description("Virtual Machine commands for verification");
@@ -11,7 +12,6 @@ export function setUpVmCommands(program: Command): void {
       "Path to ceremony URLs JSON file (optional, will check current folder first)",
     )
     .action(async (jsonPath?: string) => {
-      const { verifyVm } = await import("./verify.js");
       await verifyVm(jsonPath);
     });
 }

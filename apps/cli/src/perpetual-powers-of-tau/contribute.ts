@@ -1,5 +1,8 @@
+import { execSync } from "child_process";
 import { loadConfig } from "../utils/config.js";
 import crypto from "crypto";
+import { existsSync, mkdirSync, readdirSync, statSync, writeFileSync } from "fs";
+import { basename, join } from "path";
 import readline from "readline";
 
 /**
@@ -111,19 +114,16 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
       );
     }
 
-    const fs = await import("fs");
-    const path = await import("path");
-
     // Check if input directory exists
     const inputDir = "input";
-    if (!fs.existsSync(inputDir)) {
+    if (!existsSync(inputDir)) {
       console.error(`❌ Error: Input directory does not exist: ${inputDir}`);
       console.error(`Please download a challenge file first using the download command.`);
       process.exit(1);
     }
 
     // Find all .ptau files in input directory
-    const files = fs.readdirSync(inputDir);
+    const files = readdirSync(inputDir);
     const ptauFiles = files.filter((file) => file.endsWith(".ptau"));
 
     if (ptauFiles.length === 0) {
@@ -167,18 +167,18 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
       current.index > latest.index ? current : latest,
     );
 
-    const inputFilePath = path.join(inputDir, latestFile.file);
+    const inputFilePath = join(inputDir, latestFile.file);
     console.log(`Found latest contribution file: ${latestFile.file}`);
     console.log(`Input file: ${inputFilePath}`);
 
     const outputDir = "output";
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    if (!existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true });
     }
 
     // Calculate next increment
     const nextIncrement = (latestFile.index + 1).toString().padStart(4, "0");
-    const outputFile = path.join(outputDir, `pot${CEREMONY_POWER}_${nextIncrement}.ptau`);
+    const outputFile = join(outputDir, `pot${CEREMONY_POWER}_${nextIncrement}.ptau`);
 
     // Generate secure entropy
     let entropy: string;
@@ -190,7 +190,6 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
     }
 
     // Run snarkjs CLI command for contribution and capture output
-    const { execSync } = await import("child_process");
 
     // Build command with name and entropy parameters
     let command = `npx snarkjs powersoftau contribute ${inputFilePath} ${outputFile}`;
@@ -219,28 +218,28 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
       contributionOutput = execSync(verifyCommand, { encoding: "utf-8" });
     } catch (error: any) {
       console.warn("⚠️  Could not capture verification details for record");
-      contributionOutput = `Contribution completed successfully for ${path.basename(outputFile)}`;
+      contributionOutput = `Contribution completed successfully for ${basename(outputFile)}`;
     }
 
     console.log(`✅ Contribution completed: ${outputFile}`);
-    console.log(`Previous: ${latestFile.file} -> New: ${path.basename(outputFile)}`);
+    console.log(`Previous: ${latestFile.file} -> New: ${basename(outputFile)}`);
 
     // Save contribution log to record file
     console.log("📝 Saving contribution record...");
 
     const recordFileName = `pot${CEREMONY_POWER}_${nextIncrement}_record.txt`;
-    const recordFilePath = path.join(outputDir, recordFileName);
+    const recordFilePath = join(outputDir, recordFileName);
 
     try {
       const timestamp = new Date().toISOString();
-      const stats = fs.statSync(outputFile);
+      const stats = statSync(outputFile);
 
       // Create record content with contribution log
       const recordLines = [
         `Contribution Record`,
         `==================`,
         ``,
-        `File: ${path.basename(outputFile)}`,
+        `File: ${basename(outputFile)}`,
         `Size: ${stats.size} bytes (${(stats.size / (1024 * 1024)).toFixed(2)} MB)`,
         `Ceremony Power: ${CEREMONY_POWER}`,
         `Contribution Index: ${latestFile.index + 1}`,
@@ -266,7 +265,7 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
       const recordContent = recordLines.join("\n");
 
       // Write record file
-      fs.writeFileSync(recordFilePath, recordContent, "utf-8");
+      writeFileSync(recordFilePath, recordContent, "utf-8");
 
       console.log(`✅ Contribution record saved: ${recordFileName}`);
     } catch (error) {

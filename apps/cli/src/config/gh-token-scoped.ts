@@ -1,7 +1,6 @@
+import { scriptLoggerTitle } from "src/utils/constant.js";
 import { setConfig } from "../utils/config.js";
 import { ScriptLogger } from "../utils/logger.js";
-
-const logger = new ScriptLogger("CLI:Config:GitHubTokenScoped");
 
 function validateGitHubTokenScoped(token: string): boolean {
   // GitHub fine-grained tokens start with 'github_pat_' and are longer
@@ -10,6 +9,8 @@ function validateGitHubTokenScoped(token: string): boolean {
 }
 
 export async function setupGitHubTokenScopedGlobal(githubTokenScoped: string): Promise<void> {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Config:GitHubTokenScoped`);
+
   try {
     logger.log("🔧 Setting up fine-grained GitHub token...");
 

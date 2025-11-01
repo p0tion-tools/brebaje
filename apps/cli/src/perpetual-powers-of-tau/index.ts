@@ -1,6 +1,16 @@
 import { Command } from "commander";
-import * as snarkjs from "snarkjs";
-import { loadConfig } from "../utils/config.js";
+import { newPerpetualPowersOfTau } from "./new.js";
+import { downloadPerpetualPowersOfTau } from "./download.js";
+import { contributePerpetualPowersOfTau } from "./contribute.js";
+import { autoContributePerpetualPowersOfTau } from "./auto-contribute.js";
+import { uploadPerpetualPowersOfTau } from "./upload.js";
+import { verifyPerpetualPowersOfTau } from "./verify.js";
+import { postRecordPerpetualPowersOfTau } from "./post-record.js";
+import { generateUploadUrlPerpetualPowersOfTau } from "./generate-upload-url.js";
+import { generateDownloadUrlPerpetualPowersOfTau } from "./generate-download-url.js";
+import { generateUrlsPerpetualPowersOfTau } from "./generate-urls.js";
+import { generateUrlsUnsafePerpetualPowersOfTau } from "./generate-urls-unsafe.js";
+import { applyBeaconPerpetualPowersOfTau } from "./beacon.js";
 
 export function setUpPerpetualPowersOfTau(program: Command): void {
   const ppotCommand = program
@@ -12,7 +22,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     .command("new")
     .description("Initialize a new perpetual powers of tau ceremony")
     .action(async () => {
-      const { newPerpetualPowersOfTau } = await import("./new.js");
       await newPerpetualPowersOfTau();
     });
 
@@ -21,7 +30,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     .description("Download a Powers of Tau file from URL")
     .argument("<url>", "URL to download the .ptau file from")
     .action(async (url: string) => {
-      const { downloadPerpetualPowersOfTau } = await import("./download.js");
       await downloadPerpetualPowersOfTau(url);
     });
 
@@ -30,7 +38,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     .description("Make a contribution to the perpetual powers of tau ceremony")
     .option("--name <name>", "Contributor name (uses CONTRIBUTOR_NAME from env if not provided)")
     .action(async (options: { name?: string }) => {
-      const { contributePerpetualPowersOfTau } = await import("./contribute.js");
       await contributePerpetualPowersOfTau(options.name);
     });
 
@@ -42,7 +49,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
       "Path to ceremony URLs JSON file (optional, will check input/ folder first)",
     )
     .action(async (jsonPath?: string) => {
-      const { autoContributePerpetualPowersOfTau } = await import("./auto-contribute.js");
       await autoContributePerpetualPowersOfTau(jsonPath);
     });
 
@@ -51,7 +57,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     .description("Upload contribution file using pre-signed URL")
     .argument("<uploadUrl>", "Pre-signed URL for uploading the contribution file")
     .action(async (uploadUrl: string) => {
-      const { uploadPerpetualPowersOfTau } = await import("./upload.js");
       await uploadPerpetualPowersOfTau(uploadUrl);
     });
 
@@ -60,7 +65,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     .description("Verify a Powers of Tau file")
     .argument("<ptauFile>", "Path to the .ptau file to verify")
     .action(async (ptauFile: string) => {
-      const { verifyPerpetualPowersOfTau } = await import("./verify.js");
       await verifyPerpetualPowersOfTau(ptauFile);
     });
 
@@ -70,7 +74,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     .description("Post contribution record to GitHub Gist")
     .option("-t, --token <token>", "GitHub personal access token")
     .action(async (options: { token?: string }) => {
-      const { postRecordPerpetualPowersOfTau } = await import("./post-record.js");
       await postRecordPerpetualPowersOfTau(options.token);
     });
 
@@ -85,7 +88,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
       60,
     )
     .action(async (filename: string, options: { expiration: number }) => {
-      const { generateUploadUrlPerpetualPowersOfTau } = await import("./generate-upload-url.js");
       await generateUploadUrlPerpetualPowersOfTau(filename, options.expiration);
     });
 
@@ -100,9 +102,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
       1440,
     )
     .action(async (filename: string, options: { expiration: number }) => {
-      const { generateDownloadUrlPerpetualPowersOfTau } = await import(
-        "./generate-download-url.js"
-      );
       await generateDownloadUrlPerpetualPowersOfTau(filename, options.expiration);
     });
 
@@ -139,7 +138,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
           instanceId?: string;
         },
       ) => {
-        const { generateUrlsPerpetualPowersOfTau } = await import("./generate-urls.js");
         await generateUrlsPerpetualPowersOfTau(downloadFilename, {
           outputPath: options.output,
           downloadExpiration: options.downloadExpiration,
@@ -182,9 +180,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
           instanceId?: string;
         },
       ) => {
-        const { generateUrlsUnsafePerpetualPowersOfTau } = await import(
-          "./generate-urls-unsafe.js"
-        );
         await generateUrlsUnsafePerpetualPowersOfTau(downloadFilename, {
           outputPath: options.output,
           downloadExpiration: options.downloadExpiration,
@@ -202,7 +197,6 @@ export function setUpPerpetualPowersOfTau(program: Command): void {
     .argument("<iterations>", "Number of iterations", (value) => parseInt(value, 10))
     .argument("<name>", "Name for the beacon (in quotes)")
     .action(async (inputFile: string, beacon: string, iterations: number, name: string) => {
-      const { applyBeaconPerpetualPowersOfTau } = await import("./beacon.js");
       await applyBeaconPerpetualPowersOfTau(inputFile, beacon, iterations, name);
     });
 }

@@ -1,7 +1,6 @@
+import { scriptLoggerTitle } from "src/utils/constant.js";
 import { setConfig } from "../utils/config.js";
 import { ScriptLogger } from "../utils/logger.js";
-
-const logger = new ScriptLogger("CLI:Config:GitHubToken");
 
 function validateGitHubToken(token: string): boolean {
   // GitHub classic tokens start with 'ghp_' and are 40 characters total
@@ -10,6 +9,8 @@ function validateGitHubToken(token: string): boolean {
 }
 
 export async function setupGitHubTokenGlobal(githubToken: string): Promise<void> {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Config:GitHubToken`);
+
   try {
     logger.log("🔧 Setting up GitHub classic token for gist creation...");
 

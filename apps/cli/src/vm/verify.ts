@@ -4,29 +4,12 @@ import os from "os";
 import { ScriptLogger } from "../utils/logger.js";
 import { loadConfig } from "../utils/config.js";
 import { fetchWithTimeout } from "../utils/http.js";
-
-const logger = new ScriptLogger("CLI:VM:Verify");
-
-interface CeremonyUrls {
-  download_info: {
-    field_name: string;
-    s3_key_field: string;
-    expiration: string;
-    download_url: string;
-  };
-  upload_info: {
-    field_name: string;
-    s3_key_field: string;
-    expiration: string;
-    upload_url: string;
-  };
-  vm_info: {
-    instance_id: string | null;
-    bucket_name: string;
-  };
-}
+import { scriptLoggerTitle } from "src/utils/constant.js";
+import { CeremonyUrls } from "src/utils/types.js";
 
 export async function verifyVm(jsonPath?: string): Promise<void> {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}VM:Verify`);
+
   // Load configuration
   const config = loadConfig();
   const BREBAJE_API_URL = config.BREBAJE_API_URL;

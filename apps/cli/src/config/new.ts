@@ -1,5 +1,5 @@
+import { scriptLoggerTitle } from "src/utils/constant.js";
 import {
-  GLOBAL_CONFIG_DIR,
   GLOBAL_CONFIG_PATH,
   hasGlobalConfig,
   ensureConfigDirectory,
@@ -9,14 +9,14 @@ import { ScriptLogger } from "../utils/logger.js";
 import { showConfigPath } from "./path.js";
 import { writeFileSync } from "fs";
 
-const logger = new ScriptLogger("CLI:Config:New");
-
 export async function createNewConfig(): Promise<void> {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Config:New`);
+
   try {
     logger.log("🆕 Creating new global configuration...");
 
     // First, show current path status
-    await showConfigPath();
+    showConfigPath();
     console.log(""); // Add spacing
 
     // Check if global config already exists

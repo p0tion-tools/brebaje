@@ -1,13 +1,10 @@
+import { CreateOptions } from "src/utils/types.js";
 import { ScriptLogger } from "../utils/logger.js";
-
-const logger = new ScriptLogger("CLI:Create");
-
-interface CreateOptions {
-  template?: string;
-  auth?: string;
-}
+import { scriptLoggerTitle } from "src/utils/constant.js";
 
 export async function create(options: CreateOptions) {
+  const logger = new ScriptLogger(`${scriptLoggerTitle}Create`);
+
   logger.log("Setting up a new ceremony...");
 
   if (options.template) {

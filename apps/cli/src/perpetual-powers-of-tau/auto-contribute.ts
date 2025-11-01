@@ -1,20 +1,11 @@
 import { getUrlsJson } from "../utils/file_handling.js";
 import { loadConfig } from "../utils/config.js";
-
-interface CeremonyUrls {
-  download_info: {
-    field_name: string;
-    s3_key_field: string;
-    expiration: string;
-    download_url: string;
-  };
-  upload_info: {
-    field_name: string;
-    s3_key_field: string;
-    expiration: string;
-    upload_url: string;
-  };
-}
+import { CeremonyUrls } from "src/utils/types.js";
+import { readFileSync } from "fs";
+import { downloadPerpetualPowersOfTau } from "./download.js";
+import { contributePerpetualPowersOfTau } from "./contribute.js";
+import { uploadPerpetualPowersOfTau } from "./upload.js";
+import { postRecordPerpetualPowersOfTau } from "./post-record.js";
 
 // Function to validate GitHub tokens and configuration
 function validateTokensAndConfig(): void {
@@ -97,13 +88,12 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
     validateTokensAndConfig();
 
     // Find ceremony URLs JSON file
-    const fs = await import("fs");
     const ceremonyUrlsPath = getUrlsJson("input", jsonPath);
 
     // Read and parse JSON file
     let ceremonyUrls: CeremonyUrls;
     try {
-      const jsonContent = fs.readFileSync(ceremonyUrlsPath, "utf-8");
+      const jsonContent = readFileSync(ceremonyUrlsPath, "utf-8");
       ceremonyUrls = JSON.parse(jsonContent);
       console.log(`📄 Using ceremony URLs from: ${ceremonyUrlsPath}`);
     } catch (error) {
@@ -131,7 +121,6 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
     // Step 1: Download challenge file
     console.log(`\n📥 Step 1/4: Downloading challenge file...`);
     try {
-      const { downloadPerpetualPowersOfTau } = await import("./download.js");
       await downloadPerpetualPowersOfTau(DOWNLOAD_URL);
       console.log(`✅ Download completed`);
     } catch (error) {
@@ -142,7 +131,6 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
     // Step 2: Make contribution
     console.log(`\n🔧 Step 2/4: Making contribution...`);
     try {
-      const { contributePerpetualPowersOfTau } = await import("./contribute.js");
       // Use CONTRIBUTOR_NAME from global/local config for auto-contribute workflow
       const config = loadConfig();
       const contributorName = config.CONTRIBUTOR_NAME;
@@ -156,7 +144,6 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
     // Step 3: Upload contribution
     console.log(`\n📤 Step 3/4: Uploading contribution...`);
     try {
-      const { uploadPerpetualPowersOfTau } = await import("./upload.js");
       await uploadPerpetualPowersOfTau(UPLOAD_URL);
       console.log(`✅ Upload completed`);
     } catch (error) {
@@ -167,7 +154,6 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
     // Step 4: Post record to GitHub Gist
     console.log(`\n📋 Step 4/4: Posting contribution record...`);
     try {
-      const { postRecordPerpetualPowersOfTau } = await import("./post-record.js");
       await postRecordPerpetualPowersOfTau();
       console.log(`✅ Record posted`);
     } catch (error) {

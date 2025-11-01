@@ -1,3 +1,8 @@
+import { execSync } from "child_process";
+import { existsSync, mkdirSync, statSync, unlinkSync } from "fs";
+import { platform } from "os";
+import { basename, extname, join } from "path";
+
 export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
   try {
     console.log(`Downloading Powers of Tau file from: ${url}`);
@@ -41,17 +46,15 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
     }
 
     // Create output directory if it doesn't exist
-    const fs = await import("fs");
-    const path = await import("path");
 
     const outputDir = "input";
-    if (!fs.existsSync(outputDir)) {
-      fs.mkdirSync(outputDir, { recursive: true });
+    if (!existsSync(outputDir)) {
+      mkdirSync(outputDir, { recursive: true });
     }
 
     // Extract filename from URL
     const urlPath = new URL(url).pathname;
-    const filename = path.basename(urlPath);
+    const filename = basename(urlPath);
 
     if (!filename || !filename.includes(".")) {
       console.error(`❌ Error: Cannot extract filename from URL: ${url}`);
@@ -59,13 +62,10 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
       process.exit(1);
     }
 
-    const outputFile = path.join(outputDir, filename);
+    const outputFile = join(outputDir, filename);
 
     // Check if wget is available
-    const { execSync } = await import("child_process");
-    const os = await import("os");
-
-    const isWindows = os.platform() === "win32";
+    const isWindows = platform() === "win32";
     const wgetCommand = isWindows ? "wget.exe" : "wget";
     const checkCommand = isWindows ? "where wget.exe" : "which wget";
 
@@ -81,7 +81,7 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
     }
 
     // Check if output file already exists
-    if (fs.existsSync(outputFile)) {
+    if (existsSync(outputFile)) {
       console.log(`⚠️  File already exists: ${outputFile}`);
       console.log(`Using --continue to resume download if incomplete...`);
     }
@@ -93,10 +93,10 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
     execSync(command, { stdio: "inherit" });
 
     // Verify file was downloaded and has content
-    const stats = fs.statSync(outputFile);
+    const stats = statSync(outputFile);
     if (stats.size === 0) {
       console.error(`❌ Error: Downloaded file is empty: ${outputFile}`);
-      fs.unlinkSync(outputFile); // Clean up empty file
+      unlinkSync(outputFile); // Clean up empty file
       process.exit(1);
     }
 
@@ -104,7 +104,7 @@ export async function downloadPerpetualPowersOfTau(url: string): Promise<void> {
     console.log(`File size: ${(stats.size / (1024 * 1024)).toFixed(2)} MB`);
 
     // Verify it's a .ptau file
-    const fileExtension = path.extname(outputFile);
+    const fileExtension = extname(outputFile);
     if (fileExtension === ".ptau") {
       console.log(`✅ File appears to be a valid .ptau file`);
     } else {
