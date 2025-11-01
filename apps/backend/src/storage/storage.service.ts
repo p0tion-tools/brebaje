@@ -212,7 +212,7 @@ export class StorageService {
       ceremonyId,
     );
 
-    const isCoordinator = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
+    const { isCoordinator } = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
 
     // Extract data.
     const { contributionStep, tempContributionData: currentTempContributionData } = participant;
@@ -244,7 +244,7 @@ export class StorageService {
       ceremonyId,
     );
 
-    const isCoordinator = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
+    const { isCoordinator } = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
 
     // Extract data.
     const { contributionStep, tempContributionData: currentTempContributionData } = participant;
