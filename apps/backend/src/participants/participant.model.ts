@@ -4,6 +4,7 @@ import { ParticipantStatus, ParticipantContributionStep } from 'src/types/enums'
 import { User } from 'src/users/user.model';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Contribution } from 'src/contributions/contribution.model';
+import { TemporaryParticipantContributionData } from 'src/types';
 
 export interface ParticipantAttributes {
   userId: number;
@@ -90,7 +91,7 @@ export class Participant extends Model implements ParticipantAttributes {
     type: DataType.JSON,
     allowNull: true,
   })
-  declare tempContributionData?: object;
+  declare tempContributionData?: TemporaryParticipantContributionData;
 
   @Column({
     type: DataType.JSON,

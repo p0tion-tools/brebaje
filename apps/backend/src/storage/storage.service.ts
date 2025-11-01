@@ -7,6 +7,7 @@ import {
   ForbiddenException,
   Inject,
   forwardRef,
+  BadRequestException,
 } from '@nestjs/common';
 import {
   CompleteMultipartUploadCommand,
@@ -42,7 +43,10 @@ import {
   CompleteMultiPartUploadData,
   GeneratePreSignedUrlsPartsData,
   ObjectKeyDto,
+  TemporaryStoreCurrentContributionUploadedChunkData,
+  UploadIdDto,
 } from './dto/storage-dto';
+import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
 
 @Injectable()
 export class StorageService {
@@ -164,19 +168,17 @@ export class StorageService {
     const { objectKey } = data;
     const bucketName = await this.getCeremonyBucketName(ceremonyId);
 
-    /*
-    // Check if the user is a current contributor.
-    const participant = await this.participantsService.findParticipantOfCeremony(
-      userId,
-      ceremonyId,
-    );
-    if (participant && !isCoordinator && participant.status !== ParticipantStatus.FINALIZING) {
-      // Check pre-condition.
-      await this.checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(participant);
+    const { isCoordinator } = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
+    const { status } = await this.participantsService.findByUserIdAndCeremonyId(userId, ceremonyId);
+    const isFinalizing = status === ParticipantStatus.FINALIZING;
+    if (!isCoordinator && !isFinalizing) {
+      await this.participantsService.checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(
+        userId,
+        ceremonyId,
+      );
       // Check the validity of the uploaded file.
-      await this.checkUploadingFileValidity(ceremony.circuits, participant, objectKey);
+      await this.participantsService.checkUploadingFileValidity(userId, ceremonyId, objectKey);
     }
-    */
 
     const s3 = this.getS3Client();
 
@@ -197,6 +199,78 @@ export class StorageService {
     } catch (error) {
       this.handleErrors(error as Error);
     }
+  }
+
+  async temporaryStoreCurrentContributionMultiPartUploadId(
+    data: UploadIdDto,
+    ceremonyId: number,
+    userId: string,
+  ) {
+    const { uploadId } = data;
+    const participant = await this.participantsService.findByUserIdAndCeremonyId(
+      userId,
+      ceremonyId,
+    );
+
+    const { isCoordinator } = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
+
+    // Extract data.
+    const { contributionStep, tempContributionData: currentTempContributionData } = participant;
+    // Pre-condition: check if the current contributor has uploading contribution step.
+    if (contributionStep !== ParticipantContributionStep.UPLOADING && !isCoordinator) {
+      throw new BadRequestException('Participant is not in UPLOADING step');
+    }
+
+    await participant.update({
+      tempContributionData: {
+        ...currentTempContributionData,
+        uploadId,
+      },
+    });
+
+    this.logger.debug(
+      `Participant ${participant.userId} has successfully stored the temporary data for ${uploadId} multi-part upload`,
+    );
+  }
+
+  async temporaryStoreCurrentContributionUploadedChunkData(
+    data: TemporaryStoreCurrentContributionUploadedChunkData,
+    ceremonyId: number,
+    userId: string,
+  ) {
+    const { chunk } = data;
+    const participant = await this.participantsService.findByUserIdAndCeremonyId(
+      userId,
+      ceremonyId,
+    );
+
+    const { isCoordinator } = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
+
+    // Extract data.
+    const { contributionStep, tempContributionData: currentTempContributionData } = participant;
+    // Pre-condition: check if the current contributor has uploading contribution step.
+    if (contributionStep !== ParticipantContributionStep.UPLOADING && !isCoordinator) {
+      throw new BadRequestException('Participant is not in UPLOADING step');
+    }
+    // Get already uploaded chunks.
+    const chunks =
+      currentTempContributionData && currentTempContributionData.chunks
+        ? currentTempContributionData.chunks
+        : [];
+    // Push last chunk.
+    chunks.push(chunk);
+
+    // Update.
+    await participant.update({
+      tempContributionData: {
+        ...currentTempContributionData,
+        chunks,
+      },
+    });
+
+    this.logger.debug(
+      `Participant ${participant.userId} has successfully stored the temporary uploaded chunk data: ETag ${chunk.ETag} and PartNumber ${chunk.PartNumber}`,
+    );
   }
 
   async uploadObject(
@@ -238,19 +312,14 @@ export class StorageService {
     const { objectKey, uploadId, numberOfParts } = data;
     const bucketName = await this.getCeremonyBucketName(ceremonyId);
 
-    /*
-    // Check if the user is a current contributor.
-    const participant = await this.participantsService.findParticipantOfCeremony(
-      userId,
-      ceremonyId,
-    );
-    const ceremony = await this.ceremoniesService.findById(ceremonyId);
-    const isCoordinator = ceremony.coordinatorId === userId;
-    if (participant && !isCoordinator) {
-      // Check pre-condition.
-      await this.checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(participant);
+    const { isCoordinator } = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
+
+    if (!isCoordinator) {
+      await this.participantsService.checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(
+        userId,
+        ceremonyId,
+      );
     }
-    */
 
     const s3 = this.getS3Client();
     const parts: string[] = [];
@@ -282,10 +351,19 @@ export class StorageService {
   async completeMultipartUpload(
     data: CompleteMultiPartUploadData,
     ceremonyId: number,
-    userId: string, // TODO: migrate p0tion logic to here
+    userId: string,
   ) {
     const { objectKey, uploadId, parts } = data;
     const bucketName = await this.getCeremonyBucketName(ceremonyId);
+
+    const { isCoordinator } = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
+
+    if (!isCoordinator) {
+      await this.participantsService.checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(
+        userId,
+        ceremonyId,
+      );
+    }
 
     const s3 = this.getS3Client();
 

@@ -8,6 +8,7 @@ import {
 import { StorageService } from './storage.service';
 import { CeremoniesService } from '../ceremonies/ceremonies.service';
 import { ParticipantsService } from '../participants/participants.service';
+import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
 
 // Mock AWS SDK
 jest.mock('@aws-sdk/client-s3');
@@ -16,6 +17,7 @@ jest.mock('@aws-sdk/s3-request-presigner');
 describe('StorageService', () => {
   let service: StorageService;
   let ceremoniesService: jest.Mocked<CeremoniesService>;
+  let participantsService: jest.Mocked<ParticipantsService>;
   let mockS3Send: jest.Mock;
   let mockGetSignedUrl: jest.Mock;
 
@@ -25,10 +27,26 @@ describe('StorageService', () => {
     project: { name: string };
   }
 
+  interface MockParticipant {
+    status: ParticipantStatus;
+    contributionStep: ParticipantContributionStep;
+    tempContributionData: {
+      [key: string]: any;
+    };
+    update: () => Promise<void>;
+  }
+
   const mockCeremony: MockCeremony = {
     id: 1,
     description: 'test-ceremony',
     project: { name: 'test-project' },
+  };
+
+  const mockParticipant: MockParticipant = {
+    status: ParticipantStatus.CONTRIBUTING,
+    contributionStep: ParticipantContributionStep.UPLOADING,
+    tempContributionData: {},
+    update: async () => Promise.resolve(),
   };
 
   beforeEach(async () => {
@@ -53,10 +71,12 @@ describe('StorageService', () => {
     getSignedUrl.mockImplementation(mockGetSignedUrl);
     const mockCeremoniesService = {
       findOne: jest.fn(),
+      isCoordinator: jest.fn(),
     };
 
     const mockParticipantsService = {
       findAll: jest.fn(),
+      findByUserIdAndCeremonyId: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -77,6 +97,9 @@ describe('StorageService', () => {
     ceremoniesService = module.get<CeremoniesService>(
       CeremoniesService,
     ) as jest.Mocked<CeremoniesService>;
+    participantsService = module.get<ParticipantsService>(
+      ParticipantsService,
+    ) as jest.Mocked<ParticipantsService>;
   });
 
   afterEach(() => {
@@ -154,6 +177,9 @@ describe('StorageService', () => {
 
     it('should start multipart upload successfully', async () => {
       ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
+      ceremoniesService.isCoordinator.mockResolvedValue({ isCoordinator: true } as never);
+      participantsService.findByUserIdAndCeremonyId.mockResolvedValue(mockParticipant as never);
+
       mockS3Send.mockResolvedValueOnce({
         $metadata: { httpStatusCode: 200 },
         UploadId: 'test-upload-id',
@@ -183,6 +209,8 @@ describe('StorageService', () => {
 
     it('should generate pre-signed URLs for all parts', async () => {
       ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
+      ceremoniesService.isCoordinator.mockResolvedValue({ isCoordinator: true } as never);
+
       mockGetSignedUrl
         .mockResolvedValueOnce('https://bucket.s3.amazonaws.com/part1')
         .mockResolvedValueOnce('https://bucket.s3.amazonaws.com/part2')
@@ -215,6 +243,8 @@ describe('StorageService', () => {
 
     it('should complete multipart upload successfully', async () => {
       ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
+      ceremoniesService.isCoordinator.mockResolvedValue({ isCoordinator: true } as never);
+
       mockS3Send.mockResolvedValueOnce({
         $metadata: { httpStatusCode: 200 },
         Location: 'https://bucket.s3.amazonaws.com/test-object.zkey',
@@ -228,6 +258,8 @@ describe('StorageService', () => {
 
     it('should throw InternalServerErrorException if upload fails', async () => {
       ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
+      ceremoniesService.isCoordinator.mockResolvedValue({ isCoordinator: true } as never);
+
       mockS3Send.mockResolvedValueOnce({
         $metadata: { httpStatusCode: 200 },
         Location: null,
