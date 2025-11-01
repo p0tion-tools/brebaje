@@ -87,7 +87,7 @@ apps/cli/
 ├── build/                         # Compiled JavaScript
 ├── images/                        # Documentation images
 ├── output/                        # Generated ceremony files
-├── package.json                   # Dependencies (Commander.js, axios)
+├── package.json                   # Dependencies (Commander.js)
 └── tsconfig.json                  # TypeScript ES modules config
 ```
 
@@ -250,7 +250,6 @@ logger.failure("Failure message ❌");
   },
   "dependencies": {
     "commander": "^11.0.0",
-    "axios": "^1.0.0",
     "dotenv": "^16.0.0"
   }
 }
@@ -393,7 +392,7 @@ pnpm format
 
 #### 2. HTTP Client Integration
 
-- [ ] Add axios and dotenv dependencies to package.json
+- [ ] dotenv dependency to package.json
 - [ ] Create comprehensive API client (`src/utils/api.ts`)
 - [ ] Implement authentication token management (`src/utils/auth.ts`)
 - [ ] Configure environment variables for backend URL
