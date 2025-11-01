@@ -1,6 +1,6 @@
-# CLAUDE.md
+# Cursor Rules for Brebaje
 
-This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+This file provides guidance for Cursor AI when working with code in this repository.
 
 ## Project Overview
 
@@ -122,28 +122,6 @@ pnpm format
 4. **Testing**: Write unit tests alongside new features, run E2E tests for critical flows
 5. **Documentation**: All public TypeScript exports must have TSDoc comments (enforced by pre-commit hooks)
 
-## Key Dependencies
-
-### Backend
-
-- **NestJS**: Main framework with decorators and dependency injection
-- **Sequelize**: ORM with TypeScript support via sequelize-typescript
-- **JWT**: Authentication tokens via @nestjs/jwt
-- **SQLite**: Development database (sqlite3)
-
-### Frontend
-
-- **Next.js 14**: React framework with app router
-- **TanStack Query**: Server state management and caching
-- **TailwindCSS**: Utility-first CSS framework
-- **Lucide React**: Icon library
-
-### Documentation
-
-- **TypeDoc**: Automated TypeScript documentation generation
-- **TSDoc**: Standardized documentation comments with ESLint enforcement
-- **ESLint TSDoc Plugin**: Pre-commit validation of documentation syntax
-
 ## TSDoc Documentation Standards
 
 All public TypeScript exports must include TSDoc comments. The pre-commit hook enforces this automatically.
@@ -211,6 +189,28 @@ export class AuthService {
 - **ESLint**: Run `pnpm lint` to check documentation compliance
 - **Auto-fix**: Use `pnpm lint:fix` to fix formatting issues
 
+## Key Dependencies
+
+### Backend
+
+- **NestJS**: Main framework with decorators and dependency injection
+- **Sequelize**: ORM with TypeScript support via sequelize-typescript
+- **JWT**: Authentication tokens via @nestjs/jwt
+- **SQLite**: Development database (sqlite3)
+
+### Frontend
+
+- **Next.js 14**: React framework with app router
+- **TanStack Query**: Server state management and caching
+- **TailwindCSS**: Utility-first CSS framework
+- **Lucide React**: Icon library
+
+### Documentation
+
+- **TypeDoc**: Automated TypeScript documentation generation
+- **TSDoc**: Standardized documentation comments with ESLint enforcement
+- **ESLint TSDoc Plugin**: Pre-commit validation of documentation syntax
+
 ## Project Structure Notes
 
 - Backend follows standard NestJS module structure with feature-based organization
@@ -218,3 +218,30 @@ export class AuthService {
 - Database models are auto-generated from DBML schema
 - Shared types are centralized in `apps/backend/src/types/`
 - API routes follow RESTful conventions with OpenAPI documentation
+
+## Code Style Guidelines
+
+- Use TypeScript strict mode
+- Follow ESLint and Prettier configurations
+- Write TSDoc comments for all public exports
+- Use meaningful variable and function names
+- Prefer composition over inheritance
+- Write tests for new features
+- Use proper error handling with custom error types
+
+## File Naming Conventions
+
+- **Components**: PascalCase (e.g., `UserProfile.tsx`)
+- **Services**: camelCase with `.service.ts` suffix (e.g., `auth.service.ts`)
+- **Controllers**: camelCase with `.controller.ts` suffix (e.g., `users.controller.ts`)
+- **DTOs**: camelCase with `.dto.ts` suffix (e.g., `create-user.dto.ts`)
+- **Types**: camelCase with `.types.ts` suffix (e.g., `user.types.ts`)
+- **Tests**: Same as source file with `.spec.ts` or `.test.ts` suffix
+
+## Git Workflow
+
+- Use conventional commits (feat:, fix:, docs:, etc.)
+- Create feature branches from `main`
+- Write descriptive commit messages
+- Ensure all tests pass before merging
+- TSDoc validation runs automatically on pre-commit
