@@ -5,8 +5,6 @@ import {
   CompleteMultiPartUploadData,
   GeneratePreSignedUrlsPartsData,
   ObjectKeyDto,
-  TemporaryStoreCurrentContributionUploadedChunkData,
-  TemporaryStoreUploadIdDto,
 } from './dto/storage-dto';
 
 @ApiTags('storage')
@@ -108,55 +106,5 @@ export class StorageController {
     @Body() data: CompleteMultiPartUploadData,
   ) {
     return this.storageService.completeMultipartUpload(data, ceremonyId, userId);
-  }
-
-  @ApiOperation({
-    summary: 'Temporarily store uploaded chunk data for resumable contributions',
-  })
-  @ApiQuery({ name: 'id', type: 'number', description: 'Ceremony ID' })
-  @ApiQuery({ name: 'userId', type: 'string', description: 'User ID' })
-  @ApiBody({
-    type: TemporaryStoreCurrentContributionUploadedChunkData,
-    description: 'Chunk data with ETag and part number',
-  })
-  @ApiResponse({ status: 200, description: 'Chunk data stored successfully.' })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @ApiResponse({ status: 404, description: 'Ceremony or participant not found.' })
-  @Post('temporary-store-current-contribution-uploaded-chunk-data')
-  temporaryStoreCurrentContributionUploadedChunkData(
-    @Query('id') ceremonyId: number,
-    @Query('userId') userId: string,
-    @Body() data: TemporaryStoreCurrentContributionUploadedChunkData,
-  ) {
-    return this.storageService.temporaryStoreCurrentContributionUploadedChunkData(
-      data,
-      ceremonyId,
-      userId,
-    );
-  }
-
-  @ApiOperation({
-    summary: 'Temporarily store multipart upload ID for resumable contributions',
-  })
-  @ApiQuery({ name: 'id', type: 'number', description: 'Ceremony ID' })
-  @ApiQuery({ name: 'userId', type: 'string', description: 'User ID' })
-  @ApiBody({
-    type: TemporaryStoreUploadIdDto,
-    description: 'Multipart upload ID',
-  })
-  @ApiResponse({ status: 200, description: 'Upload ID stored successfully.' })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
-  @ApiResponse({ status: 404, description: 'Ceremony or participant not found.' })
-  @Post('temporary-store-current-contribution-multipart-upload-id')
-  temporaryStoreCurrentContributionMultiPartUploadId(
-    @Query('id') ceremonyId: number,
-    @Query('userId') userId: string,
-    @Body() data: TemporaryStoreUploadIdDto,
-  ) {
-    return this.storageService.temporaryStoreCurrentContributionMultiPartUploadId(
-      data,
-      ceremonyId,
-      userId,
-    );
   }
 }

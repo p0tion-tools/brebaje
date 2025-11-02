@@ -56,8 +56,3 @@ export class CompleteMultiPartUploadData extends ObjectKeyDto {
   @Type(() => ETagWithPartNumber)
   parts: ETagWithPartNumber[];
 }
-
-export class TemporaryStoreUploadIdDto {
-  @IsString()
-  uploadId: string;
-}

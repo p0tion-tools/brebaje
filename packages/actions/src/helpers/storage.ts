@@ -28,11 +28,13 @@ export const getBucketName = (postfix: string, project: string, description?: st
  * @param uploadId <string> - the unique identifier of the multi-part upload.
  * @param configStreamChunkSize <number> - size of each chunk into which the artifact is going to be splitted (nb. will be converted in MB).
  * @param [ceremonyId] <string> - the unique identifier of the ceremony.
+ * @param userId <string> - the unique identifier of the user.
  * @returns Promise<Array<ChunkWithUrl>> - the chunks with related pre-signed url.
  */
 export const getChunksAndPreSignedUrlsAPI = async (
   accessToken: string,
   ceremonyId: number,
+  userId: string,
   objectKey: string,
   localFilePath: string,
   uploadId: string,
@@ -56,6 +58,7 @@ export const getChunksAndPreSignedUrlsAPI = async (
     uploadId,
     chunks.length,
     ceremonyId,
+    userId,
     accessToken,
   );
 
@@ -73,6 +76,7 @@ export const getChunksAndPreSignedUrlsAPI = async (
  * @param contentType <string | false> - the content type of the ceremony artifact.
  * @param cloudFunctions <Functions> - the Firebase Cloud Functions service instance.
  * @param ceremonyId <string> - the unique identifier of the ceremony.
+ * @param userId <string> - the unique identifier of the user.
  * @param alreadyUploadedChunks Array<ETagWithPartNumber> - the temporary information about the already uploaded chunks.
  * @param logger <GenericBar> - an optional logger to show progress.
  * @returns <Promise<Array<ETagWithPartNumber>>> - the completed (uploaded) chunks information.
@@ -82,6 +86,7 @@ export const uploadPartsAPI = async (
   chunksWithUrls: Array<ChunkWithUrl>,
   contentType: string | false,
   ceremonyId: number,
+  userId: string,
   creatingCeremony?: boolean,
   alreadyUploadedChunks?: Array<ETagWithPartNumber>,
   logger?: GenericBar,
@@ -130,7 +135,12 @@ export const uploadPartsAPI = async (
     // Temporary store uploaded chunk data to enable later resumable contribution.
     // nb. this must be done only when contributing (not finalizing).
     if (ceremonyId && !creatingCeremony)
-      await temporaryStoreCurrentContributionUploadedChunkDataAPI(ceremonyId, accessToken, chunk);
+      await temporaryStoreCurrentContributionUploadedChunkDataAPI(
+        ceremonyId,
+        userId,
+        accessToken,
+        chunk,
+      );
 
     // increment the count on the logger
     if (logger) logger.increment();
@@ -147,17 +157,19 @@ export const uploadPartsAPI = async (
  * @param uploadId <string> - the unique identifier of the multi-part upload.
  * @param parts Array<ETagWithPartNumber> - the completed .
  * @param ceremonyId <string> - the unique identifier of the ceremony.
+ * @param userId <string> - the unique identifier of the user.
  * @returns Promise<string> - the location of the uploaded ceremony artifact.
  */
 export const completeMultiPartUploadAPI = async (
   ceremonyId: number,
+  userId: string,
   token: string,
   objectKey: string,
   uploadId: string,
   parts: Array<ETagWithPartNumber>,
 ) => {
   const url = new URL(`${process.env.API_URL}/storage/multipart/complete`);
-  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
+  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -177,17 +189,19 @@ export const completeMultiPartUploadAPI = async (
  * Write temporary information about the etags and part numbers for each uploaded chunk in order to make the upload resumable from last chunk.
  * @param functions <Functions> - the Firebase cloud functions object instance.
  * @param ceremonyId <string> - the unique identifier of the ceremony.
+ * @param userId <string> - the unique identifier of the user.
  * @param chunk <ETagWithPartNumber> - the information about the already uploaded chunk.
  */
 export const temporaryStoreCurrentContributionUploadedChunkDataAPI = async (
   ceremonyId: number,
+  userId: string,
   token: string,
   chunk: ETagWithPartNumber,
 ) => {
   const url = new URL(
     `${process.env.API_URL}/storage/temporary-store-current-contribution-uploaded-chunk-data`,
   );
-  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
+  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
   const result = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -212,6 +226,7 @@ export const temporaryStoreCurrentContributionUploadedChunkDataAPI = async (
  * @param uploadId <string> - the unique identifier of the multi-part upload.
  * @param numberOfChunks <number> - the number of pre-signed urls to be generated.
  * @param ceremonyId <string> - the unique identifier of the ceremony.
+ * @param userId <string> - the unique identifier of the user.
  * @returns Promise<Array<string>> - the set of pre-signed urls (one for each chunk).
  */
 export const generatePreSignedUrlsPartsAPI = async (
@@ -219,10 +234,11 @@ export const generatePreSignedUrlsPartsAPI = async (
   uploadId: string,
   numberOfParts: number,
   ceremonyId: number,
+  userId: string,
   token: string,
 ) => {
   const url = new URL(`${process.env.API_URL}/storage/multipart/urls`);
-  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
+  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -244,15 +260,17 @@ export const generatePreSignedUrlsPartsAPI = async (
  * @param bucketName <string> - the name of the ceremony bucket.
  * @param objectKey <string> - the storage path that locates the artifact to be downloaded in the bucket.
  * @param ceremonyId <string> - the unique identifier of the ceremony.
+ * @param userId <string> - the unique identifier of the user.
  * @returns Promise<string> - the multi-part upload id.
  */
 export const openMultiPartUploadAPI = async (
   objectKey: string,
   ceremonyId: number,
+  userId: string,
   token: string,
 ) => {
   const url = new URL(`${process.env.API_URL}/storage/multipart/start`);
-  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
+  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -270,17 +288,19 @@ export const openMultiPartUploadAPI = async (
  * Write temporary information about the unique identifier about the opened multi-part upload to eventually resume the contribution.
  * @param functions <Functions> - the Firebase cloud functions object instance.
  * @param ceremonyId <string> - the unique identifier of the ceremony.
+ * @param userId <string> - the unique identifier of the user.
  * @param uploadId <string> - the unique identifier of the multi-part upload.
  */
 export const temporaryStoreCurrentContributionMultiPartUploadIdAPI = async (
   ceremonyId: number,
+  userId: string,
   uploadId: string,
   token: string,
 ) => {
   const url = new URL(
     `${process.env.API_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
   );
-  url.search = new URLSearchParams({ id: ceremonyId.toString() }).toString();
+  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
   const result = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -311,6 +331,7 @@ export const temporaryStoreCurrentContributionMultiPartUploadIdAPI = async (
  * @param objectKey <string> - the unique key to identify the object inside the given AWS S3 bucket.
  * @param localPath <string> - the local path where the artifact will be downloaded.
  * @param configStreamChunkSize <number> - size of each chunk into which the artifact is going to be splitted (nb. will be converted in MB).
+ * @param userId <string> - the unique identifier of the user.
  * @param [ceremonyId] <string> - the unique identifier of the ceremony (used as a double-edge sword - as identifier and as a check if current contributor is the coordinator finalizing the ceremony).
  * @param [temporaryDataToResumeMultiPartUpload] <TemporaryParticipantContributionData> - the temporary information necessary to resume an already started multi-part upload.
  * @param logger <GenericBar> - an optional logger to show progress.
@@ -318,6 +339,7 @@ export const temporaryStoreCurrentContributionMultiPartUploadIdAPI = async (
 export const multiPartUploadAPI = async (
   accessToken: string,
   ceremonyId: number,
+  userId: string,
   objectKey: string,
   localFilePath: string,
   configStreamChunkSize: number,
@@ -338,7 +360,7 @@ export const multiPartUploadAPI = async (
   } else {
     // Step (0.B).
     // Open a new multi-part upload for the ceremony artifact.
-    const { uploadId } = await openMultiPartUploadAPI(objectKey, ceremonyId, accessToken);
+    const { uploadId } = await openMultiPartUploadAPI(objectKey, ceremonyId, userId, accessToken);
     multiPartUploadId = uploadId;
 
     // Store multi-part upload identifier on document collection.
@@ -346,6 +368,7 @@ export const multiPartUploadAPI = async (
       // Store Multi-Part Upload ID after generation.
       await temporaryStoreCurrentContributionMultiPartUploadIdAPI(
         ceremonyId,
+        userId,
         multiPartUploadId,
         accessToken,
       );
@@ -356,6 +379,7 @@ export const multiPartUploadAPI = async (
   const chunksWithUrlsZkey = await getChunksAndPreSignedUrlsAPI(
     accessToken,
     ceremonyId,
+    userId,
     objectKey,
     localFilePath,
     multiPartUploadId,
@@ -368,6 +392,7 @@ export const multiPartUploadAPI = async (
     chunksWithUrlsZkey,
     mime.lookup(localFilePath) || false, // content-type.
     ceremonyId,
+    userId,
     creatingCeremony,
     alreadyUploadedChunks,
     logger,
@@ -376,6 +401,7 @@ export const multiPartUploadAPI = async (
   // Step (3).
   await completeMultiPartUploadAPI(
     ceremonyId,
+    userId,
     accessToken,
     objectKey,
     multiPartUploadId,
