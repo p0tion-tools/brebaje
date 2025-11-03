@@ -4,40 +4,40 @@ import { AppContent } from "@/app/components/layouts/AppContent";
 import { Button } from "@/app/components/ui/Button";
 import { Card } from "@/app/components/ui/Card";
 import { StatsCard } from "@/app/components/coordinator/StatsCard";
-import { CeremonyListItem } from "@/app/components/coordinator/CeremonyListItem";
+import { ProjectListItem } from "@/app/components/coordinator/ProjectListItem";
 import { ActivityFeed } from "@/app/components/coordinator/ActivityFeed";
 
 // Mock data
 const mockStats = {
+  totalProjects: 3,
+  activeProjects: 2,
   totalCeremonies: 12,
-  activeCeremonies: 3,
-  completedCeremonies: 9,
 };
 
-const mockCeremonies = [
+const mockProjects = [
   {
     id: "1",
-    name: "ZK Rollup Ceremony #1",
-    status: "open" as const,
-    participants: 45,
-    contributions: 32,
-    endDate: "2025-12-31",
+    name: "ZK Rollup Project",
+    contact: "discord: alice#1234",
+    ceremoniesCount: 5,
+    activeCeremoniesCount: 2,
+    createdDate: "2025-01-15",
   },
   {
     id: "2",
-    name: "Privacy Protocol Setup",
-    status: "open" as const,
-    participants: 28,
-    contributions: 20,
-    endDate: "2025-11-30",
+    name: "Privacy Protocol",
+    contact: "telegram: @bobzkp",
+    ceremoniesCount: 4,
+    activeCeremoniesCount: 1,
+    createdDate: "2024-11-20",
   },
   {
     id: "3",
-    name: "Layer 2 Ceremony",
-    status: "closed" as const,
-    participants: 120,
-    contributions: 118,
-    endDate: "2024-11-15",
+    name: "Layer 2 Solutions",
+    contact: "email: contact@layer2.io",
+    ceremoniesCount: 3,
+    activeCeremoniesCount: 0,
+    createdDate: "2024-10-05",
   },
 ];
 
@@ -83,48 +83,48 @@ export default function CoordinatorDashboard() {
           variant="black"
           className="uppercase"
         >
-          + New Ceremony
+          + New Project
         </Button>
       </div>
 
       {/* Stats Cards */}
       <div className="grid grid-cols-3 gap-6">
         <StatsCard
-          title="Total Ceremonies"
-          value={mockStats.totalCeremonies}
-          icon="📊"
+          title="Total Projects"
+          value={mockStats.totalProjects}
+          icon="📦"
         />
         <StatsCard
-          title="Active Ceremonies"
-          value={mockStats.activeCeremonies}
+          title="Active Projects"
+          value={mockStats.activeProjects}
           icon="🟢"
           variant="green"
         />
         <StatsCard
-          title="Completed Ceremonies"
-          value={mockStats.completedCeremonies}
-          icon="✅"
+          title="Total Ceremonies"
+          value={mockStats.totalCeremonies}
+          icon="📊"
           variant="gray"
         />
       </div>
 
-      {/* Ceremonies List */}
+      {/* Projects List */}
       <Card
         className="bg-white"
         radius="md"
       >
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-black text-2xl font-medium">My Ceremonies</h2>
+            <h2 className="text-black text-2xl font-medium">My Projects</h2>
             <span className="text-gray text-sm">
-              {mockCeremonies.length} total
+              {mockProjects.length} total
             </span>
           </div>
           <div className="flex flex-col gap-4">
-            {mockCeremonies.map((ceremony) => (
-              <CeremonyListItem
-                key={ceremony.id}
-                ceremony={ceremony}
+            {mockProjects.map((project) => (
+              <ProjectListItem
+                key={project.id}
+                project={project}
               />
             ))}
           </div>
