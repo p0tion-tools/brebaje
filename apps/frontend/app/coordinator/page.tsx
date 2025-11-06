@@ -6,15 +6,11 @@ import { Card } from "@/app/components/ui/Card";
 import { StatsCard } from "@/app/components/coordinator/StatsCard";
 import { ProjectListItem } from "@/app/components/coordinator/ProjectListItem";
 import { ActivityFeed } from "@/app/components/coordinator/ActivityFeed";
+import { ProjectModal } from "@/app/components/coordinator/ProjectModal";
+import { useState } from "react";
 
-// Mock data
-const mockStats = {
-  totalProjects: 3,
-  activeProjects: 2,
-  totalCeremonies: 12,
-};
-
-const mockProjects = [
+// Mock data - Initial projects
+const initialMockProjects = [
   {
     id: "1",
     name: "ZK Rollup Project",
@@ -69,6 +65,31 @@ const mockActivities = [
 ];
 
 export default function CoordinatorDashboard() {
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [projects, setProjects] = useState(initialMockProjects);
+
+  const handleCreateProject = (data: { name: string; contact: string }) => {
+    const newProject = {
+      id: String(projects.length + 1),
+      name: data.name,
+      contact: data.contact,
+      ceremoniesCount: 0,
+      activeCeremoniesCount: 0,
+      createdDate: new Date().toISOString().split("T")[0],
+    };
+
+    setProjects((prev) => [newProject, ...prev]);
+    setIsModalOpen(false);
+  };
+
+  const mockStats = {
+    totalProjects: projects.length,
+    activeProjects: projects.filter((p) => p.activeCeremoniesCount > 0).length,
+    totalCeremonies: projects.reduce(
+      (sum, project) => sum + project.ceremoniesCount,
+      0
+    ),
+  };
   return (
     <AppContent
       containerClassName="bg-light-base py-[140px] min-h-screen"
@@ -82,6 +103,7 @@ export default function CoordinatorDashboard() {
         <Button
           variant="black"
           className="uppercase"
+          onClick={() => setIsModalOpen(true)}
         >
           + New Project
         </Button>
@@ -116,12 +138,10 @@ export default function CoordinatorDashboard() {
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-black text-2xl font-medium">My Projects</h2>
-            <span className="text-gray text-sm">
-              {mockProjects.length} total
-            </span>
+            <span className="text-gray text-sm">{projects.length} total</span>
           </div>
           <div className="flex flex-col gap-4">
-            {mockProjects.map((project) => (
+            {projects.map((project) => (
               <ProjectListItem
                 key={project.id}
                 project={project}
@@ -143,6 +163,13 @@ export default function CoordinatorDashboard() {
           <ActivityFeed activities={mockActivities} />
         </div>
       </Card>
+
+      {/* Project Creation Modal */}
+      <ProjectModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        onSubmit={handleCreateProject}
+      />
     </AppContent>
   );
 }
