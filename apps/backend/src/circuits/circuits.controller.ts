@@ -1,5 +1,5 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, Query } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { Circuit } from './circuit.model';
 import { CircuitsService } from './circuits.service';
 import { CreateCircuitDto } from './dto/create-circuit.dto';
@@ -27,6 +27,14 @@ export class CircuitsController {
   @ApiResponse({ status: 200, description: 'Return all circuits.', type: [Circuit] })
   findAll() {
     return this.circuitsService.findAll();
+  }
+
+  @Get()
+  @ApiOperation({ summary: 'Find all circuits of a specific ceremony' })
+  @ApiQuery({ name: 'ceremonyId', type: 'number' })
+  @ApiResponse({ status: 200, description: 'Return all circuits.', type: [Circuit] })
+  findAllByCeremonyId(@Query('ceremonyId') ceremonyId: number) {
+    return this.circuitsService.findAllByCeremonyId(ceremonyId);
   }
 
   @Get(':id')

@@ -14,8 +14,9 @@ export class CreateParticipantDto {
   @ApiProperty({
     enum: ParticipantContributionStep,
     example: ParticipantContributionStep.DOWNLOADING,
+    required: false,
   })
-  contributionStep: ParticipantContributionStep;
+  contributionStep?: ParticipantContributionStep;
 
   @ApiProperty({ example: 0, required: false })
   contributionProgress?: number;

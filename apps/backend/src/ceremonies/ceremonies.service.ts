@@ -60,6 +60,15 @@ export class CeremoniesService {
     }
   }
 
+  findCoordinatorOfCeremony(userId: string, ceremonyId: number) {
+    return this.ceremonyModel.findOne({ where: { id: ceremonyId, coordinatorId: userId } });
+  }
+
+  async isCoordinator(userId: string, ceremonyId: number) {
+    const isCoordinator = await this.findCoordinatorOfCeremony(userId, ceremonyId);
+    return { isCoordinator: !!isCoordinator };
+  }
+
   async update(id: number, updateCeremonyDto: UpdateCeremonyDto) {
     try {
       const ceremony = await this.ceremonyModel.findByPk(id);

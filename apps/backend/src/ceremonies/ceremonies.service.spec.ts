@@ -15,6 +15,7 @@ jest.mock('./ceremony.model', () => {
 
 // Import after mocking
 import { Ceremony } from './ceremony.model';
+import { Project } from 'src/projects/project.model';
 
 describe('CeremoniesService', () => {
   let service: CeremoniesService;
@@ -126,8 +127,7 @@ describe('CeremoniesService', () => {
 
       const result = await service.findOne(1);
 
-      console.log(mockCeremonyModel.findByPk);
-
+      expect(mockCeremonyModel.findByPk).toHaveBeenCalledWith(1, { include: [{ model: Project }] });
       expect(result).toEqual(mockCeremony);
     });
 

@@ -16,6 +16,15 @@ describe('AuthService', () => {
   let usersService: UsersService;
 
   beforeEach(async () => {
+    const mockJwtService = {
+      signAsync: jest.fn().mockResolvedValue('test-jwt'),
+    };
+
+    const mockUsersService = {
+      findByGithubId: jest.fn(),
+      create: jest.fn(),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
