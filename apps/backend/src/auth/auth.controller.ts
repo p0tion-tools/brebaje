@@ -1,4 +1,4 @@
-import { Body, Controller, Get, Post, Query, BadRequestException, Res } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
@@ -82,7 +82,7 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 400, description: 'Invalid wallet address' })
-  async generateCardanoNonce(@Body() generateNonceDto: GenerateNonceDto) {
+  generateCardanoNonce(@Body() generateNonceDto: GenerateNonceDto) {
     return this.authService.generateCardanoNonce(generateNonceDto.userAddress);
   }
 

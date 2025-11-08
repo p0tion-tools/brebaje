@@ -1,3 +1,7 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
+/* eslint-disable @typescript-eslint/unbound-method */
+
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
@@ -16,15 +20,6 @@ describe('AuthService', () => {
   let usersService: UsersService;
 
   beforeEach(async () => {
-    const mockJwtService = {
-      signAsync: jest.fn().mockResolvedValue('test-jwt'),
-    };
-
-    const mockUsersService = {
-      findByGithubId: jest.fn(),
-      create: jest.fn(),
-    };
-
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         AuthService,
@@ -94,7 +89,7 @@ describe('AuthService', () => {
       // Mock the device authorization request
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockDeviceAuthResponse,
+        json: () => mockDeviceAuthResponse,
       });
 
       const clientId = 'test_client_id';
@@ -127,7 +122,7 @@ describe('AuthService', () => {
       // Mock the token polling request
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockTokenResponse,
+        json: () => mockTokenResponse,
       });
 
       // This test demonstrates what the token polling would look like
@@ -162,7 +157,7 @@ describe('AuthService', () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 400,
-        json: async () => ({
+        json: () => ({
           error: 'authorization_pending',
           error_description:
             'The authorization request is still pending as the user has not yet completed the user interaction steps.',
@@ -206,7 +201,7 @@ describe('AuthService', () => {
 
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockGithubUserResponse,
+        json: () => mockGithubUserResponse,
       });
 
       const result = await service['fetchGithubUser']('test_access_token');
@@ -223,7 +218,7 @@ describe('AuthService', () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 401,
-        json: async () => ({
+        json: () => ({
           message: 'Bad credentials',
           documentation_url: 'https://docs.github.com/rest',
         }),
@@ -236,7 +231,7 @@ describe('AuthService', () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: false,
         status: 404,
-        json: async () => ({
+        json: () => ({
           message: 'Not Found',
         }),
       });
@@ -253,7 +248,7 @@ describe('AuthService', () => {
     it('should handle invalid JSON response', async () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => {
+        json: () => {
           throw new Error('Invalid JSON');
         },
       });
@@ -553,7 +548,7 @@ describe('AuthService', () => {
       // Mock GitHub token exchange
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockTokenResponse,
+        json: () => mockTokenResponse,
       });
 
       // Spy on authWithGithub to return mock result
@@ -641,7 +636,7 @@ describe('AuthService', () => {
       // Mock GitHub token exchange with error response
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => errorResponse,
+        json: () => errorResponse,
       });
 
       await expect(service.authenticateWithGithubCode(authCode, validState)).rejects.toThrow(
@@ -664,7 +659,7 @@ describe('AuthService', () => {
       // Mock GitHub token exchange
       (fetch as jest.Mock).mockResolvedValueOnce({
         ok: true,
-        json: async () => mockTokenResponse,
+        json: () => mockTokenResponse,
       });
 
       // Spy on authWithGithub to return error

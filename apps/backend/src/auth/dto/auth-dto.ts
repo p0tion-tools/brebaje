@@ -1,6 +1,7 @@
 import { Allow, IsNumber, IsString } from 'class-validator';
 import { ApiProperty } from '@nestjs/swagger';
 import { User } from '../../users/user.model';
+import { DataSignature } from '@meshsdk/core';
 
 export class JWTDto {
   @IsNumber()
@@ -50,5 +51,5 @@ export class VerifySignatureDto {
     example: '{"signature":"a4010103...", "key":"a4010103..."}',
   })
   @Allow()
-  signature: any; // DataSignature type from MeshSDK
+  signature: DataSignature; // DataSignature type from MeshSDK
 }

@@ -1,6 +1,6 @@
 import { Injectable, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
 import { DeviceFlowTokenDto, AuthResponseDto } from './dto/auth-dto';
-import type { GithubOAuthResponse, GithubUser } from '../types/declarations';
+import type { GithubUser } from '../types/declarations';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
@@ -8,6 +8,7 @@ import { UserProvider } from '../types/enums';
 import { randomBytes } from 'crypto';
 import { User } from '../users/user.model';
 import { generateNonce, checkSignature, DataSignature } from '@meshsdk/core';
+import { GithubTokenResponse } from 'src/types';
 
 @Injectable()
 export class AuthService {
@@ -109,7 +110,7 @@ export class AuthService {
     });
 
     if (!response.ok) {
-      const errorData = await response.json();
+      const errorData = (await response.json()) as { message: string };
       throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
     }
 
@@ -221,7 +222,7 @@ export class AuthService {
         throw new BadRequestException('Failed to exchange authorization code for access token');
       }
 
-      const tokenData = await tokenResponse.json();
+      const tokenData = (await tokenResponse.json()) as GithubTokenResponse;
       this.logger.debug(`Token data: ${JSON.stringify(tokenData)}`);
 
       if (tokenData.error) {
@@ -259,7 +260,7 @@ export class AuthService {
     }
   }
 
-  async generateCardanoNonce(userAddress: string) {
+  generateCardanoNonce(userAddress: string) {
     this.logger.log(`Generating Cardano nonce for address: ${userAddress.substring(0, 8)}...`);
 
     // Check if address exists in nonceStore, if not create empty array
@@ -312,7 +313,7 @@ export class AuthService {
     this.logger.debug(`Using latest nonce for verification: ${latestNonce.substring(0, 8)}...`);
 
     // Verify the signature using Mesh SDK
-    const isValidSignature = checkSignature(latestNonce, signature, userAddress);
+    const isValidSignature = await checkSignature(latestNonce, signature, userAddress);
 
     this.logger.debug(`Signature verification result: ${isValidSignature}`);
 
