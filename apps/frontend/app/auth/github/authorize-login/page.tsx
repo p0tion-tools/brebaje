@@ -1,9 +1,9 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 
-export default function GitHubCallback() {
+function GitHubCallbackInternal() {
   const searchParams = useSearchParams();
   const router = useRouter();
   const [status, setStatus] = useState<"loading" | "success" | "error">(
@@ -158,5 +158,13 @@ export default function GitHubCallback() {
         </div>
       </div>
     </div>
+  );
+}
+
+export default function GithubCallback() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GitHubCallbackInternal />
+    </Suspense>
   );
 }
