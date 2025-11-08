@@ -7,7 +7,7 @@ import { cn } from "@/lib/utils";
 const ButtonComponent = classed.button(
   "duration-200",
   "font-poppins px-5 py-2 rounded-full text-base",
-  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0",
+  "cursor-pointer inline-flex items-center justify-center gap-2 whitespace-nowrap ring-offset-background transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50 [&_svg]:pointer-events-none [&_svg]:w-6 [&_svg]:h-6 [&_svg]:shrink-0",
   "focus:outline-none focus:ring-0 outline-none focus:ring-offset-0 focus:outline-none",
   {
     variants: {

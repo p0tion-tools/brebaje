@@ -41,3 +41,18 @@ export type TemporaryParticipantContributionData = {
   uploadId: string;
   chunks: Array<ETagWithPartNumber>;
 };
+
+/**
+ * Github OAuth token response structure.
+ * @typedef {Object} GithubTokenResponse
+ * @property {string} access_token - the OAuth access token.
+ * @property {string} token_type - the type of token.
+ * @property {string} error - error message if the request failed.
+ * @property {string} error_description - detailed error description if the request failed.
+ */
+export type GithubTokenResponse = {
+  access_token: string;
+  token_type: string;
+  error: string;
+  error_description: string;
+};

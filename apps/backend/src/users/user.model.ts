@@ -7,6 +7,7 @@ import { Participant } from 'src/participants/participant.model';
 export interface UserAttributes {
   id?: number;
   displayName: string;
+  walletAddress?: string;
   creationTime: number;
   lastSignInTime?: number;
   lastUpdated?: number;
@@ -18,6 +19,7 @@ export type UserPk = 'id';
 export type UserId = User[UserPk];
 export type UserOptionalAttributes =
   | 'id'
+  | 'walletAddress'
   | 'lastSignInTime'
   | 'lastUpdated'
   | 'avatarUrl'
@@ -66,6 +68,12 @@ export class User extends Model implements UserAttributes {
   declare avatarUrl?: string;
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  declare walletAddress?: string;
+
+  @Column({
     type: DataType.ENUM(...Object.values(UserProvider)),
     allowNull: false,
     defaultValue: UserProvider.GITHUB,
@@ -78,3 +86,17 @@ export class User extends Model implements UserAttributes {
   @HasMany(() => Participant, 'userId')
   declare participants: Participant[];
 }
+
+/**
+ * User model with multi-provider OAuth support
+ *
+ * User lookup strategy: (displayName + provider) composite key
+ *
+ * For optimal performance, consider adding this database index:
+ * CREATE INDEX idx_user_provider_displayname ON users(provider, displayName);
+ *
+ * This index dramatically improves login performance and enables:
+ * - Fast provider-specific user lookups
+ * - Efficient authentication queries
+ * - Prevention of duplicate users per provider
+ */
