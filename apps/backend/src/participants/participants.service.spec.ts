@@ -3,6 +3,7 @@ import { ParticipantsService } from './participants.service';
 import { getModelToken } from '@nestjs/sequelize';
 import { Participant } from './participant.model';
 import { CircuitsService } from 'src/circuits/circuits.service';
+import { Sequelize } from 'sequelize-typescript';
 
 describe('ParticipantsService', () => {
   let service: ParticipantsService;
@@ -14,6 +15,13 @@ describe('ParticipantsService', () => {
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ParticipantsService,
+        {
+          provide: Sequelize,
+          useValue: {
+            // Mock the necessary Sequelize methods and properties
+            transaction: jest.fn(),
+          },
+        },
         { provide: getModelToken(Participant), useValue: {} },
         { provide: CircuitsService, useValue: mockCircuitsService },
       ],

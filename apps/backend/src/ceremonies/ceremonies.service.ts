@@ -14,6 +14,7 @@ import { CreateCeremonyDto } from './dto/create-ceremony.dto';
 import { UpdateCeremonyDto } from './dto/update-ceremony.dto';
 import { Ceremony } from './ceremony.model';
 import { Project } from 'src/projects/project.model';
+import { CeremonyState } from 'src/types/enums';
 
 @Injectable()
 export class CeremoniesService {
@@ -48,6 +49,14 @@ export class CeremoniesService {
     }
   }
 
+  async findOpen() {
+    try {
+      return await this.ceremonyModel.findAll({ where: { state: CeremonyState.OPENED } });
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
   async findOne(id: number) {
     try {
       const ceremony = await this.ceremonyModel.findByPk(id, { include: [{ model: Project }] });
@@ -60,11 +69,11 @@ export class CeremoniesService {
     }
   }
 
-  findCoordinatorOfCeremony(userId: string, ceremonyId: number) {
+  findCoordinatorOfCeremony(userId: number, ceremonyId: number) {
     return this.ceremonyModel.findOne({ where: { id: ceremonyId, coordinatorId: userId } });
   }
 
-  async isCoordinator(userId: string, ceremonyId: number) {
+  async isCoordinator(userId: number, ceremonyId: number) {
     const isCoordinator = await this.findCoordinatorOfCeremony(userId, ceremonyId);
     return { isCoordinator: !!isCoordinator };
   }

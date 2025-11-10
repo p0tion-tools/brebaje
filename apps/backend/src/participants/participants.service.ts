@@ -10,18 +10,24 @@ import {
   ForbiddenException,
   Inject,
   forwardRef,
+  Logger,
 } from '@nestjs/common';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Participant } from './participant.model';
-import { ParticipantStatus, ParticipantContributionStep } from 'src/types/enums';
+import { ParticipantStatus, ParticipantContributionStep, CeremonyState } from 'src/types/enums';
 import { InjectModel } from '@nestjs/sequelize';
 import { formatZkeyIndex } from '@brebaje/actions';
 import { CircuitsService } from 'src/circuits/circuits.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { Sequelize } from 'sequelize-typescript';
 
 @Injectable()
 export class ParticipantsService {
+  private readonly logger = new Logger(ParticipantsService.name);
+
   constructor(
+    private sequelize: Sequelize,
     @InjectModel(Participant)
     private participantModel: typeof Participant,
     @Inject(forwardRef(() => CircuitsService))
@@ -46,7 +52,7 @@ export class ParticipantsService {
     return this.participantModel.findByPk(id);
   }
 
-  async findByUserIdAndCeremonyId(userId: string, ceremonyId: number) {
+  async findByUserIdAndCeremonyId(userId: number, ceremonyId: number) {
     try {
       const participant = await this.participantModel.findOne({
         where: { userId: userId, ceremonyId: ceremonyId },
@@ -57,6 +63,28 @@ export class ParticipantsService {
       }
 
       return participant;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  /**
+   * Find all participants from open ceremonies.
+   * @returns Promise<Participant[]> - Array of participants from ceremonies with OPENED state
+   */
+  async findAllFromOpenCeremonies() {
+    try {
+      const participants = await this.participantModel.findAll({
+        include: [
+          {
+            association: 'ceremony',
+            where: { state: CeremonyState.OPENED },
+            required: true,
+          },
+        ],
+      });
+
+      return participants;
     } catch (error) {
       this.handleErrors(error as Error);
     }
@@ -87,7 +115,7 @@ export class ParticipantsService {
    * @throws BadRequestException if the participant is not in CONTRIBUTING status or not in UPLOADING step.
    */
   async checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(
-    userId: string,
+    userId: number,
     ceremonyId: number,
   ) {
     const participant = await this.findByUserIdAndCeremonyId(userId, ceremonyId);
@@ -112,7 +140,7 @@ export class ParticipantsService {
    * @param ceremonyId <string> - the unique identifier of the ceremony.
    * @param objectKey <string> - the object key of the file being uploaded.
    */
-  async checkUploadingFileValidity(userId: string, ceremonyId: number, objectKey: string) {
+  async checkUploadingFileValidity(userId: number, ceremonyId: number, objectKey: string) {
     const participant = await this.findByUserIdAndCeremonyId(userId, ceremonyId);
     if (!participant) {
       throw new NotFoundException('Participant not found');
@@ -144,6 +172,196 @@ export class ParticipantsService {
     const zkeyNameContributor = `circuits/${name}/contributions/${name}_${contributorZKeyIndex}.zkey`;
     if (objectKey !== zkeyNameContributor) {
       throw new BadRequestException('Provided object key does not match contributor file name');
+    }
+  }
+
+  async coordinate(participant: Participant, isSingleParticipantCoordination: boolean) {
+    const { ceremonyId, contributionProgress, status, contributionStep, userId } = participant;
+
+    const circuit = await this.circuitsService.findOneByCeremonyIdAndProgress(
+      ceremonyId,
+      contributionProgress ?? 0,
+    );
+    const { contributors, currentContributor } = circuit;
+
+    // Prepare state updates for waiting queue.
+    const newContributors = contributors;
+    let newCurrentContributorId: number | undefined;
+
+    // Prepare state updates for participant.
+    let newParticipantStatus: ParticipantStatus;
+    let newContributionStep: ParticipantContributionStep;
+
+    // Prepare pre-conditions.
+    const noCurrentContributor = !currentContributor;
+    const noContributorsInWaitingQueue = !contributors.length;
+    const emptyWaitingQueue = noCurrentContributor && noContributorsInWaitingQueue;
+
+    const participantIsNotCurrentContributor = currentContributor !== userId;
+    const participantIsCurrentContributor = currentContributor === userId;
+    const participantIsReady = status === ParticipantStatus.READY;
+    const participantResumingAfterTimeoutExpiration =
+      participantIsCurrentContributor && participantIsReady;
+
+    const participantCompletedOneOrAllContributions =
+      (status === ParticipantStatus.CONTRIBUTED || status === ParticipantStatus.DONE) &&
+      contributionStep === ParticipantContributionStep.COMPLETED;
+
+    try {
+      await this.sequelize.transaction(async (t) => {
+        const transactionHost = { transaction: t };
+
+        // check for scenarios
+        if (isSingleParticipantCoordination) {
+          // Scenario (A).
+          if (emptyWaitingQueue) {
+            this.logger.debug(`Scenario A - emptyWaitingQueue`);
+
+            // Update.
+            newCurrentContributorId = userId;
+            newParticipantStatus = ParticipantStatus.CONTRIBUTING;
+            newContributionStep = ParticipantContributionStep.DOWNLOADING;
+            newContributors.push(newCurrentContributorId);
+          }
+          // Scenario (A).
+          else if (participantResumingAfterTimeoutExpiration) {
+            this.logger.debug(`Scenario A - single - participantResumingAfterTimeoutExpiration`);
+
+            newParticipantStatus = ParticipantStatus.CONTRIBUTING;
+            newContributionStep = ParticipantContributionStep.DOWNLOADING;
+            newCurrentContributorId = userId;
+          }
+          // Scenario (B).
+          else if (participantIsNotCurrentContributor) {
+            this.logger.debug(`Scenario B - single - participantIsNotCurrentContributor`);
+
+            newCurrentContributorId = currentContributor;
+            newParticipantStatus = ParticipantStatus.WAITING;
+            newContributors.push(userId);
+          }
+
+          // Prepare tx - Scenario (A) only.
+          if (newContributionStep) {
+            await participant.update(
+              {
+                contributionStep: newContributionStep,
+              },
+              transactionHost,
+            );
+          }
+          const contributionStartedAt =
+            newParticipantStatus === ParticipantStatus.CONTRIBUTING ? Date.now() : 0;
+
+          // Prepare tx - Scenario (A) or (B).
+          await participant.update(
+            {
+              status: newParticipantStatus,
+              contributionStartedAt,
+            },
+            transactionHost,
+          );
+        } else if (
+          participantIsCurrentContributor &&
+          participantCompletedOneOrAllContributions &&
+          !!ceremonyId
+        ) {
+          this.logger.debug(
+            `Scenario C - multi - participantIsCurrentContributor && participantCompletedOneOrAllContributions`,
+          );
+
+          newParticipantStatus = ParticipantStatus.CONTRIBUTING;
+          newContributionStep = ParticipantContributionStep.DOWNLOADING;
+
+          // Remove from waiting queue of circuit X.
+          newContributors.shift();
+
+          // Step (C.1).
+          if (newContributors.length > 0) {
+            // Get new contributor for circuit X.
+            newCurrentContributorId = newContributors.at(0)!;
+
+            const newCurrentParticipant = await this.findByUserIdAndCeremonyId(
+              newCurrentContributorId,
+              ceremonyId,
+            );
+            await newCurrentParticipant.update(
+              {
+                status: newParticipantStatus,
+                contributionStep: newContributionStep,
+                contributionStartedAt: Date.now(),
+              },
+              transactionHost,
+            );
+
+            this.logger.debug(
+              `Participant ${newCurrentContributorId} is the new current contributor for circuit ${circuit.id}`,
+            );
+          }
+        }
+
+        await circuit.update(
+          {
+            contributors: newContributors,
+            currentContributor: newCurrentContributorId,
+          },
+          transactionHost,
+        );
+      });
+    } catch (error) {
+      this.logger.error(
+        `There was an error running the coordinaation with participant ${userId} in ceremony ${ceremonyId}: ${error}`,
+      );
+    }
+  }
+
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async coordinateCeremonyParticipants() {
+    // Implementation for coordinating ceremony participants
+    const participants = await this.findAllFromOpenCeremonies();
+    for (const participant of participants) {
+      const { userId, contributionProgress, status, contributionStep } = participant;
+
+      this.logger.debug(`Coordinate participant ${userId} for ceremony ${participant.ceremonyId}`);
+      this.logger.debug(
+        `Status: ${status}, Contribution Progress: ${contributionProgress}, Contribution Step: ${contributionStep}`,
+      );
+
+      // Step 1
+      // Define pre-conditions
+      const readyToContribute = status === ParticipantStatus.READY;
+      const readyForFirstContribution = readyToContribute && contributionProgress === 0;
+      const resumingContributionAfterTimeout = readyToContribute; // && prevContributionProgress === changedContributionProgress
+      const readyForNextContribution = readyToContribute && contributionProgress !== 0; // && prevContributionProgress === changedContributionProgress - 1
+      const completedEveryCircuitContribution = status === ParticipantStatus.DONE;
+      const completedContribution =
+        (status === ParticipantStatus.CONTRIBUTED &&
+          contributionStep === ParticipantContributionStep.COMPLETED) ||
+        (status === ParticipantStatus.CONTRIBUTING &&
+          contributionStep === ParticipantContributionStep.VERIFYING);
+      // prevContributionProgress === changedContributionProgress &&
+      // prevStatus === ParticipantStatus.CONTRIBUTING &&
+      // prevContributionStep === ParticipantContributionStep.VERIFYING &&
+
+      // Step (2)
+      if (
+        readyForFirstContribution ||
+        resumingContributionAfterTimeout ||
+        readyForNextContribution
+      ) {
+        this.logger.debug(
+          `Participant is ready for first contribution (${readyForFirstContribution}) or for the next contribution (${readyForNextContribution}) or is resuming after a timeout expiration (${resumingContributionAfterTimeout})`,
+        );
+
+        await this.coordinate(participant, true);
+      } else if (completedContribution || completedEveryCircuitContribution) {
+        this.logger.debug(
+          `Participant completed a contribution (${completedContribution}) or every contribution for each circuit (${completedEveryCircuitContribution})`,
+        );
+
+        await this.coordinate(participant, false);
+      }
+
+      this.logger.debug(`Coordination completed`);
     }
   }
 

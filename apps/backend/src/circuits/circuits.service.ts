@@ -79,6 +79,25 @@ export class CircuitsService {
     return this.circuitModel.findOne({ where: { id } });
   }
 
+  async findOneByCeremonyIdAndProgress(ceremonyId: number, progress: number) {
+    const circuits = await this.circuitModel.findAll({ where: { ceremonyId } });
+
+    if (progress < 0) {
+      throw new Error('Progress cannot be negative');
+    }
+
+    if (progress > circuits.length) {
+      throw new Error('Progress exceeds number of circuits for the given ceremony');
+    }
+
+    const circuit = circuits[progress];
+    if (!circuit) {
+      throw new Error('Circuit not found for the given ceremony and progress');
+    }
+
+    return circuit;
+  }
+
   update(id: number, updateCircuitDto: UpdateCircuitDto) {
     return `This action updates a #${id} circuit`;
   }
