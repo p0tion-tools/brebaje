@@ -309,7 +309,7 @@ export class ParticipantsService {
       });
     } catch (error) {
       this.logger.error(
-        `There was an error running the coordinaation with participant ${userId} in ceremony ${ceremonyId}: ${error}`,
+        `There was an error running the coordination with participant ${userId} in ceremony ${ceremonyId}: ${error}`,
       );
     }
   }
