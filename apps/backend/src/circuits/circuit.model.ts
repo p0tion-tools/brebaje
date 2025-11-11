@@ -146,7 +146,7 @@ export class Circuit extends Model implements CircuitAttributes {
     type: DataType.INTEGER,
     allowNull: true,
   })
-  declare currentContributor: number;
+  declare currentContributor?: number;
 
   @Column({
     type: DataType.JSON,
