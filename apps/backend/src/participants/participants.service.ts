@@ -185,7 +185,7 @@ export class ParticipantsService {
     const { contributors, currentContributor } = circuit;
 
     // Prepare state updates for waiting queue.
-    const newContributors = contributors;
+    const newContributors = [...contributors];
     let newCurrentContributorId: number | undefined;
 
     // Prepare state updates for participant.
