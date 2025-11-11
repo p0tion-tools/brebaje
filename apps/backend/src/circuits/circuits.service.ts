@@ -83,7 +83,7 @@ export class CircuitsService {
     const circuits = await this.circuitModel.findAll({ where: { ceremonyId } });
 
     if (progress < 0) {
-      throw new Error('Progress cannot be negative');
+      throw new Error(`Progress cannot be negative, received: ${progress}`);
     }
 
     if (progress > circuits.length) {
