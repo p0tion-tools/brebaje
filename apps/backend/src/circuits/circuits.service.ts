@@ -87,7 +87,7 @@ export class CircuitsService {
     }
 
     if (progress > circuits.length) {
-      throw new Error('Progress exceeds number of circuits for the given ceremony');
+      throw new Error(`Progress (${progress}) exceeds number of circuits (${circuits.length}) for the given ceremony`);
     }
 
     const circuit = circuits[progress];
