@@ -92,7 +92,7 @@ export class CircuitsService {
 
     const circuit = circuits[progress];
     if (!circuit) {
-      throw new Error('Circuit not found for the given ceremony and progress');
+      throw new Error(`Circuit not found for ceremony ${ceremonyId} at progress index ${progress}`);
     }
 
     return circuit;
