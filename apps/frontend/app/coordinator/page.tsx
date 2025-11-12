@@ -75,7 +75,7 @@ export default function CoordinatorDashboard() {
       contact: data.contact,
       ceremoniesCount: 0,
       activeCeremoniesCount: 0,
-      createdDate: new Date().toISOString().split("T")[0],
+      createdDate: "", // TODO: Will be populated by backend API
     };
 
     setProjects((prev) => [newProject, ...prev]);

@@ -8,6 +8,7 @@ export interface ProjectAttributes {
   name: string;
   contact: string;
   coordinatorId: number;
+  createdDate: number;
 }
 
 export type ProjectPk = 'id';
@@ -44,6 +45,12 @@ export class Project extends Model implements ProjectAttributes {
     allowNull: false,
   })
   declare coordinatorId: number;
+
+  @Column({
+    type: DataType.INTEGER,
+    allowNull: false,
+  })
+  declare createdDate: number;
 
   @BelongsTo(() => User, 'coordinatorId')
   declare user: User;
