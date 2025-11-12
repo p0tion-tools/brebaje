@@ -27,6 +27,7 @@ export class ProjectsService {
         name: createProjectDto.name,
         contact: createProjectDto.contact,
         coordinatorId: createProjectDto.coordinatorId,
+        createdDate: Date.now(),
       });
       return project;
     } catch (error) {
