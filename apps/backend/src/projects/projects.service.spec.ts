@@ -76,7 +76,7 @@ describe('ProjectsService', () => {
       expect(mockProjectModel.create).toHaveBeenCalledWith(
         expect.objectContaining({
           ...createProjectDto,
-          createdDate: expect.any(Number),
+          createdDate: expect.any(Number) as number,
         }),
       );
       expect(result).toEqual({ id: 1, ...createProjectDto });
