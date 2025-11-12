@@ -210,6 +210,7 @@ describe('Coordinator (e2e)', () => {
         await multiPartUploadAPI(
           'accessToken',
           ceremonyId!,
+          'userId',
           `${prefix}.r1cs`,
           localR1csPath,
           Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),

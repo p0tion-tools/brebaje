@@ -1,7 +1,8 @@
-import { Body, Controller, Get, Post, Query, BadRequestException } from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
+import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { DeviceFlowTokenDto } from './dto/auth-dto';
+import { DeviceFlowTokenDto, GenerateNonceDto, VerifySignatureDto } from './dto/auth-dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -44,13 +45,66 @@ export class AuthController {
   @ApiOperation({ summary: 'Handle GitHub OAuth callback (Authorization Code Flow)' })
   @ApiQuery({ name: 'code', description: 'Authorization code from GitHub' })
   @ApiQuery({ name: 'state', description: 'CSRF protection state parameter', required: false })
-  @ApiResponse({ status: 200, description: 'User authenticated successfully' })
+  @ApiResponse({ status: 302, description: 'Redirects to frontend with authentication result' })
   @ApiResponse({ status: 400, description: 'Invalid authorization code or missing parameters' })
   @ApiResponse({ status: 401, description: 'Invalid or expired state parameter' })
-  async authorizeLogin(@Query('code') code: string, @Query('state') state?: string) {
+  async authorizeLogin(
+    @Query('code') code: string,
+    @Res() res: Response,
+    @Query('state') state?: string,
+  ) {
     if (!code) {
-      throw new BadRequestException('Authorization code is required');
+      const errorUrl = `http://localhost:3001/auth/github/authorize-login?error=${encodeURIComponent('Authorization code is required')}`;
+      return res.redirect(errorUrl);
     }
-    return this.authService.authenticateWithGithubCode(code, state);
+
+    try {
+      const authResult = await this.authService.authenticateWithGithubCode(code, state);
+      const successUrl = `http://localhost:3001/auth/github/authorize-login?success=true&jwt=${authResult.jwt}&user=${encodeURIComponent(JSON.stringify(authResult.user))}`;
+      return res.redirect(successUrl);
+    } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : 'Authentication failed';
+      const errorUrl = `http://localhost:3001/auth/github/authorize-login?error=${encodeURIComponent(errorMessage)}`;
+      return res.redirect(errorUrl);
+    }
+  }
+
+  @Post('cardano/generate-nonce')
+  @ApiOperation({ summary: 'Generate nonce for Cardano wallet ownership proof' })
+  @ApiResponse({
+    status: 200,
+    description: 'Nonce generated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        nonce: { type: 'string', description: 'Unique nonce to be signed by wallet' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid wallet address' })
+  generateCardanoNonce(@Body() generateNonceDto: GenerateNonceDto) {
+    return this.authService.generateCardanoNonce(generateNonceDto.userAddress);
+  }
+
+  @Post('cardano/verify-signature')
+  @ApiOperation({ summary: 'Verify wallet signature and authenticate user' })
+  @ApiResponse({
+    status: 200,
+    description: 'Signature verified and user authenticated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        user: { type: 'object', description: 'User information' },
+        jwt: { type: 'string', description: 'JWT authentication token' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid signature or wallet address' })
+  @ApiResponse({ status: 404, description: 'No nonce found for this address' })
+  async verifyCardanoSignature(@Body() verifySignatureDto: VerifySignatureDto) {
+    return this.authService.verifyCardanoNonce(
+      verifySignatureDto.userAddress,
+      verifySignatureDto.signature,
+    );
   }
 }

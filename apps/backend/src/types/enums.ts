@@ -3,6 +3,7 @@
 export enum UserProvider {
   GITHUB = 'GITHUB',
   ETH = 'ETH',
+  CARDANO = 'CARDANO',
 }
 
 export enum CeremonyType {

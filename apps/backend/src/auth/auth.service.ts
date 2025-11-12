@@ -1,17 +1,20 @@
 import { Injectable, Logger, BadRequestException, UnauthorizedException } from '@nestjs/common';
-import { DeviceFlowTokenDto } from './dto/auth-dto';
-import type { GithubOAuthResponse, GithubUser } from '../types/declarations';
+import { DeviceFlowTokenDto, AuthResponseDto } from './dto/auth-dto';
+import type { GithubUser } from '../types/declarations';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { CreateUserDto } from '../users/dto/create-user.dto';
 import { UserProvider } from '../types/enums';
 import { randomBytes } from 'crypto';
-import { User } from 'src/users/user.model';
+import { User } from '../users/user.model';
+import { generateNonce, checkSignature, DataSignature } from '@meshsdk/core';
+import { GithubTokenResponse } from 'src/types';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   private readonly stateStore = new Map<string, { timestamp: number }>();
+  private readonly nonceStore = new Map<string, string[]>();
 
   constructor(
     private readonly jwtService: JwtService,
@@ -34,6 +37,10 @@ export class AuthService {
     }
 
     const stored = this.stateStore.get(state);
+    this.logger.debug('----------------------------------------------------');
+    this.logger.debug(`State: ${state}`);
+    this.logger.debug(`State Store: ${JSON.stringify([...this.stateStore.entries()])}`);
+    this.logger.debug(`Stored: ${JSON.stringify(stored)}`);
     if (!stored) {
       this.logger.warn('OAuth callback received with unknown state parameter');
       return false;
@@ -95,27 +102,37 @@ export class AuthService {
     return { clientId, clientSecret, callbackUrl };
   }
 
-  async authWithGithub(deviceFlowTokenDto: DeviceFlowTokenDto) {
-    try {
-      // Clean up expired states when OAuth methods are called
-      this.cleanupExpiredStates();
+  private async fetchGithubUser(accessToken: string): Promise<GithubUser> {
+    const response = await fetch('https://api.github.com/user', {
+      headers: {
+        Authorization: `token ${accessToken}`,
+      },
+    });
 
-      const result = (await fetch('https://api.github.com/user', {
-        headers: {
-          Authorization: `token ${deviceFlowTokenDto.access_token}`,
-        },
-      }).then((res) => res.json())) as GithubUser;
+    if (!response.ok) {
+      const errorData = (await response.json()) as { message: string };
+      throw new Error(errorData.message || `HTTP ${response.status}: ${response.statusText}`);
+    }
+
+    return response.json() as Promise<GithubUser>;
+  }
+
+  async authWithGithub(deviceFlowTokenDto: DeviceFlowTokenDto): Promise<AuthResponseDto | Error> {
+    try {
+      const result = await this.fetchGithubUser(deviceFlowTokenDto.access_token);
 
       let user: User;
       try {
-        user = await this.usersService.findByGithubId(result.id);
+        user = await this.usersService.findByProviderAndDisplayName(
+          result.login,
+          UserProvider.GITHUB,
+        );
       } catch {
         // User not found, create one
         const _user: CreateUserDto = {
-          displayName: result.login || result.id.toString(),
+          displayName: result.login,
           avatarUrl: result.avatar_url,
           provider: UserProvider.GITHUB,
-          githubId: result.id,
         };
         user = await this.usersService.create(_user);
       }
@@ -135,8 +152,9 @@ export class AuthService {
   getGithubAuthUrl() {
     this.logger.log('Generating GitHub OAuth authorization URL');
 
-    // Clean up expired states when OAuth methods are called
+    // Clean up expired states before creating new ones
     this.cleanupExpiredStates();
+    this.logger.debug('OAuth state cleanup done');
 
     const { clientId, callbackUrl } = this.getGitHubConfig();
     const baseUrl = 'https://github.com/login/oauth/authorize';
@@ -152,6 +170,7 @@ export class AuthService {
       scope: 'read:user user:email',
       state,
     });
+    this.logger.debug(`OAuth params: ${params.toString()}`);
 
     const authUrl = `${baseUrl}?${params.toString()}`;
     this.logger.log('GitHub OAuth authorization URL generated successfully');
@@ -167,6 +186,8 @@ export class AuthService {
    * Step 2: Exchange authorization code for access token and authenticate user
    */
   async authenticateWithGithubCode(code: string, state?: string) {
+    this.logger.debug(`State Store: ${JSON.stringify([...this.stateStore.entries()])}`);
+    this.logger.debug(`On authenticateWithGithubCode - code: ${code}, state: ${state}`);
     try {
       this.logger.log(`Processing GitHub OAuth callback with code: ${code.substring(0, 8)}...`);
 
@@ -178,21 +199,22 @@ export class AuthService {
       const { clientId, clientSecret } = this.getGitHubConfig();
 
       this.logger.debug('Exchanging authorization code for access token');
-
+      this.logger.debug(`Code: ${code}`);
       // Exchange authorization code for access token
       const tokenResponse = await fetch('https://github.com/login/oauth/access_token', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Content-Type': 'application/json',
         },
-        body: new URLSearchParams({
+        body: JSON.stringify({
           client_id: clientId,
           client_secret: clientSecret,
           code: code,
-        }).toString(),
+        }),
       });
 
+      this.logger.debug(`Token response body: ${JSON.stringify(tokenResponse.body)}`);
       if (!tokenResponse.ok) {
         this.logger.error(
           `GitHub token exchange failed: ${tokenResponse.status} ${tokenResponse.statusText}`,
@@ -200,7 +222,8 @@ export class AuthService {
         throw new BadRequestException('Failed to exchange authorization code for access token');
       }
 
-      const tokenData = (await tokenResponse.json()) as GithubOAuthResponse;
+      const tokenData = (await tokenResponse.json()) as GithubTokenResponse;
+      this.logger.debug(`Token data: ${JSON.stringify(tokenData)}`);
 
       if (tokenData.error) {
         this.logger.error(`GitHub OAuth error: ${tokenData.error}`, tokenData.error_description);
@@ -216,6 +239,12 @@ export class AuthService {
         access_token: tokenData.access_token,
         token_type: tokenData.token_type || 'bearer',
       });
+      this.logger.debug(`Auth result: ${JSON.stringify(result)}`);
+
+      // Check if result is an error
+      if (result instanceof Error) {
+        throw result;
+      }
 
       this.logger.log('GitHub OAuth authentication completed successfully');
       return result;
@@ -231,5 +260,106 @@ export class AuthService {
     }
   }
 
-  async getUserInfoFromCardano() {}
+  generateCardanoNonce(userAddress: string) {
+    this.logger.log(`Generating Cardano nonce for address: ${userAddress.substring(0, 8)}...`);
+
+    // Check if address exists in nonceStore, if not create empty array
+    if (!this.nonceStore.has(userAddress)) {
+      this.nonceStore.set(userAddress, []);
+    }
+
+    const usedNonces = this.nonceStore.get(userAddress)!;
+
+    // Generate initial nonce
+    let nonce = generateNonce('Sign to prove wallet ownership: ');
+
+    // Keep generating new nonces while current one is already used
+    // Loop breaks when we find a unique nonce (not in usedNonces array)
+    while (usedNonces.includes(nonce)) {
+      nonce = generateNonce('Sign to prove wallet ownership: ');
+    }
+
+    // Add new unique nonce to the list
+    usedNonces.push(nonce);
+
+    this.logger.debug(
+      `Stored nonce for address: ${userAddress.substring(0, 8)}..., total nonces: ${usedNonces.length}`,
+    );
+
+    return { nonce };
+  }
+
+  async verifyCardanoNonce(
+    userAddress: string,
+    signature: DataSignature,
+  ): Promise<AuthResponseDto | Error> {
+    this.logger.log(`Verifying Cardano signature for address: ${userAddress.substring(0, 8)}...`);
+
+    // Check if address exists in nonceStore
+    if (!this.nonceStore.has(userAddress)) {
+      this.logger.warn(`No nonces found for address: ${userAddress.substring(0, 8)}...`);
+      throw new BadRequestException('No nonce found for this address');
+    }
+
+    const usedNonces = this.nonceStore.get(userAddress)!;
+
+    // Get the latest (most recent) nonce for this address
+    if (usedNonces.length === 0) {
+      this.logger.warn(`No nonces available for address: ${userAddress.substring(0, 8)}...`);
+      throw new BadRequestException('No nonce available for verification');
+    }
+
+    const latestNonce = usedNonces[usedNonces.length - 1];
+    this.logger.debug(`Using latest nonce for verification: ${latestNonce.substring(0, 8)}...`);
+
+    // Verify the signature using Mesh SDK
+    const isValidSignature = await checkSignature(latestNonce, signature, userAddress);
+
+    this.logger.debug(`Signature verification result: ${isValidSignature}`);
+
+    if (!isValidSignature) {
+      this.logger.warn(`Invalid signature for address: ${userAddress.substring(0, 8)}...`);
+      throw new BadRequestException('Invalid signature provided');
+    }
+
+    // Signature is valid, authenticate or create user
+    try {
+      let user: User;
+
+      try {
+        // Try to find existing user by wallet address and CARDANO provider
+        user = await this.usersService.findByWalletAddressAndProvider(
+          userAddress,
+          UserProvider.CARDANO,
+        );
+        this.logger.debug(
+          `Found existing Cardano user for address: ${userAddress.substring(0, 8)}...`,
+        );
+      } catch {
+        // User not found, create new one
+        this.logger.debug(
+          `Creating new Cardano user for address: ${userAddress.substring(0, 8)}...`,
+        );
+        const createUserData: CreateUserDto = {
+          displayName: `Cardano User ${userAddress.substring(0, 8)}`,
+          walletAddress: userAddress,
+          provider: UserProvider.CARDANO,
+        };
+        user = await this.usersService.create(createUserData);
+      }
+
+      // Generate JWT token
+      const jwt = await this.jwtService.signAsync({ user });
+
+      this.logger.log(
+        `Cardano authentication successful for address: ${userAddress.substring(0, 8)}...`,
+      );
+      return { user, jwt };
+    } catch (error) {
+      this.logger.error(`Cardano authentication failed: ${(error as Error).message}`);
+      return error as Error;
+    }
+  }
+
+  // async getUserInfoFromCardano() {}
 }
