@@ -7,11 +7,13 @@ import { Icons } from "./Icons";
 import { Modal } from "../ui/Modal";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/app/contexts/AuthContext";
 
 export const Header = () => {
   const router = useRouter();
-  const isLoggedIn = false;
+  const { isLoggedIn, user, logout } = useAuth();
   const [isOpenLoginModal, setIsOpenLoginModal] = useState(false);
+  const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [selectedLoginMethod, setSelectedLoginMethod] = useState<
     "github" | "ethereum" | "bandada" | "cardano" | null
   >(null);
@@ -114,13 +116,50 @@ export const Header = () => {
             />
           </Link>
           {isLoggedIn ? (
-            <Button
-              fontWeight="medium"
-              variant="outline-white"
-              icon={<Icons.ArrowRight className="text-white" />}
-            >
-              Discord
-            </Button>
+            <div className="relative">
+              <button
+                onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
+                className="flex items-center gap-3 px-4 py-2 rounded-lg hover:bg-white/10 transition-colors"
+              >
+                {user?.avatarUrl && (
+                  <Image
+                    src={user.avatarUrl}
+                    alt={user.displayName}
+                    width={32}
+                    height={32}
+                    className="rounded-full"
+                  />
+                )}
+                <span className="text-white font-medium">
+                  {user?.displayName}
+                </span>
+                <Icons.ArrowRight
+                  className={`text-white transform transition-transform ${isUserMenuOpen ? "rotate-90" : ""}`}
+                />
+              </button>
+
+              {isUserMenuOpen && (
+                <div className="absolute right-0 mt-2 w-56 bg-white rounded-lg shadow-xl py-2 z-50">
+                  <Link
+                    href="/coordinator"
+                    className="block px-4 py-2 text-black hover:bg-gray-100 transition-colors"
+                    onClick={() => setIsUserMenuOpen(false)}
+                  >
+                    Coordinator Panel
+                  </Link>
+                  <button
+                    onClick={() => {
+                      logout();
+                      setIsUserMenuOpen(false);
+                      router.push("/");
+                    }}
+                    className="block w-full text-left px-4 py-2 text-red-600 hover:bg-gray-100 transition-colors"
+                  >
+                    Logout
+                  </button>
+                </div>
+              )}
+            </div>
           ) : (
             <Button
               className="uppercase"
