@@ -8,6 +8,7 @@ import { ProjectListItem } from "@/app/components/coordinator/ProjectListItem";
 import { ActivityFeed } from "@/app/components/coordinator/ActivityFeed";
 import { ProjectModal } from "@/app/components/coordinator/ProjectModal";
 import { useState } from "react";
+import { useProjects, useCreateProject } from "@/app/hooks/useProjects";
 
 // Mock data - Initial projects
 const initialMockProjects = [
@@ -66,26 +67,38 @@ const mockActivities = [
 
 export default function CoordinatorDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
-  const [projects, setProjects] = useState(initialMockProjects);
+  const { data: projects = [], isLoading } = useProjects();
+  const createProject = useCreateProject();
 
-  const handleCreateProject = (data: { name: string; contact: string }) => {
-    const newProject = {
-      id: String(projects.length + 1),
-      name: data.name,
-      contact: data.contact,
-      ceremoniesCount: 0,
-      activeCeremoniesCount: 0,
-      createdDate: "", // TODO: Will be populated by backend API
-    };
-
-    setProjects((prev) => [newProject, ...prev]);
-    setIsModalOpen(false);
+  const handleCreateProject = async (data: {
+    name: string;
+    contact: string;
+  }) => {
+    try {
+      await createProject.mutateAsync(data);
+      setIsModalOpen(false);
+    } catch (error) {
+      console.error("Failed to create project:", error);
+      // TODO: Show error notification to user
+    }
   };
 
+  // Transform API data to match component expectations
+  const transformedProjects = projects.map((project) => ({
+    id: String(project.id),
+    name: project.name,
+    contact: project.contact,
+    ceremoniesCount: 0, // TODO: Get from ceremonies API
+    activeCeremoniesCount: 0, // TODO: Get from ceremonies API
+    createdDate: new Date(project.createdDate).toISOString().split("T")[0],
+  }));
+
   const mockStats = {
-    totalProjects: projects.length,
-    activeProjects: projects.filter((p) => p.activeCeremoniesCount > 0).length,
-    totalCeremonies: projects.reduce(
+    totalProjects: transformedProjects.length,
+    activeProjects: transformedProjects.filter(
+      (p) => p.activeCeremoniesCount > 0
+    ).length,
+    totalCeremonies: transformedProjects.reduce(
       (sum, project) => sum + project.ceremoniesCount,
       0
     ),
@@ -138,16 +151,28 @@ export default function CoordinatorDashboard() {
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
             <h2 className="text-black text-2xl font-medium">My Projects</h2>
-            <span className="text-gray text-sm">{projects.length} total</span>
+            <span className="text-gray text-sm">
+              {transformedProjects.length} total
+            </span>
           </div>
-          <div className="flex flex-col gap-4">
-            {projects.map((project) => (
-              <ProjectListItem
-                key={project.id}
-                project={project}
-              />
-            ))}
-          </div>
+          {isLoading ? (
+            <div className="text-center py-8 text-gray">
+              Loading projects...
+            </div>
+          ) : transformedProjects.length === 0 ? (
+            <div className="text-center py-8 text-gray">
+              No projects yet. Create your first project!
+            </div>
+          ) : (
+            <div className="flex flex-col gap-4">
+              {transformedProjects.map((project) => (
+                <ProjectListItem
+                  key={project.id}
+                  project={project}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </Card>
 

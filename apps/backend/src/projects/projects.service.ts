@@ -21,12 +21,12 @@ export class ProjectsService {
     private readonly projectModel: typeof Project,
   ) {}
 
-  async create(createProjectDto: CreateProjectDto) {
+  async create(createProjectDto: CreateProjectDto, user: any) {
     try {
       const project = await this.projectModel.create({
         name: createProjectDto.name,
         contact: createProjectDto.contact,
-        coordinatorId: createProjectDto.coordinatorId,
+        coordinatorId: user.id,
         createdDate: Date.now(),
       });
       return project;
