@@ -42,7 +42,7 @@ function GitHubAuthCallbackInternal() {
     } else {
       router.push("/?error=missing_params");
     }
-  }, []);
+  }, [login, router, searchParams]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-light-base">

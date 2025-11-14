@@ -10,6 +10,8 @@ import {
   Request,
 } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { Request as ExpressRequest } from 'express';
+import { User } from 'src/users/user.model';
 import { Project } from './project.model';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
@@ -33,7 +35,10 @@ export class ProjectsController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  create(@Body() createProjectDto: CreateProjectDto, @Request() req) {
+  create(
+    @Body() createProjectDto: CreateProjectDto,
+    @Request() req: ExpressRequest & { user: User },
+  ) {
     return this.projectsService.create(createProjectDto, req.user);
   }
 

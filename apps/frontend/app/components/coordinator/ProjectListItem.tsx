@@ -8,7 +8,7 @@ interface Project {
   contact: string;
   ceremoniesCount: number;
   activeCeremoniesCount: number;
-  createdDate: string;
+  createdAt: string | Date;
 }
 
 interface ProjectListItemProps {
@@ -18,8 +18,10 @@ interface ProjectListItemProps {
 export const ProjectListItem = ({ project }: ProjectListItemProps) => {
   const hasActiveCeremonies = project.activeCeremoniesCount > 0;
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const formatDate = (dateInput: string | Date) => {
+    if (!dateInput) return "N/A";
+    const date = new Date(dateInput);
+    if (isNaN(date.getTime())) return "N/A"; // Invalid date check
     return date.toLocaleDateString("en-US", {
       month: "short",
       day: "numeric",
@@ -62,7 +64,7 @@ export const ProjectListItem = ({ project }: ProjectListItemProps) => {
             <div className="flex items-center gap-2">
               <span>Created:</span>
               <span className="font-medium">
-                {formatDate(project.createdDate)}
+                {formatDate(project.createdAt)}
               </span>
             </div>
           </div>

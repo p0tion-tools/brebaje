@@ -10,34 +10,6 @@ import { ProjectModal } from "@/app/components/coordinator/ProjectModal";
 import { useState } from "react";
 import { useProjects, useCreateProject } from "@/app/hooks/useProjects";
 
-// Mock data - Initial projects
-const initialMockProjects = [
-  {
-    id: "1",
-    name: "ZK Rollup Project",
-    contact: "discord: alice#1234",
-    ceremoniesCount: 5,
-    activeCeremoniesCount: 2,
-    createdDate: "2025-01-15",
-  },
-  {
-    id: "2",
-    name: "Privacy Protocol",
-    contact: "telegram: @bobzkp",
-    ceremoniesCount: 4,
-    activeCeremoniesCount: 1,
-    createdDate: "2024-11-20",
-  },
-  {
-    id: "3",
-    name: "Layer 2 Solutions",
-    contact: "email: contact@layer2.io",
-    ceremoniesCount: 3,
-    activeCeremoniesCount: 0,
-    createdDate: "2024-10-05",
-  },
-];
-
 const mockActivities = [
   {
     id: "1",
@@ -90,7 +62,7 @@ export default function CoordinatorDashboard() {
     contact: project.contact,
     ceremoniesCount: 0, // TODO: Get from ceremonies API
     activeCeremoniesCount: 0, // TODO: Get from ceremonies API
-    createdDate: new Date(project.createdDate).toISOString().split("T")[0],
+    createdAt: project.createdAt,
   }));
 
   const mockStats = {

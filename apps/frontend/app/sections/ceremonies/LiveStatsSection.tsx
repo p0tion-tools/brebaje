@@ -3,7 +3,7 @@ import { Card } from "@/app/components/ui/Card";
 import { useGetLiveStatsByCeremonyId } from "@/app/hooks/useGetLiveStatsByCeremonyId";
 
 export const LiveStatsSection = ({ id }: { id: string | number }) => {
-  const { data: liveStats = [], isLoading } = useGetLiveStatsByCeremonyId(id);
+  const { data: liveStats = [] } = useGetLiveStatsByCeremonyId(id);
 
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">

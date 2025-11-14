@@ -5,6 +5,8 @@ import {
   ForbiddenException,
   NotFoundException,
 } from '@nestjs/common';
+import { Request } from 'express';
+import { User } from 'src/users/user.model';
 import { ProjectsService } from '../projects.service';
 
 @Injectable()
@@ -12,7 +14,7 @@ export class ProjectOwnershipGuard implements CanActivate {
   constructor(private projectsService: ProjectsService) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const request = context.switchToHttp().getRequest();
+    const request = context.switchToHttp().getRequest<Request & { user: User }>();
     const user = request.user;
     const projectId = parseInt(request.params.id, 10);
 
@@ -34,7 +36,7 @@ export class ProjectOwnershipGuard implements CanActivate {
       }
 
       return true;
-    } catch (error) {
+    } catch (error: any) {
       if (error instanceof NotFoundException || error.message === 'Project not found') {
         throw new NotFoundException('Project not found');
       }

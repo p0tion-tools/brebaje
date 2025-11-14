@@ -5,7 +5,8 @@ export interface Project {
   name: string;
   contact: string;
   coordinatorId: number;
-  createdDate: number;
+  createdAt: string;
+  updatedAt: string;
 }
 
 export interface CreateProjectDto {
