@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback } from "react";
+import React from "react";
 import ReactMarkdown, { Components } from "react-markdown";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
@@ -11,7 +11,7 @@ interface MarkdownProps {
   darkMode?: boolean;
 }
 
-export const Markdown = ({ children, components }: MarkdownProps) => {
+export const Markdown = ({ children }: MarkdownProps) => {
   return (
     <ReactMarkdown
       remarkPlugins={[remarkGfm]}
