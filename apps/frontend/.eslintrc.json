@@ -1,19 +1,6 @@
 {
-  "root": false,
-  "extends": ["next/core-web-vitals", "prettier"],
-  "plugins": ["prettier"],
+  "extends": ["next/core-web-vitals"],
   "rules": {
-    "prettier/prettier": [
-      "error",
-      {
-        "singleQuote": false,
-        "semi": true,
-        "tabWidth": 2,
-        "printWidth": 80,
-        "trailingComma": "es5",
-        "singleAttributePerLine": true
-      }
-    ],
     "react/jsx-max-props-per-line": [1, { "maximum": 1 }],
     "react/jsx-first-prop-new-line": [1, "multiline"]
   }
