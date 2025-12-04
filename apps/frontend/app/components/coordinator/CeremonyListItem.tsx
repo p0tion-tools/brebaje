@@ -5,7 +5,7 @@ import Link from "next/link";
 interface Ceremony {
   id: string;
   name: string;
-  status: "open" | "closed";
+  status: "open" | "closed" | "scheduled";
   participants: number;
   contributions: number;
   endDate: string;
@@ -34,15 +34,17 @@ export const CeremonyListItem = ({ ceremony }: CeremonyListItemProps) => {
           <div className="flex items-center gap-3">
             <span className="text-2xl">📋</span>
             <h3 className="text-black text-xl font-medium">{ceremony.name}</h3>
-            {isOpen ? (
+            {ceremony.status === "open" ? (
               <Chip
                 withDot
                 dotColor="green"
               >
                 Open
               </Chip>
-            ) : (
+            ) : ceremony.status === "closed" ? (
               <Chip variant="gray">Closed</Chip>
+            ) : (
+              <Chip variant="yellow">Scheduled</Chip>
             )}
           </div>
 

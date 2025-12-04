@@ -4,52 +4,79 @@ import { AppContent } from "@/app/components/layouts/AppContent";
 import { Button } from "@/app/components/ui/Button";
 import { Card } from "@/app/components/ui/Card";
 import { Chip } from "@/app/components/ui/Chip";
+import { ceremoniesApi, type Ceremony } from "@/app/lib/api/ceremonies";
+import { projectsApi, type Project } from "@/app/lib/api/projects";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-
-// Mock data - In production this would be fetched based on the ceremony ID
-const mockCeremony = {
-  id: "3",
-  name: "ZK Rollup Ceremony #1",
-  description: "Zero-knowledge proof setup for Layer 2 scaling solution",
-  status: "open" as const,
-  type: "PHASE2" as const,
-  participants: 45,
-  contributions: 32,
-  startDate: "2025-12-01",
-  endDate: "2025-12-30",
-  penalty: 300,
-  project: {
-    id: "1",
-    name: "ZK Rollup Project",
-  },
-};
-
-const mockCircuits = [
-  {
-    id: "1",
-    name: "Transaction Circuit",
-    constraints: 2097152,
-    completedContributions: 25,
-    failedContributions: 2,
-    sequencePosition: 1,
-  },
-  {
-    id: "2",
-    name: "Merkle Tree Circuit",
-    constraints: 1048576,
-    completedContributions: 32,
-    failedContributions: 1,
-    sequencePosition: 2,
-  },
-];
+import { useState, useEffect } from "react";
 
 export default function CeremonyDetailPage() {
   const params = useParams();
-  const ceremonyId = params.id;
+  const ceremonyId = Number(params.id);
 
-  const formatDate = (dateString: string) => {
-    const date = new Date(dateString);
+  const [ceremony, setCeremony] = useState<Ceremony | null>(null);
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Mock circuits data for now - would be fetched from circuits API
+  const mockCircuits = [
+    {
+      id: "1",
+      name: "Transaction Circuit",
+      constraints: 2097152,
+      completedContributions: 25,
+      failedContributions: 2,
+      sequencePosition: 1,
+    },
+    {
+      id: "2",
+      name: "Merkle Tree Circuit",
+      constraints: 1048576,
+      completedContributions: 32,
+      failedContributions: 1,
+      sequencePosition: 2,
+    },
+  ];
+
+  // Fetch ceremony and project data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        console.log("Fetching ceremony with ID:", ceremonyId);
+
+        // Fetch ceremony details
+        const ceremonyData = await ceremoniesApi.findOne(ceremonyId);
+        console.log("Ceremony data received:", ceremonyData);
+        setCeremony(ceremonyData);
+
+        // Fetch related project details
+        const projectData = await projectsApi.findOne(ceremonyData.projectId);
+        console.log("Project data received:", projectData);
+        setProject(projectData);
+      } catch (err) {
+        console.error("Detailed error:", err);
+        setError(
+          err instanceof Error ? err.message : "Failed to fetch ceremony data"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (ceremonyId && !isNaN(ceremonyId)) {
+      fetchData();
+    } else {
+      setError("Invalid ceremony ID");
+      setLoading(false);
+    }
+  }, [ceremonyId]);
+
+  const formatDate = (timestamp: number) => {
+    const date = new Date(timestamp * 1000);
     return date.toLocaleDateString("en-US", {
       month: "long",
       day: "numeric",
@@ -57,7 +84,54 @@ export default function CeremonyDetailPage() {
     });
   };
 
-  const isOpen = mockCeremony.status === "open";
+  const getDisplayStatus = (state: string) => {
+    switch (state?.toUpperCase()) {
+      case "OPENED":
+        return { status: "open", label: "Open", color: "green" };
+      case "CLOSED":
+      case "FINALIZED":
+      case "CANCELED":
+        return { status: "closed", label: "Closed", color: "gray" };
+      case "SCHEDULED":
+      case "PAUSED":
+      default:
+        return { status: "scheduled", label: "Scheduled", color: "yellow" };
+    }
+  };
+
+  if (loading) {
+    return (
+      <AppContent
+        containerClassName="bg-light-base py-[140px] min-h-screen"
+        className="flex items-center justify-center"
+      >
+        <div className="text-center">
+          <div className="text-xl text-gray-600">Loading ceremony...</div>
+        </div>
+      </AppContent>
+    );
+  }
+
+  if (error || !ceremony || !project) {
+    return (
+      <AppContent
+        containerClassName="bg-light-base py-[140px] min-h-screen"
+        className="flex items-center justify-center"
+      >
+        <div className="text-center">
+          <div className="text-xl text-red-600 mb-4">
+            {error || "Ceremony not found"}
+          </div>
+          <Link href="/coordinator">
+            <Button variant="outline-black">← Back to Projects</Button>
+          </Link>
+        </div>
+      </AppContent>
+    );
+  }
+
+  const displayStatus = getDisplayStatus(ceremony.state);
+  const isOpen = displayStatus.status === "open";
 
   return (
     <AppContent
@@ -71,11 +145,9 @@ export default function CeremonyDetailPage() {
             <span className="text-4xl">📋</span>
             <div className="flex flex-col gap-2">
               <h1 className="text-black text-4xl font-medium">
-                {mockCeremony.name}
+                {ceremony.description}
               </h1>
-              <p className="text-gray-600 text-lg">
-                {mockCeremony.description}
-              </p>
+              <p className="text-gray-600 text-lg">Type: {ceremony.type}</p>
             </div>
           </div>
           <div className="flex gap-3">
@@ -109,32 +181,33 @@ export default function CeremonyDetailPage() {
         <div className="flex gap-6 text-sm">
           <div className="flex items-center gap-2">
             <span className="text-gray-600">Status:</span>
-            {isOpen ? (
+            {displayStatus.status === "open" ? (
               <Chip
                 withDot
                 dotColor="green"
               >
-                Open
+                {displayStatus.label}
               </Chip>
+            ) : displayStatus.status === "closed" ? (
+              <Chip variant="gray">{displayStatus.label}</Chip>
             ) : (
-              <Chip variant="gray">Closed</Chip>
+              <Chip variant="yellow">{displayStatus.label}</Chip>
             )}
           </div>
           <div className="flex items-center gap-2">
             <span className="text-gray-600">Type:</span>
-            <Chip variant="blue">{mockCeremony.type}</Chip>
+            <Chip variant="yellow">{ceremony.type}</Chip>
           </div>
           <div className="text-gray-600">
             <span className="font-medium">Start:</span>{" "}
-            {formatDate(mockCeremony.startDate)}
+            {formatDate(ceremony.start_date)}
           </div>
           <div className="text-gray-600">
             <span className="font-medium">End:</span>{" "}
-            {formatDate(mockCeremony.endDate)}
+            {formatDate(ceremony.end_date)}
           </div>
           <div className="text-gray-600">
-            <span className="font-medium">Penalty:</span> {mockCeremony.penalty}
-            s
+            <span className="font-medium">Penalty:</span> {ceremony.penalty}s
           </div>
         </div>
 
@@ -142,10 +215,10 @@ export default function CeremonyDetailPage() {
         <div className="text-sm">
           <span className="text-gray-600">Project:</span>{" "}
           <Link
-            href={`/coordinator/projects/${mockCeremony.project.id}`}
+            href={`/coordinator/projects/${project.id}`}
             className="text-black hover:underline font-medium"
           >
-            {mockCeremony.project.name}
+            {project.name}
           </Link>
         </div>
       </div>
@@ -157,9 +230,7 @@ export default function CeremonyDetailPage() {
           radius="md"
         >
           <div className="p-6 text-center">
-            <div className="text-3xl font-bold text-black mb-2">
-              {mockCeremony.participants}
-            </div>
+            <div className="text-3xl font-bold text-black mb-2">0</div>
             <div className="text-gray-600">Total Participants</div>
           </div>
         </Card>
@@ -168,9 +239,7 @@ export default function CeremonyDetailPage() {
           radius="md"
         >
           <div className="p-6 text-center">
-            <div className="text-3xl font-bold text-green-600 mb-2">
-              {mockCeremony.contributions}
-            </div>
+            <div className="text-3xl font-bold text-green-600 mb-2">0</div>
             <div className="text-gray-600">Completed Contributions</div>
           </div>
         </Card>
@@ -253,7 +322,7 @@ export default function CeremonyDetailPage() {
 
       {/* Back Button */}
       <div className="flex justify-center">
-        <Link href={`/coordinator/projects/${mockCeremony.project.id}`}>
+        <Link href={`/coordinator/projects/${project.id}`}>
           <Button
             variant="outline-black"
             size="sm"

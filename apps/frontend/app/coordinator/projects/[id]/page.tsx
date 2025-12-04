@@ -5,48 +5,53 @@ import { Button } from "@/app/components/ui/Button";
 import { Card } from "@/app/components/ui/Card";
 import { CeremonyListItem } from "@/app/components/coordinator/CeremonyListItem";
 import { CeremonyModal } from "@/app/components/coordinator/CeremonyModal";
+import {
+  ceremoniesApi,
+  formatCeremonyForDisplay,
+  type Ceremony,
+} from "@/app/lib/api/ceremonies";
+import { projectsApi, type Project } from "@/app/lib/api/projects";
 import Link from "next/link";
-import { useState } from "react";
-
-// Mock data - In production this would be fetched based on the project ID
-const mockProject = {
-  id: "1",
-  name: "ZK Rollup Project",
-  contact: "discord: alice#1234",
-  createdDate: "2025-01-15",
-};
-
-// Mock ceremony data for testing - Replace with API call in production
-//const mockCeremonies = [
-//  {
-//    id: "1",
-//    name: "ZK Rollup Ceremony #1",
-//    status: "open" as const,
-//    participants: 45,
-//    contributions: 32,
-//    endDate: "2025-12-30",
-//  },
-//  {
-//    id: "2",
-//    name: "Privacy Protocol Setup",
-//    status: "open" as const,
-//    participants: 28,
-//    contributions: 20,
-//    endDate: "2025-11-29",
-//  },
-//  {
-//    id: "3",
-//    name: "Layer 2 Ceremony",
-//    status: "closed" as const,
-//    participants: 120,
-//    contributions: 118,
-//    endDate: "2024-11-14",
-//  },
-//];
+import { useState, useEffect } from "react";
+import { useParams } from "next/navigation";
 
 export default function ProjectDetailPage() {
+  const params = useParams();
+  const projectId = Number(params.id);
+
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [ceremonies, setCeremonies] = useState<any[]>([]);
+  const [project, setProject] = useState<Project | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  // Fetch project and ceremonies on component mount
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+
+        // Fetch project details and ceremonies in parallel
+        const [projectData, ceremoniesData] = await Promise.all([
+          projectsApi.findOne(projectId),
+          ceremoniesApi.findByProject(projectId),
+        ]);
+
+        setProject(projectData);
+        setCeremonies(ceremoniesData.map(formatCeremonyForDisplay));
+      } catch (err) {
+        setError(err instanceof Error ? err.message : "Failed to fetch data");
+        console.error("Error fetching data:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (projectId) {
+      fetchData();
+    }
+  }, [projectId]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -57,29 +62,66 @@ export default function ProjectDetailPage() {
     });
   };
 
-  const handleCreateCeremony = (data: {
+  const handleCreateCeremony = async (data: {
     description: string;
     type: "PHASE1" | "PHASE2";
     start_date: string;
     end_date: string;
     penalty: number;
   }) => {
-    // Create new ceremony object
-    const newCeremony = {
-      id: (ceremonies.length + 1).toString(),
-      name: data.description,
-      status: "scheduled" as const,
-      participants: 0,
-      contributions: 0,
-      endDate: data.end_date.split("T")[0], // Convert to YYYY-MM-DD format
-      type: data.type,
-      startDate: data.start_date.split("T")[0],
-      penalty: data.penalty,
-    };
+    try {
+      // Get auth token (you'll need to implement auth context)
+      const token = localStorage.getItem("authToken") || ""; // Temporary solution
 
-    setCeremonies((prev) => [...prev, newCeremony]);
-    setIsModalOpen(false);
+      const newCeremony = await ceremoniesApi.create(
+        {
+          projectId,
+          ...data,
+        },
+        token
+      );
+
+      // Add the new ceremony to the list
+      setCeremonies((prev) => [...prev, formatCeremonyForDisplay(newCeremony)]);
+      setIsModalOpen(false);
+    } catch (err) {
+      setError(
+        err instanceof Error ? err.message : "Failed to create ceremony"
+      );
+      console.error("Error creating ceremony:", err);
+    }
   };
+
+  if (loading) {
+    return (
+      <AppContent
+        containerClassName="bg-light-base py-[140px] min-h-screen"
+        className="flex items-center justify-center"
+      >
+        <div className="text-center">
+          <div className="text-xl text-gray-600">Loading project...</div>
+        </div>
+      </AppContent>
+    );
+  }
+
+  if (error || !project) {
+    return (
+      <AppContent
+        containerClassName="bg-light-base py-[140px] min-h-screen"
+        className="flex items-center justify-center"
+      >
+        <div className="text-center">
+          <div className="text-xl text-red-600 mb-4">
+            {error || "Project not found"}
+          </div>
+          <Link href="/coordinator">
+            <Button variant="outline-black">← Back to Projects</Button>
+          </Link>
+        </div>
+      </AppContent>
+    );
+  }
 
   return (
     <AppContent
@@ -91,9 +133,7 @@ export default function ProjectDetailPage() {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
             <span className="text-4xl">📦</span>
-            <h1 className="text-black text-4xl font-medium">
-              {mockProject.name}
-            </h1>
+            <h1 className="text-black text-4xl font-medium">{project.name}</h1>
           </div>
           <Button
             variant="black"
@@ -107,11 +147,11 @@ export default function ProjectDetailPage() {
         {/* Project Info */}
         <div className="flex gap-6 text-sm text-gray-600">
           <div>
-            <span className="font-medium">Contact:</span> {mockProject.contact}
+            <span className="font-medium">Contact:</span> {project.contact}
           </div>
           <div>
             <span className="font-medium">Created:</span>{" "}
-            {formatDate(mockProject.createdDate)}
+            {formatDate(project.createdAt)}
           </div>
         </div>
       </div>
