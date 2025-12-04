@@ -1,0 +1,18 @@
+{
+  "download_info": {
+    "field_name": "pot23_0005.ptau",
+    "s3_key_field": "Cardano-PPOT/pot23_0005.ptau",
+    "expiration": "2025-10-16T04:36:04.856Z",
+    "download_url": "https://cardano-trusted-setup-test.s3.us-east-2.amazonaws.com/Cardano-PPOT/pot23_0005.ptau?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIASF7TS2XFAHAHCTJC%2F20251015%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20251015T183604Z&X-Amz-Expires=36000&X-Amz-Signature=402624f07a6801ac1fed142e4008b882b0b48b863c5bfb344bda3170a36f9de1&X-Amz-SignedHeaders=host"
+  },
+  "upload_info": {
+    "field_name": "pot23_0006.ptau",
+    "s3_key_field": "Cardano-PPOT/pot23_0006.ptau",
+    "expiration": "2025-10-16T04:36:04.856Z",
+    "upload_url": "https://cardano-trusted-setup-test.s3.us-east-2.amazonaws.com/Cardano-PPOT/pot23_0006.ptau?Content-Type=application%2Foctet-stream&X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIASF7TS2XFAHAHCTJC%2F20251015%2Fus-east-2%2Fs3%2Faws4_request&X-Amz-Date=20251015T183604Z&X-Amz-Expires=36000&X-Amz-Signature=e73454af6b273122c8cc7a7cf9c9b8f021541ca775494a36f386f84e678540db&X-Amz-SignedHeaders=host%3Bx-amz-meta-ceremony-type%3Bx-amz-meta-coordinator%3Bx-amz-meta-generated-at&x-amz-meta-ceremony-type=perpetual-powers-of-tau&x-amz-meta-coordinator=brebaje-cli&x-amz-meta-generated-at=2025-10-15T18%3A36%3A04.851Z"
+  },
+  "vm_info": {
+    "instance_id": "i-0b929a8bcf2c26d82",
+    "bucket_name": "cardano-trusted-setup-test"
+  }
+}
