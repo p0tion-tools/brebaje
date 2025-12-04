@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
+import { User } from 'src/users/user.model';
 
 // Mock the Project model to avoid import issues
 jest.mock('./project.model', () => {
@@ -37,7 +38,7 @@ describe('ProjectsService', () => {
     id: 1,
     displayName: 'Test User',
     // Add other User properties if needed by tests
-  } as any;
+  } as User;
 
   beforeEach(async () => {
     mockProjectModel = {

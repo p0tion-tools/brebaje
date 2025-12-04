@@ -36,8 +36,11 @@ export class ProjectOwnershipGuard implements CanActivate {
       }
 
       return true;
-    } catch (error: any) {
-      if (error instanceof NotFoundException || error.message === 'Project not found') {
+    } catch (error: unknown) {
+      if (error instanceof NotFoundException) {
+        throw new NotFoundException('Project not found');
+      }
+      if (error instanceof Error && error.message === 'Project not found') {
         throw new NotFoundException('Project not found');
       }
       throw error;

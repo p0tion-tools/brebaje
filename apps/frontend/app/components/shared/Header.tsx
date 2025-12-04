@@ -107,14 +107,30 @@ export const Header = () => {
       </Modal>
       <header className="bg-black w-full py-5 sticky top-0 z-50">
         <div className="container flex items-center justify-between mx-auto">
-          <Link href="/">
-            <Image
-              src="/logo.svg"
-              alt="logo p0tion"
-              width={165}
-              height={48}
-            />
-          </Link>
+          <div className="flex items-center gap-16">
+            <Link href="/">
+              <Image
+                src="/logo.svg"
+                alt="logo p0tion"
+                width={165}
+                height={48}
+              />
+            </Link>
+            <nav className="flex items-center gap-6">
+              <Link
+                href="/blog"
+                className="text-white font-medium hover:text-yellow-400 transition-colors"
+              >
+                BLOG
+              </Link>
+              <Link
+                href="/ppot"
+                className="text-white font-medium hover:text-yellow-400 transition-colors"
+              >
+                PPOT
+              </Link>
+            </nav>
+          </div>
           {isLoggedIn ? (
             <div className="relative">
               <button

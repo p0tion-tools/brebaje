@@ -39,7 +39,7 @@ export default function RootLayout({
         <AuthProvider>
           <QueryClientProviderLayout>
             <Header />
-            <main className="flex-1 relative overflow-auto">{children}</main>
+            <main className="flex-1 relative">{children}</main>
             <Footer />
           </QueryClientProviderLayout>
         </AuthProvider>
