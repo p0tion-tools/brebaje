@@ -1,5 +1,6 @@
 import { Button } from "../ui/Button";
 import { Chip } from "../ui/Chip";
+import Link from "next/link";
 
 interface Ceremony {
   id: string;
@@ -64,12 +65,14 @@ export const CeremonyListItem = ({ ceremony }: CeremonyListItemProps) => {
         </div>
 
         <div className="flex gap-2">
-          <Button
-            variant="outline-black"
-            size="sm"
-          >
-            View
-          </Button>
+          <Link href={`/ceremonies/${ceremony.id}`}>
+            <Button
+              variant="outline-black"
+              size="sm"
+            >
+              View
+            </Button>
+          </Link>
           {isOpen ? (
             <Button
               variant="black"
