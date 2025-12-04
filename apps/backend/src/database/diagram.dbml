@@ -59,6 +59,7 @@ Table projects {
   name varchar [not null, note: 'title in the frontend']
   contact varchar [not null, note: 'E.g.: nicoserranop (Discord)']
   coordinatorId int [ref: > users.id, not null]
+  createdDate int [not null]
 }
 
 Table ceremonies {

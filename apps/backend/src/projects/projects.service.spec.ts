@@ -33,6 +33,12 @@ describe('ProjectsService', () => {
     destroy: jest.fn(),
   };
 
+  const mockUser = {
+    id: 1,
+    displayName: 'Test User',
+    // Add other User properties if needed by tests
+  } as any;
+
   beforeEach(async () => {
     mockProjectModel = {
       create: jest.fn(),
@@ -63,32 +69,36 @@ describe('ProjectsService', () => {
       const createProjectDto: CreateProjectDto = {
         name: 'New Project',
         contact: 'contact@example.com',
-        coordinatorId: 1,
+      };
+
+      const expectedProject = {
+        name: createProjectDto.name,
+        contact: createProjectDto.contact,
+        coordinatorId: mockUser.id,
       };
 
       mockProjectModel.create.mockResolvedValue({
         id: 1,
-        ...createProjectDto,
+        ...expectedProject,
       });
 
-      const result = await service.create(createProjectDto);
+      const result = await service.create(createProjectDto, mockUser);
 
-      expect(mockProjectModel.create).toHaveBeenCalledWith(createProjectDto);
-      expect(result).toEqual({ id: 1, ...createProjectDto });
+      expect(mockProjectModel.create).toHaveBeenCalledWith(expectedProject);
+      expect(result).toEqual({ id: 1, ...expectedProject });
     });
 
     it('should throw a ConflictException when a project with the same name already exists', async () => {
       const createProjectDto: CreateProjectDto = {
         name: 'Existing Project',
         contact: 'contact@example.com',
-        coordinatorId: 1,
       };
 
       const error = new Error('Project already exists');
       error.name = 'SequelizeUniqueConstraintError';
       mockProjectModel.create.mockRejectedValue(error);
 
-      await expect(service.create(createProjectDto)).rejects.toThrow(ConflictException);
+      await expect(service.create(createProjectDto, mockUser)).rejects.toThrow(ConflictException);
     });
   });
 
