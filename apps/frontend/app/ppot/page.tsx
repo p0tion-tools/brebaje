@@ -68,8 +68,546 @@ export default function PPOTPage() {
         </AppContent>
       </section>
 
-      {/* What is PPOT Section */}
+      {/* Participants Section */}
       <section className="bg-gray-50 py-24">
+        <AppContent>
+          <h2 className="text-5xl font-bold text-black mb-12 text-center">
+            Ceremony Participants
+          </h2>
+
+          <div className="max-w-4xl mx-auto mb-8">
+            <p className="text-xl text-gray-700 text-center mb-4">
+              40 verified contributors have participated in the Cardano
+              Perpetual Powers of Tau ceremony, each adding their unique
+              cryptographic contribution to strengthen the ecosystem.
+            </p>
+          </div>
+
+          <div className="max-w-6xl mx-auto overflow-x-auto border-2 border-gray-300 rounded-lg">
+            <table className="w-full bg-white shadow-lg">
+              <thead className="bg-black text-white">
+                <tr>
+                  <th className="px-6 py-4 text-left font-semibold">#</th>
+                  <th className="px-6 py-4 text-left font-semibold">
+                    Participant
+                  </th>
+                  <th className="px-6 py-4 text-left font-semibold">Type</th>
+                  <th className="px-6 py-4 text-left font-semibold">Status</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-200">
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0000</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    AgustinBadi
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Init</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0001</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    AgustinBadi
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0002</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    Xtremono
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0003</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    rodrigoioyz
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0004</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    brweisz
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0005</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    avilsmeier
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0006</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    diegomac35
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0007</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    LorenzoRD2003
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0008</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    carrotshadow
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0009</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    WHITECardano
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0010</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">esis8</td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0011</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    Agustinblockchain
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0012</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    gitmachtl
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0013</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    Straightpool
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0014</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    bosconfts
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0015</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    AndrewWestberg
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0016</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    Cerkoryn
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0017</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    NicoSerranoP
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0018</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    mezuny
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0019</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    marcuspuchalla
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0020</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    EarnCoinPool
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0021</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    RSVpool
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0022</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    brouwerQ
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0023</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    chadle-git
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0024</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    petloverstake
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0025</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    wiiinnie
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0026</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    qfedesq
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0027</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    fndecroix
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0028</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    Larision
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0029</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    BiomaEvolve
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0030</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    ItsDaveB
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0031</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    AticoMismana
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0032</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    devslashpool
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0033</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    aada-finance
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0034</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    SolidarityPool
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0035</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    MuesliSwapTeam
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0036</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    Felixisto
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0037</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    Gerolamo-Cardano
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0038</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    Livio79
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0039</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    DinoDrac
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+                <tr className="hover:bg-gray-50 transition-colors">
+                  <td className="px-6 py-4 text-gray-900">0040</td>
+                  <td className="px-6 py-4 font-medium text-gray-900">
+                    matiwinnetou
+                  </td>
+                  <td className="px-6 py-4 text-gray-600">Response</td>
+                  <td className="px-6 py-4">
+                    <span className="inline-flex items-center px-3 py-1 rounded-full text-sm font-medium bg-green-100 text-green-800">
+                      Verified
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <div className="mt-8 text-center">
+            <p className="text-lg text-gray-600">
+              View detailed contribution records on{" "}
+              <Link
+                href="https://github.com/p0tion-tools/cardano-ppot"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-black font-semibold hover:underline"
+              >
+                GitHub
+              </Link>
+            </p>
+          </div>
+        </AppContent>
+      </section>
+
+      {/* What is PPOT Section */}
+      <section className="bg-white py-24">
         <AppContent className="flex flex-col gap-12">
           <div>
             <h2 className="text-5xl font-bold text-black mb-6">
@@ -106,7 +644,7 @@ export default function PPOTPage() {
       </section>
 
       {/* How It Works Section */}
-      <section className="bg-white py-24">
+      <section className="bg-gray-50 py-24">
         <AppContent>
           <h2 className="text-5xl font-bold text-black mb-12 text-center">
             How the Ceremony Works
@@ -206,7 +744,7 @@ export default function PPOTPage() {
       </section>
 
       {/* Technical Requirements Section */}
-      <section className="bg-gray-50 py-24">
+      <section className="bg-white py-24">
         <AppContent>
           <h2 className="text-5xl font-bold text-black mb-12 text-center">
             Technical Requirements
