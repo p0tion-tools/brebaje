@@ -33,24 +33,24 @@ export default function ProjectPage() {
         >
           <AttributeCard
             title="Total contributions"
-            value="400"
+            value={ceremony?.totalContributions?.toString() || ""}
             isLoading={isLoading}
           />
           <AttributeCard
             title="People in the queue"
-            value="368"
+            value={ceremony?.peopleInQueue?.toString() || ""}
             removeBorderBottom
             isLoading={isLoading}
           />
           <AttributeCard
             title="Avg time to contribute"
-            value="43 min"
+            value={ceremony?.avgContributionTime || "-"}
             removeBorderBottom
             isLoading={isLoading}
           />
           <AttributeCard
             title="Penalty"
-            value="1130"
+            value={ceremony?.penalty?.toString() || ""}
             removeBorderBottom
             isLoading={isLoading}
           />
@@ -119,7 +119,7 @@ export default function ProjectPage() {
             </div>
           </div>
         </div>
-        <Tabs
+        {/* <Tabs
           items={[
             {
               id: "live-stats",
@@ -142,7 +142,7 @@ export default function ProjectPage() {
               content: <DownloadZkeySection />,
             },
           ]}
-        />
+        /> */}
       </div>
     </AppContent>
   );

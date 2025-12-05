@@ -161,6 +161,43 @@ export const ceremoniesApi = {
 
     return response.json();
   },
+
+  async createWithCircuit(
+    data: CreateCeremonyDto & { circuitFile: File | null },
+    token: string
+  ): Promise<Ceremony> {
+    // First create the ceremony
+    const ceremony = await this.create(data, token);
+
+    // If there's a circuit file, upload it
+    if (data.circuitFile) {
+      try {
+        const formData = new FormData();
+        formData.append("file", data.circuitFile);
+        formData.append("ceremonyId", ceremony.id.toString());
+        formData.append("name", data.circuitFile.name);
+        formData.append("sequencePosition", "1");
+
+        const uploadResponse = await fetch(`${API_URL}/circuits/upload`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+          body: formData,
+        });
+
+        if (!uploadResponse.ok) {
+          console.error(
+            "Failed to upload circuit file, but ceremony was created"
+          );
+        }
+      } catch (error) {
+        console.error("Error uploading circuit file:", error);
+      }
+    }
+
+    return ceremony;
+  },
 };
 
 // Helper functions to format ceremony data for display

@@ -23,12 +23,24 @@ export const useGetCeremonyById = (id: string) => {
           isActive: ceremony.state === "OPENED",
           startDate: new Date(ceremony.start_date * 1000),
           endDate: new Date(ceremony.end_date * 1000),
+          // Real ceremony statistics (show actual data, blank if not available)
+          totalContributions: 0, // Would come from contributions count
+          peopleInQueue: 0, // Would come from participants count
+          avgContributionTime: "", // Would come from average contribution time calculation
+          penalty: ceremony.penalty, // Real penalty value from ceremony
         };
       } catch (error) {
         // If not found in API, fall back to mock data (homepage ceremonies)
         const mockCeremony = ceremonies.find((c: any) => c.id === ceremonyId);
         if (mockCeremony) {
-          return mockCeremony;
+          return {
+            ...mockCeremony,
+            // Ensure mock ceremonies have all required properties
+            totalContributions: 0,
+            peopleInQueue: 0,
+            avgContributionTime: "",
+            penalty: 0,
+          };
         }
 
         throw new Error("Ceremony not found");

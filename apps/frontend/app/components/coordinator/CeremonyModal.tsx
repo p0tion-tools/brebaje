@@ -14,6 +14,7 @@ interface CeremonyModalProps {
     start_date: string;
     end_date: string;
     penalty: number;
+    circuitFile: File | null;
   }) => void;
 }
 
@@ -28,6 +29,7 @@ export const CeremonyModal = ({
     start_date: "",
     end_date: "",
     penalty: 0,
+    circuitFile: null as File | null,
   });
   const [errors, setErrors] = useState({
     description: "",
@@ -35,6 +37,7 @@ export const CeremonyModal = ({
     start_date: "",
     end_date: "",
     penalty: "",
+    circuitFile: "",
   });
 
   const handleChange = (
@@ -55,6 +58,7 @@ export const CeremonyModal = ({
       start_date: "",
       end_date: "",
       penalty: "",
+      circuitFile: "",
     };
     let isValid = true;
 
@@ -87,6 +91,11 @@ export const CeremonyModal = ({
       isValid = false;
     }
 
+    if (formData.circuitFile && formData.circuitFile.size > 100 * 1024 * 1024) {
+      newErrors.circuitFile = "File size must be less than 100MB";
+      isValid = false;
+    }
+
     setErrors(newErrors);
     return isValid;
   };
@@ -101,6 +110,7 @@ export const CeremonyModal = ({
         start_date: "",
         end_date: "",
         penalty: 0,
+        circuitFile: null,
       });
       setErrors({
         description: "",
@@ -108,6 +118,7 @@ export const CeremonyModal = ({
         start_date: "",
         end_date: "",
         penalty: "",
+        circuitFile: "",
       });
     }
   };
@@ -120,6 +131,7 @@ export const CeremonyModal = ({
       start_date: "",
       end_date: "",
       penalty: 0,
+      circuitFile: null,
     });
     setErrors({
       description: "",
@@ -127,6 +139,7 @@ export const CeremonyModal = ({
       start_date: "",
       end_date: "",
       penalty: "",
+      circuitFile: "",
     });
     onClose();
   };
@@ -191,6 +204,31 @@ export const CeremonyModal = ({
           error={errors.penalty}
           helperText="Time penalty for failed contributions"
         />
+
+        <div className="flex flex-col gap-2">
+          <label className="text-sm font-medium text-gray-700">
+            Circuit File (optional)
+          </label>
+          <input
+            type="file"
+            accept=".circom,.r1cs,.wasm,.json,.ptau"
+            onChange={(e) => {
+              const file = e.target.files?.[0];
+              setFormData((prev) => ({ ...prev, circuitFile: file || null }));
+              if (errors.circuitFile) {
+                setErrors((prev) => ({ ...prev, circuitFile: "" }));
+              }
+            }}
+            className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-black focus:border-transparent"
+          />
+          {errors.circuitFile && (
+            <p className="text-sm text-red-500 mt-1">{errors.circuitFile}</p>
+          )}
+          <p className="text-xs text-gray-500">
+            Upload circuit files (.circom, .r1cs, .wasm, .json, .ptau) up to
+            100MB
+          </p>
+        </div>
 
         <div className="flex gap-3 mt-4">
           <Button

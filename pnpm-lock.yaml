@@ -100,6 +100,9 @@ importers:
       "@nestjs/swagger":
         specifier: ^11.2.0
         version: 11.2.0(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
+      "@types/multer":
+        specifier: ^2.0.0
+        version: 2.0.0
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -109,6 +112,9 @@ importers:
       dotenv:
         specifier: ^17.2.1
         version: 17.2.1
+      multer:
+        specifier: ^2.0.2
+        version: 2.0.2
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -4798,6 +4804,12 @@ packages:
     resolution:
       {
         integrity: sha512-GsCCIZDE/p3i96vtEqx+7dBUGXrc7zeSK3wwPHIaRThS+9OhWIXRqzs4d6k1SVU8g91DrNRWxWUGhp5KXQb2VA==,
+      }
+
+  "@types/multer@2.0.0":
+    resolution:
+      {
+        integrity: sha512-C3Z9v9Evij2yST3RSBktxP9STm6OdMc5uR1xF1SGr98uv8dUlAL2hqwrZ3GVB3uyMyiegnscEK6PGtYvNrjTjw==,
       }
 
   "@types/node-fetch@2.6.13":
@@ -16856,7 +16868,7 @@ snapshots:
       bech32: 2.0.0
       cross-fetch: 3.2.0(encoding@0.1.13)
       fastq: 1.19.1
-      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.0.9))
+      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5))
       nanoid: 3.3.11
       ts-custom-error: 3.3.1
       ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)
@@ -20099,6 +20111,10 @@ snapshots:
   "@types/minimist@1.2.5": {}
 
   "@types/ms@2.1.0": {}
+
+  "@types/multer@2.0.0":
+    dependencies:
+      "@types/express": 5.0.3
 
   "@types/node-fetch@2.6.13":
     dependencies:
@@ -23541,7 +23557,7 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  isomorphic-ws@4.0.1(ws@7.5.10(bufferutil@4.0.9)):
+  isomorphic-ws@4.0.1(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)):
     dependencies:
       ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)
 

@@ -5,6 +5,19 @@ import { useGetLiveStatsByCeremonyId } from "@/app/hooks/useGetLiveStatsByCeremo
 export const LiveStatsSection = ({ id }: { id: string | number }) => {
   const { data: liveStats = [] } = useGetLiveStatsByCeremonyId(id);
 
+  if (liveStats.length === 0) {
+    return (
+      <div className="flex items-center justify-center py-12">
+        <div className="text-center text-gray-600">
+          <p className="text-lg">No circuits available</p>
+          <p className="text-sm mt-2">
+            Circuits will appear here once they are uploaded to this ceremony
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
       {liveStats.map((stat) => (

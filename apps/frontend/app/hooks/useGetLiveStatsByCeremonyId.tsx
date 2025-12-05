@@ -1,6 +1,7 @@
+import { circuitsApi, formatCircuitForLiveStats } from "@/app/lib/api/circuits";
 import { useQuery } from "@tanstack/react-query";
 
-const liveStats = [
+const mockLiveStats = [
   {
     title: "SemaphoreV4 / max_depth = 1",
     completed: 387,
@@ -62,8 +63,33 @@ const liveStats = [
 export const useGetLiveStatsByCeremonyId = (id: string | number) => {
   return useQuery({
     queryKey: ["live-stats", id],
-    queryFn: () => {
-      return liveStats;
+    queryFn: async () => {
+      const ceremonyId = Number(id);
+
+      // Determine if this is a mock ceremony (homepage examples) or real ceremony
+      const isMockCeremony = ceremonyId <= 32; // IDs 1-32 are mock ceremonies from homepage
+
+      // For real ceremonies (created via coordinator), always try API first
+      if (!isMockCeremony) {
+        try {
+          const circuits = await circuitsApi.findByCeremony(ceremonyId);
+
+          // Return real circuits if found, or empty array if none
+          if (circuits && circuits.length > 0) {
+            return circuits.map(formatCircuitForLiveStats);
+          }
+
+          // For real ceremonies with no circuits, return empty array
+          return [];
+        } catch (error) {
+          console.log("Error fetching circuits for real ceremony:", error);
+          return []; // Return empty for real ceremonies on API error
+        }
+      }
+
+      // For mock ceremonies (homepage examples), show mock circuit data
+      return mockLiveStats;
     },
+    enabled: !!id,
   });
 };

@@ -1,11 +1,14 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import { Injectable, Inject, forwardRef, BadRequestException } from '@nestjs/common';
 import { CreateCircuitDto } from './dto/create-circuit.dto';
 import { UpdateCircuitDto } from './dto/update-circuit.dto';
+import { UploadCircuitDto } from './upload-circuit.dto';
 import { InjectModel } from '@nestjs/sequelize';
 import { Circuit } from './circuit.model';
 import { vmBootstrapScriptFilename } from '@brebaje/actions';
 import { VmService } from 'src/vm/vm.service';
 import { StorageService } from 'src/storage/storage.service';
+import { Express } from 'express';
+import { promises as fs } from 'fs';
 
 @Injectable()
 export class CircuitsService {
@@ -87,7 +90,9 @@ export class CircuitsService {
     }
 
     if (progress > circuits.length) {
-      throw new Error(`Progress (${progress}) exceeds number of circuits (${circuits.length}) for the given ceremony`);
+      throw new Error(
+        `Progress (${progress}) exceeds number of circuits (${circuits.length}) for the given ceremony`,
+      );
     }
 
     const circuit = circuits[progress];
@@ -106,5 +111,49 @@ export class CircuitsService {
     await this.circuitModel.destroy({ where: { id } });
     // TODO: delete EC2 vm if exists
     return { message: `Circuit deleted successfully` };
+  }
+
+  async uploadCircuit(file: Express.Multer.File, uploadCircuitDto: UploadCircuitDto) {
+    if (!file) {
+      throw new BadRequestException('No file uploaded');
+    }
+
+    try {
+      // Ensure upload directory exists
+      const uploadDir = './uploads/circuits';
+      await fs.mkdir(uploadDir, { recursive: true });
+
+      // Create circuit record with file information
+      const circuit = await this.circuitModel.create({
+        ceremonyId: uploadCircuitDto.ceremonyId,
+        name: uploadCircuitDto.name,
+        sequencePosition: uploadCircuitDto.sequencePosition || 1,
+        timeoutMechanismType: 'FIXED', // Default value
+        fixedTimeWindow: 3600, // Default 1 hour
+        completedContributions: 0,
+        failedContributions: 0,
+        verification: {}, // Default empty verification
+        artifacts: {}, // Default empty artifacts
+        files: {
+          originalName: file.originalname,
+          filename: file.filename,
+          path: file.path,
+          size: file.size,
+          mimetype: file.mimetype,
+        },
+        metadata: {
+          uploadedAt: new Date().toISOString(),
+          ...uploadCircuitDto.metadata,
+        },
+      });
+
+      return circuit;
+    } catch (error) {
+      // Clean up uploaded file on error
+      if (file.path) {
+        await fs.unlink(file.path).catch(console.error);
+      }
+      throw error;
+    }
   }
 }

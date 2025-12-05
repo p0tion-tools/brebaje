@@ -68,12 +68,13 @@ export default function ProjectDetailPage() {
     start_date: string;
     end_date: string;
     penalty: number;
+    circuitFile: File | null;
   }) => {
     try {
       // Get auth token (you'll need to implement auth context)
       const token = localStorage.getItem("authToken") || ""; // Temporary solution
 
-      const newCeremony = await ceremoniesApi.create(
+      const newCeremony = await ceremoniesApi.createWithCircuit(
         {
           projectId,
           ...data,
