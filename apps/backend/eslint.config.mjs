@@ -3,6 +3,7 @@ import eslint from '@eslint/js';
 import eslintPluginPrettierRecommended from 'eslint-plugin-prettier/recommended';
 import globals from 'globals';
 import tseslint from 'typescript-eslint';
+import tsdoc from 'eslint-plugin-tsdoc';
 
 export default tseslint.config(
   {
@@ -23,6 +24,9 @@ export default tseslint.config(
         tsconfigRootDir: import.meta.dirname,
       },
     },
+    plugins: {
+      tsdoc: tsdoc,
+    },
   },
   {
     rules: {
@@ -30,6 +34,7 @@ export default tseslint.config(
       '@typescript-eslint/no-floating-promises': 'warn',
       '@typescript-eslint/no-unsafe-argument': 'warn',
       '@typescript-eslint/no-unused-vars': ['error', { args: 'none' }],
+      'tsdoc/syntax': 'error',
     },
   },
 );
