@@ -6,6 +6,7 @@ import { StorageService } from '../storage/storage.service';
 import { VerifyPhase1Dto } from './dto/verify-phase1.dto';
 import { SetupVmDto } from './dto/setup-vm.dto';
 import { VmLifecycleDto } from './dto/vm-lifecycle.dto';
+import { GetMonitoringStatusUseCase } from './use-cases/get-monitoring-status.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -14,6 +15,7 @@ export class VmController {
     private readonly vmService: VmService,
     private readonly verificationMonitoringService: VerificationMonitoringService,
     private readonly storageService: StorageService,
+    private readonly getMonitoringStatusUseCase: GetMonitoringStatusUseCase,
   ) {}
 
   @Post('verify')
@@ -283,6 +285,6 @@ export class VmController {
   @ApiOperation({ summary: 'Get monitoring service status' })
   @ApiResponse({ status: 200, description: 'Monitoring service status' })
   getMonitoringStatus() {
-    return this.verificationMonitoringService.getMonitoringStatus();
+    return this.getMonitoringStatusUseCase.execute();
   }
 }
