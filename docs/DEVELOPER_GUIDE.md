@@ -15,7 +15,7 @@
 ### Prerequisites
 
 - **Node.js**: >=22.17.1
-- **pnpm**: >=9.0.0
+- **pnpm**: >=10.0.0
 - **Git**: Latest version
 
 ### Initial Setup

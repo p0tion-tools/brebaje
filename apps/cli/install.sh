@@ -157,7 +157,7 @@ fi
 echo "🔍 Checking pnpm..."
 if command_exists pnpm; then
     PNPM_VERSION=$(pnpm --version)
-    REQUIRED_PNPM="9.0.0"
+    REQUIRED_PNPM="10.0.0"
     if version_ge "$PNPM_VERSION" "$REQUIRED_PNPM"; then
         echo "✅ pnpm $PNPM_VERSION (>= $REQUIRED_PNPM required)"
     else

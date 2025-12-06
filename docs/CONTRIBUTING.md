@@ -24,7 +24,7 @@ Thank you for your interest in contributing to Brebaje! This guide will help you
 ### Prerequisites
 
 - Node.js >=22.17.1
-- pnpm >=9.0.0
+- pnpm >=10.0.0
 - Git
 - A code editor (VS Code recommended)
 

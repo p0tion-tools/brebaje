@@ -10,7 +10,7 @@ Complete setup instructions for the Brebaje development environment.
   - Download from [nodejs.org](https://nodejs.org/)
   - Verify: `node --version`
 
-- **pnpm**: Version >=9.0.0
+- **pnpm**: Version >=10.0.0
   - Install: `npm install -g pnpm`
   - Verify: `pnpm --version`
 
