@@ -1,4 +1,8 @@
-import { DescribeInstanceStatusCommand, EC2Client } from '@aws-sdk/client-ec2';
+import {
+  DescribeInstanceStatusCommand,
+  EC2Client,
+  TerminateInstancesCommand,
+} from '@aws-sdk/client-ec2';
 import { AWS_ACCESS_KEY_ID, AWS_REGION, AWS_SECRET_ACCESS_KEY } from 'src/utils/constants';
 import { VMManagerService } from 'src/vm/domain/ports/vm-manager.service';
 
@@ -20,6 +24,24 @@ export class AWSEC2VMManagerService implements VMManagerService {
       );
 
     return response.InstanceStatuses?.[0]?.InstanceState?.Name === 'running';
+  }
+
+  async terminateVm(instanceId: string): Promise<void> {
+    const ec2Client = this.getEC2Client();
+
+    // Generate a new terminate instance command.
+    const command = new TerminateInstancesCommand({
+      InstanceIds: [instanceId],
+      DryRun: false,
+    });
+
+    // Run the command.
+    const response = await ec2Client.send(command);
+
+    if (response.$metadata.httpStatusCode !== 200)
+      throw new Error(
+        `Something went wrong when terminating the EC2 instance (${instanceId}). More details ${JSON.stringify(response)}`,
+      );
   }
 
   /**

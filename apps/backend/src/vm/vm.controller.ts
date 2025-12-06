@@ -8,6 +8,7 @@ import { SetupVmDto } from './dto/setup-vm.dto';
 import { VmLifecycleDto } from './dto/vm-lifecycle.dto';
 import { GetMonitoringStatusUseCase } from './use-cases/get-monitoring-status.use-case';
 import { CheckVMIsRunningUseCase } from './use-cases/check-vm-is-running.use-case';
+import { TerminateVmUseCase } from './use-cases/terminate-vm.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -18,6 +19,7 @@ export class VmController {
     private readonly storageService: StorageService,
     private readonly checkVMIsRunningUseCase: CheckVMIsRunningUseCase,
     private readonly getMonitoringStatusUseCase: GetMonitoringStatusUseCase,
+    private readonly terminateVmUseCase: TerminateVmUseCase,
   ) {}
 
   @Post('verify')
@@ -236,18 +238,15 @@ export class VmController {
 
   @Post('terminate')
   @ApiOperation({ summary: 'Terminate an EC2 instance (PERMANENT)' })
-  @ApiResponse({ status: 200, description: 'Instance terminate command sent successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instance terminate command sent successfully',
+  })
   @ApiResponse({ status: 400, description: 'Failed to terminate instance' })
   async terminateInstance(@Body() lifecycleDto: VmLifecycleDto) {
     try {
-      await this.vmService.terminateEC2Instance(lifecycleDto.instanceId);
-      return {
-        instanceId: lifecycleDto.instanceId,
-        action: 'terminate',
-        status: 'success',
-        message: 'Instance terminate command sent. This action is PERMANENT and cannot be undone.',
-        warning: 'All data on the instance will be lost permanently.',
-      };
+      const response = await this.terminateVmUseCase.execute(lifecycleDto.instanceId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {
