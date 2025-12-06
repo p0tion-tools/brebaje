@@ -17,15 +17,23 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - uses: pnpm/action-setup@v4
+      - name: Install pnpm 10.24.0
+        uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.24.0
+          run_install: false
+
+      - name: Verify pnpm version
+        run: |
+          pnpm --version
+          which pnpm
 
       - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
           node-version: 22.17.x
           cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install all dependencies
         run: |
