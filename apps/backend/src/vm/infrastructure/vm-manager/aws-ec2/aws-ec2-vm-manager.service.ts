@@ -19,15 +19,7 @@ export class AWSEC2VMManagerService implements VMManagerService {
         `Something went wrong when retrieving the EC2 instance (${instanceId}) status. More details ${JSON.stringify(response)}`,
       );
 
-    if (
-      !response.InstanceStatuses ||
-      response.InstanceStatuses.length === 0 ||
-      !response.InstanceStatuses[0].InstanceState ||
-      !response.InstanceStatuses[0].InstanceState.Name
-    ) {
-      return false;
-    }
-    return response.InstanceStatuses[0].InstanceState.Name === 'running';
+    return response.InstanceStatuses?.[0]?.InstanceState?.Name === 'running';
   }
 
   /**
