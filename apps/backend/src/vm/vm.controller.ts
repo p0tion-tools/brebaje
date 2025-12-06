@@ -7,6 +7,7 @@ import { VerifyPhase1Dto } from './dto/verify-phase1.dto';
 import { SetupVmDto } from './dto/setup-vm.dto';
 import { VmLifecycleDto } from './dto/vm-lifecycle.dto';
 import { GetMonitoringStatusUseCase } from './use-cases/get-monitoring-status.use-case';
+import { CheckVMIsRunningUseCase } from './use-cases/check-vm-is-running.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -15,6 +16,7 @@ export class VmController {
     private readonly vmService: VmService,
     private readonly verificationMonitoringService: VerificationMonitoringService,
     private readonly storageService: StorageService,
+    private readonly checkVMIsRunningUseCase: CheckVMIsRunningUseCase,
     private readonly getMonitoringStatusUseCase: GetMonitoringStatusUseCase,
   ) {}
 
@@ -260,16 +262,14 @@ export class VmController {
   @Get('status/:instanceId')
   @ApiOperation({ summary: 'Check if an EC2 instance is running' })
   @ApiParam({ name: 'instanceId', description: 'EC2 Instance ID' })
-  @ApiResponse({ status: 200, description: 'Instance status retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instance status retrieved successfully',
+  })
   async getInstanceStatus(@Param('instanceId') instanceId: string) {
     try {
-      const isRunning = await this.vmService.checkIfRunning(instanceId);
-      return {
-        instanceId,
-        isRunning,
-        status: isRunning ? 'running' : 'not running',
-        timestamp: new Date().toISOString(),
-      };
+      const response = await this.checkVMIsRunningUseCase.execute(instanceId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {
