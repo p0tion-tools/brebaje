@@ -5,6 +5,7 @@ import {
   StopInstancesCommand,
   TerminateInstancesCommand,
 } from '@aws-sdk/client-ec2';
+import { GetCommandInvocationCommand, SSMClient } from '@aws-sdk/client-ssm';
 import { AWS_ACCESS_KEY_ID, AWS_REGION, AWS_SECRET_ACCESS_KEY } from 'src/utils/constants';
 import { VMManagerService } from 'src/vm/domain/ports/vm-manager.service';
 
@@ -82,12 +83,68 @@ export class AWSEC2VMManagerService implements VMManagerService {
       );
   }
 
+  async getCommandStatus(instanceId: string, commandId: string): Promise<string> {
+    const ssmClient = this.getSSMClient();
+
+    // Generate a new get command invocation command.
+    const command = new GetCommandInvocationCommand({
+      CommandId: commandId,
+      InstanceId: instanceId,
+    });
+
+    try {
+      // Run the command.
+      const response = await ssmClient.send(command);
+
+      return response.StandardOutputContent!;
+    } catch (error: any) {
+      throw new Error(
+        `Something went wrong when trying to retrieve the command ${commandId} output on the EC2 instance (${instanceId}). More details ${error}`,
+      );
+    }
+  }
+
+  async getCommandOutput(instanceId: string, commandId: string): Promise<string> {
+    const ssmClient = this.getSSMClient();
+
+    // Generate a new get command invocation command.
+    const command = new GetCommandInvocationCommand({
+      CommandId: commandId,
+      InstanceId: instanceId,
+    });
+
+    try {
+      // Run the command.
+      const response = await ssmClient.send(command);
+
+      return response.StandardOutputContent!;
+    } catch (error: any) {
+      throw new Error(
+        `Something went wrong when trying to retrieve the command ${commandId} output on the EC2 instance (${instanceId}). More details ${error}`,
+      );
+    }
+  }
+
   /**
    * Get the EC2 client to create new AWS instances
    * @returns <EC2Client> - the instance of the EC2 client.
    */
   private getEC2Client() {
     return new EC2Client({
+      credentials: {
+        accessKeyId: AWS_ACCESS_KEY_ID,
+        secretAccessKey: AWS_SECRET_ACCESS_KEY,
+      },
+      region: AWS_REGION,
+    });
+  }
+
+  /**
+   * Get the SSM client to interact with AWS Systems Manager (interact with EC2 instances).
+   * @returns <SSMClient> - the instance of the SSM client.
+   */
+  getSSMClient() {
+    return new SSMClient({
       credentials: {
         accessKeyId: AWS_ACCESS_KEY_ID,
         secretAccessKey: AWS_SECRET_ACCESS_KEY,

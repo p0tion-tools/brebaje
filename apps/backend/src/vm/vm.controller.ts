@@ -11,6 +11,7 @@ import { CheckVMIsRunningUseCase } from './use-cases/check-vm-is-running.use-cas
 import { TerminateVmUseCase } from './use-cases/terminate-vm.use-case';
 import { StopVmUseCase } from './use-cases/stop-vm.use-case';
 import { StartVmUseCase } from './use-cases/start-vm.use-case';
+import { GetCommandStatusAndOutputUseCase } from './use-cases/get-command-status-and-output.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -24,6 +25,7 @@ export class VmController {
     private readonly terminateVmUseCase: TerminateVmUseCase,
     private readonly stopVmUseCase: StopVmUseCase,
     private readonly startVmUseCase: StartVmUseCase,
+    private readonly getCommandStatusAndOutputUseCase: GetCommandStatusAndOutputUseCase,
   ) {}
 
   @Post('verify')
@@ -158,29 +160,21 @@ export class VmController {
   @ApiOperation({ summary: 'Get command output and logs' })
   @ApiParam({ name: 'commandId', description: 'SSM Command ID' })
   @ApiQuery({ name: 'instanceId', description: 'EC2 Instance ID' })
-  @ApiResponse({ status: 200, description: 'Command output retrieved successfully' })
-  @ApiResponse({ status: 400, description: 'Command not found or still running' })
+  @ApiResponse({
+    status: 200,
+    description: 'Command output retrieved successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Command not found or still running',
+  })
   async getCommandOutput(
     @Param('commandId') commandId: string,
     @Query('instanceId') instanceId: string,
   ) {
     try {
-      const status = await this.vmService.retrieveCommandStatus(instanceId, commandId);
-      const output = await this.vmService.retrieveCommandOutput(instanceId, commandId);
-
-      return {
-        commandId,
-        instanceId,
-        status,
-        output: {
-          stdout: output,
-          timestamp: new Date().toISOString(),
-        },
-        note:
-          status === 'InProgress'
-            ? 'Command is still running, output may be partial'
-            : 'Command completed',
-      };
+      const response = await this.getCommandStatusAndOutputUseCase.exec(instanceId, commandId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {
