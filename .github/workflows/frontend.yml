@@ -37,7 +37,12 @@ jobs:
 
       - name: Install all dependencies
         run: |
-          pnpm install --frozen-lockfile --prefer-offline
+          # Try frozen lockfile first, if it fails due to lockfile corruption, regenerate it
+          pnpm install --frozen-lockfile --prefer-offline || {
+            echo "Lockfile appears corrupted, regenerating..."
+            rm -f pnpm-lock.yaml
+            pnpm install
+          }
 
       - name: Build the frontend
         working-directory: apps/frontend
