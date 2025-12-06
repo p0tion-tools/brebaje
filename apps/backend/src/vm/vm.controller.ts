@@ -12,6 +12,7 @@ import { TerminateVmUseCase } from './use-cases/terminate-vm.use-case';
 import { StopVmUseCase } from './use-cases/stop-vm.use-case';
 import { StartVmUseCase } from './use-cases/start-vm.use-case';
 import { GetCommandStatusAndOutputUseCase } from './use-cases/get-command-status-and-output.use-case';
+import { VerifyCommandStatusUseCase } from './use-cases/verify-command-status.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -26,6 +27,7 @@ export class VmController {
     private readonly stopVmUseCase: StopVmUseCase,
     private readonly startVmUseCase: StartVmUseCase,
     private readonly getCommandStatusAndOutputUseCase: GetCommandStatusAndOutputUseCase,
+    private readonly verifyCommandStatusUseCase: VerifyCommandStatusUseCase,
   ) {}
 
   @Post('verify')
@@ -129,31 +131,9 @@ export class VmController {
     @Param('commandId') commandId: string,
     @Query('instanceId') instanceId: string,
   ) {
-    const status = await this.vmService.retrieveCommandStatus(instanceId, commandId);
+    const response = await this.verifyCommandStatusUseCase.execute(instanceId, commandId);
 
-    if (
-      status === 'Success' ||
-      status === 'Failed' ||
-      status === 'Cancelled' ||
-      status === 'TimedOut'
-    ) {
-      const output = await this.vmService.retrieveCommandOutput(instanceId, commandId);
-      const result = this.vmService.evaluateVerificationResult(output, status);
-
-      return {
-        commandId,
-        status: 'completed',
-        result: result === 200 ? 'success' : 'failed',
-        httpStatus: result,
-        completedAt: new Date().toISOString(),
-      };
-    }
-
-    return {
-      commandId,
-      status: 'running',
-      message: 'Verification in progress',
-    };
+    return response;
   }
 
   @Get('command/output/:commandId')
