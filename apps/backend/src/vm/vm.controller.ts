@@ -1,8 +1,5 @@
 import { Controller, Post, Get, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { VmService } from './vm.service';
-import { VerificationMonitoringService } from './verification-monitoring.service';
-import { StorageService } from '../storage/storage.service';
 import { VerifyPhase1Dto } from './dto/verify-phase1.dto';
 import { SetupVmDto } from './dto/setup-vm.dto';
 import { VmLifecycleDto } from './dto/vm-lifecycle.dto';
@@ -14,14 +11,12 @@ import { StartVmUseCase } from './use-cases/start-vm.use-case';
 import { GetCommandStatusAndOutputUseCase } from './use-cases/get-command-status-and-output.use-case';
 import { VerifyCommandStatusUseCase } from './use-cases/verify-command-status.use-case';
 import { SetupVMUseCase } from './use-cases/setup-vm.use-case';
+import { StartPhase1VerificationUseCase } from './use-cases/start-phase-1-verification.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
 export class VmController {
   constructor(
-    private readonly vmService: VmService,
-    private readonly verificationMonitoringService: VerificationMonitoringService,
-    private readonly storageService: StorageService,
     private readonly checkVMIsRunningUseCase: CheckVMIsRunningUseCase,
     private readonly getMonitoringStatusUseCase: GetMonitoringStatusUseCase,
     private readonly terminateVmUseCase: TerminateVmUseCase,
@@ -30,11 +25,15 @@ export class VmController {
     private readonly getCommandStatusAndOutputUseCase: GetCommandStatusAndOutputUseCase,
     private readonly verifyCommandStatusUseCase: VerifyCommandStatusUseCase,
     private readonly setupVMUseCase: SetupVMUseCase,
+    private readonly startPhase1VerificationUseCase: StartPhase1VerificationUseCase,
   ) {}
 
   @Post('verify')
   @ApiOperation({ summary: 'Start Phase 1 verification (Powers of Tau) on VM' })
-  @ApiResponse({ status: 201, description: 'Verification started successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'Verification started successfully',
+  })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   async startVerification(@Body() verifyDto: VerifyPhase1Dto) {
     // TODO: Implement auto-start functionality for complete lifecycle automation
@@ -54,51 +53,16 @@ export class VmController {
     // - Let existing CRON monitoring service retry verification once instance is ready
     // - This provides complete automation: auto-start → wait for ready → verify → auto-stop
 
-    // Get bucket name from ceremony
-    const bucketName = await this.storageService.getCeremonyBucketName(verifyDto.ceremonyId);
-
-    // Generate Phase 1 verification commands
-    const commands = this.vmService.vmVerificationPhase1Command(
-      bucketName,
-      verifyDto.lastPtauStoragePath,
-    );
-
-    // Extract filename from storage path for notifications
-    const ptauFilename = verifyDto.lastPtauStoragePath.split('/').pop() || 'unknown.ptau';
-
-    // Start verification (don't wait for completion)
-    const commandId = await this.vmService.runCommandUsingSSM(verifyDto.instanceId, commands);
-
-    // Check if notifications are configured
-    const hasNotificationConfig = !!(verifyDto.coordinatorEmail || verifyDto.webhookUrl);
-
-    // Start monitoring for completion notifications
-    const notificationConfig = {
+    const response = await this.startPhase1VerificationUseCase.execute({
+      instanceId: verifyDto.instanceId,
+      ceremonyId: verifyDto.ceremonyId,
+      lastPtauStoragePath: verifyDto.lastPtauStoragePath,
       coordinatorEmail: verifyDto.coordinatorEmail,
       webhookUrl: verifyDto.webhookUrl,
-    };
+      autoStop: verifyDto.autoStop,
+    });
 
-    this.verificationMonitoringService.startMonitoring(
-      commandId,
-      verifyDto.instanceId,
-      notificationConfig,
-      verifyDto.autoStop,
-      ptauFilename,
-    );
-
-    // Return immediately with command tracking info
-    return {
-      commandId,
-      instanceId: verifyDto.instanceId,
-      message: 'Phase 1 verification started',
-      statusUrl: `/vm/verify/status/${commandId}?instanceId=${verifyDto.instanceId}`,
-      monitoring: hasNotificationConfig
-        ? 'Notifications will be sent when verification completes'
-        : 'No notifications configured',
-      autoStop: verifyDto.autoStop
-        ? 'Instance will be automatically stopped when verification completes'
-        : 'Instance will remain running after verification',
-    };
+    return response;
   }
 
   @Post('setup')

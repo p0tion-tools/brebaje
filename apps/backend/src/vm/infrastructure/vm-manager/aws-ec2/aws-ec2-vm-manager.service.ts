@@ -11,6 +11,7 @@ import {
   SendCommandCommandInput,
   SSMClient,
 } from '@aws-sdk/client-ssm';
+import { StorageService } from 'src/storage/storage.service';
 import {
   AWS_ACCESS_KEY_ID,
   AWS_REGION,
@@ -20,6 +21,8 @@ import {
 import { VMManagerService } from 'src/vm/domain/ports/vm-manager.service';
 
 export class AWSEC2VMManagerService implements VMManagerService {
+  constructor(private readonly storageService: StorageService) {}
+
   async getIsRunning(instanceId: string): Promise<boolean> {
     const ec2Client = this.getEC2Client();
 
@@ -164,6 +167,38 @@ export class AWSEC2VMManagerService implements VMManagerService {
     ];
 
     const commandId = await this.sendCommandsWithSSM(instanceId, commandsToRun);
+
+    return commandId;
+  }
+
+  async startPhase1Verification(
+    instanceId: string,
+    ceremonyId: number,
+    lastPtauStoragePath: string,
+  ): Promise<string> {
+    const bucketName = await this.storageService.getCeremonyBucketName(ceremonyId);
+
+    // Extract filename from path (e.g., "Cardano-PPOT/pot10_0008.ptau" -> "pot10_0008.ptau")
+    const filename = lastPtauStoragePath.split('/').pop() || 'unknown.ptau';
+
+    // Generate verification log filename with timestamp
+    const timestamp = new Date().toISOString().replace(/[:.]/g, '-');
+    const verificationLogName = `verification-${filename}-${timestamp}.log`;
+    const s3LogPath = `verification-logs/${verificationLogName}`;
+
+    const commands = [
+      `source /etc/profile`,
+      // Download with original filename
+      `aws s3 cp s3://${bucketName}/${lastPtauStoragePath} /var/tmp/${filename} > /var/tmp/download.log`,
+      // Run verification and save output to log
+      `snarkjs powersoftau verify /var/tmp/${filename} > /var/tmp/${verificationLogName} 2>&1`,
+      // Upload verification log to S3
+      `aws s3 cp /var/tmp/${verificationLogName} s3://${bucketName}/${s3LogPath}`,
+      // Clean up all temporary files
+      `rm /var/tmp/${filename} /var/tmp/${verificationLogName} /var/tmp/download.log &>/dev/null`,
+    ];
+
+    const commandId = await this.sendCommandsWithSSM(instanceId, commands);
 
     return commandId;
   }

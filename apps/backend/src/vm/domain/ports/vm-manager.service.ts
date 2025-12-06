@@ -6,4 +6,9 @@ export abstract class VMManagerService {
   abstract getCommandStatus(vmId: string, commandId: string): Promise<string>;
   abstract getCommandOutput(vmId: string, commandId: string): Promise<string>;
   abstract setupVM(vmId: string, potPath: string, zKeyPath: string): Promise<string>;
+  abstract startPhase1Verification(
+    instanceId: string,
+    ceremonyId: number,
+    lastPtauStoragePath: string,
+  ): Promise<string>;
 }
