@@ -12,6 +12,7 @@ import { StopVmUseCase } from './use-cases/stop-vm.use-case';
 import { StartVmUseCase } from './use-cases/start-vm.use-case';
 import { GetCommandStatusAndOutputUseCase } from './use-cases/get-command-status-and-output.use-case';
 import { VerifyCommandStatusUseCase } from './use-cases/verify-command-status.use-case';
+import { SetupVMUseCase } from './use-cases/setup-vm.use-case';
 
 @Module({
   imports: [ScheduleModule.forRoot(), StorageModule, VMInfrastructureModule],
@@ -26,6 +27,7 @@ import { VerifyCommandStatusUseCase } from './use-cases/verify-command-status.us
     StartVmUseCase,
     GetCommandStatusAndOutputUseCase,
     VerifyCommandStatusUseCase,
+    SetupVMUseCase,
   ],
   exports: [VmService, VerificationMonitoringService],
 })

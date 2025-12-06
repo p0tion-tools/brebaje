@@ -5,8 +5,18 @@ import {
   StopInstancesCommand,
   TerminateInstancesCommand,
 } from '@aws-sdk/client-ec2';
-import { GetCommandInvocationCommand, SSMClient } from '@aws-sdk/client-ssm';
-import { AWS_ACCESS_KEY_ID, AWS_REGION, AWS_SECRET_ACCESS_KEY } from 'src/utils/constants';
+import {
+  GetCommandInvocationCommand,
+  SendCommandCommand,
+  SendCommandCommandInput,
+  SSMClient,
+} from '@aws-sdk/client-ssm';
+import {
+  AWS_ACCESS_KEY_ID,
+  AWS_REGION,
+  AWS_SECRET_ACCESS_KEY,
+  AWS_SNS_TOPIC_ARN,
+} from 'src/utils/constants';
 import { VMManagerService } from 'src/vm/domain/ports/vm-manager.service';
 
 export class AWSEC2VMManagerService implements VMManagerService {
@@ -121,6 +131,63 @@ export class AWSEC2VMManagerService implements VMManagerService {
     } catch (error: any) {
       throw new Error(
         `Something went wrong when trying to retrieve the command ${commandId} output on the EC2 instance (${instanceId}). More details ${error}`,
+      );
+    }
+  }
+
+  async setupVM(instanceId: string, potPath: string, zKeyPath: string): Promise<string> {
+    const commandsToRun = [
+      '#!/bin/bash',
+      'MARKER_FILE="/var/run/my_script_ran"',
+
+      'if [ -e ${MARKER_FILE} ]; then',
+      'exit 0',
+      'else',
+
+      'touch ${MARKER_FILE}',
+      'sudo yum update -y',
+      'curl -O https://nodejs.org/dist/v22.17.1/node-v22.17.1-linux-x64.tar.xz',
+      'tar -xf node-v22.17.1-linux-x64.tar.xz',
+      'mv node-v22.17.1-linux-x64 nodejs',
+      'sudo mv nodejs /opt/',
+      "echo 'export NODEJS_HOME=/opt/nodejs' >> /etc/profile",
+      "echo 'export PATH=$NODEJS_HOME/bin:$PATH' >> /etc/profile",
+      'source /etc/profile',
+      'npm install -g snarkjs',
+      `aws s3 cp s3://${zKeyPath} /var/tmp/genesisZkey.zkey`,
+      `aws s3 cp s3://${potPath} /var/tmp/pot.ptau`,
+      'wget https://github.com/BLAKE3-team/BLAKE3/releases/download/1.4.0/b3sum_linux_x64_bin -O /var/tmp/blake3.bin',
+      'chmod +x /var/tmp/blake3.bin',
+      "INSTANCE_ID=$(ec2-metadata -i | awk '{print $2}')",
+      `aws sns publish --topic-arn ${AWS_SNS_TOPIC_ARN} --message "$INSTANCE_ID" --region ${AWS_REGION}`,
+      'fi',
+    ];
+
+    const commandId = await this.sendCommandsWithSSM(instanceId, commandsToRun);
+
+    return commandId;
+  }
+
+  private async sendCommandsWithSSM(instanceId: string, commands: string[]) {
+    const ssmClient = this.getSSMClient();
+
+    // Generate a new send command input command.
+    const params: SendCommandCommandInput = {
+      DocumentName: 'AWS-RunShellScript',
+      InstanceIds: [instanceId],
+      Parameters: {
+        commands,
+      },
+      TimeoutSeconds: 1200,
+    };
+
+    try {
+      // Run the command.
+      const response = await ssmClient.send(new SendCommandCommand(params));
+      return response.Command!.CommandId!;
+    } catch (error: any) {
+      throw new Error(
+        `Something went wrong when trying to run a command on the EC2 instance. More details ${error}`,
       );
     }
   }

@@ -13,6 +13,7 @@ import { StopVmUseCase } from './use-cases/stop-vm.use-case';
 import { StartVmUseCase } from './use-cases/start-vm.use-case';
 import { GetCommandStatusAndOutputUseCase } from './use-cases/get-command-status-and-output.use-case';
 import { VerifyCommandStatusUseCase } from './use-cases/verify-command-status.use-case';
+import { SetupVMUseCase } from './use-cases/setup-vm.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -28,6 +29,7 @@ export class VmController {
     private readonly startVmUseCase: StartVmUseCase,
     private readonly getCommandStatusAndOutputUseCase: GetCommandStatusAndOutputUseCase,
     private readonly verifyCommandStatusUseCase: VerifyCommandStatusUseCase,
+    private readonly setupVMUseCase: SetupVMUseCase,
   ) {}
 
   @Post('verify')
@@ -100,27 +102,16 @@ export class VmController {
   }
 
   @Post('setup')
-  @ApiOperation({ summary: 'Setup VM with Node.js, snarkjs and cache dependencies' })
+  @ApiOperation({
+    summary: 'Setup VM with Node.js, snarkjs and cache dependencies',
+  })
   @ApiResponse({ status: 201, description: 'VM setup started successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   async setupVm(@Body() setupDto: SetupVmDto) {
-    // Generate setup commands
-    const commands = this.vmService.vmDependenciesAndCacheArtifactsCommand(
-      setupDto.zKeyPath || '',
-      setupDto.potPath || '',
-    );
+    const { instanceId, zKeyPath, potPath } = setupDto;
+    const result = await this.setupVMUseCase.execute(instanceId, zKeyPath, potPath);
 
-    // Start setup (don't wait for completion)
-    const commandId = await this.vmService.runCommandUsingSSM(setupDto.instanceId, commands);
-
-    // Return immediately with command tracking info
-    return {
-      commandId,
-      instanceId: setupDto.instanceId,
-      message: 'VM setup started',
-      statusUrl: `/vm/verify/status/${commandId}?instanceId=${setupDto.instanceId}`,
-      note: 'This will install Node.js v22.17.1, snarkjs, and cache any provided artifacts',
-    };
+    return result;
   }
 
   @Get('verify/status/:commandId')
