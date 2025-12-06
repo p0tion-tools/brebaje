@@ -1,31 +1,40 @@
 {
-  "entryPoints": ["apps/backend/src", "apps/frontend/src"],
-  "out": "docs/api",
-  "name": "Brebaje API Documentation",
-  "includeVersion": true,
-  "excludeExternals": true,
+  "$schema": "https://typedoc.org/schema.json",
+  "entryPoints": [
+    "apps/backend/src/main.ts",
+    "apps/cli/src/index.ts"
+  ],
+  "out": "docs",
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**"
+  ],
   "excludePrivate": true,
-  "excludeProtected": true,
-  "excludeInternal": true,
-  "readme": "docs/TSDOC_GUIDE.md",
-  "plugin": ["typedoc-plugin-missing-exports"],
-  "theme": "default",
+  "excludeProtected": false,
+  "excludeInternal": false,
+  "readme": "README.md",
+  "name": "Brebaje Documentation",
+  "includeVersion": true,
+  "plugin": [
+    "typedoc-plugin-missing-exports"
+  ],
+  "tsconfig": "apps/backend/tsconfig.json",
+  "compilerOptions": {
+    "skipLibCheck": true
+  },
   "navigation": {
     "includeCategories": true,
     "includeGroups": true
   },
   "categorizeByGroup": true,
-  "defaultCategory": "Other",
-  "categoryOrder": [
-    "Authentication",
-    "Ceremonies", 
-    "Circuits",
-    "Contributions",
-    "Participants",
-    "Projects",
-    "Storage",
-    "Utils",
-    "Types",
-    "Other"
-  ]
+  "searchInComments": true,
+  "validation": {
+    "invalidLink": true,
+    "notDocumented": true
+  }
 }
+

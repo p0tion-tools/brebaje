@@ -1,13 +1,17 @@
-# TSDoc Documentation Guide
+# TSDoc Writing Guide
 
 This guide explains how to write proper TSDoc comments for the Brebaje project.
 
+## Overview
+
+TSDoc is a standardized documentation format for TypeScript. All public APIs in Brebaje must be documented with TSDoc comments.
+
 ## Why TSDoc?
 
-- **Consistency**: Standardized documentation format across the entire codebase
-- **Automation**: Pre-commit hooks ensure all public exports are documented
-- **Quality**: ESLint validation catches syntax errors and missing documentation
-- **Generation**: TypeDoc automatically creates documentation websites
+- **Consistency**: Standardized format across the codebase
+- **Tooling**: Works with TypeDoc for automatic documentation generation
+- **IDE Support**: Better IntelliSense and autocomplete
+- **Validation**: ESLint plugin enforces syntax correctness
 
 ## Basic Syntax
 
@@ -15,23 +19,14 @@ This guide explains how to write proper TSDoc comments for the Brebaje project.
 
 ```typescript
 /**
- * Calculates the hash of a contribution for verification.
- * 
- * @param contribution - The contribution data to hash
- * @param algorithm - Hash algorithm to use (default: 'sha256')
- * @returns Promise resolving to the calculated hash
- * @throws {InvalidContributionError} When contribution data is invalid
- * @example
- * ```typescript
- * const hash = await calculateContributionHash(contribution);
- * console.log('Hash:', hash);
- * ```
+ * Calculates the sum of two numbers.
+ *
+ * @param a - The first number
+ * @param b - The second number
+ * @returns The sum of a and b
  */
-export async function calculateContributionHash(
-  contribution: Contribution,
-  algorithm: string = 'sha256'
-): Promise<string> {
-  // Implementation...
+function add(a: number, b: number): number {
+  return a + b;
 }
 ```
 
@@ -39,26 +34,14 @@ export async function calculateContributionHash(
 
 ```typescript
 /**
- * Manages ceremony lifecycle and participant coordination.
- * 
- * @example
- * ```typescript
- * const ceremonyService = new CeremonyService();
- * await ceremonyService.createCeremony(ceremonyData);
- * ```
+ * Manages user authentication and authorization.
+ *
+ * @remarks
+ * This service handles OAuth flows, token management, and user sessions.
+ * It integrates with GitHub OAuth for authentication.
  */
-export class CeremonyService {
-  /**
-   * Creates a new ceremony with the specified configuration.
-   * 
-   * @param ceremonyData - Configuration for the new ceremony
-   * @returns Promise resolving to the created ceremony
-   * @throws {ValidationError} When ceremony data is invalid
-   * @throws {PermissionError} When user lacks creation permissions
-   */
-  async createCeremony(ceremonyData: CreateCeremonyDto): Promise<Ceremony> {
-    // Implementation...
-  }
+export class AuthService {
+  // ...
 }
 ```
 
@@ -66,86 +49,424 @@ export class CeremonyService {
 
 ```typescript
 /**
- * Configuration options for ceremony creation.
- * 
- * @example
- * ```typescript
- * const config: CeremonyConfig = {
- *   name: 'My Ceremony',
- *   maxParticipants: 100,
- *   duration: 7 * 24 * 60 * 60 * 1000 // 7 days in milliseconds
- * };
- * ```
+ * Represents a user in the system.
  */
-export interface CeremonyConfig {
-  /** The display name of the ceremony */
+export interface User {
+  /** The unique identifier for the user */
+  id: number;
+  
+  /** The user's display name */
   name: string;
   
-  /** Maximum number of participants allowed */
-  maxParticipants: number;
-  
-  /** Duration in milliseconds */
-  duration: number;
-  
-  /** Optional description of the ceremony */
-  description?: string;
+  /** The user's email address */
+  email: string;
 }
 ```
 
-## Common TSDoc Tags
+## Common Tags
 
-| Tag | Purpose | Example |
-|-----|---------|---------|
-| `@param` | Document function parameters | `@param name - The user's name` |
-| `@returns` | Document return value | `@returns Promise resolving to user data` |
-| `@throws` | Document possible exceptions | `@throws {Error} When validation fails` |
-| `@example` | Provide usage examples | `@example \`\`\`typescript\nconst result = func();\n\`\`\`` |
-| `@deprecated` | Mark as deprecated | `@deprecated Use newFunction() instead` |
-| `@since` | Version when added | `@since 1.2.0` |
-| `@see` | Reference related docs | `@see {@link OtherClass} for related functionality` |
+### @param
 
-## Validation Commands
+Documents function parameters.
+
+```typescript
+/**
+ * @param userId - The unique identifier of the user
+ * @param options - Optional configuration for the query
+ */
+function getUser(userId: number, options?: QueryOptions): User {
+  // ...
+}
+```
+
+### @returns / @returns
+
+Documents return values.
+
+```typescript
+/**
+ * @returns A promise that resolves to the user object
+ * @returns The user object, or null if not found
+ */
+async findUser(id: number): Promise<User | null> {
+  // ...
+}
+```
+
+### @throws
+
+Documents exceptions that may be thrown.
+
+```typescript
+/**
+ * @throws {NotFoundError} When the user does not exist
+ * @throws {ValidationError} When the input is invalid
+ */
+function getUser(id: number): User {
+  if (!id) {
+    throw new ValidationError('ID is required');
+  }
+  // ...
+}
+```
+
+### @example
+
+Provides usage examples.
+
+```typescript
+/**
+ * Formats a date to a readable string.
+ *
+ * @param date - The date to format
+ * @returns Formatted date string
+ *
+ * @example
+ * ```typescript
+ * const formatted = formatDate(new Date());
+ * console.log(formatted); // "January 1, 2024"
+ * ```
+ */
+function formatDate(date: Date): string {
+  // ...
+}
+```
+
+### @remarks
+
+Additional notes or important information.
+
+```typescript
+/**
+ * Processes a ceremony contribution.
+ *
+ * @remarks
+ * This method performs cryptographic validation and stores the contribution.
+ * It should only be called by authenticated coordinators.
+ */
+async processContribution(contribution: Contribution): Promise<void> {
+  // ...
+}
+```
+
+### @see
+
+References related documentation.
+
+```typescript
+/**
+ * Creates a new ceremony.
+ *
+ * @see {@link CeremonyService} for ceremony management
+ * @see {@link https://example.com/docs} for external documentation
+ */
+async createCeremony(data: CreateCeremonyDto): Promise<Ceremony> {
+  // ...
+}
+```
+
+### @deprecated
+
+Marks APIs as deprecated.
+
+```typescript
+/**
+ * @deprecated Use {@link newMethod} instead. This will be removed in v2.0.
+ */
+function oldMethod(): void {
+  // ...
+}
+```
+
+### @internal
+
+Marks APIs as internal (not part of public API).
+
+```typescript
+/**
+ * @internal
+ * Internal helper method for processing contributions.
+ */
+function processContributionInternal(data: unknown): void {
+  // ...
+}
+```
+
+### @public / @private / @protected
+
+Access modifiers (usually inferred from TypeScript, but can be explicit).
+
+```typescript
+/**
+ * @public
+ * Public method that can be called by external code.
+ */
+public processData(): void {
+  // ...
+}
+```
+
+## Advanced Patterns
+
+### Generic Types
+
+```typescript
+/**
+ * Retrieves an entity by its identifier.
+ *
+ * @typeParam T - The type of entity to retrieve
+ * @param id - The unique identifier
+ * @returns A promise resolving to the entity
+ */
+async findById<T extends Entity>(id: number): Promise<T> {
+  // ...
+}
+```
+
+### Complex Parameters
+
+```typescript
+/**
+ * Updates user preferences.
+ *
+ * @param userId - The user's unique identifier
+ * @param preferences - The preferences object
+ * @param preferences.theme - The UI theme preference
+ * @param preferences.notifications - Notification settings
+ */
+function updatePreferences(
+  userId: number,
+  preferences: {
+    theme: string;
+    notifications: boolean;
+  }
+): void {
+  // ...
+}
+```
+
+### Async Functions
+
+```typescript
+/**
+ * Fetches data from the API.
+ *
+ * @param endpoint - The API endpoint URL
+ * @returns A promise that resolves to the response data
+ *
+ * @example
+ * ```typescript
+ * const data = await fetchData('/api/users');
+ * ```
+ */
+async function fetchData(endpoint: string): Promise<ApiResponse> {
+  // ...
+}
+```
+
+### Method Overloads
+
+```typescript
+/**
+ * Finds a user by ID or email.
+ *
+ * @param identifier - The user ID (number) or email (string)
+ * @returns The user object if found
+ */
+function findUser(identifier: number): User;
+function findUser(identifier: string): User | null;
+function findUser(identifier: number | string): User | null {
+  // ...
+}
+```
+
+## Best Practices
+
+### 1. Be Descriptive
+
+```typescript
+// ❌ Bad
+/**
+ * Gets user.
+ */
+function getUser(id: number): User {
+  // ...
+}
+
+// ✅ Good
+/**
+ * Retrieves a user by their unique identifier.
+ *
+ * @param id - The user's unique identifier
+ * @returns The user object if found
+ * @throws {NotFoundError} If the user does not exist
+ */
+function getUser(id: number): User {
+  // ...
+}
+```
+
+### 2. Document All Parameters
+
+```typescript
+// ❌ Bad
+/**
+ * Creates a ceremony.
+ */
+function createCeremony(name: string, startDate: Date): Ceremony {
+  // ...
+}
+
+// ✅ Good
+/**
+ * Creates a new ceremony with the specified parameters.
+ *
+ * @param name - The name of the ceremony
+ * @param startDate - The scheduled start date and time
+ * @returns The newly created ceremony object
+ */
+function createCeremony(name: string, startDate: Date): Ceremony {
+  // ...
+}
+```
+
+### 3. Include Examples for Complex APIs
+
+```typescript
+/**
+ * Validates a contribution file.
+ *
+ * @param file - The contribution file to validate
+ * @param ceremonyId - The ID of the ceremony
+ * @returns Validation result with details
+ *
+ * @example
+ * ```typescript
+ * const result = await validateContribution(file, ceremonyId);
+ * if (result.valid) {
+ *   console.log('Contribution is valid');
+ * } else {
+ *   console.error('Validation errors:', result.errors);
+ * }
+ * ```
+ */
+async function validateContribution(
+  file: File,
+  ceremonyId: number
+): Promise<ValidationResult> {
+  // ...
+}
+```
+
+### 4. Document Error Conditions
+
+```typescript
+/**
+ * Processes a payment transaction.
+ *
+ * @param amount - The payment amount in cents
+ * @param userId - The user making the payment
+ * @returns Transaction ID
+ * @throws {InsufficientFundsError} When user has insufficient funds
+ * @throws {InvalidAmountError} When amount is invalid
+ */
+async function processPayment(amount: number, userId: number): Promise<string> {
+  // ...
+}
+```
+
+### 5. Use @remarks for Important Context
+
+```typescript
+/**
+ * Finalizes a ceremony.
+ *
+ * @remarks
+ * This operation is irreversible. Once a ceremony is finalized,
+ * no further contributions can be accepted. Ensure all participants
+ * have completed their contributions before calling this method.
+ *
+ * @param ceremonyId - The ID of the ceremony to finalize
+ */
+async function finalizeCeremony(ceremonyId: number): Promise<void> {
+  // ...
+}
+```
+
+## ESLint Validation
+
+The project uses `eslint-plugin-tsdoc` to validate TSDoc syntax. Common errors:
+
+### Missing @param
+
+```typescript
+// ❌ Error: Missing @param tag
+/**
+ * Gets user by ID.
+ */
+function getUser(id: number): User {
+  // ...
+}
+```
+
+### Invalid Tag Syntax
+
+```typescript
+// ❌ Error: Invalid tag syntax
+/**
+ * @param id The user ID
+ */
+
+// ✅ Correct
+/**
+ * @param id - The user ID
+ */
+```
+
+### Missing Description
+
+```typescript
+// ❌ Error: Missing description
+/**
+ * @param id
+ */
+
+// ✅ Correct
+/**
+ * @param id - The user identifier
+ */
+```
+
+## TypeDoc Integration
+
+TSDoc comments are automatically processed by TypeDoc to generate documentation:
 
 ```bash
-# Check TSDoc syntax across entire project
-pnpm lint
-
-# Fix formatting issues automatically
-pnpm lint:fix
-
-# Check specific file
-npx eslint path/to/file.ts
+pnpm docs
 ```
 
-## Common Mistakes to Avoid
+The generated documentation includes:
+- All exported APIs
+- Parameter descriptions
+- Return types
+- Examples
+- Related links
 
-### ❌ Wrong
-```typescript
-/**
- * @param name -Missing hyphen
- * @return Missing 's'
- * @param - Missing parameter name
- */
-```
+## Resources
 
-### ✅ Correct
-```typescript
-/**
- * @param name - The user's name
- * @returns The greeting message
- * @param age - The user's age
- */
-```
+- [TSDoc Official Documentation](https://tsdoc.org/)
+- [TypeDoc Documentation](https://typedoc.org/)
+- [ESLint TSDoc Plugin](https://github.com/microsoft/tsdoc/tree/master/eslint-plugin)
 
-## Pre-commit Enforcement
+## Checklist
 
-The pre-commit hook automatically runs TSDoc validation. If you have syntax errors:
+Before committing code, ensure:
 
-1. Fix the TSDoc comments
-2. Run `pnpm lint:fix` to auto-fix formatting
-3. Try committing again
+- [ ] All exported functions have TSDoc comments
+- [ ] All parameters are documented with @param
+- [ ] Return values are documented with @returns
+- [ ] Exceptions are documented with @throws
+- [ ] Complex APIs have @example sections
+- [ ] ESLint TSDoc validation passes
+- [ ] Documentation generates without errors
 
-## Next Steps
-
-- **Phase 2**: Automated documentation generation with TypeDoc
-- **Phase 3**: CI/CD integration for documentation deployment

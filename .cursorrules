@@ -1,247 +1,280 @@
-# Cursor Rules for Brebaje
+# Cursor AI Rules for Brebaje
 
-This file provides guidance for Cursor AI when working with code in this repository.
+This file provides rules and context for Cursor AI when working with the Brebaje codebase.
 
 ## Project Overview
 
-Brebaje is a zero-knowledge proof ceremony management platform built with a NestJS backend and Next.js frontend. The project manages trusted setup ceremonies for zkSNARK circuits, handling user authentication, ceremony coordination, and participant contributions.
+Brebaje is a zero-knowledge proof ceremony management platform built with:
+- **Backend**: NestJS with TypeScript, SQLite, Sequelize ORM
+- **Frontend**: Next.js 14 with App Router, TailwindCSS, React Query
+- **CLI**: Commander.js with TypeScript ES modules
+- **Monorepo**: pnpm workspaces with Lerna
 
-## Architecture
+## Code Style & Standards
 
-This is a monorepo using pnpm workspaces with two main applications:
+### TypeScript
 
-- **Backend (`apps/backend/`)**: NestJS API with SQLite database using Sequelize ORM
-- **Frontend (`apps/frontend/`)**: Next.js application with TailwindCSS and React Query
+- Use strict TypeScript mode
+- Prefer explicit types over `any` - use `unknown` or proper types
+- Use interfaces for object shapes
+- Use type aliases for unions and intersections
+- Enable all strict compiler options
 
-### Key Domain Models
+### Naming Conventions
 
-The system revolves around zero-knowledge proof ceremonies:
+- **Files**: `kebab-case.ts` (e.g., `user-service.ts`)
+- **Classes**: `PascalCase` (e.g., `UserService`)
+- **Functions/Variables**: `camelCase` (e.g., `getUserById`)
+- **Constants**: `UPPER_SNAKE_CASE` (e.g., `MAX_RETRIES`)
+- **Interfaces/Types**: `PascalCase` (e.g., `UserProfile`)
 
-- **Users**: Authenticated via GitHub OAuth, stored with provider info
-- **Projects**: Container for related ceremonies, managed by coordinators
-- **Ceremonies**: Time-bounded events with phases (SCHEDULED → OPENED → CLOSED → FINALIZED)
-- **Circuits**: Individual zkSNARK circuits within ceremonies requiring trusted setup
-- **Participants**: Users enrolled in ceremonies with contribution tracking
-- **Contributions**: Cryptographic contributions to circuit trusted setup
+### Code Formatting
 
-### Database Schema
+- Use Prettier (auto-formatted on save)
+- Single quotes for strings
+- Semicolons required
+- 2-space indentation
+- Trailing commas in multi-line structures
+- Maximum line length: 80 characters (where practical)
 
-The database schema is defined in `apps/backend/src/database/diagram.dbml` and automatically generates:
+### Import Organization
 
-- TypeScript enums (`src/types/enums.ts`)
-- Sequelize models
-- Database migration SQL
+1. External dependencies (NestJS, React, etc.)
+2. Internal modules (from `@brebaje/` packages)
+3. Relative imports
+4. Type-only imports (use `import type`)
 
-### Authentication Flow
+Example:
+```typescript
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
-Uses GitHub device flow OAuth:
-
-1. Frontend gets GitHub client ID from backend
-2. User completes GitHub OAuth device flow
-3. Backend exchanges token for user info, creates/finds user record
-4. JWT token issued for session management
-
-## Common Commands
-
-### Root Level (Monorepo)
-
-```bash
-# Install dependencies
-pnpm install
-
-# Run linting across all packages
-pnpm lint
-
-# Run tests across all packages
-pnpm test
-
-# Format code across all packages
-pnpm prettier:fix
-
-# Generate documentation
-pnpm docs:generate
-
-# Serve documentation with live reload
-pnpm docs:serve
+import type { User } from '../types';
+import { UserService } from './user.service';
 ```
 
-### Backend Development
+## Documentation Requirements
 
-```bash
-cd apps/backend
+### TSDoc Comments
 
-# Start development server with hot reload
-pnpm start:dev
+**All public APIs must have TSDoc comments.** This includes:
+- Exported functions, classes, interfaces, and types
+- Public methods and properties
+- Complex algorithms or business logic
+- Configuration options
 
-# Build the application
-pnpm build
-
-# Run tests
-pnpm test
-
-# Run tests with coverage
-pnpm test:cov
-
-# Run E2E tests
-pnpm test:e2e
-
-# Lint TypeScript files
-pnpm lint
-
-# Database schema operations
-pnpm convert              # Convert DBML to SQL
-pnpm setup-dml-to-database  # Generate models from schema
-```
-
-### Frontend Development
-
-```bash
-cd apps/frontend
-
-# Start development server
-pnpm dev
-
-# Build for production
-pnpm build
-
-# Start production server
-pnpm start
-
-# Lint code
-pnpm lint
-
-# Format code
-pnpm format
-```
-
-## Development Workflow
-
-1. **Database Changes**: Update `apps/backend/src/database/diagram.dbml` then run `pnpm convert` and `pnpm setup-dml-to-database`
-2. **API Development**: Follow NestJS module pattern - create controller, service, DTOs, and tests
-3. **Frontend Features**: Use React Query hooks for API calls, TailwindCSS for styling
-4. **Testing**: Write unit tests alongside new features, run E2E tests for critical flows
-5. **Documentation**: All public TypeScript exports must have TSDoc comments (enforced by pre-commit hooks)
-
-## TSDoc Documentation Standards
-
-All public TypeScript exports must include TSDoc comments. The pre-commit hook enforces this automatically.
-
-### Basic TSDoc Format
-
+**Required TSDoc format:**
 ```typescript
 /**
- * Brief description of the function/class.
- * 
+ * Brief description of what the function/class does.
+ *
  * @param paramName - Description of the parameter
  * @returns Description of the return value
- * @throws {ErrorType} When this error occurs
+ * @throws {ErrorType} Description of when this error is thrown
+ *
  * @example
  * ```typescript
- * const result = myFunction('example');
- * console.log(result); // 'Hello example!'
+ * const result = await functionName(param);
  * ```
  */
-export function myFunction(paramName: string): string {
-  return `Hello ${paramName}!`;
-}
 ```
 
-### Class Documentation
+**TSDoc validation is enforced via ESLint** - syntax errors will fail pre-commit hooks.
+
+See `docs/TSDOC_GUIDE.md` for comprehensive TSDoc guidelines.
+
+## Architecture Patterns
+
+### Backend (NestJS)
+
+- Follow NestJS module pattern: Controller → Service → Repository
+- Use dependency injection for all services
+- Create DTOs for request/response validation
+- Use class-validator and class-transformer for validation
+- Organize by feature (e.g., `users/`, `ceremonies/`, `contributions/`)
+
+### Frontend (Next.js)
+
+- Use App Router structure
+- Server components by default, client components when needed
+- Use React Query for server state management
+- TailwindCSS for styling (utility-first approach)
+- Organize components by feature
+
+### CLI
+
+- Modular command structure with Commander.js
+- Use ScriptLogger for consistent logging
+- Handle errors gracefully with user-friendly messages
+- Support both interactive and non-interactive modes
+
+## Testing Standards
+
+- Write tests for all new features
+- Use descriptive test names
+- Follow AAA pattern (Arrange, Act, Assert)
+- Mock external dependencies
+- Test edge cases and error conditions
+- Maintain or improve test coverage
+
+## ESLint & Linting
+
+- ESLint v9 flat config format (`eslint.config.mjs`)
+- TSDoc syntax validation is enforced
+- Prettier integration for formatting
+- Pre-commit hooks run linting automatically
+
+## Git & Commits
+
+### Commit Message Format
+
+Follow [Conventional Commits](https://www.conventionalcommits.org/):
+
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+Types: `feat`, `fix`, `docs`, `style`, `refactor`, `test`, `chore`
+
+### Pre-commit Hooks
+
+Before each commit:
+1. ESLint runs (includes TSDoc validation)
+2. Prettier formats code
+3. Type checking (via ESLint)
+
+## File Structure Guidelines
+
+- One class/interface per file (when possible)
+- Group related functionality together
+- Use index files for public API exports
+- Keep files focused and small (< 300 lines when possible)
+
+## Error Handling
+
+- Use appropriate error types (not generic Error)
+- Provide meaningful error messages
+- Log errors with context
+- Handle errors at appropriate levels
+
+## Security Considerations
+
+- Never commit secrets or API keys
+- Use environment variables for configuration
+- Validate all user input
+- Use parameterized queries for database operations
+- Implement proper authentication and authorization
+
+## Performance
+
+- Optimize database queries
+- Use caching where appropriate
+- Minimize bundle size
+- Lazy load when possible
+- Profile before optimizing
+
+## Common Patterns
+
+### Service Pattern (Backend)
 
 ```typescript
-/**
- * A service for managing user authentication.
- * 
- * @example
- * ```typescript
- * const authService = new AuthService();
- * const user = await authService.login('username', 'password');
- * ```
- */
-export class AuthService {
+@Injectable()
+export class UserService {
+  constructor(
+    @InjectRepository(User)
+    private readonly userRepository: Repository<User>,
+  ) {}
+
   /**
-   * Authenticates a user with credentials.
-   * 
-   * @param username - The user's username
-   * @param password - The user's password
-   * @returns Promise resolving to user data
-   * @throws {AuthenticationError} When credentials are invalid
+   * Finds a user by ID.
+   *
+   * @param id - The user's unique identifier
+   * @returns The user object if found, null otherwise
    */
-  async login(username: string, password: string): Promise<User> {
-    // Implementation...
+  async findById(id: number): Promise<User | null> {
+    return this.userRepository.findOne({ where: { id } });
   }
 }
 ```
 
-### Common TSDoc Tags
+### React Query Hook (Frontend)
 
-- `@param` - Function parameters
-- `@returns` - Return value description
-- `@throws` - Possible exceptions
-- `@example` - Usage examples
-- `@deprecated` - Mark as deprecated
-- `@since` - Version when added
-- `@see` - Related documentation
+```typescript
+/**
+ * Fetches user data.
+ *
+ * @param userId - The user's unique identifier
+ * @returns React Query hook result with user data
+ */
+export function useUser(userId: number) {
+  return useQuery({
+    queryKey: ['user', userId],
+    queryFn: () => fetchUser(userId),
+  });
+}
+```
 
-### Validation
+## When Writing Code
 
-- **Pre-commit**: TSDoc syntax is validated before commits
-- **ESLint**: Run `pnpm lint` to check documentation compliance
-- **Auto-fix**: Use `pnpm lint:fix` to fix formatting issues
+1. **Always add TSDoc comments** for public APIs
+2. **Follow naming conventions** strictly
+3. **Use TypeScript types** - avoid `any`
+4. **Write tests** for new features
+5. **Run linting** before committing
+6. **Keep functions small** and focused
+7. **Use meaningful names** for variables and functions
+8. **Handle errors** appropriately
+9. **Update documentation** when changing APIs
+10. **Follow existing patterns** in the codebase
 
-## Key Dependencies
+## When Suggesting Changes
 
-### Backend
+- Maintain consistency with existing code
+- Consider backward compatibility
+- Update related documentation
+- Include tests for new features
+- Follow the project's architecture patterns
 
-- **NestJS**: Main framework with decorators and dependency injection
-- **Sequelize**: ORM with TypeScript support via sequelize-typescript
-- **JWT**: Authentication tokens via @nestjs/jwt
-- **SQLite**: Development database (sqlite3)
+## Project-Specific Context
 
-### Frontend
+### Domain Models
 
-- **Next.js 14**: React framework with app router
-- **TanStack Query**: Server state management and caching
-- **TailwindCSS**: Utility-first CSS framework
-- **Lucide React**: Icon library
+- **Users**: Authenticated via GitHub OAuth
+- **Projects**: Container for related ceremonies
+- **Ceremonies**: Time-bounded events with phases (SCHEDULED → OPENED → CLOSED → FINALIZED)
+- **Circuits**: Individual zkSNARK circuits requiring trusted setup
+- **Participants**: Users enrolled in ceremonies
+- **Contributions**: Cryptographic contributions to circuit trusted setup
 
-### Documentation
+### Database
 
-- **TypeDoc**: Automated TypeScript documentation generation
-- **TSDoc**: Standardized documentation comments with ESLint enforcement
-- **ESLint TSDoc Plugin**: Pre-commit validation of documentation syntax
+- Schema defined in `apps/backend/src/database/diagram.dbml`
+- Models auto-generated from DBML
+- Use Sequelize ORM with TypeScript
 
-## Project Structure Notes
+### Authentication
 
-- Backend follows standard NestJS module structure with feature-based organization
-- Frontend uses Next.js app router with components organized by feature
-- Database models are auto-generated from DBML schema
-- Shared types are centralized in `apps/backend/src/types/`
-- API routes follow RESTful conventions with OpenAPI documentation
+- GitHub OAuth device flow
+- JWT tokens for session management
+- Token stored securely (not in plain text)
 
-## Code Style Guidelines
+## Resources
 
-- Use TypeScript strict mode
-- Follow ESLint and Prettier configurations
-- Write TSDoc comments for all public exports
-- Use meaningful variable and function names
-- Prefer composition over inheritance
-- Write tests for new features
-- Use proper error handling with custom error types
+- [Developer Guide](./docs/DEVELOPER_GUIDE.md)
+- [TSDoc Guide](./docs/TSDOC_GUIDE.md)
+- [Contributing Guide](./docs/CONTRIBUTING.md)
+- [Setup Guide](./docs/SETUP.md)
+- [CLAUDE.md](./CLAUDE.md) - Additional project context
 
-## File Naming Conventions
+## Important Reminders
 
-- **Components**: PascalCase (e.g., `UserProfile.tsx`)
-- **Services**: camelCase with `.service.ts` suffix (e.g., `auth.service.ts`)
-- **Controllers**: camelCase with `.controller.ts` suffix (e.g., `users.controller.ts`)
-- **DTOs**: camelCase with `.dto.ts` suffix (e.g., `create-user.dto.ts`)
-- **Types**: camelCase with `.types.ts` suffix (e.g., `user.types.ts`)
-- **Tests**: Same as source file with `.spec.ts` or `.test.ts` suffix
+- **TSDoc is mandatory** for all public APIs
+- **ESLint validation** runs on every commit
+- **TypeScript strict mode** is enabled
+- **Tests are required** for new features
+- **Documentation** must be updated with code changes
 
-## Git Workflow
-
-- Use conventional commits (feat:, fix:, docs:, etc.)
-- Create feature branches from `main`
-- Write descriptive commit messages
-- Ensure all tests pass before merging
-- TSDoc validation runs automatically on pre-commit

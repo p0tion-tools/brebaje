@@ -1,50 +1,20 @@
 # Brebaje
 
-A zero-knowledge proof ceremony management platform built with NestJS and Next.js.
+Brebaje is a zero-knowledge proof ceremony management platform for coordinating trusted setup ceremonies for zkSNARK circuits. The platform provides tools for managing ceremonies, participants, and cryptographic contributions.
 
-## Quick Start
+## Overview
 
-```bash
-# Install dependencies
-pnpm install
+Brebaje consists of three main components:
 
-# Start development servers
-pnpm dev
+- **Backend**: NestJS API with SQLite database
+- **Frontend**: Next.js web application
+- **CLI**: Command-line interface for ceremony management
 
-# Run linting (includes TSDoc validation)
-pnpm lint
+## Documentation
 
-# Run tests
-pnpm test
-```
+For detailed information, please refer to the documentation in the [`docs/`](./docs/) directory:
 
-## Documentation Standards
-
-This project enforces TSDoc documentation for all public TypeScript exports:
-
-- **Pre-commit validation**: TSDoc syntax is checked before commits
-- **ESLint integration**: Run `pnpm lint` to validate documentation
-- **TypeDoc generation**: Automated documentation site generation (Phase 2)
-
-### Example TSDoc
-
-```typescript
-/**
- * Authenticates a user with GitHub OAuth.
- * 
- * @param code - GitHub OAuth authorization code
- * @returns Promise resolving to user data
- * @throws {AuthenticationError} When OAuth fails
- * @example
- * ```typescript
- * const user = await authService.authenticate(code);
- * ```
- */
-export async function authenticate(code: string): Promise<User> {
-  // Implementation...
-}
-```
-
-## Development
-
-See [CLAUDE.md](./CLAUDE.md) for detailed development guidelines and project structure.
+- **[Setup Guide](./docs/SETUP.md)**: Get started with installation and configuration
+- **[Developer Guide](./docs/DEVELOPER_GUIDE.md)**: Development workflow and project structure
+- **[Contributing Guide](./docs/CONTRIBUTING.md)**: Guidelines for contributing to the project
+- **[TSDoc Guide](./docs/TSDOC_GUIDE.md)**: Documentation standards for code
