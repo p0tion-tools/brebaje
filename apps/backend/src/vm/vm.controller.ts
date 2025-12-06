@@ -10,6 +10,7 @@ import { GetMonitoringStatusUseCase } from './use-cases/get-monitoring-status.us
 import { CheckVMIsRunningUseCase } from './use-cases/check-vm-is-running.use-case';
 import { TerminateVmUseCase } from './use-cases/terminate-vm.use-case';
 import { StopVmUseCase } from './use-cases/stop-vm.use-case';
+import { StartVmUseCase } from './use-cases/start-vm.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -22,6 +23,7 @@ export class VmController {
     private readonly getMonitoringStatusUseCase: GetMonitoringStatusUseCase,
     private readonly terminateVmUseCase: TerminateVmUseCase,
     private readonly stopVmUseCase: StopVmUseCase,
+    private readonly startVmUseCase: StartVmUseCase,
   ) {}
 
   @Post('verify')
@@ -192,17 +194,15 @@ export class VmController {
 
   @Post('start')
   @ApiOperation({ summary: 'Start an EC2 instance' })
-  @ApiResponse({ status: 200, description: 'Instance start command sent successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instance start command sent successfully',
+  })
   @ApiResponse({ status: 400, description: 'Failed to start instance' })
   async startInstance(@Body() lifecycleDto: VmLifecycleDto) {
     try {
-      await this.vmService.startEC2Instance(lifecycleDto.instanceId);
-      return {
-        instanceId: lifecycleDto.instanceId,
-        action: 'start',
-        status: 'success',
-        message: 'Instance start command sent. It may take 1-2 minutes to boot.',
-      };
+      const response = await this.startVmUseCase.execute(lifecycleDto.instanceId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {

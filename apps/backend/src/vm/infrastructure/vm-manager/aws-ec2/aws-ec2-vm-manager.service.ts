@@ -1,6 +1,7 @@
 import {
   DescribeInstanceStatusCommand,
   EC2Client,
+  StartInstancesCommand,
   StopInstancesCommand,
   TerminateInstancesCommand,
 } from '@aws-sdk/client-ec2';
@@ -60,6 +61,24 @@ export class AWSEC2VMManagerService implements VMManagerService {
     if (response.$metadata.httpStatusCode !== 200)
       throw new Error(
         `Something went wrong when stopping the EC2 instance (${instanceId}). More details ${JSON.stringify(response)}`,
+      );
+  }
+
+  async startVm(instanceId: string): Promise<void> {
+    const ec2Client = this.getEC2Client();
+
+    // Generate a new start instance command.
+    const command = new StartInstancesCommand({
+      InstanceIds: [instanceId],
+      DryRun: false,
+    });
+
+    // Run the command.
+    const response = await ec2Client.send(command);
+
+    if (response.$metadata.httpStatusCode !== 200)
+      throw new Error(
+        `Something went wrong when starting the EC2 instance (${instanceId}). More details ${JSON.stringify(response)}`,
       );
   }
 

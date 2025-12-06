@@ -9,6 +9,7 @@ import { VMInfrastructureModule } from './infrastructure/vm.infrastructure.modul
 import { CheckVMIsRunningUseCase } from './use-cases/check-vm-is-running.use-case';
 import { TerminateVmUseCase } from './use-cases/terminate-vm.use-case';
 import { StopVmUseCase } from './use-cases/stop-vm.use-case';
+import { StartVmUseCase } from './use-cases/start-vm.use-case';
 
 @Module({
   imports: [ScheduleModule.forRoot(), StorageModule, VMInfrastructureModule],
@@ -20,6 +21,7 @@ import { StopVmUseCase } from './use-cases/stop-vm.use-case';
     CheckVMIsRunningUseCase,
     TerminateVmUseCase,
     StopVmUseCase,
+    StartVmUseCase,
   ],
   exports: [VmService, VerificationMonitoringService],
 })
