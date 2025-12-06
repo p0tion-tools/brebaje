@@ -1,6 +1,7 @@
 import {
   DescribeInstanceStatusCommand,
   EC2Client,
+  StopInstancesCommand,
   TerminateInstancesCommand,
 } from '@aws-sdk/client-ec2';
 import { AWS_ACCESS_KEY_ID, AWS_REGION, AWS_SECRET_ACCESS_KEY } from 'src/utils/constants';
@@ -41,6 +42,24 @@ export class AWSEC2VMManagerService implements VMManagerService {
     if (response.$metadata.httpStatusCode !== 200)
       throw new Error(
         `Something went wrong when terminating the EC2 instance (${instanceId}). More details ${JSON.stringify(response)}`,
+      );
+  }
+
+  async stopVm(instanceId: string): Promise<void> {
+    const ec2Client = this.getEC2Client();
+
+    // Generate a new stop instance command.
+    const command = new StopInstancesCommand({
+      InstanceIds: [instanceId],
+      DryRun: false,
+    });
+
+    // Run the command.
+    const response = await ec2Client.send(command);
+
+    if (response.$metadata.httpStatusCode !== 200)
+      throw new Error(
+        `Something went wrong when stopping the EC2 instance (${instanceId}). More details ${JSON.stringify(response)}`,
       );
   }
 

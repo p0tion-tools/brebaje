@@ -9,6 +9,7 @@ import { VmLifecycleDto } from './dto/vm-lifecycle.dto';
 import { GetMonitoringStatusUseCase } from './use-cases/get-monitoring-status.use-case';
 import { CheckVMIsRunningUseCase } from './use-cases/check-vm-is-running.use-case';
 import { TerminateVmUseCase } from './use-cases/terminate-vm.use-case';
+import { StopVmUseCase } from './use-cases/stop-vm.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
@@ -20,6 +21,7 @@ export class VmController {
     private readonly checkVMIsRunningUseCase: CheckVMIsRunningUseCase,
     private readonly getMonitoringStatusUseCase: GetMonitoringStatusUseCase,
     private readonly terminateVmUseCase: TerminateVmUseCase,
+    private readonly stopVmUseCase: StopVmUseCase,
   ) {}
 
   @Post('verify')
@@ -214,17 +216,15 @@ export class VmController {
 
   @Post('stop')
   @ApiOperation({ summary: 'Stop an EC2 instance' })
-  @ApiResponse({ status: 200, description: 'Instance stop command sent successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instance stop command sent successfully',
+  })
   @ApiResponse({ status: 400, description: 'Failed to stop instance' })
   async stopInstance(@Body() lifecycleDto: VmLifecycleDto) {
     try {
-      await this.vmService.stopEC2Instance(lifecycleDto.instanceId);
-      return {
-        instanceId: lifecycleDto.instanceId,
-        action: 'stop',
-        status: 'success',
-        message: 'Instance stop command sent. It may take 1-2 minutes to shut down.',
-      };
+      const response = await this.stopVmUseCase.execute(lifecycleDto.instanceId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {
