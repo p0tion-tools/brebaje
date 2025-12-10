@@ -28,6 +28,12 @@ export class ParticipantsService {
     private readonly circuitsService: CircuitsService,
   ) {}
 
+  /**
+   * Creates a new participant.
+   *
+   * @param createParticipantDto - The DTO containing participant creation data
+   * @returns The created participant
+   */
   async create(createParticipantDto: CreateParticipantDto) {
     const participant = await this.participantModel.create({
       ...createParticipantDto,
@@ -62,7 +68,14 @@ export class ParticipantsService {
     }
   }
 
-  update(id: number, updateParticipantDto: UpdateParticipantDto) {
+  /**
+   * Updates a participant by ID.
+   *
+   * @param id - The participant's unique identifier
+   * @param _updateParticipantDto - The DTO containing the updated participant data
+   * @returns A message indicating the update action (not yet implemented)
+   */
+  update(id: number, _updateParticipantDto: UpdateParticipantDto) {
     return `This action updates a #${id} participant`;
   }
 
@@ -82,8 +95,10 @@ export class ParticipantsService {
 
   /**
    * Check if the pre-condition for interacting with a multi-part upload for an identified current contributor is valid.
-   * @notice the precondition is to be a current contributor (contributing status) in the uploading contribution step.
-   * @param participant - the participant entity to check.
+   * The precondition is to be a current contributor (contributing status) in the uploading contribution step.
+   *
+   * @param userId - The user ID of the participant
+   * @param ceremonyId - The ceremony ID
    * @throws BadRequestException if the participant is not in CONTRIBUTING status or not in UPLOADING step.
    */
   async checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(
@@ -108,9 +123,10 @@ export class ParticipantsService {
 
   /**
    * Helper function to check whether a contributor is uploading a file related to its contribution.
-   * @param contributorId <string> - the unique identifier of the contributor.
-   * @param ceremonyId <string> - the unique identifier of the ceremony.
-   * @param objectKey <string> - the object key of the file being uploaded.
+   *
+   * @param userId - The unique identifier of the contributor
+   * @param ceremonyId - The unique identifier of the ceremony
+   * @param objectKey - The object key of the file being uploaded
    */
   async checkUploadingFileValidity(userId: string, ceremonyId: number, objectKey: string) {
     const participant = await this.findByUserIdAndCeremonyId(userId, ceremonyId);
@@ -144,6 +160,28 @@ export class ParticipantsService {
     const zkeyNameContributor = `circuits/${name}/contributions/${name}_${contributorZKeyIndex}.zkey`;
     if (objectKey !== zkeyNameContributor) {
       throw new BadRequestException('Provided object key does not match contributor file name');
+    }
+  }
+
+  async addParticipantToCircuitsQueues(participant: Participant) {
+    const { userId, ceremonyId, contributionProgress } = participant;
+    const circuits = await this.circuitsService.findAllByCeremonyId(ceremonyId);
+
+    for (let index = contributionProgress || 0; index < circuits.length; index++) {
+      const circuit = circuits[index];
+      const { contributors } = circuit;
+
+      const isAlreadyInQueue = contributors?.includes(userId);
+      if (isAlreadyInQueue) {
+        continue;
+      }
+
+      const newContributors = contributors ? [...contributors, userId] : [userId];
+
+      circuit.contributors = newContributors;
+
+      participant.contributionProgress = index;
+      await Promise.all([participant.save(), circuit.save()]);
     }
   }
 
