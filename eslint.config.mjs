@@ -57,7 +57,7 @@ export default tseslint.config(
     rules: {
       "prettier/prettier": "error",
       // TSDoc syntax enforcement
-      "tsdoc/syntax": "warn",
+      "tsdoc/syntax": "error",
       // Allow unused variables prefixed with underscore
       "@typescript-eslint/no-unused-vars": [
         "error",
