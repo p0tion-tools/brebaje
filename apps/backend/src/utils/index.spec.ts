@@ -12,7 +12,7 @@ describe('fetchWithTimeout', () => {
     jest.clearAllMocks();
 
     // Mock setTimeout and clearTimeout with proper spies
-    setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation((fn, delay) => {
+    setTimeoutSpy = jest.spyOn(global, 'setTimeout').mockImplementation((_fn, _delay) => {
       // Return a mock timer ID
       return 12345 as unknown as NodeJS.Timeout;
     });
@@ -34,7 +34,6 @@ describe('fetchWithTimeout', () => {
     const result = await fetchWithTimeout('https://example.com');
 
     expect(mockFetch).toHaveBeenCalledWith('https://example.com', {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       signal: expect.any(AbortSignal),
     });
     expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 10000);
@@ -65,7 +64,7 @@ describe('fetchWithTimeout', () => {
 
     expect(mockFetch).toHaveBeenCalledWith('https://example.com', {
       ...options,
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
       signal: expect.any(AbortSignal),
     });
   });
@@ -125,7 +124,6 @@ describe('fetchWithTimeout', () => {
     const result = await fetchWithTimeout('https://example.com', {});
 
     expect(mockFetch).toHaveBeenCalledWith('https://example.com', {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       signal: expect.any(AbortSignal),
     });
     expect(result).toBe(mockResponse);
@@ -141,14 +139,13 @@ describe('fetchWithTimeout', () => {
 
     // The function should override the signal with its own AbortController
     expect(mockFetch).toHaveBeenCalledWith('https://example.com', {
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
       signal: expect.any(AbortSignal),
     });
 
     // Ensure the signal passed is not the original one
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+
     const callArgs = mockFetch.mock.calls[0];
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-member-access
+
     expect(callArgs[1].signal).not.toBe(existingController.signal);
   });
 
