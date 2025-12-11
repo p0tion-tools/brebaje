@@ -34,7 +34,7 @@ describe('fetchWithTimeout', () => {
     const result = await fetchWithTimeout('https://example.com');
 
     expect(mockFetch).toHaveBeenCalledWith('https://example.com', {
-      signal: expect.any(AbortSignal),
+      signal: expect.any(AbortSignal) as AbortSignal,
     });
     expect(setTimeoutSpy).toHaveBeenCalledWith(expect.any(Function), 10000);
     expect(clearTimeoutSpy).toHaveBeenCalled();
@@ -65,7 +65,7 @@ describe('fetchWithTimeout', () => {
     expect(mockFetch).toHaveBeenCalledWith('https://example.com', {
       ...options,
 
-      signal: expect.any(AbortSignal),
+      signal: expect.any(AbortSignal) as AbortSignal,
     });
   });
 
@@ -124,7 +124,7 @@ describe('fetchWithTimeout', () => {
     const result = await fetchWithTimeout('https://example.com', {});
 
     expect(mockFetch).toHaveBeenCalledWith('https://example.com', {
-      signal: expect.any(AbortSignal),
+      signal: expect.any(AbortSignal) as AbortSignal,
     });
     expect(result).toBe(mockResponse);
   });
@@ -139,12 +139,12 @@ describe('fetchWithTimeout', () => {
 
     // The function should override the signal with its own AbortController
     expect(mockFetch).toHaveBeenCalledWith('https://example.com', {
-      signal: expect.any(AbortSignal),
+      signal: expect.any(AbortSignal) as AbortSignal,
     });
 
     // Ensure the signal passed is not the original one
 
-    const callArgs = mockFetch.mock.calls[0];
+    const callArgs = mockFetch.mock.calls[0] as [string, RequestInit];
 
     expect(callArgs[1].signal).not.toBe(existingController.signal);
   });
