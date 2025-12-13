@@ -414,7 +414,7 @@ describe('ParticipantsService', () => {
       expect(mockCircuits[3].save).not.toHaveBeenCalled();
 
       // Verify contributionProgress updated to circuit 2 index (last circuit where participant was added)
-      // Note: contributionProgress is only updated when participant is added, not when skipped
+      // Note: contributionProgress represents the index of the last circuit to which the participant was successfully added (i.e., it is updated only when the participant is added, not when skipped)
       expect(mockParticipant.contributionProgress).toBe(2);
 
       // Verify save was called only once on participant (for circuit 2 only)
