@@ -424,10 +424,11 @@ describe('ParticipantsService', () => {
     it('should handle large number of circuits (N circuits scenario)', async () => {
       // Setup: 10 circuits
       const numCircuits = 10;
+      const EXISTING_PARTICIPANT_ID = 200;
       mockCircuits = Array.from({ length: numCircuits }, (_, i) => ({
         id: i + 1,
         name: `circuit${i + 1}`,
-        contributors: i % 2 === 0 ? [] : [200], // Alternate between empty and having contributor
+        contributors: i % 2 === 0 ? [] : [EXISTING_PARTICIPANT_ID], // Alternate between empty and having contributor
         save: jest.fn().mockResolvedValue(undefined),
       }));
 
@@ -446,7 +447,7 @@ describe('ParticipantsService', () => {
 
       // Verify participant was added to all circuits
       mockCircuits.forEach((circuit, index) => {
-        const expectedContributors = index % 2 === 0 ? [107] : [200, 107];
+        const expectedContributors = index % 2 === 0 ? [107] : [EXISTING_PARTICIPANT_ID, 107];
         expect(circuit.contributors).toEqual(expectedContributors);
         expect(circuit.save).toHaveBeenCalled();
       });
@@ -500,10 +501,11 @@ describe('ParticipantsService', () => {
       await service.addParticipantToCircuitsQueues(mockParticipant);
 
       // Verify contributionProgress was updated sequentially
-      expect(progressUpdates).toEqual([0, 1, 2]);
+      const expectedProgressUpdates = Array.from({ length: mockCircuits.length }, (_, i) => i);
+      expect(progressUpdates).toEqual(expectedProgressUpdates);
 
       // Verify final contributionProgress
-      expect(mockParticipant.contributionProgress).toBe(2);
+      expect(mockParticipant.contributionProgress).toBe(mockCircuits.length - 1);
     });
 
     it('should handle scenario where participant starts with non-zero contributionProgress and all remaining circuits already have them', async () => {
