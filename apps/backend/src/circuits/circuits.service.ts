@@ -79,7 +79,7 @@ export class CircuitsService {
     return this.circuitModel.findOne({ where: { id } });
   }
 
-  update(id: number, updateCircuitDto: UpdateCircuitDto) {
+  update(id: number, _updateCircuitDto: UpdateCircuitDto) {
     return `This action updates a #${id} circuit`;
   }
 

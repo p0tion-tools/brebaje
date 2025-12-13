@@ -200,7 +200,7 @@ if (Test-Command "node") {
 
 # Check pnpm
 Write-InfoMsg "Checking pnpm..."
-$pnpmRequired = "9.0.0"
+$pnpmRequired = "10.0.0"
 
 if (Test-Command "pnpm") {
     try {

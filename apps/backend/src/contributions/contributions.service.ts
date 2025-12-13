@@ -4,7 +4,7 @@ import { UpdateContributionDto } from './dto/update-contribution.dto';
 
 @Injectable()
 export class ContributionsService {
-  create(createContributionDto: CreateContributionDto) {
+  create(_createContributionDto: CreateContributionDto) {
     return 'This action adds a new contribution';
   }
 
@@ -16,7 +16,7 @@ export class ContributionsService {
     return `This action returns a #${id} contribution`;
   }
 
-  update(id: number, updateContributionDto: UpdateContributionDto) {
+  update(id: number, _updateContributionDto: UpdateContributionDto) {
     return `This action updates a #${id} contribution`;
   }
 
