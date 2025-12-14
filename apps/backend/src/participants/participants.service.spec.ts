@@ -35,37 +35,39 @@ describe('ParticipantsService', () => {
       mockCircuitsService.findAllByCeremonyId = jest.fn();
     });
 
+    // Helper function to create a mock circuit
+    const createMockCircuit = (id: number, name: string, contributors: number[] | null) => ({
+      id,
+      name,
+      contributors,
+      save: jest.fn().mockResolvedValue(undefined),
+    });
+
+    // Helper function to create a mock participant
+    const createMockParticipant = (
+      userId: number,
+      ceremonyId: number,
+      contributionProgress: number | undefined,
+      status: ParticipantStatus = ParticipantStatus.CREATED,
+      contributionStep: ParticipantContributionStep = ParticipantContributionStep.DOWNLOADING,
+    ) => ({
+      userId,
+      ceremonyId,
+      contributionProgress,
+      status,
+      contributionStep,
+      save: jest.fn().mockResolvedValue(undefined),
+    });
+
     it('should add a new participant (contributionProgress = 0) to all circuit queues', async () => {
       // Setup: 3 circuits with empty contributors
       mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: null,
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 2,
-          name: 'circuit2',
-          contributors: null,
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 3,
-          name: 'circuit3',
-          contributors: null,
-          save: jest.fn().mockResolvedValue(undefined),
-        },
+        createMockCircuit(1, 'circuit1', null),
+        createMockCircuit(2, 'circuit2', null),
+        createMockCircuit(3, 'circuit3', null),
       ];
 
-      mockParticipant = {
-        userId: 100,
-        ceremonyId: 1,
-        contributionProgress: 0,
-        status: ParticipantStatus.CREATED,
-        contributionStep: ParticipantContributionStep.DOWNLOADING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(100, 1, 0);
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -89,28 +91,11 @@ describe('ParticipantsService', () => {
     it('should add a new participant with undefined contributionProgress to all circuit queues', async () => {
       // Setup: 2 circuits
       mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: null,
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 2,
-          name: 'circuit2',
-          contributors: null,
-          save: jest.fn().mockResolvedValue(undefined),
-        },
+        createMockCircuit(1, 'circuit1', null),
+        createMockCircuit(2, 'circuit2', null),
       ];
 
-      mockParticipant = {
-        userId: 101,
-        ceremonyId: 1,
-        contributionProgress: undefined, // explicitly undefined
-        status: ParticipantStatus.CREATED,
-        contributionStep: ParticipantContributionStep.DOWNLOADING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(101, 1, undefined);
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -132,40 +117,19 @@ describe('ParticipantsService', () => {
     it('should resume adding an old participant (contributionProgress > 0) to remaining circuits', async () => {
       // Setup: 4 circuits, participant already contributed to first 2
       mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: [100, 200],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 2,
-          name: 'circuit2',
-          contributors: [100, 300],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 3,
-          name: 'circuit3',
-          contributors: [200],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 4,
-          name: 'circuit4',
-          contributors: null,
-          save: jest.fn().mockResolvedValue(undefined),
-        },
+        createMockCircuit(1, 'circuit1', [100, 200]),
+        createMockCircuit(2, 'circuit2', [100, 300]),
+        createMockCircuit(3, 'circuit3', [200]),
+        createMockCircuit(4, 'circuit4', null),
       ];
 
-      mockParticipant = {
-        userId: 100,
-        ceremonyId: 1,
-        contributionProgress: 2, // Starting from circuit index 2
-        status: ParticipantStatus.CONTRIBUTING,
-        contributionStep: ParticipantContributionStep.COMPUTING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(
+        100,
+        1,
+        2,
+        ParticipantStatus.CONTRIBUTING,
+        ParticipantContributionStep.COMPUTING,
+      );
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -192,23 +156,9 @@ describe('ParticipantsService', () => {
 
     it('should handle participant with a single circuit', async () => {
       // Setup: Only 1 circuit
-      mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: [],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-      ];
+      mockCircuits = [createMockCircuit(1, 'circuit1', [])];
 
-      mockParticipant = {
-        userId: 102,
-        ceremonyId: 1,
-        contributionProgress: 0,
-        status: ParticipantStatus.CREATED,
-        contributionStep: ParticipantContributionStep.DOWNLOADING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(102, 1, 0);
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -227,29 +177,9 @@ describe('ParticipantsService', () => {
 
     it('should add participant to circuits with empty contributors array', async () => {
       // Setup: Circuits with empty arrays
-      mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: [],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 2,
-          name: 'circuit2',
-          contributors: [],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-      ];
+      mockCircuits = [createMockCircuit(1, 'circuit1', []), createMockCircuit(2, 'circuit2', [])];
 
-      mockParticipant = {
-        userId: 103,
-        ceremonyId: 1,
-        contributionProgress: 0,
-        status: ParticipantStatus.CREATED,
-        contributionStep: ParticipantContributionStep.DOWNLOADING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(103, 1, 0);
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -268,28 +198,11 @@ describe('ParticipantsService', () => {
     it('should add participant to circuits with existing contributors', async () => {
       // Setup: Circuits already have contributors
       mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: [200, 300],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 2,
-          name: 'circuit2',
-          contributors: [400],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
+        createMockCircuit(1, 'circuit1', [200, 300]),
+        createMockCircuit(2, 'circuit2', [400]),
       ];
 
-      mockParticipant = {
-        userId: 104,
-        ceremonyId: 1,
-        contributionProgress: 0,
-        status: ParticipantStatus.CREATED,
-        contributionStep: ParticipantContributionStep.DOWNLOADING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(104, 1, 0);
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -308,34 +221,12 @@ describe('ParticipantsService', () => {
     it('should skip circuits where participant is already in queue', async () => {
       // Setup: Participant already in some circuit queues
       mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: [105, 200],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 2,
-          name: 'circuit2',
-          contributors: [300],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 3,
-          name: 'circuit3',
-          contributors: [105, 400],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
+        createMockCircuit(1, 'circuit1', [105, 200]),
+        createMockCircuit(2, 'circuit2', [300]),
+        createMockCircuit(3, 'circuit3', [105, 400]),
       ];
 
-      mockParticipant = {
-        userId: 105,
-        ceremonyId: 1,
-        contributionProgress: 0,
-        status: ParticipantStatus.CREATED,
-        contributionStep: ParticipantContributionStep.DOWNLOADING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(105, 1, 0);
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -358,40 +249,19 @@ describe('ParticipantsService', () => {
     it('should handle mixed scenario: participant resuming with some circuits already containing them', async () => {
       // Setup: Participant at contributionProgress 1, already in some queues
       mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: [106, 200],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 2,
-          name: 'circuit2',
-          contributors: [106, 300],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 3,
-          name: 'circuit3',
-          contributors: [400],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 4,
-          name: 'circuit4',
-          contributors: [106, 500],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
+        createMockCircuit(1, 'circuit1', [106, 200]),
+        createMockCircuit(2, 'circuit2', [106, 300]),
+        createMockCircuit(3, 'circuit3', [400]),
+        createMockCircuit(4, 'circuit4', [106, 500]),
       ];
 
-      mockParticipant = {
-        userId: 106,
-        ceremonyId: 1,
-        contributionProgress: 1, // Start from circuit index 1
-        status: ParticipantStatus.CONTRIBUTING,
-        contributionStep: ParticipantContributionStep.COMPUTING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(
+        106,
+        1,
+        1,
+        ParticipantStatus.CONTRIBUTING,
+        ParticipantContributionStep.COMPUTING,
+      );
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -425,21 +295,11 @@ describe('ParticipantsService', () => {
       // Setup: 10 circuits
       const numCircuits = 10;
       const EXISTING_PARTICIPANT_ID = 200;
-      mockCircuits = Array.from({ length: numCircuits }, (_, i) => ({
-        id: i + 1,
-        name: `circuit${i + 1}`,
-        contributors: i % 2 === 0 ? [] : [EXISTING_PARTICIPANT_ID], // Alternate between empty and having contributor
-        save: jest.fn().mockResolvedValue(undefined),
-      }));
+      mockCircuits = Array.from({ length: numCircuits }, (_, i) =>
+        createMockCircuit(i + 1, `circuit${i + 1}`, i % 2 === 0 ? [] : [EXISTING_PARTICIPANT_ID]),
+      );
 
-      mockParticipant = {
-        userId: 107,
-        ceremonyId: 1,
-        contributionProgress: 0,
-        status: ParticipantStatus.CREATED,
-        contributionStep: ParticipantContributionStep.DOWNLOADING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(107, 1, 0);
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -462,39 +322,18 @@ describe('ParticipantsService', () => {
     it('should correctly update contributionProgress from 0 through each circuit', async () => {
       // Setup: 3 circuits to track progress updates
       mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: null,
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 2,
-          name: 'circuit2',
-          contributors: null,
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 3,
-          name: 'circuit3',
-          contributors: null,
-          save: jest.fn().mockResolvedValue(undefined),
-        },
+        createMockCircuit(1, 'circuit1', null),
+        createMockCircuit(2, 'circuit2', null),
+        createMockCircuit(3, 'circuit3', null),
       ];
 
       const progressUpdates: number[] = [];
 
-      mockParticipant = {
-        userId: 108,
-        ceremonyId: 1,
-        contributionProgress: 0,
-        status: ParticipantStatus.CREATED,
-        contributionStep: ParticipantContributionStep.DOWNLOADING,
-        save: jest.fn().mockImplementation(() => {
-          progressUpdates.push(mockParticipant.contributionProgress);
-          return Promise.resolve(undefined);
-        }),
-      };
+      mockParticipant = createMockParticipant(108, 1, 0);
+      mockParticipant.save = jest.fn().mockImplementation(() => {
+        progressUpdates.push(mockParticipant.contributionProgress);
+        return Promise.resolve(undefined);
+      });
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
@@ -511,40 +350,19 @@ describe('ParticipantsService', () => {
     it('should handle scenario where participant starts with non-zero contributionProgress and all remaining circuits already have them', async () => {
       // Setup: Participant at progress 2, already in all remaining circuits
       mockCircuits = [
-        {
-          id: 1,
-          name: 'circuit1',
-          contributors: [109],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 2,
-          name: 'circuit2',
-          contributors: [109],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 3,
-          name: 'circuit3',
-          contributors: [109, 200],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
-        {
-          id: 4,
-          name: 'circuit4',
-          contributors: [109],
-          save: jest.fn().mockResolvedValue(undefined),
-        },
+        createMockCircuit(1, 'circuit1', [109]),
+        createMockCircuit(2, 'circuit2', [109]),
+        createMockCircuit(3, 'circuit3', [109, 200]),
+        createMockCircuit(4, 'circuit4', [109]),
       ];
 
-      mockParticipant = {
-        userId: 109,
-        ceremonyId: 1,
-        contributionProgress: 2, // Start from circuit index 2
-        status: ParticipantStatus.CONTRIBUTING,
-        contributionStep: ParticipantContributionStep.COMPUTING,
-        save: jest.fn().mockResolvedValue(undefined),
-      };
+      mockParticipant = createMockParticipant(
+        109,
+        1,
+        2,
+        ParticipantStatus.CONTRIBUTING,
+        ParticipantContributionStep.COMPUTING,
+      );
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
