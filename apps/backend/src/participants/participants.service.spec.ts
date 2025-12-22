@@ -73,7 +73,9 @@ describe('ParticipantsService', () => {
       contributionProgress: number | undefined,
       status: ParticipantStatus = ParticipantStatus.CREATED,
       contributionStep: ParticipantContributionStep = ParticipantContributionStep.DOWNLOADING,
+      id?: number,
     ): Partial<Participant> => ({
+      id: id || userId, // Default to userId if not specified
       userId,
       ceremonyId,
       contributionProgress,
@@ -403,6 +405,218 @@ describe('ParticipantsService', () => {
 
       // contributionProgress should remain at 2 (no updates)
       expect(mockParticipant.contributionProgress).toBe(2);
+    });
+
+    it('should skip circuits where participant has already contributed', async () => {
+      // Setup: 3 circuits, participant has already contributed to circuit 2
+      mockCircuits = [
+        createMockCircuit(1, 'circuit1'),
+        createMockCircuit(2, 'circuit2'),
+        createMockCircuit(3, 'circuit3'),
+      ];
+
+      mockParticipant = createMockParticipant(110, 1, 0);
+
+      (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
+
+      // Mock that participant has already contributed to circuit 2 (index 1)
+      (mockContributionsService.findValidOneByCircuitIdAndParticipantId as jest.Mock)
+        .mockResolvedValueOnce(null) // Circuit 1 - no contribution
+        .mockResolvedValueOnce({ id: 1, circuitId: 2, participantId: 110 }) // Circuit 2 - has contribution
+        .mockResolvedValueOnce(null); // Circuit 3 - no contribution
+
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
+
+      // Verify participant was added to circuits 1 and 3, but not 2
+      expect(mockCircuits[0].contributors).toEqual([110]);
+      expect(mockCircuits[1].contributors).toBeUndefined(); // Not modified
+      expect(mockCircuits[2].contributors).toEqual([110]);
+
+      // Verify save was called only on circuits 1 and 3
+      expect(mockCircuits[0].save).toHaveBeenCalled();
+      expect(mockCircuits[1].save).not.toHaveBeenCalled();
+      expect(mockCircuits[2].save).toHaveBeenCalled();
+
+      // Verify participant save was called twice (for circuits 1 and 3)
+      expect(mockParticipant.save).toHaveBeenCalledTimes(2);
+
+      // Verify contributionProgress updated to last circuit index
+      expect(mockParticipant.contributionProgress).toBe(2);
+    });
+
+    it('should skip all circuits where participant has already contributed', async () => {
+      // Setup: Participant has contributed to all circuits
+      mockCircuits = [
+        createMockCircuit(1, 'circuit1'),
+        createMockCircuit(2, 'circuit2'),
+        createMockCircuit(3, 'circuit3'),
+      ];
+
+      mockParticipant = createMockParticipant(111, 1, 0);
+
+      (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
+
+      // Mock that participant has already contributed to all circuits
+      (mockContributionsService.findValidOneByCircuitIdAndParticipantId as jest.Mock)
+        .mockResolvedValueOnce({ id: 1, circuitId: 1, participantId: 111 })
+        .mockResolvedValueOnce({ id: 2, circuitId: 2, participantId: 111 })
+        .mockResolvedValueOnce({ id: 3, circuitId: 3, participantId: 111 });
+
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
+
+      // Verify no circuits were modified
+      expect(mockCircuits[0].contributors).toBeUndefined();
+      expect(mockCircuits[1].contributors).toBeUndefined();
+      expect(mockCircuits[2].contributors).toBeUndefined();
+
+      // Verify no saves were called
+      expect(mockCircuits[0].save).not.toHaveBeenCalled();
+      expect(mockCircuits[1].save).not.toHaveBeenCalled();
+      expect(mockCircuits[2].save).not.toHaveBeenCalled();
+      expect(mockParticipant.save).not.toHaveBeenCalled();
+
+      // contributionProgress should remain at 0 (no updates)
+      expect(mockParticipant.contributionProgress).toBe(0);
+    });
+
+    it('should handle mixed scenario: participant in queue, already contributed, and new circuits', async () => {
+      // Setup: Complex scenario with multiple conditions
+      mockCircuits = [
+        createMockCircuit(1, 'circuit1', [112]), // Already in queue
+        createMockCircuit(2, 'circuit2'), // Already contributed
+        createMockCircuit(3, 'circuit3'), // New circuit to add
+        createMockCircuit(4, 'circuit4', [200]), // Already contributed
+        createMockCircuit(5, 'circuit5'), // New circuit to add
+      ];
+
+      mockParticipant = createMockParticipant(112, 1, 0);
+
+      (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
+
+      // Mock contributions
+      (mockContributionsService.findValidOneByCircuitIdAndParticipantId as jest.Mock)
+        // Circuit 1 - no contribution (but already in queue so we do not need mock value)
+        .mockResolvedValueOnce({ id: 1, circuitId: 2, participantId: 112 }) // Circuit 2 - has contribution
+        .mockResolvedValueOnce(null) // Circuit 3 - no contribution
+        .mockResolvedValueOnce({ id: 2, circuitId: 4, participantId: 112 }) // Circuit 4 - has contribution
+        .mockResolvedValueOnce(null); // Circuit 5 - no contribution
+
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
+
+      // Verify circuit 1 was not modified (already in queue)
+      expect(mockCircuits[0].contributors).toEqual([112]);
+      expect(mockCircuits[0].save).not.toHaveBeenCalled();
+
+      // Verify circuit 2 was not modified (already contributed)
+      expect(mockCircuits[1].contributors).toBeUndefined();
+      expect(mockCircuits[1].save).not.toHaveBeenCalled();
+
+      // Verify participant was added to circuit 3
+      expect(mockCircuits[2].contributors).toEqual([112]);
+      expect(mockCircuits[2].save).toHaveBeenCalled();
+
+      // Verify circuit 4 was not modified (already contributed)
+      expect(mockCircuits[3].contributors).toEqual([200]);
+      expect(mockCircuits[3].save).not.toHaveBeenCalled();
+
+      // Verify participant was added to circuit 5
+      expect(mockCircuits[4].contributors).toEqual([112]);
+      expect(mockCircuits[4].save).toHaveBeenCalled();
+
+      // Verify participant save was called twice (for circuits 3 and 5)
+      expect(mockParticipant.save).toHaveBeenCalledTimes(2);
+
+      // Verify contributionProgress updated to last circuit index
+      expect(mockParticipant.contributionProgress).toBe(4);
+    });
+
+    it('should handle participant resuming from middle with some circuits already contributed', async () => {
+      // Setup: Participant resuming from circuit 2, has contributed to circuit 3
+      mockCircuits = [
+        createMockCircuit(1, 'circuit1', [113]),
+        createMockCircuit(2, 'circuit2', [113]),
+        createMockCircuit(3, 'circuit3'), // Already contributed
+        createMockCircuit(4, 'circuit4'), // New circuit to add
+        createMockCircuit(5, 'circuit5'), // New circuit to add
+      ];
+
+      mockParticipant = createMockParticipant(
+        113,
+        1,
+        2,
+        ParticipantStatus.CONTRIBUTING,
+        ParticipantContributionStep.COMPUTING,
+      );
+
+      (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
+
+      // Mock contributions (only called for circuits starting from index 2 - circuit #3)
+      (mockContributionsService.findValidOneByCircuitIdAndParticipantId as jest.Mock)
+        .mockResolvedValueOnce({ id: 1, circuitId: 3, participantId: 113 }) // Circuit 3 - has contribution
+        .mockResolvedValueOnce(null) // Circuit 4 - no contribution
+        .mockResolvedValueOnce(null); // Circuit 5 - no contribution
+
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
+
+      // Verify circuits 0 and 1 were not processed (before contributionProgress)
+      expect(mockCircuits[0].contributors).toEqual([113]);
+      expect(mockCircuits[0].save).not.toHaveBeenCalled();
+      expect(mockCircuits[1].contributors).toEqual([113]);
+      expect(mockCircuits[1].save).not.toHaveBeenCalled();
+
+      // Verify circuit 2 was not modified (already contributed)
+      expect(mockCircuits[2].contributors).toBeUndefined();
+      expect(mockCircuits[2].save).not.toHaveBeenCalled();
+
+      // Verify participant was added to circuits 3 and 4
+      expect(mockCircuits[3].contributors).toEqual([113]);
+      expect(mockCircuits[3].save).toHaveBeenCalled();
+      expect(mockCircuits[4].contributors).toEqual([113]);
+      expect(mockCircuits[4].save).toHaveBeenCalled();
+
+      // Verify participant save was called twice (for circuits 4 and 5)
+      expect(mockParticipant.save).toHaveBeenCalledTimes(2);
+
+      // Verify contributionProgress updated to last circuit index
+      expect(mockParticipant.contributionProgress).toBe(4);
+    });
+
+    it('should prioritize already in queue check over already contributed check', async () => {
+      // Setup: Participant is in queue but has also contributed (edge case)
+      mockCircuits = [
+        createMockCircuit(1, 'circuit1', [114]), // In queue AND contributed
+        createMockCircuit(2, 'circuit2'), // New circuit
+      ];
+
+      mockParticipant = createMockParticipant(114, 1, 0);
+
+      (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
+
+      // Mock contributions - should NOT be called for circuit 1 because it's already in queue
+      (
+        mockContributionsService.findValidOneByCircuitIdAndParticipantId as jest.Mock
+      ).mockResolvedValueOnce(null); // Only called for circuit 2
+
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
+
+      // Verify circuit 1 was not modified (already in queue, contribution check skipped)
+      expect(mockCircuits[0].contributors).toEqual([114]);
+      expect(mockCircuits[0].save).not.toHaveBeenCalled();
+
+      // Verify participant was added to circuit 2
+      expect(mockCircuits[1].contributors).toEqual([114]);
+      expect(mockCircuits[1].save).toHaveBeenCalled();
+
+      // Verify findValidOneByCircuitIdAndParticipantId was called only once (for circuit 2)
+      expect(
+        mockContributionsService.findValidOneByCircuitIdAndParticipantId,
+      ).toHaveBeenCalledTimes(1);
+
+      // Verify participant save was called once
+      expect(mockParticipant.save).toHaveBeenCalledTimes(1);
+
+      // Verify contributionProgress updated
+      expect(mockParticipant.contributionProgress).toBe(1);
     });
   });
 });
