@@ -9,7 +9,7 @@ import { TemporaryParticipantContributionData } from 'src/types';
 export interface ParticipantAttributes {
   userId: number;
   ceremonyId: number;
-  id?: number;
+  id: number;
   status: ParticipantStatus;
   contributionStep: ParticipantContributionStep;
   contributionProgress?: number;
@@ -22,7 +22,6 @@ export interface ParticipantAttributes {
 export type ParticipantPk = 'id';
 export type ParticipantId = Participant[ParticipantPk];
 export type ParticipantOptionalAttributes =
-  | 'id'
   | 'status'
   | 'contributionProgress'
   | 'contributionStartedAt'
@@ -52,9 +51,8 @@ export class Participant extends Model implements ParticipantAttributes {
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    allowNull: false,
   })
-  declare id?: number;
+  declare id: number;
 
   @Column({
     type: DataType.ENUM(...Object.values(ParticipantStatus)),

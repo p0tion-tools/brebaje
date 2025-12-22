@@ -18,6 +18,7 @@ import { ParticipantStatus, ParticipantContributionStep } from 'src/types/enums'
 import { InjectModel } from '@nestjs/sequelize';
 import { formatZkeyIndex } from '@brebaje/actions';
 import { CircuitsService } from 'src/circuits/circuits.service';
+import { ContributionsService } from 'src/contributions/contributions.service';
 
 @Injectable()
 export class ParticipantsService {
@@ -26,6 +27,8 @@ export class ParticipantsService {
     private participantModel: typeof Participant,
     @Inject(forwardRef(() => CircuitsService))
     private readonly circuitsService: CircuitsService,
+    @Inject(forwardRef(() => ContributionsService))
+    private readonly contributionsService: ContributionsService,
   ) {}
 
   /**
@@ -172,7 +175,18 @@ export class ParticipantsService {
       const { contributors } = circuit;
 
       const isAlreadyInQueue = contributors?.includes(userId);
+
       if (isAlreadyInQueue) {
+        continue;
+      }
+
+      const alreadyContributed =
+        await this.contributionsService.findValidOneByCircuitIdAndParticipantId(
+          circuit.id,
+          participant.id,
+        );
+
+      if (alreadyContributed) {
         continue;
       }
 

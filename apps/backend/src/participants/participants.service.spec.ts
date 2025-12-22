@@ -3,20 +3,29 @@ import { ParticipantsService } from './participants.service';
 import { getModelToken } from '@nestjs/sequelize';
 import { Participant } from './participant.model';
 import { CircuitsService } from 'src/circuits/circuits.service';
-import { ParticipantStatus, ParticipantContributionStep } from 'src/types/enums';
+import {
+  ParticipantStatus,
+  ParticipantContributionStep,
+  CircuitTimeoutType,
+} from 'src/types/enums';
+import { Circuit } from 'src/circuits/circuit.model';
+import { ContributionsService } from 'src/contributions/contributions.service';
 
 describe('ParticipantsService', () => {
   let service: ParticipantsService;
   let mockCircuitsService: Partial<CircuitsService>;
+  let mockContributionsService: Partial<ContributionsService>;
 
   beforeEach(async () => {
     mockCircuitsService = {};
+    mockContributionsService = {};
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ParticipantsService,
         { provide: getModelToken(Participant), useValue: {} },
         { provide: CircuitsService, useValue: mockCircuitsService },
+        { provide: ContributionsService, useValue: mockContributionsService },
       ],
     }).compile();
 
@@ -28,17 +37,31 @@ describe('ParticipantsService', () => {
   });
 
   describe('addParticipantToCircuitsQueues', () => {
-    let mockCircuits;
-    let mockParticipant;
+    let mockCircuits: Partial<Circuit>[];
+    let mockParticipant: Partial<Participant>;
 
     beforeEach(() => {
       mockCircuitsService.findAllByCeremonyId = jest.fn();
+      mockContributionsService.findValidOneByCircuitIdAndParticipantId = jest
+        .fn()
+        .mockResolvedValue(null);
     });
 
     // Helper function to create a mock circuit
-    const createMockCircuit = (id: number, name: string, contributors: number[] | null) => ({
+    const createMockCircuit = (
+      id: number,
+      name: string,
+      contributors?: number[],
+    ): Partial<Circuit> => ({
+      ceremonyId: 1,
       id,
       name,
+      timeoutMechanismType: CircuitTimeoutType.FIXED,
+      sequencePosition: id,
+      completedContributions: 0,
+      failedContributions: 0,
+      verification: { serverOrVm: 'server' },
+      artifacts: { r1csStoragePath: '', wasmStoragePath: '' },
       contributors,
       save: jest.fn().mockResolvedValue(undefined),
     });
@@ -50,7 +73,7 @@ describe('ParticipantsService', () => {
       contributionProgress: number | undefined,
       status: ParticipantStatus = ParticipantStatus.CREATED,
       contributionStep: ParticipantContributionStep = ParticipantContributionStep.DOWNLOADING,
-    ) => ({
+    ): Partial<Participant> => ({
       userId,
       ceremonyId,
       contributionProgress,
@@ -62,16 +85,16 @@ describe('ParticipantsService', () => {
     it('should add a new participant (contributionProgress = 0) to all circuit queues', async () => {
       // Setup: 3 circuits with empty contributors
       mockCircuits = [
-        createMockCircuit(1, 'circuit1', null),
-        createMockCircuit(2, 'circuit2', null),
-        createMockCircuit(3, 'circuit3', null),
+        createMockCircuit(1, 'circuit1'),
+        createMockCircuit(2, 'circuit2'),
+        createMockCircuit(3, 'circuit3'),
       ];
 
       mockParticipant = createMockParticipant(100, 1, 0);
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify participant was added to all circuits
       expect(mockCircuits[0].contributors).toEqual([100]);
@@ -90,16 +113,13 @@ describe('ParticipantsService', () => {
 
     it('should add a new participant with undefined contributionProgress to all circuit queues', async () => {
       // Setup: 2 circuits
-      mockCircuits = [
-        createMockCircuit(1, 'circuit1', null),
-        createMockCircuit(2, 'circuit2', null),
-      ];
+      mockCircuits = [createMockCircuit(1, 'circuit1'), createMockCircuit(2, 'circuit2')];
 
       mockParticipant = createMockParticipant(101, 1, undefined);
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify participant was added to all circuits
       expect(mockCircuits[0].contributors).toEqual([101]);
@@ -120,7 +140,7 @@ describe('ParticipantsService', () => {
         createMockCircuit(1, 'circuit1', [100, 200]),
         createMockCircuit(2, 'circuit2', [100, 300]),
         createMockCircuit(3, 'circuit3', [200]),
-        createMockCircuit(4, 'circuit4', null),
+        createMockCircuit(4, 'circuit4'),
       ];
 
       mockParticipant = createMockParticipant(
@@ -133,7 +153,7 @@ describe('ParticipantsService', () => {
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify first two circuits were not modified
       expect(mockCircuits[0].contributors).toEqual([100, 200]);
@@ -162,7 +182,7 @@ describe('ParticipantsService', () => {
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify participant was added to the single circuit
       expect(mockCircuits[0].contributors).toEqual([102]);
@@ -183,7 +203,7 @@ describe('ParticipantsService', () => {
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify participant was added to both circuits
       expect(mockCircuits[0].contributors).toEqual([103]);
@@ -206,7 +226,7 @@ describe('ParticipantsService', () => {
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify participant was appended to existing contributors
       expect(mockCircuits[0].contributors).toEqual([200, 300, 104]);
@@ -230,7 +250,7 @@ describe('ParticipantsService', () => {
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify circuit 1 and 3 were not modified (already has participant)
       expect(mockCircuits[0].contributors).toEqual([105, 200]);
@@ -265,7 +285,7 @@ describe('ParticipantsService', () => {
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify circuit 0 was not processed (start from index 1)
       expect(mockCircuits[0].contributors).toEqual([106, 200]);
@@ -303,7 +323,7 @@ describe('ParticipantsService', () => {
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify participant was added to all circuits
       mockCircuits.forEach((circuit, index) => {
@@ -322,22 +342,22 @@ describe('ParticipantsService', () => {
     it('should correctly update contributionProgress from 0 through each circuit', async () => {
       // Setup: 3 circuits to track progress updates
       mockCircuits = [
-        createMockCircuit(1, 'circuit1', null),
-        createMockCircuit(2, 'circuit2', null),
-        createMockCircuit(3, 'circuit3', null),
+        createMockCircuit(1, 'circuit1'),
+        createMockCircuit(2, 'circuit2'),
+        createMockCircuit(3, 'circuit3'),
       ];
 
       const progressUpdates: number[] = [];
 
       mockParticipant = createMockParticipant(108, 1, 0);
       mockParticipant.save = jest.fn().mockImplementation(() => {
-        progressUpdates.push(mockParticipant.contributionProgress);
+        progressUpdates.push((mockParticipant as Participant).contributionProgress!);
         return Promise.resolve(undefined);
       });
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify contributionProgress was updated sequentially
       const expectedProgressUpdates = Array.from({ length: mockCircuits.length }, (_, i) => i);
@@ -366,7 +386,7 @@ describe('ParticipantsService', () => {
 
       (mockCircuitsService.findAllByCeremonyId as jest.Mock).mockResolvedValue(mockCircuits);
 
-      await service.addParticipantToCircuitsQueues(mockParticipant);
+      await service.addParticipantToCircuitsQueues(mockParticipant as Participant);
 
       // Verify no circuits were modified
       expect(mockCircuits[0].contributors).toEqual([109]);
