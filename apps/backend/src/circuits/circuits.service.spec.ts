@@ -4,6 +4,7 @@ import { CircuitsService } from './circuits.service';
 import { Circuit } from './circuit.model';
 import { VmService } from 'src/vm/vm.service';
 import { StorageService } from 'src/storage/storage.service';
+import { ParticipantsService } from 'src/participants/participants.service';
 
 describe('CircuitsService', () => {
   let service: CircuitsService;
@@ -15,6 +16,7 @@ describe('CircuitsService', () => {
   };
   let mockVmService: Partial<VmService>;
   let mockStorageService: Partial<StorageService>;
+  let mockParticipantsService: Partial<ParticipantsService>;
 
   beforeEach(async () => {
     mockCircuitModel = {
@@ -34,6 +36,8 @@ describe('CircuitsService', () => {
       uploadObject: jest.fn(),
     };
 
+    mockParticipantsService = {};
+
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         CircuitsService,
@@ -48,6 +52,10 @@ describe('CircuitsService', () => {
         {
           provide: StorageService,
           useValue: mockStorageService,
+        },
+        {
+          provide: ParticipantsService,
+          useValue: mockParticipantsService,
         },
       ],
     }).compile();
