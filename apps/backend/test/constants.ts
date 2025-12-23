@@ -38,6 +38,8 @@ export const circuits: CircuitCreationAttributes[] = [
     timeoutMechanismType: CircuitTimeoutType.FIXED,
     fixedTimeWindow: 5 * 60 * 1000, // five minutes
     sequencePosition: 1,
+    completedContributions: 0,
+    failedContributions: 0,
     artifacts: {
       r1csStoragePath:
         'https://github.com/0xbow-io/privacy-pools-core/raw/refs/heads/dev/packages/circuits/build/withdraw/withdraw.r1cs',

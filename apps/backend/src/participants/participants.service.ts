@@ -14,11 +14,12 @@ import {
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Participant } from './participant.model';
-import { ParticipantStatus, ParticipantContributionStep } from 'src/types/enums';
+import { ParticipantStatus, ParticipantContributionStep, CeremonyState } from 'src/types/enums';
 import { InjectModel } from '@nestjs/sequelize';
 import { formatZkeyIndex } from '@brebaje/actions';
 import { CircuitsService } from 'src/circuits/circuits.service';
 import { ContributionsService } from 'src/contributions/contributions.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class ParticipantsService {
@@ -66,6 +67,26 @@ export class ParticipantsService {
       }
 
       return participant;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  async findTimedOutParticipantsOfOpenCeremonies() {
+    try {
+      const participants = await this.participantModel.findAll({
+        where: {
+          status: ParticipantStatus.TIMEDOUT,
+        },
+        include: [
+          {
+            association: 'ceremony',
+            where: { state: CeremonyState.OPENED },
+            required: true,
+          },
+        ],
+      });
+      return participants;
     } catch (error) {
       this.handleErrors(error as Error);
     }
@@ -196,6 +217,22 @@ export class ParticipantsService {
 
       participant.contributionProgress = index;
       await Promise.all([participant.save(), circuit.save()]);
+    }
+  }
+
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async monitorTimedOutParticipants() {
+    const participants = await this.findTimedOutParticipantsOfOpenCeremonies();
+
+    for (const participant of participants) {
+      const { timeout } = participant;
+
+      const lastTimeout = timeout ? timeout[timeout.length - 1] : null;
+      const timeoutExpired = lastTimeout && lastTimeout.endDate < Date.now();
+
+      if (timeoutExpired) {
+        await this.addParticipantToCircuitsQueues(participant);
+      }
     }
   }
 

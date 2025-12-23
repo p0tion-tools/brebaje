@@ -1,4 +1,5 @@
 import type { VolumeType } from '@aws-sdk/client-ec2';
+import { ParticipantTimeoutType } from 'src/types/enums';
 
 export type UserErrorResponse = {
   message: string;
@@ -65,13 +66,12 @@ export type CircuitArtifactsType = {
 
 /**
  * Group information about the VM configuration for circuit contribution verification.
- * @dev the coordinator could choose among CF and VM.
- * @notice the VM configurations could be retrieved at https://aws.amazon.com/ec2/instance-types/.
- * @typedef {Object} VMConfiguration
- * @property {string} [vmConfigurationType] - the VM configuration type.
- * @property {string} [vmDiskType] - the VM volume type (e.g., gp2)
- * @property {number} [vmDiskSize] - the VM disk size in GB.
- * @property {string} [vmInstanceId] - the VM instance identifier (after VM instantiation).
+ * the coordinator could choose among CF and VM.
+ * the VM configurations could be retrieved at https://aws.amazon.com/ec2/instance-types/.
+ * vmConfigurationType - the VM configuration type.
+ * vmDiskType - the VM volume type (e.g., gp2)
+ * vmDiskSize - the VM disk size in GB.
+ * vmInstanceId - the VM instance identifier (after VM instantiation).
  */
 export type VMConfiguration = {
   vmConfigurationType: string;
@@ -92,4 +92,15 @@ export type CircuitVerificationType =
 export type NotificationConfig = {
   coordinatorEmail?: string;
   webhookUrl?: string;
+};
+
+/**
+ * end date of the timeout period in milliseconds
+ * start date of the timeout period in milliseconds
+ * type of timeout
+ */
+export type ParticipantTimeout = {
+  endDate: number;
+  startDate: number;
+  type: ParticipantTimeoutType;
 };
