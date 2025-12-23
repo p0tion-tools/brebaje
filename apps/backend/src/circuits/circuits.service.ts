@@ -1,4 +1,10 @@
-import { Injectable, Inject, forwardRef } from '@nestjs/common';
+import {
+  Injectable,
+  Inject,
+  forwardRef,
+  BadRequestException,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { CreateCircuitDto } from './dto/create-circuit.dto';
 import { UpdateCircuitDto } from './dto/update-circuit.dto';
 import { InjectModel } from '@nestjs/sequelize';
@@ -6,6 +12,8 @@ import { Circuit } from './circuit.model';
 import { vmBootstrapScriptFilename } from '@brebaje/actions';
 import { VmService } from 'src/vm/vm.service';
 import { StorageService } from 'src/storage/storage.service';
+import { CeremonyState } from 'src/types/enums';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class CircuitsService {
@@ -60,15 +68,36 @@ export class CircuitsService {
       createCircuitDto.verification.vm.vmInstanceId = instance.instanceId;
     }
 
-    const circuit = await this.circuitModel.create({
-      ...createCircuitDto,
-    });
+    try {
+      const circuit = await this.circuitModel.create({
+        ...createCircuitDto,
+      });
+      return circuit;
+    } catch (error) {
+      switch ((error as Error).name) {
+        case 'SequelizeForeignKeyConstraintError':
+          throw new BadRequestException('Invalid ceremonyId provided');
 
-    return circuit;
+        default:
+          throw new InternalServerErrorException((error as Error).message);
+      }
+    }
   }
 
   findAll() {
     return this.circuitModel.findAll();
+  }
+
+  findAllFromOpenedCeremonies() {
+    return this.circuitModel.findAll({
+      include: [
+        {
+          association: 'ceremony',
+          where: { state: CeremonyState.OPENED },
+          required: true,
+        },
+      ],
+    });
   }
 
   findAllByCeremonyId(ceremonyId: number) {
@@ -87,5 +116,14 @@ export class CircuitsService {
     await this.circuitModel.destroy({ where: { id } });
     // TODO: delete EC2 vm if exists
     return { message: `Circuit deleted successfully` };
+  }
+
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async coordinate() {
+    const circuits = await this.findAllFromOpenedCeremonies();
+
+    for (const circuit of circuits) {
+      console.log(circuit.ceremony.penalty);
+    }
   }
 }
