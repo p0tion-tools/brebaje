@@ -207,6 +207,44 @@ export class CircuitsService {
     await this.shiftToNextContributor(circuit);
   }
 
+  /**
+   * Coordinates the ceremony contribution process by managing participant status transitions
+   * and circuit queue progression for all circuits in opened ceremonies.
+   *
+   * @remarks
+   * **Participant Status Flow:**
+   *
+   * 1. **WAITING → READY**
+   *    - Occurs when current contributor is set to READY
+   *    - Indicates the participant is now eligible to start contributing (user should download previous participant's contribution)
+   *
+   * 2. **READY or CONTRIBUTING → TIMEDOUT**
+   *    - Triggered when participant exceeds the allowed time window for contribution
+   *
+   * 3. **CONTRIBUTED or FINALIZED → DONE or WAITING**
+   *    - **If in VERIFYING step:**
+   *      - Check for verification timeout (server or vm should move participant from verifying to completed if successful verification)
+   *
+   *    - **If in COMPLETED step:**
+   *      - **All circuits completed:** Status changes to `DONE`
+   *      - **More circuits pending:** Status changes to `WAITING` (participant waits for next circuit)
+   *
+   * 4. **TIMEDOUT**
+   *    - Participant was manually timedout so kick him out of current contributor
+   *    - Queue shifts to next contributor
+   *
+   * **Queue Management:**
+   *
+   * - If `currentContributor` is `undefined`, the function attempts to shift to the next contributor
+   * - If the current participant document doesn't exist, shifts to next contributor
+   * - Each status check may trigger `shiftToNextContributor()` to advance the queue
+   *
+   * @see {@link ParticipantStatus} for all possible participant statuses
+   * @see {@link ParticipantTimeoutType} for timeout types
+   * @see {@link shiftToNextContributor} for queue advancement logic
+   * @see {@link checkAndAddTimeout} for timeout checking and application
+   *
+   */
   @Cron(CronExpression.EVERY_10_SECONDS)
   async coordinate() {
     const circuits = await this.findAllFromOpenedCeremonies();
