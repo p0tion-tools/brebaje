@@ -15,6 +15,7 @@ import { StorageService } from 'src/storage/storage.service';
 import {
   CeremonyState,
   CircuitTimeoutType,
+  ParticipantContributionStep,
   ParticipantStatus,
   ParticipantTimeoutType,
 } from 'src/types/enums';
@@ -128,6 +129,20 @@ export class CircuitsService {
     return { message: `Circuit deleted successfully` };
   }
 
+  async shiftToNextContributor(circuit: Circuit) {
+    const { contributors } = circuit;
+    const pendingContributors = contributors && contributors.length > 0;
+
+    if (pendingContributors) {
+      circuit.currentContributor = contributors.shift();
+      circuit.contributors = contributors;
+    } else {
+      circuit.currentContributor = undefined;
+    }
+
+    await circuit.save();
+  }
+
   isParticipantTimedOutOnCircuit(participant: Participant, circuit: Circuit): boolean {
     const { updatedAt } = participant;
     const { timeoutMechanismType } = circuit;
@@ -156,109 +171,119 @@ export class CircuitsService {
     }
   }
 
+  async addTimeOut(participant: Participant, circuit: Circuit, type: ParticipantTimeoutType) {
+    const { penalty } = circuit.ceremony;
+
+    const newTimeout: ParticipantTimeout = {
+      startDate: Date.now(),
+      endDate: Date.now() + penalty,
+      type: type,
+    };
+
+    const { timeout } = participant;
+
+    if (timeout) {
+      timeout.push(newTimeout);
+      participant.timeout = timeout;
+    } else {
+      participant.timeout = [newTimeout];
+    }
+
+    participant.status = ParticipantStatus.TIMEDOUT;
+    await participant.save();
+  }
+
+  async checkAndAddTimeout(
+    participant: Participant,
+    circuit: Circuit,
+    type: ParticipantTimeoutType,
+  ) {
+    const isTimedOut = this.isParticipantTimedOutOnCircuit(participant, circuit);
+
+    if (isTimedOut) {
+      await this.addTimeOut(participant, circuit, type);
+    }
+
+    await this.shiftToNextContributor(circuit);
+  }
+
   @Cron(CronExpression.EVERY_10_SECONDS)
   async coordinate() {
     const circuits = await this.findAllFromOpenedCeremonies();
 
     for (const circuit of circuits) {
-      const { contributors, currentContributor } = circuit;
-
-      const pendingContributors = contributors && contributors.length > 0;
+      const { currentContributor } = circuit;
 
       if (currentContributor === undefined) {
-        if (pendingContributors) {
-          circuit.currentContributor = contributors.shift();
-          circuit.contributors = contributors;
-          await circuit.save();
-        }
+        await this.shiftToNextContributor(circuit);
         return;
       }
 
       const currentParticipant = await this.participantsService.findOne(currentContributor);
       // participant document could be inexistent if it was manually removed
       if (!currentParticipant) {
-        if (pendingContributors) {
-          circuit.currentContributor = contributors.shift();
-          circuit.contributors = contributors;
-        } else {
-          circuit.currentContributor = undefined;
-        }
-
-        await circuit.save();
+        await this.shiftToNextContributor(circuit);
         return;
       }
 
       const { status: currentParticipantStatus } = currentParticipant;
 
-      // CREATED to WAITING happens when participant is added to the circuit
+      switch (currentParticipantStatus) {
+        case ParticipantStatus.WAITING: {
+          currentParticipant.status = ParticipantStatus.READY;
+          await currentParticipant.save();
+          break;
+        }
 
-      // WAITING to READY if it is participant's turn
-      // TODO: implement LOBBY mechanism here
-      if (currentParticipantStatus === ParticipantStatus.WAITING) {
-        currentParticipant.status = ParticipantStatus.READY;
-        await currentParticipant.save();
-        return;
-      }
+        case ParticipantStatus.READY:
+        case ParticipantStatus.CONTRIBUTING: {
+          await this.checkAndAddTimeout(
+            currentParticipant,
+            circuit,
+            ParticipantTimeoutType.BLOCKING_CONTRIBUTION,
+          );
+          break;
+        }
 
-      // TODO: implement READY to TIMEDOUT happens when participant doesn't start contribution in time
+        case ParticipantStatus.CONTRIBUTED:
+        case ParticipantStatus.FINALIZED: {
+          const { contributionStep, contributionProgress } = currentParticipant;
 
-      // READY to CONTRIBUTING happens when participant downloads the contribution files
-
-      // CONTRIBUTING to TIMEDOUT
-      if (currentParticipantStatus === ParticipantStatus.CONTRIBUTING) {
-        const isTimedOut = this.isParticipantTimedOutOnCircuit(currentParticipant, circuit);
-
-        // if timed out -> mark as TIMEDOUT and move to next contributor in the circuit object
-        if (isTimedOut) {
-          const { penalty } = circuit.ceremony;
-
-          const newTimeout: ParticipantTimeout = {
-            startDate: Date.now(),
-            endDate: Date.now() + penalty,
-            type: ParticipantTimeoutType.BLOCKING_CONTRIBUTION,
-          };
-
-          const { timeout } = currentParticipant;
-
-          if (timeout) {
-            timeout.push(newTimeout);
-            currentParticipant.timeout = timeout;
-          } else {
-            currentParticipant.timeout = [newTimeout];
+          if (contributionStep === ParticipantContributionStep.VERIFYING) {
+            await this.checkAndAddTimeout(
+              currentParticipant,
+              circuit,
+              ParticipantTimeoutType.BLOCKING_VERIFICATION,
+            );
           }
 
-          currentParticipant.status = ParticipantStatus.TIMEDOUT;
+          if (contributionStep === ParticipantContributionStep.COMPLETED) {
+            const allCircuitsCompleted =
+              contributionProgress && circuits.length < contributionProgress;
 
-          await currentParticipant.save();
+            if (allCircuitsCompleted) {
+              currentParticipant.status = ParticipantStatus.DONE;
+              await currentParticipant.save();
+            } else {
+              // Participant has more circuits to contribute to
+              currentParticipant.status = ParticipantStatus.WAITING;
+              await currentParticipant.save();
+            }
 
-          circuit.currentContributor = contributors ? contributors.shift() : undefined;
-          circuit.contributors = contributors;
-          await circuit.save();
-        }
-        return;
-      }
+            await this.shiftToNextContributor(circuit);
+            return;
+          }
 
-      // CONTRIBUTING to CONTRIBUTED happens when participant uploads the contribution files
-      // TODO: CONTRIBUTED to DONE happens when verification finishes for ALL circuits
-
-      // TODO: CONTRIBUTING to TIMEDOUT happens when participant has not moved from ContributionStep in time
-
-      // READY to FINALIZING happens when participant starts finalization step
-      // TODO: FINALIZING to FINALIZED happens when verification finishes for ALL circuits
-
-      // TIMEDOUT to WAITING
-      if (currentParticipantStatus === ParticipantStatus.TIMEDOUT) {
-        const { timeout } = currentParticipant;
-        if (!timeout || timeout.length === 0) {
-          currentParticipant.status = ParticipantStatus.WAITING;
-          // TODO: rejoin participant to circuit contributors list
-          await currentParticipant.save();
-          return;
+          break;
         }
 
-        // TODO: check if timeout is over
-        // TODO: mark as WAITING
-        // TODO: rejoin participant to circuit contributors list
+        case ParticipantStatus.TIMEDOUT: {
+          await this.shiftToNextContributor(circuit);
+          break;
+        }
+
+        default:
+          break;
       }
     }
   }
