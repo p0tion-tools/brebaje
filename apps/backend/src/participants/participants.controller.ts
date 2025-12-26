@@ -29,7 +29,7 @@ export class ParticipantsController {
     return this.participantsService.findAll();
   }
 
-  @Get('find-one')
+  @Get(':id')
   @ApiOperation({ summary: 'Find a participant by ID' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'Return the participant.', type: Participant })
@@ -38,7 +38,7 @@ export class ParticipantsController {
     return this.participantsService.findOne(id);
   }
 
-  @Patch('update')
+  @Patch(':id')
   @ApiOperation({ summary: 'Update a participant' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({
@@ -51,7 +51,7 @@ export class ParticipantsController {
     return this.participantsService.update(id, updateParticipantDto);
   }
 
-  @Delete('delete')
+  @Delete(':id')
   @ApiOperation({ summary: 'Delete a participant' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'The participant has been successfully deleted.' })

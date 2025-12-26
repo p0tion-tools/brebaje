@@ -28,9 +28,6 @@ export default tseslint.config(
   ...tseslint.configs.recommendedTypeChecked,
   eslintPluginPrettierRecommended,
   {
-    linterOptions: {
-      reportUnusedDisableDirectives: false,
-    },
     plugins: {
       tsdoc: tsdoc,
     },
