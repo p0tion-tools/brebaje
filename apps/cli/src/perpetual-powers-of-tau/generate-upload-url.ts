@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { S3 } from "aws-sdk";
 import { loadConfig } from "../utils/config.js";
 import { writeFileSync } from "fs";

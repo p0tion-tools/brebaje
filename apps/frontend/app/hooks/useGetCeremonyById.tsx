@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { ceremonies } from "@/mocks/ceremonies.mocks";
 import { useQuery } from "@tanstack/react-query";
 

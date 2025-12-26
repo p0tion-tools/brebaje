@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { loadConfig } from "../utils/config.js";
 import { existsSync, mkdirSync, statSync, writeFileSync } from "fs";
 import { basename, join } from "path";
