@@ -1,5 +1,8 @@
-import { getBucketName, sanitizeString, genesisZkeyIndex } from "../build/index.js";
+// import { getBucketName, sanitizeString, genesisZkeyIndex } from "../build/index.js";
 import { strictEqual } from "node:assert";
+import { genesisZkeyIndex } from "src/helpers/constants";
+import { getBucketName } from "src/helpers/storage";
+import { sanitizeString } from "src/helpers/utils";
 
 // Test getBucketName function
 const bucketName = getBucketName("test-postfix", "MyProject", "My Ceremony");
