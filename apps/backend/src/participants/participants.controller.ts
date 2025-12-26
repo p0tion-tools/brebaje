@@ -34,8 +34,8 @@ export class ParticipantsController {
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'Return the participant.', type: Participant })
   @ApiResponse({ status: 404, description: 'Participant not found.' })
-  findOne(@Param('id') id: string) {
-    return this.participantsService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.participantsService.findOne(id);
   }
 
   @Patch(':id')
@@ -47,8 +47,8 @@ export class ParticipantsController {
     type: Participant,
   })
   @ApiResponse({ status: 404, description: 'Participant not found.' })
-  update(@Param('id') id: string, @Body() updateParticipantDto: UpdateParticipantDto) {
-    return this.participantsService.update(+id, updateParticipantDto);
+  update(@Param('id') id: number, @Body() updateParticipantDto: UpdateParticipantDto) {
+    return this.participantsService.update(id, updateParticipantDto);
   }
 
   @Delete(':id')
@@ -56,7 +56,7 @@ export class ParticipantsController {
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'The participant has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Participant not found.' })
-  remove(@Param('id') id: string) {
-    return this.participantsService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.participantsService.remove(id);
   }
 }

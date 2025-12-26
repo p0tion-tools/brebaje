@@ -51,6 +51,9 @@ export type CircuitCreationAttributes = Optional<CircuitAttributes, CircuitOptio
 
 @Table({ tableName: 'circuits' })
 export class Circuit extends Model implements CircuitAttributes {
+  declare createdAt: Date;
+  declare updatedAt: Date;
+
   @Column({
     type: DataType.INTEGER,
     allowNull: false,

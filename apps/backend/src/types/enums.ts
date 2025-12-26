@@ -53,3 +53,8 @@ export enum ParticipantTimeoutType {
   BLOCKING_VERIFICATION = 'BLOCKING_VERIFICATION',
   UNKNOWN = 'UNKNOWN',
 }
+
+export enum VerificationMachineType {
+  SERVER = 'server',
+  VM = 'vm',
+}

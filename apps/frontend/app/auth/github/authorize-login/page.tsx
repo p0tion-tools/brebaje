@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 "use client";
 
 import { Suspense, useEffect, useState } from "react";
@@ -44,6 +46,7 @@ function GitHubCallbackInternal() {
             router.push("/");
           }, 4000);
         } catch (parseError) {
+          console.error(parseError);
           setStatus("error");
           setMessage("Failed to parse user data from authentication response");
         }

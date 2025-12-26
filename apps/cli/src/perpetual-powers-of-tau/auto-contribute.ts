@@ -96,6 +96,7 @@ export async function autoContributePerpetualPowersOfTau(jsonPath?: string): Pro
       const jsonContent = readFileSync(ceremonyUrlsPath, "utf-8");
       ceremonyUrls = JSON.parse(jsonContent);
       console.log(`📄 Using ceremony URLs from: ${ceremonyUrlsPath}`);
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       console.error(`❌ Error: Failed to read ceremony URLs file: ${ceremonyUrlsPath}`);
       console.error(`Please ensure the file contains valid JSON`);

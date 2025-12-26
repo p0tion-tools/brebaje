@@ -12,7 +12,7 @@ export const vmBootstrapScriptFilename = "bootstrap.sh";
 
 /**
  * Define the PPoT Trusted Setup ceremony output powers of tau files size (in GB).
- * @dev the powers of tau files can be retrieved at https://github.com/weijiekoh/perpetualpowersoftau
+ * @remarks The powers of tau files can be retrieved at https://github.com/weijiekoh/perpetualpowersoftau
  */
 export const powersOfTauFiles = [
   {

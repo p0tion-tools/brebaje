@@ -32,9 +32,9 @@ import {
 export class VmService {
   /**
    * Return the list of bootstrap commands to be executed.
-   * @dev the startup commands must be suitable for a shell script.
-   * @param bucketName <string> - the name of the AWS S3 bucket.
-   * @returns <Array<string>> - the list of startup commands to be executed.
+   * @remarks The startup commands must be suitable for a shell script.
+   * @param bucketName - The name of the AWS S3 bucket.
+   * @returns The list of startup commands to be executed.
    */
   vmBootstrapCommands(bucketName: string): Array<string> {
     return [
@@ -46,9 +46,9 @@ export class VmService {
 
   /**
    * Return the list of Node environment (and packages) installation plus artifact caching for contribution verification.
-   * @param zKeyPath <string> - the path to zKey artifact inside AWS S3 bucket.
-   * @param potPath <string> - the path to ptau artifact inside AWS S3 bucket.
-   * @returns <Array<string>> - the array of commands to be run by the EC2 instance.
+   * @param zKeyPath - The path to zKey artifact inside AWS S3 bucket.
+   * @param potPath - The path to ptau artifact inside AWS S3 bucket.
+   * @returns The array of commands to be run by the EC2 instance.
    */
   vmDependenciesAndCacheArtifactsCommand(zKeyPath: string, potPath: string): Array<string> {
     return [
@@ -81,11 +81,11 @@ export class VmService {
 
   /**
    * Compute the VM disk size.
-   * @dev the disk size is computed using the zKey size in bytes taking into consideration
+   * @remarks The disk size is computed using the zKey size in bytes taking into consideration
    * the verification task (2 * zKeySize) + ptauSize + OS/VM (~8GB).
-   * @param zKeySizeInBytes <number> the size of the zKey in bytes.
-   * @param pot <number> the amount of powers needed for the circuit (index of the PPoT file).
-   * @return <number> the configuration of the VM disk size in GB.
+   * @param zKeySizeInBytes - The size of the zKey in bytes.
+   * @param pot - The amount of powers needed for the circuit (index of the PPoT file).
+   * @returns The configuration of the VM disk size in GB.
    */
   computeDiskSizeForVM(zKeySizeInBytes: number, pot: number): number {
     const index = pot - 1;
@@ -110,7 +110,7 @@ export class VmService {
 
   /**
    * Get the EC2 client to create new AWS instances
-   * @returns <EC2Client> - the instance of the EC2 client.
+   * @returns The instance of the EC2 client.
    */
   getEC2Client() {
     return new EC2Client({
@@ -124,7 +124,7 @@ export class VmService {
 
   /**
    * Get the SSM client to interact with AWS Systems Manager (interact with EC2 instances).
-   * @returns <SSMClient> - the instance of the SSM client.
+   * @returns The instance of the SSM client.
    */
   getSSMClient() {
     return new SSMClient({
@@ -138,11 +138,11 @@ export class VmService {
 
   /**
    * Creates a new EC2 instance
-   * @param commands <Array<string>> - the list of commands to be run on the EC2 instance.
-   * @param instanceType <string> - the type of the EC2 VM instance.
-   * @param diskSize <number> - the size of the disk (volume) of the VM.
-   * @param diskType <VolumeType> - the type of the disk (volume) of the VM.
-   * @returns <Promise<EC2Instance>> the instance that was created
+   * @param commands - The list of commands to be run on the EC2 instance.
+   * @param instanceType - The type of the EC2 VM instance.
+   * @param volumeSize - The size of the disk (volume) of the VM.
+   * @param diskType - The type of the disk (volume) of the VM.
+   * @returns The instance that was created
    */
   async createEC2Instance(
     commands: string[],
@@ -225,15 +225,18 @@ export class VmService {
         keyName: instance.KeyName,
         launchTime: instance.LaunchTime.toISOString(),
       };
-    } catch (error: any) {
-      throw new Error(`Something went wrong when creating the EC2 instance. More details ${error}`);
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      throw new Error(
+        `Something went wrong when creating the EC2 instance. More details ${errorMessage}`,
+      );
     }
   }
 
   /**
    * Check if the current VM EC2 instance is running by querying the status.
-   * @param instanceId <string> - the unique identifier of the EC2 VM instance.
-   * @returns <Promise<boolean>> - true if the current status of the EC2 VM instance is 'running'; otherwise false.
+   * @param instanceId - The unique identifier of the EC2 VM instance.
+   * @returns True if the current status of the EC2 VM instance is 'running'; otherwise false.
    */
   async checkIfRunning(instanceId: string): Promise<boolean> {
     const ec2Client = this.getEC2Client();
@@ -264,8 +267,8 @@ export class VmService {
 
   /**
    * Start an EC2 VM instance.
-   * @dev the instance must have been created previously.
-   * @param instanceId <string> - the unique identifier of the EC2 VM instance.
+   * @remarks The instance must have been created previously.
+   * @param instanceId - The unique identifier of the EC2 VM instance.
    */
   async startEC2Instance(instanceId: string) {
     const ec2Client = this.getEC2Client();
@@ -287,8 +290,8 @@ export class VmService {
 
   /**
    * Stop an EC2 VM instance.
-   * @dev the instance must have been in a running status.
-   * @param instanceId <string> - the unique identifier of the EC2 VM instance.
+   * @remarks The instance must have been in a running status.
+   * @param instanceId - The unique identifier of the EC2 VM instance.
    */
   async stopEC2Instance(instanceId: string) {
     const ec2Client = this.getEC2Client();
@@ -310,7 +313,7 @@ export class VmService {
 
   /**
    * Terminate an EC2 VM instance.
-   * @param instanceId <string> - the unique identifier of the EC2 VM instance.
+   * @param instanceId - The unique identifier of the EC2 VM instance.
    */
   async terminateEC2Instance(instanceId: string) {
     const ec2Client = this.getEC2Client();
@@ -332,11 +335,11 @@ export class VmService {
 
   /**
    * Run a command on an EC2 VM instance by using SSM.
-   * @dev this method returns the command identifier for checking the status and retrieve
+   * @remarks This method returns the command identifier for checking the status and retrieve
    * the output of the command execution later on.
-   * @param instanceId <string> - the unique identifier of the EC2 VM instance.
-   * @param commands <Array<string>> - the list of commands.
-   * @return <Promise<string>> - the unique identifier of the command.
+   * @param instanceId - The unique identifier of the EC2 VM instance.
+   * @param commands - The list of commands.
+   * @returns The unique identifier of the command.
    */
   async runCommandUsingSSM(instanceId: string, commands: Array<string>): Promise<string> {
     const ssmClient = this.getSSMClient();
@@ -355,18 +358,19 @@ export class VmService {
       // Run the command.
       const response = await ssmClient.send(new SendCommandCommand(params));
       return response.Command!.CommandId!;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(
-        `Something went wrong when trying to run a command on the EC2 instance. More details ${error}`,
+        `Something went wrong when trying to run a command on the EC2 instance. More details ${errorMessage}`,
       );
     }
   }
 
   /**
    * Get the output of an SSM command executed on an EC2 VM instance.
-   * @param instanceId <string> - the unique identifier of the EC2 VM instance.
-   * @param commandId <string> - the unique identifier of the command.
-   * @return <Promise<string>> - the command output.
+   * @param instanceId - The unique identifier of the EC2 VM instance.
+   * @param commandId - The unique identifier of the command.
+   * @returns The command output.
    */
   async retrieveCommandOutput(instanceId: string, commandId: string): Promise<string> {
     const ssmClient = this.getSSMClient();
@@ -382,18 +386,19 @@ export class VmService {
       const response = await ssmClient.send(command);
 
       return response.StandardOutputContent!;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(
-        `Something went wrong when trying to retrieve the command ${commandId} output on the EC2 instance (${instanceId}). More details ${error}`,
+        `Something went wrong when trying to retrieve the command ${commandId} output on the EC2 instance (${instanceId}). More details ${errorMessage}`,
       );
     }
   }
 
   /**
    * Get the status of an SSM command executed on an EC2 VM instance.
-   * @param instanceId <string> - the unique identifier of the EC2 VM instance.
-   * @param commandId <string> - the unique identifier of the command.
-   * @return <Promise<string>> - the command status.
+   * @param instanceId - The unique identifier of the EC2 VM instance.
+   * @param commandId - The unique identifier of the command.
+   * @returns The command status.
    */
   async retrieveCommandStatus(instanceId: string, commandId: string): Promise<string> {
     const ssmClient = this.getSSMClient();
@@ -408,18 +413,19 @@ export class VmService {
       // Run the command.
       const response = await ssmClient.send(command);
       return response.Status!;
-    } catch (error: any) {
+    } catch (error: unknown) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
       throw new Error(
-        `Something went wrong when trying to retrieve the command ${commandId} status on the EC2 instance (${instanceId}). More details ${error}`,
+        `Something went wrong when trying to retrieve the command ${commandId} status on the EC2 instance (${instanceId}). More details ${errorMessage}`,
       );
     }
   }
 
   /**
    * Return the list of commands for verification of a phase 1 contribution (Powers of Tau).
-   * @param bucketName <string> - the name of the AWS S3 bucket.
-   * @param lastPtauStoragePath <string> - the last ptau storage path.
-   * @returns Array<string> - the list of commands for contribution verification.
+   * @param bucketName - The name of the AWS S3 bucket.
+   * @param lastPtauStoragePath - The last ptau storage path.
+   * @returns The list of commands for contribution verification.
    */
   vmVerificationPhase1Command(bucketName: string, lastPtauStoragePath: string): Array<string> {
     // Extract filename from path (e.g., "Cardano-PPOT/pot10_0008.ptau" -> "pot10_0008.ptau")
@@ -445,11 +451,11 @@ export class VmService {
 
   /**
    * Return the list of commands for verification of a phase 2 contribution.
-   * @dev this method generates the verification transcript as well.
-   * @param bucketName <string> - the name of the AWS S3 bucket.
-   * @param lastZkeyStoragePath <string> - the last zKey storage path.
-   * @param verificationTranscriptStoragePathAndFilename <string> - the verification transcript storage path.
-   * @returns Array<string> - the list of commands for contribution verification.
+   * @remarks This method generates the verification transcript as well.
+   * @param bucketName - The name of the AWS S3 bucket.
+   * @param lastZkeyStoragePath - The last zKey storage path.
+   * @param verificationTranscriptStoragePathAndFilename - The verification transcript storage path.
+   * @returns The list of commands for contribution verification.
    */
   vmVerificationPhase2Command(
     bucketName: string,
@@ -468,10 +474,10 @@ export class VmService {
 
   /**
    * Evaluate verification command results and return HTTP status code.
-   * @dev this method interprets SSM command execution results for verification operations.
-   * @param commandOutput <string> - the stdout from the verification command.
-   * @param commandStatus <string> - the execution status from SSM.
-   * @returns <number> - HTTP status code (200 for success, 400 for verification failure).
+   * @remarks This method interprets SSM command execution results for verification operations.
+   * @param commandOutput - The stdout from the verification command.
+   * @param commandStatus - The execution status from SSM.
+   * @returns HTTP status code (200 for success, 400 for verification failure).
    */
   evaluateVerificationResult(commandOutput: string, commandStatus: string): number {
     // Check if SSM command executed successfully

@@ -1,5 +1,5 @@
 import type { VolumeType } from '@aws-sdk/client-ec2';
-import { ParticipantTimeoutType } from 'src/types/enums';
+import { ParticipantTimeoutType, VerificationMachineType } from 'src/types/enums';
 
 export type UserErrorResponse = {
   message: string;
@@ -82,10 +82,10 @@ export type VMConfiguration = {
 
 export type CircuitVerificationType =
   | {
-      serverOrVm: 'server';
+      serverOrVm: VerificationMachineType.SERVER;
     }
   | {
-      serverOrVm: 'vm';
+      serverOrVm: VerificationMachineType.VM;
       vm: VMConfiguration;
     };
 

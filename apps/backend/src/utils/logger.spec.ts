@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { ScriptLogger } from './logger';
 
 describe('ScriptLogger', () => {

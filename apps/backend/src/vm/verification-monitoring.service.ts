@@ -22,11 +22,11 @@ export class VerificationMonitoringService {
 
   /**
    * Start monitoring a verification job.
-   * @param commandId <string> - SSM command ID to monitor.
-   * @param instanceId <string> - EC2 instance ID.
-   * @param notificationConfig <NotificationConfig> - Optional notification configuration.
-   * @param autoStop <boolean> - Whether to automatically stop instance when verification completes.
-   * @param ptauFilename <string> - Optional ptau filename being verified.
+   * @param commandId - SSM command ID to monitor.
+   * @param instanceId - EC2 instance ID.
+   * @param notificationConfig - Optional notification configuration.
+   * @param autoStop - Whether to automatically stop instance when verification completes.
+   * @param ptauFilename - Optional ptau filename being verified.
    */
   startMonitoring(
     commandId: string,
@@ -116,10 +116,10 @@ export class VerificationMonitoringService {
 
   /**
    * Send notification when verification completes.
-   * @param notificationConfig <NotificationConfig> - Notification configuration.
-   * @param result <number> - HTTP status code (200/400).
-   * @param commandId <string> - Command ID for reference.
-   * @param status <string> - SSM command status.
+   * @param notificationConfig - Notification configuration.
+   * @param result - HTTP status code (200/400).
+   * @param commandId - Command ID for reference.
+   * @param status - SSM command status.
    */
   private sendNotification(
     notificationConfig: NotificationConfig,
@@ -146,10 +146,10 @@ export class VerificationMonitoringService {
 
   /**
    * Send Discord notification when verification completes.
-   * @param result <number> - HTTP status code (200/400).
-   * @param commandId <string> - Command ID for reference.
-   * @param status <string> - SSM command status.
-   * @param ptauFilename <string> - Optional ptau filename being verified.
+   * @param result - HTTP status code (200/400).
+   * @param commandId - Command ID for reference.
+   * @param status - SSM command status.
+   * @param ptauFilename - Optional ptau filename being verified.
    */
   private async sendDiscordNotification(
     result: number,

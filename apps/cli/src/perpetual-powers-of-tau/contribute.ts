@@ -1,3 +1,5 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import { execSync } from "child_process";
 import { loadConfig } from "../utils/config.js";
 import crypto from "crypto";
@@ -216,7 +218,8 @@ export async function contributePerpetualPowersOfTau(name?: string): Promise<voi
     try {
       const verifyCommand = `npx snarkjs powersoftau verify ${outputFile}`;
       contributionOutput = execSync(verifyCommand, { encoding: "utf-8" });
-    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    } catch (error) {
       console.warn("⚠️  Could not capture verification details for record");
       contributionOutput = `Contribution completed successfully for ${basename(outputFile)}`;
     }

@@ -70,7 +70,7 @@ export class StorageController {
   @Post('multipart/start')
   startMultipartUpload(
     @Query('id') ceremonyId: number,
-    @Query('userId') userId: string,
+    @Query('userId') userId: number,
     @Body() data: ObjectKeyDto,
   ) {
     return this.storageService.startMultipartUpload(data, ceremonyId, userId);
@@ -86,7 +86,7 @@ export class StorageController {
   @Post('multipart/urls')
   generatePreSignedUrlsParts(
     @Query('id') ceremonyId: number,
-    @Query('userId') userId: string,
+    @Query('userId') userId: number,
     @Body() data: GeneratePreSignedUrlsPartsData,
   ) {
     return this.storageService.generatePreSignedUrlsParts(data, ceremonyId, userId);
@@ -102,7 +102,7 @@ export class StorageController {
   @Post('multipart/complete')
   completeMultipartUpload(
     @Query('id') ceremonyId: number,
-    @Query('userId') userId: string,
+    @Query('userId') userId: number,
     @Body() data: CompleteMultiPartUploadData,
   ) {
     return this.storageService.completeMultipartUpload(data, ceremonyId, userId);

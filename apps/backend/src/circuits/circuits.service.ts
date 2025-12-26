@@ -4,6 +4,8 @@ import {
   forwardRef,
   BadRequestException,
   InternalServerErrorException,
+  NotFoundException,
+  Logger,
 } from '@nestjs/common';
 import { CreateCircuitDto } from './dto/create-circuit.dto';
 import { UpdateCircuitDto } from './dto/update-circuit.dto';
@@ -18,6 +20,7 @@ import {
   ParticipantContributionStep,
   ParticipantStatus,
   ParticipantTimeoutType,
+  VerificationMachineType,
 } from 'src/types/enums';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ParticipantsService } from 'src/participants/participants.service';
@@ -36,8 +39,10 @@ export class CircuitsService {
     private readonly participantsService: ParticipantsService,
   ) {}
 
+  private readonly logger = new Logger(CircuitsService.name);
+
   async create(createCircuitDto: CreateCircuitDto) {
-    if (createCircuitDto.verification.serverOrVm === 'vm') {
+    if (createCircuitDto.verification.serverOrVm === VerificationMachineType.VM) {
       // Fetch the ceremony bucket name.
       const bucketName = await this.storageService.getCeremonyBucketName(
         createCircuitDto.ceremonyId,
@@ -119,13 +124,55 @@ export class CircuitsService {
     return this.circuitModel.findOne({ where: { id } });
   }
 
+  async findOneByCeremonyIdAndProgress(ceremonyId: number, progress: number) {
+    const circuits = await this.circuitModel.findAll({ where: { ceremonyId } });
+
+    if (progress < 0) {
+      throw new Error(`Progress cannot be negative, received: ${progress}`);
+    }
+
+    if (progress > circuits.length) {
+      throw new Error(
+        `Progress (${progress}) exceeds number of circuits (${circuits.length}) for the given ceremony`,
+      );
+    }
+
+    const circuit = circuits[progress];
+    if (!circuit) {
+      throw new Error(`Circuit not found for ceremony ${ceremonyId} at progress index ${progress}`);
+    }
+
+    return circuit;
+  }
+
   update(id: number, _updateCircuitDto: UpdateCircuitDto) {
     return `This action updates a #${id} circuit`;
   }
 
   async remove(id: number) {
+    const circuit = await this.circuitModel.findOne({ where: { id } });
+    if (!circuit) {
+      throw new NotFoundException(`Circuit with ID ${id} not found`);
+    }
+
+    if (
+      circuit.verification.serverOrVm === VerificationMachineType.VM &&
+      !!circuit.verification.vm.vmInstanceId
+    ) {
+      try {
+        await this.vmService.stopEC2Instance(circuit.verification.vm.vmInstanceId);
+        await this.vmService.terminateEC2Instance(circuit.verification.vm.vmInstanceId);
+      } catch (error) {
+        this.logger.error(
+          `Failed to terminate VM instance ${circuit.verification.vm.vmInstanceId} for circuit ${id}: ${
+            (error as Error).message
+          }`,
+        );
+      }
+    }
+
     await this.circuitModel.destroy({ where: { id } });
-    // TODO: delete EC2 vm if exists
+
     return { message: `Circuit deleted successfully` };
   }
 
