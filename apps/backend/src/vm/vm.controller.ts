@@ -1,24 +1,39 @@
 import { Controller, Post, Get, Body, Param, Query } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
-import { VmService } from './vm.service';
-import { VerificationMonitoringService } from './verification-monitoring.service';
-import { StorageService } from '../storage/storage.service';
 import { VerifyPhase1Dto } from './dto/verify-phase1.dto';
 import { SetupVmDto } from './dto/setup-vm.dto';
 import { VmLifecycleDto } from './dto/vm-lifecycle.dto';
+import { GetMonitoringStatusUseCase } from './use-cases/get-monitoring-status.use-case';
+import { CheckVMIsRunningUseCase } from './use-cases/check-vm-is-running.use-case';
+import { TerminateVmUseCase } from './use-cases/terminate-vm.use-case';
+import { StopVmUseCase } from './use-cases/stop-vm.use-case';
+import { StartVmUseCase } from './use-cases/start-vm.use-case';
+import { GetCommandStatusAndOutputUseCase } from './use-cases/get-command-status-and-output.use-case';
+import { VerifyCommandStatusUseCase } from './use-cases/verify-command-status.use-case';
+import { SetupVMUseCase } from './use-cases/setup-vm.use-case';
+import { StartPhase1VerificationUseCase } from './use-cases/start-phase-1-verification.use-case';
 
 @ApiTags('vm')
 @Controller('vm')
 export class VmController {
   constructor(
-    private readonly vmService: VmService,
-    private readonly verificationMonitoringService: VerificationMonitoringService,
-    private readonly storageService: StorageService,
+    private readonly checkVMIsRunningUseCase: CheckVMIsRunningUseCase,
+    private readonly getMonitoringStatusUseCase: GetMonitoringStatusUseCase,
+    private readonly terminateVmUseCase: TerminateVmUseCase,
+    private readonly stopVmUseCase: StopVmUseCase,
+    private readonly startVmUseCase: StartVmUseCase,
+    private readonly getCommandStatusAndOutputUseCase: GetCommandStatusAndOutputUseCase,
+    private readonly verifyCommandStatusUseCase: VerifyCommandStatusUseCase,
+    private readonly setupVMUseCase: SetupVMUseCase,
+    private readonly startPhase1VerificationUseCase: StartPhase1VerificationUseCase,
   ) {}
 
   @Post('verify')
   @ApiOperation({ summary: 'Start Phase 1 verification (Powers of Tau) on VM' })
-  @ApiResponse({ status: 201, description: 'Verification started successfully' })
+  @ApiResponse({
+    status: 201,
+    description: 'Verification started successfully',
+  })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   async startVerification(@Body() verifyDto: VerifyPhase1Dto) {
     // TODO: Implement auto-start functionality for complete lifecycle automation
@@ -38,75 +53,29 @@ export class VmController {
     // - Let existing CRON monitoring service retry verification once instance is ready
     // - This provides complete automation: auto-start → wait for ready → verify → auto-stop
 
-    // Get bucket name from ceremony
-    const bucketName = await this.storageService.getCeremonyBucketName(verifyDto.ceremonyId);
-
-    // Generate Phase 1 verification commands
-    const commands = this.vmService.vmVerificationPhase1Command(
-      bucketName,
-      verifyDto.lastPtauStoragePath,
-    );
-
-    // Extract filename from storage path for notifications
-    const ptauFilename = verifyDto.lastPtauStoragePath.split('/').pop() || 'unknown.ptau';
-
-    // Start verification (don't wait for completion)
-    const commandId = await this.vmService.runCommandUsingSSM(verifyDto.instanceId, commands);
-
-    // Check if notifications are configured
-    const hasNotificationConfig = !!(verifyDto.coordinatorEmail || verifyDto.webhookUrl);
-
-    // Start monitoring for completion notifications
-    const notificationConfig = {
+    const response = await this.startPhase1VerificationUseCase.execute({
+      instanceId: verifyDto.instanceId,
+      ceremonyId: verifyDto.ceremonyId,
+      lastPtauStoragePath: verifyDto.lastPtauStoragePath,
       coordinatorEmail: verifyDto.coordinatorEmail,
       webhookUrl: verifyDto.webhookUrl,
-    };
+      autoStop: verifyDto.autoStop,
+    });
 
-    this.verificationMonitoringService.startMonitoring(
-      commandId,
-      verifyDto.instanceId,
-      notificationConfig,
-      verifyDto.autoStop,
-      ptauFilename,
-    );
-
-    // Return immediately with command tracking info
-    return {
-      commandId,
-      instanceId: verifyDto.instanceId,
-      message: 'Phase 1 verification started',
-      statusUrl: `/vm/verify/status/${commandId}?instanceId=${verifyDto.instanceId}`,
-      monitoring: hasNotificationConfig
-        ? 'Notifications will be sent when verification completes'
-        : 'No notifications configured',
-      autoStop: verifyDto.autoStop
-        ? 'Instance will be automatically stopped when verification completes'
-        : 'Instance will remain running after verification',
-    };
+    return response;
   }
 
   @Post('setup')
-  @ApiOperation({ summary: 'Setup VM with Node.js, snarkjs and cache dependencies' })
+  @ApiOperation({
+    summary: 'Setup VM with Node.js, snarkjs and cache dependencies',
+  })
   @ApiResponse({ status: 201, description: 'VM setup started successfully' })
   @ApiResponse({ status: 400, description: 'Bad Request' })
   async setupVm(@Body() setupDto: SetupVmDto) {
-    // Generate setup commands
-    const commands = this.vmService.vmDependenciesAndCacheArtifactsCommand(
-      setupDto.zKeyPath || '',
-      setupDto.potPath || '',
-    );
+    const { instanceId, zKeyPath, potPath } = setupDto;
+    const result = await this.setupVMUseCase.execute(instanceId, zKeyPath, potPath);
 
-    // Start setup (don't wait for completion)
-    const commandId = await this.vmService.runCommandUsingSSM(setupDto.instanceId, commands);
-
-    // Return immediately with command tracking info
-    return {
-      commandId,
-      instanceId: setupDto.instanceId,
-      message: 'VM setup started',
-      statusUrl: `/vm/verify/status/${commandId}?instanceId=${setupDto.instanceId}`,
-      note: 'This will install Node.js v22.17.1, snarkjs, and cache any provided artifacts',
-    };
+    return result;
   }
 
   @Get('verify/status/:commandId')
@@ -117,60 +86,30 @@ export class VmController {
     @Param('commandId') commandId: string,
     @Query('instanceId') instanceId: string,
   ) {
-    const status = await this.vmService.retrieveCommandStatus(instanceId, commandId);
+    const response = await this.verifyCommandStatusUseCase.execute(instanceId, commandId);
 
-    if (
-      status === 'Success' ||
-      status === 'Failed' ||
-      status === 'Cancelled' ||
-      status === 'TimedOut'
-    ) {
-      const output = await this.vmService.retrieveCommandOutput(instanceId, commandId);
-      const result = this.vmService.evaluateVerificationResult(output, status);
-
-      return {
-        commandId,
-        status: 'completed',
-        result: result === 200 ? 'success' : 'failed',
-        httpStatus: result,
-        completedAt: new Date().toISOString(),
-      };
-    }
-
-    return {
-      commandId,
-      status: 'running',
-      message: 'Verification in progress',
-    };
+    return response;
   }
 
   @Get('command/output/:commandId')
   @ApiOperation({ summary: 'Get command output and logs' })
   @ApiParam({ name: 'commandId', description: 'SSM Command ID' })
   @ApiQuery({ name: 'instanceId', description: 'EC2 Instance ID' })
-  @ApiResponse({ status: 200, description: 'Command output retrieved successfully' })
-  @ApiResponse({ status: 400, description: 'Command not found or still running' })
+  @ApiResponse({
+    status: 200,
+    description: 'Command output retrieved successfully',
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Command not found or still running',
+  })
   async getCommandOutput(
     @Param('commandId') commandId: string,
     @Query('instanceId') instanceId: string,
   ) {
     try {
-      const status = await this.vmService.retrieveCommandStatus(instanceId, commandId);
-      const output = await this.vmService.retrieveCommandOutput(instanceId, commandId);
-
-      return {
-        commandId,
-        instanceId,
-        status,
-        output: {
-          stdout: output,
-          timestamp: new Date().toISOString(),
-        },
-        note:
-          status === 'InProgress'
-            ? 'Command is still running, output may be partial'
-            : 'Command completed',
-      };
+      const response = await this.getCommandStatusAndOutputUseCase.exec(instanceId, commandId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {
@@ -184,17 +123,15 @@ export class VmController {
 
   @Post('start')
   @ApiOperation({ summary: 'Start an EC2 instance' })
-  @ApiResponse({ status: 200, description: 'Instance start command sent successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instance start command sent successfully',
+  })
   @ApiResponse({ status: 400, description: 'Failed to start instance' })
   async startInstance(@Body() lifecycleDto: VmLifecycleDto) {
     try {
-      await this.vmService.startEC2Instance(lifecycleDto.instanceId);
-      return {
-        instanceId: lifecycleDto.instanceId,
-        action: 'start',
-        status: 'success',
-        message: 'Instance start command sent. It may take 1-2 minutes to boot.',
-      };
+      const response = await this.startVmUseCase.execute(lifecycleDto.instanceId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {
@@ -208,17 +145,15 @@ export class VmController {
 
   @Post('stop')
   @ApiOperation({ summary: 'Stop an EC2 instance' })
-  @ApiResponse({ status: 200, description: 'Instance stop command sent successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instance stop command sent successfully',
+  })
   @ApiResponse({ status: 400, description: 'Failed to stop instance' })
   async stopInstance(@Body() lifecycleDto: VmLifecycleDto) {
     try {
-      await this.vmService.stopEC2Instance(lifecycleDto.instanceId);
-      return {
-        instanceId: lifecycleDto.instanceId,
-        action: 'stop',
-        status: 'success',
-        message: 'Instance stop command sent. It may take 1-2 minutes to shut down.',
-      };
+      const response = await this.stopVmUseCase.execute(lifecycleDto.instanceId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {
@@ -232,18 +167,15 @@ export class VmController {
 
   @Post('terminate')
   @ApiOperation({ summary: 'Terminate an EC2 instance (PERMANENT)' })
-  @ApiResponse({ status: 200, description: 'Instance terminate command sent successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instance terminate command sent successfully',
+  })
   @ApiResponse({ status: 400, description: 'Failed to terminate instance' })
   async terminateInstance(@Body() lifecycleDto: VmLifecycleDto) {
     try {
-      await this.vmService.terminateEC2Instance(lifecycleDto.instanceId);
-      return {
-        instanceId: lifecycleDto.instanceId,
-        action: 'terminate',
-        status: 'success',
-        message: 'Instance terminate command sent. This action is PERMANENT and cannot be undone.',
-        warning: 'All data on the instance will be lost permanently.',
-      };
+      const response = await this.terminateVmUseCase.execute(lifecycleDto.instanceId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {
@@ -258,16 +190,14 @@ export class VmController {
   @Get('status/:instanceId')
   @ApiOperation({ summary: 'Check if an EC2 instance is running' })
   @ApiParam({ name: 'instanceId', description: 'EC2 Instance ID' })
-  @ApiResponse({ status: 200, description: 'Instance status retrieved successfully' })
+  @ApiResponse({
+    status: 200,
+    description: 'Instance status retrieved successfully',
+  })
   async getInstanceStatus(@Param('instanceId') instanceId: string) {
     try {
-      const isRunning = await this.vmService.checkIfRunning(instanceId);
-      return {
-        instanceId,
-        isRunning,
-        status: isRunning ? 'running' : 'not running',
-        timestamp: new Date().toISOString(),
-      };
+      const response = await this.checkVMIsRunningUseCase.execute(instanceId);
+      return response;
     } catch (error) {
       const e = error as Error;
       return {
@@ -283,6 +213,6 @@ export class VmController {
   @ApiOperation({ summary: 'Get monitoring service status' })
   @ApiResponse({ status: 200, description: 'Monitoring service status' })
   getMonitoringStatus() {
-    return this.verificationMonitoringService.getMonitoringStatus();
+    return this.getMonitoringStatusUseCase.execute();
   }
 }
