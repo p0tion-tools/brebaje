@@ -30,9 +30,11 @@
     "url": "https://github.com/NicoSerranoP/brebaje/issues"
   },
   "dependencies": {
+    "@types/jsonwebtoken": "^9.0.10",
     "aws-sdk": "^2.1692.0",
     "commander": "^11.0.0",
     "dotenv": "^17.2.1",
+    "jsonwebtoken": "^9.0.3",
     "snarkjs": "^0.7.5"
   },
   "devDependencies": {

@@ -224,6 +224,9 @@ importers:
 
   apps/cli:
     dependencies:
+      "@types/jsonwebtoken":
+        specifier: ^9.0.10
+        version: 9.0.10
       aws-sdk:
         specifier: ^2.1692.0
         version: 2.1692.0
@@ -233,6 +236,9 @@ importers:
       dotenv:
         specifier: ^17.2.1
         version: 17.2.1
+      jsonwebtoken:
+        specifier: ^9.0.3
+        version: 9.0.3
       snarkjs:
         specifier: ^0.7.5
         version: 0.7.5
@@ -2344,12 +2350,14 @@ packages:
       {
         integrity: sha512-uRG0jLjsa83JbPZqnVkec3gjvi0LEMiu1E6ItUALEnKUTTuhDOe3Cx4Ov1PbPTsYVsGRq61DCgzCNHSh2bXy+Q==,
       }
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   "@meshsdk/web3-sdk@0.0.50":
     resolution:
       {
         integrity: sha512-mBEdwGJNCJgUfl/VXDicGMe8duqzrNCNEiEgkSRy795JhXrppl9ARPb64P6AkryZ5DxRRjMqZyVNXQRv9fIITQ==,
       }
+    deprecated: Package no longer supported. Contact Support at https://www.npmjs.com/support for more info.
 
   "@microsoft/tsdoc-config@0.16.2":
     resolution:
@@ -4804,6 +4812,12 @@ packages:
     resolution:
       {
         integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==,
+      }
+
+  "@types/jsonwebtoken@9.0.10":
+    resolution:
+      {
+        integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==,
       }
 
   "@types/jsonwebtoken@9.0.7":
@@ -10443,6 +10457,13 @@ packages:
       }
     engines: { node: ">=12", npm: ">=6" }
 
+  jsonwebtoken@9.0.3:
+    resolution:
+      {
+        integrity: sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==,
+      }
+    engines: { node: ">=12", npm: ">=6" }
+
   jsx-ast-utils@3.3.5:
     resolution:
       {
@@ -10475,10 +10496,22 @@ packages:
         integrity: sha512-eeH5JO+21J78qMvTIDdBXidBd6nG2kZjg5Ohz/1fpa28Z4CcsWUzJ1ZZyFq/3z3N17aZy+ZuBoHljASbL1WfOw==,
       }
 
+  jwa@2.0.1:
+    resolution:
+      {
+        integrity: sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==,
+      }
+
   jws@3.2.2:
     resolution:
       {
         integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==,
+      }
+
+  jws@4.0.1:
+    resolution:
+      {
+        integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==,
       }
 
   k-bucket@5.1.0:
@@ -11770,6 +11803,7 @@ packages:
         integrity: sha512-wlzrsbfeSU48YQBjZhDzOwhWhGsy+uQycR8bHAOt1LY1bn3zZEcDyHQOEoN3aWzQ8LHCAJ1nqrWCc9XF2+O45Q==,
       }
     engines: { node: ">=18.17.0" }
+    deprecated: This version has a security vulnerability. Please upgrade to a patched version. See https://nextjs.org/blog/security-update-2025-12-11 for more details.
     hasBin: true
     peerDependencies:
       "@opentelemetry/api": ^1.1.0
@@ -17005,7 +17039,7 @@ snapshots:
       bech32: 2.0.0
       cross-fetch: 3.2.0(encoding@0.1.13)
       fastq: 1.19.1
-      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5))
+      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.0.9))
       nanoid: 3.3.11
       ts-custom-error: 3.3.1
       ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)
@@ -20177,7 +20211,7 @@ snapshots:
 
   "@types/base32-encoding@1.0.2":
     dependencies:
-      "@types/node": 22.17.0
+      "@types/node": 20.19.9
 
   "@types/body-parser@1.19.6":
     dependencies:
@@ -20263,6 +20297,11 @@ snapshots:
   "@types/json-schema@7.0.15": {}
 
   "@types/json5@0.0.29": {}
+
+  "@types/jsonwebtoken@9.0.10":
+    dependencies:
+      "@types/ms": 2.1.0
+      "@types/node": 20.19.9
 
   "@types/jsonwebtoken@9.0.7":
     dependencies:
@@ -22319,7 +22358,7 @@ snapshots:
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1)
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.57.1)
       eslint-plugin-react: 7.37.5(eslint@8.57.1)
       eslint-plugin-react-hooks: 5.0.0-canary-7118f5dd7-20230705(eslint@8.57.1)
@@ -22357,7 +22396,7 @@ snapshots:
       tinyglobby: 0.2.14
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -22372,7 +22411,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1):
     dependencies:
       "@rtsao/scc": 1.1.0
       array-includes: 3.1.9
@@ -23734,7 +23773,7 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  isomorphic-ws@4.0.1(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)):
+  isomorphic-ws@4.0.1(ws@7.5.10(bufferutil@4.0.9)):
     dependencies:
       ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)
 
@@ -24244,6 +24283,19 @@ snapshots:
       ms: 2.1.3
       semver: 7.7.2
 
+  jsonwebtoken@9.0.3:
+    dependencies:
+      jws: 4.0.1
+      lodash.includes: 4.3.0
+      lodash.isboolean: 3.0.3
+      lodash.isinteger: 4.0.4
+      lodash.isnumber: 3.0.3
+      lodash.isplainobject: 4.0.6
+      lodash.isstring: 4.0.1
+      lodash.once: 4.1.1
+      ms: 2.1.3
+      semver: 7.7.2
+
   jsx-ast-utils@3.3.5:
     dependencies:
       array-includes: 3.1.9
@@ -24263,9 +24315,20 @@ snapshots:
       ecdsa-sig-formatter: 1.0.11
       safe-buffer: 5.2.1
 
+  jwa@2.0.1:
+    dependencies:
+      buffer-equal-constant-time: 1.0.1
+      ecdsa-sig-formatter: 1.0.11
+      safe-buffer: 5.2.1
+
   jws@3.2.2:
     dependencies:
       jwa: 1.4.2
+      safe-buffer: 5.2.1
+
+  jws@4.0.1:
+    dependencies:
+      jwa: 2.0.1
       safe-buffer: 5.2.1
 
   k-bucket@5.1.0:
