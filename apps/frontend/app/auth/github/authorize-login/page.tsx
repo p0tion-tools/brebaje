@@ -44,6 +44,7 @@ function GitHubCallbackInternal() {
             router.push("/");
           }, 4000);
         } catch (parseError) {
+          console.error(parseError);
           setStatus("error");
           setMessage("Failed to parse user data from authentication response");
         }

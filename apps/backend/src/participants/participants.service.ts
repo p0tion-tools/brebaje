@@ -56,7 +56,7 @@ export class ParticipantsService {
     return this.participantModel.findByPk(id);
   }
 
-  async findByUserIdAndCeremonyId(userId: string, ceremonyId: number) {
+  async findByUserIdAndCeremonyId(userId: number, ceremonyId: number) {
     try {
       const participant = await this.participantModel.findOne({
         where: { userId: userId, ceremonyId: ceremonyId },
@@ -126,7 +126,7 @@ export class ParticipantsService {
    * @throws BadRequestException if the participant is not in CONTRIBUTING status or not in UPLOADING step.
    */
   async checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(
-    userId: string,
+    userId: number,
     ceremonyId: number,
   ) {
     const participant = await this.findByUserIdAndCeremonyId(userId, ceremonyId);
@@ -152,7 +152,7 @@ export class ParticipantsService {
    * @param ceremonyId - The unique identifier of the ceremony
    * @param objectKey - The object key of the file being uploaded
    */
-  async checkUploadingFileValidity(userId: string, ceremonyId: number, objectKey: string) {
+  async checkUploadingFileValidity(userId: number, ceremonyId: number, objectKey: string) {
     const participant = await this.findByUserIdAndCeremonyId(userId, ceremonyId);
     if (!participant) {
       throw new NotFoundException('Participant not found');

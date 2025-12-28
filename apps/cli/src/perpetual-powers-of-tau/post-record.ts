@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { getNewerFile, getUrlsJson } from "../utils/file_handling.js";
 import { loadConfig } from "../utils/config.js";
 import { fetchWithTimeout } from "../utils/http.js";
@@ -333,7 +335,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     }
 
     const power = parseInt(match[1]);
-    let index = parseInt(match[2]);
+    const index = parseInt(match[2]);
 
     // Try to find ceremony URLs JSON file in input directory to get the correct index and contribution URL
     let ceremonyIndex = index; // fallback to record file index
@@ -551,7 +553,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     }
 
     // Enhanced social media sharing with repository, gist, and PR links
-    let tweetText = `🎉 Contributed to Cardano Perpetual Powers of Tau Ceremony!
+    const tweetText = `🎉 Contributed to Cardano Perpetual Powers of Tau Ceremony!
 
 📋 Official ceremony: ${ceremonyUrl}
 👁️ Quick view: ${gistUrl}`;

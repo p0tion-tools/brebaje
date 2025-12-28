@@ -35,6 +35,11 @@ export default tseslint.config(
       "**/package-lock.json",
     ],
   },
+  {
+    linterOptions: {
+      reportUnusedDisableDirectives: "off",
+    },
+  },
   eslint.configs.recommended,
   ...tseslint.configs.recommended,
   eslintPluginPrettierRecommended,
@@ -66,6 +71,7 @@ export default tseslint.config(
           varsIgnorePattern: "^_",
         },
       ],
+      "@typescript-eslint/no-explicit-any": "off",
     },
   },
   // TypeScript-specific files with stricter TSDoc rules

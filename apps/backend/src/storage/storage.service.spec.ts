@@ -9,6 +9,8 @@ import { StorageService } from './storage.service';
 import { CeremoniesService } from '../ceremonies/ceremonies.service';
 import { ParticipantsService } from '../participants/participants.service';
 import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
+import { S3Client } from '@aws-sdk/client-s3';
+import { getSignedUrl } from '@aws-sdk/s3-request-presigner';
 
 // Mock AWS SDK
 jest.mock('@aws-sdk/client-s3');
@@ -55,20 +57,14 @@ describe('StorageService', () => {
     mockGetSignedUrl = jest.fn();
 
     // Mock AWS SDK modules
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
-    const { S3Client } = require('@aws-sdk/client-s3');
-    // eslint-disable-next-line @typescript-eslint/no-require-imports, @typescript-eslint/no-unsafe-assignment
-    const { getSignedUrl } = require('@aws-sdk/s3-request-presigner');
-
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    S3Client.mockImplementation(
+    (S3Client as jest.MockedClass<typeof S3Client>).mockImplementation(
       () =>
         ({
           send: mockS3Send,
         }) as never,
     );
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-call, @typescript-eslint/no-unsafe-member-access
-    getSignedUrl.mockImplementation(mockGetSignedUrl);
+
+    (getSignedUrl as jest.MockedFunction<typeof getSignedUrl>).mockImplementation(mockGetSignedUrl);
     const mockCeremoniesService = {
       findOne: jest.fn(),
       isCoordinator: jest.fn(),
@@ -126,8 +122,7 @@ describe('StorageService', () => {
 
       const result = await service.createAndSetupBucket(1);
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-      expect(result).toEqual({ bucketName: expect.any(String) });
+      expect(result).toEqual({ bucketName: expect.any(String) as unknown as string });
       expect(mockS3Send).toHaveBeenCalledTimes(3);
     });
 
@@ -137,8 +132,8 @@ describe('StorageService', () => {
       const { BucketAlreadyExists } = require('@aws-sdk/client-s3') as {
         BucketAlreadyExists: new () => Error;
       };
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const error = Object.create(BucketAlreadyExists.prototype) as Error;
+
+      const error = Object.create(BucketAlreadyExists.prototype as object) as Error;
       error.message = 'Bucket already exists';
       error.name = 'BucketAlreadyExists';
 
@@ -185,7 +180,7 @@ describe('StorageService', () => {
         UploadId: 'test-upload-id',
       });
 
-      const result = await service.startMultipartUpload(mockData, 1, 'user123');
+      const result = await service.startMultipartUpload(mockData, 1, 1);
 
       expect(result).toEqual({ uploadId: 'test-upload-id' });
       expect(mockS3Send).toHaveBeenCalledTimes(1);
@@ -194,7 +189,7 @@ describe('StorageService', () => {
     it('should throw NotFoundException if ceremony not found', async () => {
       ceremoniesService.findOne.mockResolvedValue(null as never);
 
-      await expect(service.startMultipartUpload(mockData, 999, 'user123')).rejects.toThrow(
+      await expect(service.startMultipartUpload(mockData, 999, 1)).rejects.toThrow(
         NotFoundException,
       );
     });
@@ -216,7 +211,7 @@ describe('StorageService', () => {
         .mockResolvedValueOnce('https://bucket.s3.amazonaws.com/part2')
         .mockResolvedValueOnce('https://bucket.s3.amazonaws.com/part3');
 
-      const result = await service.generatePreSignedUrlsParts(mockData, 1, 'user123');
+      const result = await service.generatePreSignedUrlsParts(mockData, 1, 1);
 
       expect(result.parts).toHaveLength(3);
       expect(result.parts[0]).toBe('https://bucket.s3.amazonaws.com/part1');
@@ -228,7 +223,7 @@ describe('StorageService', () => {
     it('should throw NotFoundException if ceremony not found', async () => {
       ceremoniesService.findOne.mockResolvedValue(null as never);
 
-      await expect(service.generatePreSignedUrlsParts(mockData, 999, 'user123')).rejects.toThrow(
+      await expect(service.generatePreSignedUrlsParts(mockData, 999, 1)).rejects.toThrow(
         NotFoundException,
       );
     });
@@ -250,7 +245,7 @@ describe('StorageService', () => {
         Location: 'https://bucket.s3.amazonaws.com/test-object.zkey',
       });
 
-      const result = await service.completeMultipartUpload(mockData, 1, 'user123');
+      const result = await service.completeMultipartUpload(mockData, 1, 1);
 
       expect(result).toEqual({ location: 'https://bucket.s3.amazonaws.com/test-object.zkey' });
       expect(mockS3Send).toHaveBeenCalledTimes(1);
@@ -265,7 +260,7 @@ describe('StorageService', () => {
         Location: null,
       });
 
-      await expect(service.completeMultipartUpload(mockData, 1, 'user123')).rejects.toThrow(
+      await expect(service.completeMultipartUpload(mockData, 1, 1)).rejects.toThrow(
         InternalServerErrorException,
       );
     });
@@ -342,8 +337,8 @@ describe('StorageService', () => {
       const { BucketAlreadyExists } = require('@aws-sdk/client-s3') as {
         BucketAlreadyExists: new () => Error;
       };
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const error = Object.create(BucketAlreadyExists.prototype) as Error;
+
+      const error = Object.create(BucketAlreadyExists.prototype as object) as Error;
       error.message = 'Bucket already exists';
       error.name = 'BucketAlreadyExists';
 

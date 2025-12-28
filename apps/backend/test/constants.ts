@@ -1,7 +1,13 @@
 import { CreateCeremonyDto } from 'src/ceremonies/dto/create-ceremony.dto';
-import { CircuitCreationAttributes } from 'src/circuits/circuit.model';
+import { CreateCircuitDto } from 'src/circuits/dto/create-circuit.dto';
 import { CreateProjectDto } from 'src/projects/dto/create-project.dto';
-import { CeremonyState, CeremonyType, CircuitTimeoutType, UserProvider } from 'src/types/enums';
+import {
+  CeremonyState,
+  CeremonyType,
+  CircuitTimeoutType,
+  UserProvider,
+  VerificationMachineType,
+} from 'src/types/enums';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
 
 export const coordinatorDto: CreateUserDto = {
@@ -30,16 +36,13 @@ export const ceremonyDto: CreateCeremonyDto = {
   authProviders: { github: true },
 };
 
-export const circuits: CircuitCreationAttributes[] = [
+export const circuits: CreateCircuitDto[] = [
   {
     ceremonyId: 1,
-    id: 1,
     name: 'Test Circuit 1',
     timeoutMechanismType: CircuitTimeoutType.FIXED,
     fixedTimeWindow: 5 * 60 * 1000, // five minutes
     sequencePosition: 1,
-    completedContributions: 0,
-    failedContributions: 0,
     artifacts: {
       r1csStoragePath:
         'https://github.com/0xbow-io/privacy-pools-core/raw/refs/heads/dev/packages/circuits/build/withdraw/withdraw.r1cs',
@@ -47,7 +50,7 @@ export const circuits: CircuitCreationAttributes[] = [
         'https://github.com/0xbow-io/privacy-pools-core/raw/refs/heads/dev/packages/circuits/build/withdraw/withdraw_js/withdraw.wasm',
     },
     verification: {
-      serverOrVm: 'server',
+      serverOrVm: VerificationMachineType.SERVER,
     },
   },
 ];

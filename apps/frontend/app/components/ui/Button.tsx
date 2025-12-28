@@ -55,7 +55,6 @@ const Button = forwardRef<HTMLButtonElement, ButtonProps>(
   (
     {
       className,
-      asChild = false,
       icon,
       isExternal = false,
       iconPosition = "left",
