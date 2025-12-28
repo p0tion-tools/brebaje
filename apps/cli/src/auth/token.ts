@@ -50,6 +50,9 @@ export function readToken(tokenPath: string): string | null {
 
 /**
  * Decodes JWT token without verification
+ * Note: Client-side verification is not performed as we don't have access to the secret.
+ * The backend verifies the token signature when making authenticated requests.
+ * This function is only used to extract payload information for display purposes.
  */
 export function decodeToken(token: string): JWTPayload | null {
   try {

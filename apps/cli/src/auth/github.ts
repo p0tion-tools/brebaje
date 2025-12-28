@@ -38,13 +38,18 @@ interface BackendAuthResponse {
  * Initiates GitHub device flow authorization
  */
 async function initiateDeviceFlow(clientId: string): Promise<DeviceCodeResponse> {
+  const body = new URLSearchParams({
+    client_id: clientId,
+    scope: "user:email",
+  });
+
   const response = await fetchWithTimeout("https://github.com/login/device/code", {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/x-www-form-urlencoded",
     },
-    body: `client_id=${clientId}&scope=user:email`,
+    body: body.toString(),
   });
 
   if (!response.ok) {
@@ -65,13 +70,19 @@ async function pollForToken(
   return new Promise((resolve, reject) => {
     const poll = async () => {
       try {
+        const body = new URLSearchParams({
+          client_id: clientId,
+          device_code: deviceCode,
+          grant_type: "urn:ietf:params:oauth:grant-type:device_code",
+        });
+
         const response = await fetchWithTimeout("https://github.com/login/oauth/access_token", {
           method: "POST",
           headers: {
             Accept: "application/json",
             "Content-Type": "application/x-www-form-urlencoded",
           },
-          body: `client_id=${clientId}&device_code=${deviceCode}&grant_type=urn:ietf:params:oauth:grant-type:device_code`,
+          body: body.toString(),
         });
 
         const data = (await response.json()) as TokenResponse;
@@ -99,20 +110,27 @@ async function pollForToken(
   });
 }
 
+interface BackendTokenRequest {
+  access_token: string;
+  token_type: string;
+}
+
 /**
  * Exchanges GitHub access token for backend JWT
  */
 async function exchangeForJWT(accessToken: string, apiUrl: string): Promise<BackendAuthResponse> {
+  const requestBody: BackendTokenRequest = {
+    access_token: accessToken,
+    token_type: "bearer",
+  };
+
   const response = await fetchWithTimeout(`${apiUrl}/auth/github/user`, {
     method: "POST",
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({
-      access_token: accessToken,
-      token_type: "bearer",
-    }),
+    body: JSON.stringify(requestBody),
   });
 
   if (!response.ok) {
@@ -124,6 +142,8 @@ async function exchangeForJWT(accessToken: string, apiUrl: string): Promise<Back
 
 /**
  * Stores JWT token to file
+ * Note: File is created with 0600 permissions (read/write for owner only).
+ * Ensure the parent directory also has secure permissions via umask or manual setting.
  */
 function storeToken(jwt: string, tokenPath: string): void {
   // Expand ~ to home directory
@@ -132,11 +152,11 @@ function storeToken(jwt: string, tokenPath: string): void {
   // Ensure directory exists
   const dir = dirname(expandedPath);
   if (!existsSync(dir)) {
-    mkdirSync(dir, { recursive: true });
+    mkdirSync(dir, { recursive: true, mode: 0o700 }); // Secure directory permissions
   }
 
-  // Write token to file
-  writeFileSync(expandedPath, jwt, { mode: 0o600 }); // Secure file permissions
+  // Write token to file with secure permissions
+  writeFileSync(expandedPath, jwt, { mode: 0o600 });
 }
 
 /**
