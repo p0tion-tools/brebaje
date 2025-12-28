@@ -7,6 +7,7 @@
     "^.+\\.ts$": "ts-jest"
   },
   "moduleNameMapper": {
-    "^src/(.*)": "<rootDir>/../src/$1"
+    "^src/(.*)": "<rootDir>/../src/$1",
+    "^@brebaje/actions$": "<rootDir>/../../../packages/actions/build/src/index.js"
   }
 }

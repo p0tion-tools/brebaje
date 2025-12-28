@@ -513,7 +513,6 @@ export const downloadCeremonyArtifact = async (
       `There was an error while downloading the object ${storagePath} from ceremony ${ceremonyId}. Please check the function inputs and try again.`,
     );
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const content: any = response.body;
   // Prepare stream.
   const writeStream = createWriteStream(localPath);

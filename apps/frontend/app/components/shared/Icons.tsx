@@ -1,6 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-/* eslint-disable @typescript-eslint/no-unused-vars */
-
 export const Icons = {
   External: (props: any) => (
     <svg
@@ -258,7 +255,7 @@ export const Icons = {
       </g>
     </svg>
   ),
-  ActiveCeremonies: (props: any) => (
+  ActiveCeremonies: (_props: any) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="120"
@@ -280,7 +277,7 @@ export const Icons = {
       />
     </svg>
   ),
-  ClosedCeremonies: (props: any) => (
+  ClosedCeremonies: (_props: any) => (
     <svg
       width="120"
       height="29"
@@ -338,7 +335,7 @@ export const Icons = {
       />
     </svg>
   ),
-  ArrowDown: (props: any) => (
+  ArrowDown: (_props: any) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="21"
@@ -354,7 +351,7 @@ export const Icons = {
       />
     </svg>
   ),
-  Download: (props: any) => (
+  Download: (_props: any) => (
     <svg
       xmlns="http://www.w3.org/2000/svg"
       width="17"

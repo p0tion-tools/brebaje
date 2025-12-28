@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import { execSync } from "child_process";
 import { loadConfig } from "../utils/config.js";
 import crypto from "crypto";

@@ -56,10 +56,9 @@ jobs:
         run: |
           pnpm run build
 
-      - name: Lint backend code
-        working-directory: apps/backend
+      - name: Lint
         run: |
-          pnpm exec eslint "{src,apps,libs,test}/**/*.ts" --fix --rule 'tsdoc/syntax: off'
+          pnpm run lint
 
       - name: Run tests
         working-directory: apps/backend
