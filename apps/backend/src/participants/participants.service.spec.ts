@@ -7,6 +7,7 @@ import {
   ParticipantStatus,
   ParticipantContributionStep,
   CircuitTimeoutType,
+  VerificationMachineType,
 } from 'src/types/enums';
 import { Circuit } from 'src/circuits/circuit.model';
 import { ContributionsService } from 'src/contributions/contributions.service';
@@ -60,7 +61,7 @@ describe('ParticipantsService', () => {
       sequencePosition: id,
       completedContributions: 0,
       failedContributions: 0,
-      verification: { serverOrVm: 'server' },
+      verification: { serverOrVm: VerificationMachineType.SERVER },
       artifacts: { r1csStoragePath: '', wasmStoragePath: '' },
       contributors,
       save: jest.fn().mockResolvedValue(undefined),

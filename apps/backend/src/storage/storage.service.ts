@@ -164,7 +164,7 @@ export class StorageService {
     await this.deleteBucket(s3, bucketName);
   }
 
-  async startMultipartUpload(data: ObjectKeyDto, ceremonyId: number, userId: string) {
+  async startMultipartUpload(data: ObjectKeyDto, ceremonyId: number, userId: number) {
     const { objectKey } = data;
     const bucketName = await this.getCeremonyBucketName(ceremonyId);
 
@@ -204,7 +204,7 @@ export class StorageService {
   async temporaryStoreCurrentContributionMultiPartUploadId(
     data: UploadIdDto,
     ceremonyId: number,
-    userId: string,
+    userId: number,
   ) {
     const { uploadId } = data;
     const participant = await this.participantsService.findByUserIdAndCeremonyId(
@@ -236,7 +236,7 @@ export class StorageService {
   async temporaryStoreCurrentContributionUploadedChunkData(
     data: TemporaryStoreCurrentContributionUploadedChunkData,
     ceremonyId: number,
-    userId: string,
+    userId: number,
   ) {
     const { chunk } = data;
     const participant = await this.participantsService.findByUserIdAndCeremonyId(
@@ -307,7 +307,7 @@ export class StorageService {
   async generatePreSignedUrlsParts(
     data: GeneratePreSignedUrlsPartsData,
     ceremonyId: number,
-    userId: string,
+    userId: number,
   ) {
     const { objectKey, uploadId, numberOfParts } = data;
     const bucketName = await this.getCeremonyBucketName(ceremonyId);
@@ -351,7 +351,7 @@ export class StorageService {
   async completeMultipartUpload(
     data: CompleteMultiPartUploadData,
     ceremonyId: number,
-    userId: string,
+    userId: number,
   ) {
     const { objectKey, uploadId, parts } = data;
     const bucketName = await this.getCeremonyBucketName(ceremonyId);

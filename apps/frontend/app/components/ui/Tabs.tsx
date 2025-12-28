@@ -6,7 +6,6 @@ import {
   createContext,
   forwardRef,
   useCallback,
-  useContext,
   useEffect,
   useState,
 } from "react";
@@ -29,12 +28,6 @@ const TabsTrigger = classed.button(
   "inline-flex items-center justify-center px-8 py-2 w-full relative border-b-2 border-gray",
   "text-sm font-medium transition-all duration-200 text-gray",
   "data-[state=active]:font-semibold data-[state=active]:border-black data-[state=active]:text-black",
-  "outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 ring-0 ring-offset-0"
-);
-
-const TabsContent = classed.div(
-  "mt-2",
-  "data-[state=inactive]:hidden",
   "outline-none focus:outline-none focus:ring-0 focus:ring-offset-0 ring-0 ring-offset-0"
 );
 
