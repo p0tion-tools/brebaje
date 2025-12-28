@@ -1,5 +1,5 @@
 import { Command } from "commander";
-import { verifyVm } from "./verify";
+import { verifyVm } from "./verify.js";
 
 export function setUpVmCommands(program: Command): void {
   const vmCommand = program.command("vm").description("Virtual Machine commands for verification");
