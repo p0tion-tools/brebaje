@@ -224,6 +224,9 @@ importers:
 
   apps/cli:
     dependencies:
+      "@octokit/auth-oauth-device":
+        specifier: ^8.0.3
+        version: 8.0.3
       aws-sdk:
         specifier: ^2.1692.0
         version: 2.1692.0
@@ -233,10 +236,16 @@ importers:
       dotenv:
         specifier: ^17.2.1
         version: 17.2.1
+      jsonwebtoken:
+        specifier: ^9.0.3
+        version: 9.0.3
       snarkjs:
         specifier: ^0.7.5
         version: 0.7.5
     devDependencies:
+      "@types/jsonwebtoken":
+        specifier: ^9.0.10
+        version: 9.0.10
       "@types/node":
         specifier: ^20.8.9
         version: 20.19.9
@@ -3070,6 +3079,13 @@ packages:
     cpu: [x64]
     os: [win32]
 
+  "@octokit/auth-oauth-device@8.0.3":
+    resolution:
+      {
+        integrity: sha512-zh2W0mKKMh/VWZhSqlaCzY7qFyrgd9oTWmTmHaXnHNeQRCZr/CXy2jCgHo4e4dJVTiuxP5dLa0YM5p5QVhJHbw==,
+      }
+    engines: { node: ">= 20" }
+
   "@octokit/auth-token@4.0.0":
     resolution:
       {
@@ -3083,6 +3099,13 @@ packages:
         integrity: sha512-/g2d4sW9nUDJOMz3mabVQvOGhVa4e/BN/Um7yca9Bb2XTzPPnfTWHWQg+IsEYO7M3Vx+EXvaM/I2pJWIMun1bg==,
       }
     engines: { node: ">= 18" }
+
+  "@octokit/endpoint@11.0.2":
+    resolution:
+      {
+        integrity: sha512-4zCpzP1fWc7QlqunZ5bSEjxc6yLAlRTnDwKtgXfcI/FxxGoqedDG8V2+xJ60bV2kODqcGB+nATdtap/XYq2NZQ==,
+      }
+    engines: { node: ">= 20" }
 
   "@octokit/endpoint@9.0.6":
     resolution:
@@ -3098,10 +3121,30 @@ packages:
       }
     engines: { node: ">= 18" }
 
+  "@octokit/oauth-authorization-url@8.0.0":
+    resolution:
+      {
+        integrity: sha512-7QoLPRh/ssEA/HuHBHdVdSgF8xNLz/Bc5m9fZkArJE5bb6NmVkDm3anKxXPmN1zh6b5WKZPRr3697xKT/yM3qQ==,
+      }
+    engines: { node: ">= 20" }
+
+  "@octokit/oauth-methods@6.0.2":
+    resolution:
+      {
+        integrity: sha512-HiNOO3MqLxlt5Da5bZbLV8Zarnphi4y9XehrbaFMkcoJ+FL7sMxH/UlUsCVxpddVu4qvNDrBdaTVE2o4ITK8ng==,
+      }
+    engines: { node: ">= 20" }
+
   "@octokit/openapi-types@24.2.0":
     resolution:
       {
         integrity: sha512-9sIH3nSUttelJSXUrmGzl7QUBFul0/mB8HRYl3fOlgHbIWG+WnYDXU3v/2zMtAvuzZ/ed00Ei6on975FhBfzrg==,
+      }
+
+  "@octokit/openapi-types@27.0.0":
+    resolution:
+      {
+        integrity: sha512-whrdktVs1h6gtR+09+QsNk2+FO+49j6ga1c55YZudfEG+oKJVvJLQi3zkOm5JjiUXAagWK2tI2kTGKJ2Ys7MGA==,
       }
 
   "@octokit/plugin-enterprise-rest@6.0.1":
@@ -3144,6 +3187,20 @@ packages:
       }
     engines: { node: ">= 18" }
 
+  "@octokit/request-error@7.1.0":
+    resolution:
+      {
+        integrity: sha512-KMQIfq5sOPpkQYajXHwnhjCC0slzCNScLHs9JafXc4RAJI+9f+jNDlBNaIMTvazOPLgb4BnlhGJOTbnN0wIjPw==,
+      }
+    engines: { node: ">= 20" }
+
+  "@octokit/request@10.0.7":
+    resolution:
+      {
+        integrity: sha512-v93h0i1yu4idj8qFPZwjehoJx4j3Ntn+JhXsdJrG9pYaX6j/XRz2RmasMUHtNgQD39nrv/VwTWSqK0RNXR8upA==,
+      }
+    engines: { node: ">= 20" }
+
   "@octokit/request@8.4.1":
     resolution:
       {
@@ -3162,6 +3219,12 @@ packages:
     resolution:
       {
         integrity: sha512-ifLaO34EbbPj0Xgro4G5lP5asESjwHracYJvVaPIyXMuiuXLlhic3S47cBdTb+jfODkTE5YtGCLt3Ay3+J97sA==,
+      }
+
+  "@octokit/types@16.0.0":
+    resolution:
+      {
+        integrity: sha512-sKq+9r1Mm4efXW1FCk7hFSeJo4QKreL/tTbR0rz/qx/r1Oa2VV83LTA/H/MuCOX7uCIJmQVRKBcbmWoySjAnSg==,
       }
 
   "@paralleldrive/cuid2@2.2.2":
@@ -4815,6 +4878,12 @@ packages:
     resolution:
       {
         integrity: sha512-dRLjCWHYg4oaA77cxO64oO+7JwCwnIzkZPdrrC71jQmQtlhM556pwKo5bUzqvZndkVbeFLIIi+9TC40JNF5hNQ==,
+      }
+
+  "@types/jsonwebtoken@9.0.10":
+    resolution:
+      {
+        integrity: sha512-asx5hIG9Qmf/1oStypjanR7iKTv0gXQ1Ov/jfrX6kS/EO0OFni8orbmGCn0672NHR3kXHwpAwR+B368ZGN/2rA==,
       }
 
   "@types/jsonwebtoken@9.0.7":
@@ -8320,6 +8389,12 @@ packages:
       }
     engines: { node: ">=4" }
 
+  fast-content-type-parse@3.0.0:
+    resolution:
+      {
+        integrity: sha512-ZvLdcY8P+N8mGQJahJV5G4U88CSvT1rP8ApL6uETe88MBXrBHAkZlSEySdUlyztF7ccb+Znos3TFqaepHxdhBg==,
+      }
+
   fast-deep-equal@3.1.3:
     resolution:
       {
@@ -10460,6 +10535,13 @@ packages:
       }
     engines: { node: ">=12", npm: ">=6" }
 
+  jsonwebtoken@9.0.3:
+    resolution:
+      {
+        integrity: sha512-MT/xP0CrubFRNLNKvxJ2BYfy53Zkm++5bX9dtuPbqAeQpTVe0MQTFhao8+Cp//EmJp244xt6Drw/GVEGCUj40g==,
+      }
+    engines: { node: ">=12", npm: ">=6" }
+
   jsx-ast-utils@3.3.5:
     resolution:
       {
@@ -10492,10 +10574,22 @@ packages:
         integrity: sha512-eeH5JO+21J78qMvTIDdBXidBd6nG2kZjg5Ohz/1fpa28Z4CcsWUzJ1ZZyFq/3z3N17aZy+ZuBoHljASbL1WfOw==,
       }
 
+  jwa@2.0.1:
+    resolution:
+      {
+        integrity: sha512-hRF04fqJIP8Abbkq5NKGN0Bbr3JxlQ+qhZufXVr0DvujKy93ZCbXZMHDL4EOtodSbCWxOqR8MS1tXA5hwqCXDg==,
+      }
+
   jws@3.2.2:
     resolution:
       {
         integrity: sha512-YHlZCB6lMTllWDtSPHz/ZXTsi8S00usEV6v1tjq8tOUZzw7DpSDWVXjXDre6ed1w/pd495ODpHZYSdkRTsa0HA==,
+      }
+
+  jws@4.0.1:
+    resolution:
+      {
+        integrity: sha512-EKI/M/yqPncGUUh44xz0PxSidXFr/+r0pA70+gIYhjv+et7yxM+s29Y+VGDkovRofQem0fs7Uvf4+YmAdyRduA==,
       }
 
   k-bucket@5.1.0:
@@ -15222,6 +15316,12 @@ packages:
         integrity: sha512-yCzhz6FN2wU1NiiQRogkTQszlQSlpWaw8SvVegAc+bDxbzHgh1vX8uIe8OYyMH6DwH+sdTJsgMl36+mSMdRJIQ==,
       }
 
+  universal-user-agent@7.0.3:
+    resolution:
+      {
+        integrity: sha512-TmnEAEAsBJVZM/AADELsK76llnwcf9vMKuPz8JflO1frO8Lchitr0fNaN9d+Ap0BjKtqWqd/J17qeDnXh8CL2A==,
+      }
+
   universalify@2.0.1:
     resolution:
       {
@@ -19003,6 +19103,13 @@ snapshots:
   "@nx/nx-win32-x64-msvc@20.8.2":
     optional: true
 
+  "@octokit/auth-oauth-device@8.0.3":
+    dependencies:
+      "@octokit/oauth-methods": 6.0.2
+      "@octokit/request": 10.0.7
+      "@octokit/types": 16.0.0
+      universal-user-agent: 7.0.3
+
   "@octokit/auth-token@4.0.0": {}
 
   "@octokit/core@5.2.2":
@@ -19015,6 +19122,11 @@ snapshots:
       before-after-hook: 2.2.3
       universal-user-agent: 6.0.1
 
+  "@octokit/endpoint@11.0.2":
+    dependencies:
+      "@octokit/types": 16.0.0
+      universal-user-agent: 7.0.3
+
   "@octokit/endpoint@9.0.6":
     dependencies:
       "@octokit/types": 13.10.0
@@ -19026,7 +19138,18 @@ snapshots:
       "@octokit/types": 13.10.0
       universal-user-agent: 6.0.1
 
+  "@octokit/oauth-authorization-url@8.0.0": {}
+
+  "@octokit/oauth-methods@6.0.2":
+    dependencies:
+      "@octokit/oauth-authorization-url": 8.0.0
+      "@octokit/request": 10.0.7
+      "@octokit/request-error": 7.1.0
+      "@octokit/types": 16.0.0
+
   "@octokit/openapi-types@24.2.0": {}
+
+  "@octokit/openapi-types@27.0.0": {}
 
   "@octokit/plugin-enterprise-rest@6.0.1": {}
 
@@ -19050,6 +19173,18 @@ snapshots:
       deprecation: 2.3.1
       once: 1.4.0
 
+  "@octokit/request-error@7.1.0":
+    dependencies:
+      "@octokit/types": 16.0.0
+
+  "@octokit/request@10.0.7":
+    dependencies:
+      "@octokit/endpoint": 11.0.2
+      "@octokit/request-error": 7.1.0
+      "@octokit/types": 16.0.0
+      fast-content-type-parse: 3.0.0
+      universal-user-agent: 7.0.3
+
   "@octokit/request@8.4.1":
     dependencies:
       "@octokit/endpoint": 9.0.6
@@ -19067,6 +19202,10 @@ snapshots:
   "@octokit/types@13.10.0":
     dependencies:
       "@octokit/openapi-types": 24.2.0
+
+  "@octokit/types@16.0.0":
+    dependencies:
+      "@octokit/openapi-types": 27.0.0
 
   "@paralleldrive/cuid2@2.2.2":
     dependencies:
@@ -20295,6 +20434,11 @@ snapshots:
   "@types/json-schema@7.0.15": {}
 
   "@types/json5@0.0.29": {}
+
+  "@types/jsonwebtoken@9.0.10":
+    dependencies:
+      "@types/ms": 2.1.0
+      "@types/node": 20.19.9
 
   "@types/jsonwebtoken@9.0.7":
     dependencies:
@@ -22355,7 +22499,7 @@ snapshots:
       eslint: 8.57.1
       eslint-import-resolver-node: 0.3.9
       eslint-import-resolver-typescript: 3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1)
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
       eslint-plugin-jsx-a11y: 6.10.2(eslint@8.57.1)
       eslint-plugin-react: 7.37.5(eslint@8.57.1)
       eslint-plugin-react-hooks: 5.0.0-canary-7118f5dd7-20230705(eslint@8.57.1)
@@ -22393,7 +22537,7 @@ snapshots:
       tinyglobby: 0.2.14
       unrs-resolver: 1.11.1
     optionalDependencies:
-      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1)
+      eslint-plugin-import: 2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1)
     transitivePeerDependencies:
       - supports-color
 
@@ -22408,7 +22552,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1(eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint@8.57.1))(eslint@8.57.1))(eslint@8.57.1):
+  eslint-plugin-import@2.32.0(@typescript-eslint/parser@8.38.0(eslint@8.57.1)(typescript@5.9.2))(eslint-import-resolver-typescript@3.10.1)(eslint@8.57.1):
     dependencies:
       "@rtsao/scc": 1.1.0
       array-includes: 3.1.9
@@ -22753,6 +22897,8 @@ snapshots:
       chardet: 0.7.0
       iconv-lite: 0.4.24
       tmp: 0.0.33
+
+  fast-content-type-parse@3.0.0: {}
 
   fast-deep-equal@3.1.3: {}
 
@@ -24280,6 +24426,19 @@ snapshots:
       ms: 2.1.3
       semver: 7.7.2
 
+  jsonwebtoken@9.0.3:
+    dependencies:
+      jws: 4.0.1
+      lodash.includes: 4.3.0
+      lodash.isboolean: 3.0.3
+      lodash.isinteger: 4.0.4
+      lodash.isnumber: 3.0.3
+      lodash.isplainobject: 4.0.6
+      lodash.isstring: 4.0.1
+      lodash.once: 4.1.1
+      ms: 2.1.3
+      semver: 7.7.2
+
   jsx-ast-utils@3.3.5:
     dependencies:
       array-includes: 3.1.9
@@ -24299,9 +24458,20 @@ snapshots:
       ecdsa-sig-formatter: 1.0.11
       safe-buffer: 5.2.1
 
+  jwa@2.0.1:
+    dependencies:
+      buffer-equal-constant-time: 1.0.1
+      ecdsa-sig-formatter: 1.0.11
+      safe-buffer: 5.2.1
+
   jws@3.2.2:
     dependencies:
       jwa: 1.4.2
+      safe-buffer: 5.2.1
+
+  jws@4.0.1:
+    dependencies:
+      jwa: 2.0.1
       safe-buffer: 5.2.1
 
   k-bucket@5.1.0:
@@ -27562,6 +27732,8 @@ snapshots:
       unist-util-visit-parents: 6.0.1
 
   universal-user-agent@6.0.1: {}
+
+  universal-user-agent@7.0.3: {}
 
   universalify@2.0.1: {}
 
