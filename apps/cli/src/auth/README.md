@@ -11,7 +11,7 @@ This module provides GitHub OAuth device flow authentication for the Brebaje CLI
 
 ## Commands
 
-### `brebaje-cli auth login`
+### `brebaje-cli auth login-github`
 
 Initiates GitHub OAuth device flow authentication.
 
