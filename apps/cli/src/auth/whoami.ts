@@ -10,58 +10,40 @@ export async function whoami(): Promise<void> {
   const logger = new ScriptLogger(`${scriptLoggerTitle}Auth:Whoami`);
 
   try {
-    const config = loadConfig();
-    const tokenPath = config.BREBAJE_AUTH_TOKEN_PATH;
+    const { BREBAJE_AUTH_TOKEN_PATH } = loadConfig();
 
     logger.log("👤 Fetching user information...");
 
-    const validation = validateToken(tokenPath);
+    const { valid, payload, error } = validateToken(BREBAJE_AUTH_TOKEN_PATH);
 
-    if (!validation.valid || !validation.payload) {
-      console.log("");
-      console.log("❌ Not authenticated");
-      console.log("");
+    if (!valid || !payload) {
+      logger.error("❌ Not authenticated");
 
-      if (validation.error) {
-        console.log(`⚠️  ${validation.error}`);
-        console.log("");
+      if (error) {
+        logger.error(`⚠️  ${error}`);
       }
 
-      console.log("To login, run: brebaje-cli auth login");
-      console.log("");
+      logger.log("To login, run: brebaje-cli auth login \n");
       process.exit(1);
     }
 
-    const user = validation.payload.user;
+    const { displayName, id, provider, walletAddress } = payload.user;
 
-    console.log("");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log("👤 User Information");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log("");
-    console.log(`Display Name: ${user.displayName}`);
-    console.log(`User ID: ${user.id}`);
-    console.log(`Provider: ${user.provider}`);
+    logger.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+    logger.log("👤 User Information");
+    logger.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+    logger.log(`Display Name: ${displayName}`);
+    logger.log(`User ID: ${id}`);
+    logger.log(`Provider: ${provider}`);
 
-    if (user.avatarUrl) {
-      console.log(`Avatar URL: ${user.avatarUrl}`);
+    if (walletAddress) {
+      logger.log(`Wallet Address: ${walletAddress}`);
     }
 
-    if (user.githubId) {
-      console.log(`GitHub ID: ${user.githubId}`);
-    }
+    logger.log(`Token issued at: ${new Date(payload.iat * 1000).toLocaleString()}`);
+    logger.log(`Token expires at: ${new Date(payload.exp * 1000).toLocaleString()}`);
 
-    if (user.walletAddress) {
-      console.log(`Wallet Address: ${user.walletAddress}`);
-    }
-
-    console.log("");
-    console.log(`Token issued at: ${new Date(validation.payload.iat * 1000).toLocaleString()}`);
-    console.log(`Token expires at: ${new Date(validation.payload.exp * 1000).toLocaleString()}`);
-
-    console.log("");
-    console.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-    console.log("");
+    logger.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);
     logger.error(`❌ Failed to get user information: ${errorMessage}`);

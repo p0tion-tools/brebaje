@@ -1,8 +1,6 @@
 import { scriptLoggerTitle } from "../utils/constant.js";
 import { ScriptLogger } from "../utils/logger.js";
 import { authenticatedFetch } from "../auth/http.js";
-import { validateToken } from "../auth/token.js";
-import { loadConfig } from "../utils/config.js";
 
 interface Ceremony {
   id: string;
@@ -21,15 +19,6 @@ export async function list() {
 
   try {
     // Check authentication
-    const config = loadConfig();
-    const validation = validateToken(config.BREBAJE_AUTH_TOKEN_PATH);
-
-    if (!validation.valid) {
-      logger.warn("⚠️  Authentication recommended for listing ceremonies");
-      logger.log("Some information may be limited without authentication.");
-      logger.log("To authenticate, run: brebaje-cli auth login");
-      console.log("");
-    }
 
     logger.log("📡 Fetching ceremonies from backend...");
 
@@ -50,37 +39,36 @@ export async function list() {
     }
 
     logger.success(`✅ Found ${ceremonies.length} ceremony(ies):`);
-    console.log("");
 
     ceremonies.forEach((ceremony, index) => {
-      console.log(`${index + 1}. ${ceremony.title}`);
-      console.log(`   ID: ${ceremony.id}`);
+      logger.log(`${index + 1}. ${ceremony.title}`);
+      logger.log(`   ID: ${ceremony.id}`);
 
       if (ceremony.description) {
-        console.log(`   Description: ${ceremony.description}`);
+        logger.log(`   Description: ${ceremony.description}`);
       }
 
       if (ceremony.phase) {
-        console.log(`   Phase: ${ceremony.phase}`);
+        logger.log(`   Phase: ${ceremony.phase}`);
       }
 
       if (ceremony.circuitCount !== undefined) {
-        console.log(`   Circuits: ${ceremony.circuitCount}`);
+        logger.log(`   Circuits: ${ceremony.circuitCount}`);
       }
 
       if (ceremony.contributorsCount !== undefined) {
-        console.log(`   Contributors: ${ceremony.contributorsCount}`);
+        logger.log(`   Contributors: ${ceremony.contributorsCount}`);
       }
 
       if (ceremony.startTime) {
-        console.log(`   Start: ${new Date(ceremony.startTime).toLocaleString()}`);
+        logger.log(`   Start: ${new Date(ceremony.startTime).toLocaleString()}`);
       }
 
       if (ceremony.endTime) {
-        console.log(`   End: ${new Date(ceremony.endTime).toLocaleString()}`);
+        logger.log(`   End: ${new Date(ceremony.endTime).toLocaleString()}`);
       }
 
-      console.log("");
+      logger.log("\n");
     });
   } catch (error) {
     const errorMessage = error instanceof Error ? error.message : String(error);

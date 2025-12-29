@@ -1,25 +1,32 @@
-import { readFileSync, existsSync, unlinkSync } from "fs";
+import { readFileSync, existsSync, unlinkSync, mkdirSync, writeFileSync } from "fs";
+import { dirname } from "path";
 import { homedir } from "os";
 import jwt from "jsonwebtoken";
-
-interface JWTPayload {
-  user: {
-    id: string;
-    displayName: string;
-    avatarUrl?: string;
-    provider: string;
-    githubId?: string;
-    walletAddress?: string;
-  };
-  iat: number;
-  exp: number;
-}
+import { JWTPayload } from "./declarations";
 
 /**
  * Expands ~ in path to home directory
  */
 function expandPath(path: string): string {
   return path.replace(/^~/, homedir());
+}
+
+/**
+ * Stores JWT token to file
+ * Note: File is created with 0600 permissions (read/write for owner only).
+ * Ensure the parent directory also has secure permissions via umask or manual setting.
+ */
+export function storeToken(jwt: string, tokenPath: string): void {
+  const expandedPath = expandPath(tokenPath);
+
+  // Ensure directory exists
+  const dir = dirname(expandedPath);
+  if (!existsSync(dir)) {
+    mkdirSync(dir, { recursive: true, mode: 0o700 }); // Secure directory permissions
+  }
+
+  // Write token to file with secure permissions
+  writeFileSync(expandedPath, jwt, { mode: 0o600 });
 }
 
 /**
@@ -80,6 +87,7 @@ export function isTokenExpired(token: string): boolean {
 
 /**
  * Validates token (exists and not expired)
+ * Returns valid boolean, jwt and the payload (user: \{ displayName, provider, etc \})
  */
 export function validateToken(tokenPath: string): {
   valid: boolean;

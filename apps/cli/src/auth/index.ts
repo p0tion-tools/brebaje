@@ -7,7 +7,10 @@ import { whoami } from "./whoami.js";
 export function setUpAuthCommands(program: Command): void {
   const authCommand = program.command("auth").description("Authentication commands");
 
-  authCommand.command("login").description("Login with GitHub OAuth").action(githubAuth);
+  authCommand
+    .command("login-github")
+    .description("Login with GitHub Device Flow")
+    .action(githubAuth);
 
   authCommand.command("logout").description("Logout and clear stored tokens").action(logout);
 

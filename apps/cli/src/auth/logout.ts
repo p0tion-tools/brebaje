@@ -14,9 +14,8 @@ export async function logout(): Promise<void> {
     const tokenPath = config.BREBAJE_AUTH_TOKEN_PATH;
 
     if (!hasToken(tokenPath)) {
-      logger.log("ℹ️  No active session found");
-      console.log("");
-      console.log("You are not currently logged in.");
+      logger.log("ℹ️  No active session found \n");
+      logger.log("You are not currently logged in.");
       return;
     }
 
@@ -25,11 +24,9 @@ export async function logout(): Promise<void> {
     const deleted = deleteToken(tokenPath);
 
     if (deleted) {
-      logger.success("✅ Logged out successfully!");
-      console.log("");
-      console.log("Your authentication token has been removed.");
-      console.log("");
-      console.log("To login again, run: brebaje-cli auth login");
+      logger.success("✅ Logged out successfully!\n");
+      logger.log("Your authentication token has been removed.\n");
+      logger.log("To login again, run: brebaje-cli auth login");
     } else {
       logger.error("❌ Failed to remove authentication token");
       process.exit(1);

@@ -30,6 +30,7 @@
     "url": "https://github.com/NicoSerranoP/brebaje/issues"
   },
   "dependencies": {
+    "@octokit/auth-oauth-device": "^8.0.3",
     "aws-sdk": "^2.1692.0",
     "commander": "^11.0.0",
     "dotenv": "^17.2.1",

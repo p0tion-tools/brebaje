@@ -27,7 +27,7 @@ Initiates GitHub OAuth device flow authentication.
 **Example:**
 
 ```bash
-$ brebaje-cli auth login
+$ brebaje-cli auth login-github
 
 🔐 Starting GitHub authentication...
 📡 Fetching GitHub client ID from backend...
