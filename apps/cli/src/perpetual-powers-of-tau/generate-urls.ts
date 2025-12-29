@@ -1,6 +1,6 @@
 import { writeFileSync } from "fs";
 import { loadConfig } from "../utils/config.js";
-import { S3 } from "aws-sdk";
+import AWS from "aws-sdk";
 
 export async function generateUrlsPerpetualPowersOfTau(
   downloadFilename: string,
@@ -72,7 +72,7 @@ export async function generateUrlsPerpetualPowersOfTau(
       process.exit(1);
     }
 
-    const s3 = new S3({
+    const s3 = new AWS.S3({
       credentials: {
         accessKeyId: AWS_ACCESS_KEY_ID,
         secretAccessKey: AWS_SECRET_ACCESS_KEY,

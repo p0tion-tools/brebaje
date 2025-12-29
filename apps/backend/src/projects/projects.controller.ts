@@ -1,9 +1,20 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Project } from './project.model';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
+import { AuthenticatedRequest, JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -11,6 +22,8 @@ export class ProjectsController {
   constructor(private readonly projectsService: ProjectsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new project' })
   @ApiResponse({
     status: 201,
@@ -18,8 +31,9 @@ export class ProjectsController {
     type: Project,
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto);
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  create(@Request() req: AuthenticatedRequest, @Body() createProjectDto: CreateProjectDto) {
+    return this.projectsService.create(createProjectDto, req.user!.id!);
   }
 
   @Get()
