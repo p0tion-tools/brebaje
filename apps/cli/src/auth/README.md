@@ -118,7 +118,7 @@ $ brebaje-cli auth logout
 
 Your authentication token has been removed.
 
-To login again, run: brebaje-cli auth login
+To login again, run: brebaje-cli auth login-github
 ```
 
 ## Using Authentication in CLI Commands
@@ -195,7 +195,7 @@ async function requireAuth() {
     console.error("❌ Authentication required");
     console.error(`⚠️  ${validation.error}`);
     console.error("");
-    console.error("Please login first: brebaje-cli auth login");
+    console.error("Please login first: brebaje-cli auth login-github");
     process.exit(1);
   }
 

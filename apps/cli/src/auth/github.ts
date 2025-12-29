@@ -10,13 +10,14 @@ const logger = new ScriptLogger(`${scriptLoggerTitle}Authentication`);
 
 /**
  * Handles expiration countdown to notify user
+ * @returns Cleanup function to clear the interval
  */
-function expirationCountdown(expirationInSeconds: number): void {
+function expirationCountdown(expirationInSeconds: number): () => void {
   // Prepare data.
   let secondsCounter = expirationInSeconds <= 60 ? expirationInSeconds : 60;
   const interval = 1; // 1s
 
-  setInterval(() => {
+  const intervalId = setInterval(() => {
     if (expirationInSeconds !== 0) {
       // Update time and seconds counter.
       expirationInSeconds -= interval;
@@ -27,6 +28,7 @@ function expirationCountdown(expirationInSeconds: number): void {
       // Notify user.
       logger.log(`Expires in 00:${Math.floor(expirationInSeconds / 60)}:${secondsCounter}`);
     } else {
+      clearInterval(intervalId);
       process.stdout.write(`\n\n`); // workaround to \r.
       logger.error(
         `❌ GitHub OAuth device flow session has expired. Please restart the authentication process.`,
@@ -34,6 +36,9 @@ function expirationCountdown(expirationInSeconds: number): void {
       process.exit(1);
     }
   }, interval * 1000); // ms.
+
+  // Return cleanup function
+  return () => clearInterval(intervalId);
 }
 
 /**
@@ -47,34 +52,49 @@ async function initiateDeviceFlow(clientId: string): Promise<string> {
    * # Step 3: The app polls/asks for the user authentication status.
    */
 
-  // # Step 1.
-  const auth = createOAuthDeviceAuth({
-    clientType: "oauth-app",
-    clientId,
-    scopes: ["gist"],
-    onVerification: async (verification: Verification) => {
-      logger.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
-      logger.log("📱 GitHub Device Authentication");
-      logger.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
-      logger.log(`1. Visit: ${verification.verification_uri}`);
-      logger.log(`2. Enter code: ${verification.user_code}\n`);
-      if (verification.verification_uri) {
-        logger.log(`Or open this URL directly:`);
-        logger.log(verification.verification_uri);
-      }
-      logger.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+  let cleanupCountdown: (() => void) | undefined;
 
-      // Countdown for time expiration.
-      expirationCountdown(verification.expires_in);
-    },
-  });
+  try {
+    // # Step 1.
+    const auth = createOAuthDeviceAuth({
+      clientType: "oauth-app",
+      clientId,
+      scopes: ["gist"],
+      onVerification: async (verification: Verification) => {
+        logger.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━");
+        logger.log("📱 GitHub Device Authentication");
+        logger.log("━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
+        logger.log(`1. Visit: ${verification.verification_uri}`);
+        logger.log(`2. Enter code: ${verification.user_code}\n`);
+        if (verification.verification_uri) {
+          logger.log(`Or open this URL directly:`);
+          logger.log(verification.verification_uri);
+        }
+        logger.log("\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n");
 
-  // # Step 3.
-  const { token } = await auth({
-    type: "oauth",
-  });
+        // Countdown for time expiration.
+        cleanupCountdown = expirationCountdown(verification.expires_in);
+      },
+    });
 
-  return token;
+    // # Step 3.
+    const { token } = await auth({
+      type: "oauth",
+    });
+
+    // Clear the countdown interval when authentication succeeds
+    if (cleanupCountdown) {
+      cleanupCountdown();
+    }
+
+    return token;
+  } catch (error) {
+    // Clear the countdown interval if authentication fails
+    if (cleanupCountdown) {
+      cleanupCountdown();
+    }
+    throw error;
+  }
 }
 
 /**
