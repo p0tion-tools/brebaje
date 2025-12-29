@@ -26,7 +26,7 @@ export async function logout(): Promise<void> {
     if (deleted) {
       logger.success("✅ Logged out successfully!\n");
       logger.log("Your authentication token has been removed.\n");
-      logger.log("To login again, run: brebaje-cli auth login");
+      logger.log("To login again, run: brebaje-cli auth login-github");
     } else {
       logger.error("❌ Failed to remove authentication token");
       process.exit(1);
