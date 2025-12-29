@@ -41,7 +41,7 @@ function expirationCountdown(expirationInSeconds: number): void {
  */
 async function initiateDeviceFlow(clientId: string): Promise<string> {
   /**
-   * Github OAuth 2.0 Device Flow.
+   * GitHub OAuth 2.0 Device Flow.
    * # Step 1: Request device and user verification codes and gets auth verification uri.
    * # Step 2: The app prompts the user to enter a user verification code at https://github.com/login/device.
    * # Step 3: The app polls/asks for the user authentication status.
