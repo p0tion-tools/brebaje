@@ -23,7 +23,7 @@ export async function whoami(): Promise<void> {
         logger.error(`⚠️  ${error}`);
       }
 
-      logger.log("To login, run: brebaje-cli auth login \n");
+      logger.log("To login, run: brebaje-cli auth login-github \n");
       process.exit(1);
     }
 
