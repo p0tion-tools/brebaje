@@ -26,7 +26,7 @@ export async function list() {
 
     if (!response.ok) {
       if (response.status === 401) {
-        throw new Error("Authentication required. Please run: brebaje-cli auth login");
+        throw new Error("Authentication required. Please run: brebaje-cli auth login-github");
       }
       throw new Error(`Failed to fetch ceremonies: ${response.statusText}`);
     }
