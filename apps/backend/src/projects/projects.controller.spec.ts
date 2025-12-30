@@ -11,6 +11,7 @@ jest.mock('./projects.service', () => {
 // Import after mocking
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
+import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 describe('ProjectsController', () => {
   let controller: ProjectsController;
@@ -25,6 +26,10 @@ describe('ProjectsController', () => {
       remove: jest.fn(),
     };
 
+    const mockJwtAuthGuard = {
+      canActivate: jest.fn(() => true),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProjectsController],
       providers: [
@@ -32,8 +37,15 @@ describe('ProjectsController', () => {
           provide: ProjectsService,
           useValue: mockProjectsService,
         },
+        {
+          provide: JwtAuthGuard,
+          useValue: mockJwtAuthGuard,
+        },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue(mockJwtAuthGuard)
+      .compile();
 
     controller = module.get<ProjectsController>(ProjectsController);
     service = module.get<ProjectsService>(ProjectsService);
@@ -48,14 +60,15 @@ describe('ProjectsController', () => {
       const createProjectDto = {
         name: 'New Project',
         contact: 'contact@example.com',
-        coordinatorId: 1,
       };
+      const mockUser = { id: 1, displayName: 'Test User' };
+      const mockRequest = { user: mockUser } as AuthenticatedRequest;
       const mockResult = { id: 1, name: 'New Project' };
 
       jest.spyOn(service, 'create').mockImplementation(() => Promise.resolve(mockResult as any));
 
-      expect(await controller.create(createProjectDto)).toBe(mockResult);
-      expect(service.create).toHaveBeenCalledWith(createProjectDto);
+      expect(await controller.create(mockRequest, createProjectDto)).toBe(mockResult);
+      expect(service.create).toHaveBeenCalledWith(createProjectDto, 1);
     });
   });
 

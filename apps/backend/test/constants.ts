@@ -19,7 +19,6 @@ export const coordinatorDto: CreateUserDto = {
 export const projectDto: CreateProjectDto = {
   name: 'Test Project',
   contact: 'pse.dev',
-  coordinatorId: 1, // set after creating the coordinator user
 };
 
 export const startDate = Date.now() + 5 * 60 * 1000; // five minutes from now

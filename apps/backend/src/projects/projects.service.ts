@@ -21,12 +21,19 @@ export class ProjectsService {
     private readonly projectModel: typeof Project,
   ) {}
 
-  async create(createProjectDto: CreateProjectDto) {
+  /**
+   * Creates a new project.
+   *
+   * @param createProjectDto - The project data
+   * @param coordinatorId - The ID of the authenticated user creating the project
+   * @returns The created project
+   */
+  async create(createProjectDto: CreateProjectDto, coordinatorId: number) {
     try {
       const project = await this.projectModel.create({
         name: createProjectDto.name,
         contact: createProjectDto.contact,
-        coordinatorId: createProjectDto.coordinatorId,
+        coordinatorId,
       });
       return project;
     } catch (error) {

@@ -22,7 +22,7 @@
     "url": "git+https://github.com/NicoSerranoP/brebaje.git"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "tsx src/index.ts",
     "build": "tsc",
     "test": "echo \"No tests yet - TODO: Implement unit tests for CLI commands\""
   },
@@ -32,7 +32,7 @@
   "dependencies": {
     "@octokit/auth-oauth-device": "^8.0.3",
     "aws-sdk": "^2.1692.0",
-    "commander": "^11.0.0",
+    "commander": "14.0.2",
     "dotenv": "^17.2.1",
     "jsonwebtoken": "^9.0.3",
     "snarkjs": "^0.7.5"
@@ -41,6 +41,7 @@
     "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.8.9",
     "ts-node": "^10.9.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.2.2"
   }
 }
