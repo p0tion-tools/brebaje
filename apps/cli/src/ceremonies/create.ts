@@ -1,6 +1,6 @@
 import { ScriptLogger } from "../utils/logger";
 import { scriptLoggerTitle } from "../utils/constant";
-import { readTemplate, validateCreateTemplate } from "./utils";
+import { formatDate, readTemplate, validateCreateTemplate } from "./utils";
 import { CeremonyCreate } from "./declarations";
 import { authenticatedFetch } from "../auth/http";
 
@@ -35,8 +35,8 @@ export async function create(options: CreateOptions) {
     logger.log(`   Project ID: ${ceremony.projectId}`);
     logger.log(`   Type: ${ceremony.type}`);
     logger.log(`   State: ${ceremony.state}`);
-    logger.log(`   Start Date: ${ceremony.start_date}`);
-    logger.log(`   End Date: ${ceremony.end_date}`);
+    logger.log(`   Start Date: ${formatDate(ceremony.start_date)} (${ceremony.start_date})`);
+    logger.log(`   End Date: ${formatDate(ceremony.end_date)} (${ceremony.end_date})`);
     logger.log(`   Penalty: ${ceremony.penalty}`);
   } catch (err) {
     logger.failure(`Error: ${(err as Error).message}`);

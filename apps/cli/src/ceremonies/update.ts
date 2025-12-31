@@ -1,6 +1,6 @@
 import { ScriptLogger } from "../utils/logger";
 import { scriptLoggerTitle } from "../utils/constant";
-import { readTemplate, validateUpdateTemplate } from "./utils";
+import { formatDate, readTemplate, validateUpdateTemplate } from "./utils";
 import { CeremonyUpdate } from "./declarations";
 import { authenticatedFetch, fetchWithoutAuth } from "../auth/http";
 
@@ -46,6 +46,15 @@ export async function update(options: UpdateOptions) {
 
     Object.keys(template).forEach((key) => {
       if (template[key as keyof CeremonyUpdate] !== undefined) {
+        if (key === "start_date" || key === "end_date") {
+          logger.log(
+            `   ${key}: ${formatDate(updated[key as keyof CeremonyUpdate] as number)} (${
+              updated[key as keyof CeremonyUpdate]
+            }) (updated)`,
+          );
+          return;
+        }
+
         logger.log(`   ${key}: ${updated[key]} (updated)`);
       }
     });
