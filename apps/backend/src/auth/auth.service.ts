@@ -146,6 +146,32 @@ export class AuthService {
   }
 
   /**
+   * Test-only authentication method
+   * Generates JWT token for existing user without OAuth flow
+   * Only available in test/development environments
+   */
+  async testAuthWithUserId(userId: number): Promise<AuthResponseDto> {
+    if (process.env.NODE_ENV === 'production') {
+      throw new UnauthorizedException('Test authentication not allowed in production');
+    }
+
+    try {
+      const user = await this.usersService.findById(userId);
+      if (!user) {
+        throw new BadRequestException(`User with ID ${userId} not found`);
+      }
+
+      const jwt = await this.jwtService.signAsync({ user: user });
+      return { user, jwt };
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new BadRequestException(`Failed to authenticate user: ${error}`);
+    }
+  }
+
+  /**
    * GitHub OAuth 2.0 Authorization Code Flow
    * Step 1: Generate authorization URL for frontend redirect
    */

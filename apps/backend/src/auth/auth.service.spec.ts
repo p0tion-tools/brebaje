@@ -9,6 +9,7 @@ import { UserProvider } from '../types/enums';
 import { UserAttributes } from '../users/user.model';
 import { DeviceFlowTokenDto, AuthResponseDto } from './dto/auth-dto';
 import { GithubUser } from '../types/declarations';
+import { UnauthorizedException } from '@nestjs/common';
 
 // Mock fetch globally for device flow OAuth tests only
 global.fetch = jest.fn();
@@ -32,6 +33,7 @@ describe('AuthService', () => {
           provide: UsersService,
           useValue: {
             findByProviderAndDisplayName: jest.fn(),
+            findById: jest.fn(),
             create: jest.fn(),
           },
         },
@@ -361,6 +363,49 @@ describe('AuthService', () => {
       if (result instanceof Error) {
         expect(result.message).toBe('Bad credentials');
       }
+    });
+  });
+
+  describe('testAuthWithUserId', () => {
+    const mockUser: UserAttributes = {
+      id: 1,
+      displayName: 'testuser',
+      creationTime: Date.now(),
+      provider: UserProvider.GITHUB,
+    };
+
+    it('should authenticate the user with valid userId', async () => {
+      (usersService.findById as jest.Mock).mockResolvedValue(mockUser);
+
+      const userId = 1;
+      const result = await service.testAuthWithUserId(userId);
+
+      expect(result).toBeDefined();
+      expect(result).not.toBeInstanceOf(Error);
+      if (!(result instanceof Error)) {
+        expect(result.user.id).toBe(userId);
+      }
+    });
+
+    it('should return an error for invalid userId', async () => {
+      (usersService.findById as jest.Mock).mockResolvedValue(null);
+
+      const userId = 999; // Non-existent user
+      await expect(service.testAuthWithUserId(userId)).rejects.toThrow(
+        `User with ID ${userId} not found`,
+      );
+    });
+
+    it('should not work in production environment', async () => {
+      process.env.NODE_ENV = 'production';
+
+      (usersService.findById as jest.Mock).mockResolvedValue(mockUser);
+
+      const userId = 1;
+
+      await expect(service.testAuthWithUserId(userId)).rejects.toThrow(
+        new UnauthorizedException('Test authentication not allowed in production'),
+      );
     });
   });
 

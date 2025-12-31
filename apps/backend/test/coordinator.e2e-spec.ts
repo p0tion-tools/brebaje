@@ -13,12 +13,14 @@ import {
   getURLOfPowersOfTau,
   getFilenameFromUrl,
   genesisZkeyIndex,
+  multiPartUploadAPI,
 } from '@brebaje/actions';
 import { existsSync, mkdirSync } from 'fs';
 import { downloadAndSaveFile } from 'src/utils';
 import { zKey } from 'snarkjs';
 import { Circuit } from 'src/circuits/circuit.model';
 import { JwtAuthGuard, AuthenticatedRequest } from '../src/auth/guards/jwt-auth.guard';
+import { JwtService } from '@nestjs/jwt';
 
 const DOWNLOAD_DIRECTORY = './.downloads';
 const TEST_URL = `http://localhost:${PORT}`;
@@ -29,6 +31,8 @@ process.env.API_URL = TEST_URL;
 
 describe('Coordinator (e2e)', () => {
   let app: INestApplication<App>;
+  let jwtService: JwtService;
+  let jwtToken: string | undefined;
   let coordinatorId: number | undefined;
   let projectId: number | undefined;
   let ceremonyId: number | undefined;
@@ -69,6 +73,8 @@ describe('Coordinator (e2e)', () => {
         },
       } as JwtAuthGuard)
       .compile();
+
+    jwtService = moduleFixture.get<JwtService>(JwtService);
 
     app = moduleFixture.createNestApplication();
     await app.init();
@@ -113,6 +119,35 @@ describe('Coordinator (e2e)', () => {
     expect(savedUser.provider).toBe(coordinatorDto.provider);
 
     coordinatorId = body.id;
+  });
+
+  it('should authenticate the user using test endpoint', async () => {
+    const response = await fetch(`${TEST_URL}/auth/test/login`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: coordinatorId,
+      }),
+    });
+
+    const body = (await response.json()) as { user: User; jwt: string };
+
+    expect(response.status).toBe(201);
+    expect(typeof body.jwt).toBe('string');
+    expect(body.user.id).toBe(coordinatorId);
+    expect(body.user.displayName).toBe(coordinatorDto.displayName);
+
+    // Verify and decode JWT token
+    const decoded = await jwtService.verifyAsync<{ user: User }>(body.jwt);
+
+    expect(decoded.user).toBeDefined();
+    expect(decoded.user.id).toBe(coordinatorId);
+    expect(decoded.user.displayName).toBe(coordinatorDto.displayName);
+    expect(decoded.user.provider).toBe(coordinatorDto.provider);
+
+    jwtToken = body.jwt;
   });
 
   it('should create a project', async () => {
@@ -235,18 +270,16 @@ describe('Coordinator (e2e)', () => {
         const localZkeyPath = `${DOWNLOAD_DIRECTORY}/${prefix}_${genesisZkeyIndex}.zkey`;
         await zKey.newZKey(localR1csPath, localPTauPath, localZkeyPath);
 
-        /*
-        // TODO: complete the storage.service migration first
         await multiPartUploadAPI(
-          'accessToken',
+          jwtToken!,
           ceremonyId!,
-          'userId',
+          coordinatorId!,
           `${prefix}.r1cs`,
           localR1csPath,
           Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
           true,
         );
-        */
+        // TODO: complete other uploads as well (wasm, zkey)
       }
     },
     5 * 60 * 1000, // Sets timeout to 5 minutes

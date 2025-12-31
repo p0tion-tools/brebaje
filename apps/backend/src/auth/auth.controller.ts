@@ -107,4 +107,22 @@ export class AuthController {
       verifySignatureDto.signature,
     );
   }
+
+  @Post('test/login')
+  @ApiOperation({ summary: 'Test endpoint to authenticate user by ID (for testing purposes only)' })
+  @ApiResponse({
+    status: 201,
+    description: 'User authenticated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        user: { type: 'object', description: 'User information' },
+        jwt: { type: 'string', description: 'JWT authentication token' },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async testLogin(@Body() body: { userId: number }) {
+    return this.authService.testAuthWithUserId(body.userId);
+  }
 }
