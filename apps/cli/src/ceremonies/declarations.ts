@@ -1,5 +1,4 @@
 // TypeScript type definitions for ceremonies module
-// ...interfaces and types to be added...
 
 // Enums (imported from backend, duplicated here for CLI typing)
 export enum CeremonyType {
