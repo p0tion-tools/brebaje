@@ -21,6 +21,17 @@ export function createAuthHeaders(): HeadersInit {
 }
 
 /**
+ * Makes a API request without authentication
+ */
+export async function fetchWithoutAuth(url: string, options: RequestInit = {}): Promise<Response> {
+  const { BREBAJE_API_URL } = loadConfig();
+
+  const fullUrl = url.startsWith("http") ? url : `${BREBAJE_API_URL}${url}`;
+
+  return fetch(fullUrl, options);
+}
+
+/**
  * Makes an authenticated API request
  */
 export async function authenticatedFetch(
@@ -29,7 +40,6 @@ export async function authenticatedFetch(
 ): Promise<Response> {
   const { BREBAJE_API_URL } = loadConfig();
 
-  // Prepend API URL if relative path
   const fullUrl = url.startsWith("http") ? url : `${BREBAJE_API_URL}${url}`;
 
   const authHeaders = createAuthHeaders();
