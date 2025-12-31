@@ -9,7 +9,7 @@ export interface ProjectCreate {
 /**
  * Interface for project data from API.
  */
-interface Project {
+export interface Project {
   id: number;
   name: string;
   contact: string;

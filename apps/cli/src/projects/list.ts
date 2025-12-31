@@ -1,5 +1,5 @@
 import { ScriptLogger } from "../utils/logger.js";
-import { authenticatedFetch } from "../auth/http.js";
+import { fetchWithoutAuth } from "../auth/http.js";
 import { scriptLoggerTitle } from "../utils/constant.js";
 import { Project } from "./declarations.js";
 
@@ -12,12 +12,9 @@ export async function list(): Promise<void> {
   try {
     logger.log("📡 Fetching projects from backend...");
 
-    const response = await authenticatedFetch("/projects");
+    const response = await fetchWithoutAuth("/projects");
 
     if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error("Authentication required. Please run: brebaje-cli auth login-github");
-      }
       throw new Error(`Failed to fetch projects: ${response.statusText}`);
     }
 

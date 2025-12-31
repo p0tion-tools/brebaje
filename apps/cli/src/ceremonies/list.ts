@@ -1,33 +1,17 @@
-import { scriptLoggerTitle } from "../utils/constant.js";
-import { ScriptLogger } from "../utils/logger.js";
-import { authenticatedFetch } from "../auth/http.js";
-
-interface Ceremony {
-  id: string;
-  title: string;
-  description?: string;
-  startTime?: string;
-  endTime?: string;
-  circuitCount?: number;
-  contributorsCount?: number;
-  coordinatorId?: string;
-  phase?: string;
-}
+import { scriptLoggerTitle } from "../utils/constant";
+import { ScriptLogger } from "../utils/logger";
+import { fetchWithoutAuth } from "../auth/http";
+import { Ceremony } from "./declarations";
+import { formatDate } from "./utils";
 
 export async function list() {
   const logger = new ScriptLogger(`${scriptLoggerTitle}List`);
 
   try {
-    // Check authentication
-
     logger.log("📡 Fetching ceremonies from backend...");
-
-    const response = await authenticatedFetch("/ceremonies");
+    const response = await fetchWithoutAuth("/ceremonies");
 
     if (!response.ok) {
-      if (response.status === 401) {
-        throw new Error("Authentication required. Please run: brebaje-cli auth login-github");
-      }
       throw new Error(`Failed to fetch ceremonies: ${response.statusText}`);
     }
 
@@ -41,38 +25,20 @@ export async function list() {
     logger.success(`✅ Found ${ceremonies.length} ceremony(ies):`);
 
     ceremonies.forEach((ceremony, index) => {
-      logger.log(`${index + 1}. ${ceremony.title}`);
+      logger.log(`${index + 1}. Ceremony #${ceremony.id}`);
       logger.log(`   ID: ${ceremony.id}`);
-
+      logger.log(`   Project ID: ${ceremony.projectId}`);
+      logger.log(`   Type: ${ceremony.type}`);
+      logger.log(`   State: ${ceremony.state}`);
       if (ceremony.description) {
         logger.log(`   Description: ${ceremony.description}`);
       }
-
-      if (ceremony.phase) {
-        logger.log(`   Phase: ${ceremony.phase}`);
-      }
-
-      if (ceremony.circuitCount !== undefined) {
-        logger.log(`   Circuits: ${ceremony.circuitCount}`);
-      }
-
-      if (ceremony.contributorsCount !== undefined) {
-        logger.log(`   Contributors: ${ceremony.contributorsCount}`);
-      }
-
-      if (ceremony.startTime) {
-        logger.log(`   Start: ${new Date(ceremony.startTime).toLocaleString()}`);
-      }
-
-      if (ceremony.endTime) {
-        logger.log(`   End: ${new Date(ceremony.endTime).toLocaleString()}`);
-      }
-
-      logger.log("\n");
+      logger.log(`   Start Date: ${formatDate(ceremony.start_date)}`);
+      logger.log(`   End Date: ${formatDate(ceremony.end_date)}`);
+      logger.log(`   Penalty: ${ceremony.penalty}`);
     });
-  } catch (error) {
-    const errorMessage = error instanceof Error ? error.message : String(error);
-    logger.error(`❌ Failed to list ceremonies: ${errorMessage}`);
+  } catch (err) {
+    logger.failure(`Error: ${(err as Error).message}`);
     process.exit(1);
   }
 }
