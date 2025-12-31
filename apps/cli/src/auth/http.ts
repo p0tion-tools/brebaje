@@ -21,7 +21,7 @@ export function createAuthHeaders(): HeadersInit {
 }
 
 /**
- * Makes a API request without authentication
+ * Makes an API request without authentication
  */
 export async function fetchWithoutAuth(url: string, options: RequestInit = {}): Promise<Response> {
   const { BREBAJE_API_URL } = loadConfig();
