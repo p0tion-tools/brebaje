@@ -39,5 +39,6 @@ export async function list() {
     });
   } catch (err) {
     logger.failure(`Error: ${(err as Error).message}`);
+    process.exit(1);
   }
 }

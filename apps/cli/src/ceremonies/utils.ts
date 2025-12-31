@@ -97,13 +97,18 @@ export function validateUpdateTemplate(template: any): void {
       `state must be a valid CeremonyState: ${Object.values(CeremonyState).join(", ")}`,
     );
   }
-  if (
-    (template.start_date !== undefined || template.end_date !== undefined) &&
-    !validateTimestamps(template.start_date ?? 0, template.end_date ?? Number.MAX_SAFE_INTEGER)
-  ) {
-    throw new Error(
-      "start_date and end_date must be valid unix timestamps and start_date < end_date",
-    );
+  if (template.start_date !== undefined || template.end_date !== undefined) {
+    if (template.start_date === undefined || template.end_date === undefined) {
+      throw new Error(
+        "Both start_date and end_date must be provided together when updating timestamps",
+      );
+    }
+
+    if (!validateTimestamps(template.start_date, template.end_date)) {
+      throw new Error(
+        "start_date and end_date must be valid unix timestamps and start_date < end_date",
+      );
+    }
   }
   if (
     template.penalty !== undefined &&

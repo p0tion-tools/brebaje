@@ -36,7 +36,7 @@ export function setUpCeremonyCommands(program: Command) {
 
   coordinate
     .command("delete")
-    .description("delete a ceremony (not yet implemented)")
+    .description("delete a ceremony")
     .requiredOption("-i, --id <number>", "the ID of the ceremony to delete")
     .option("-y, --yes", "confirm deletion without prompt")
     .action(remove);

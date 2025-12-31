@@ -21,14 +21,21 @@ export function createAuthHeaders(): HeadersInit {
 }
 
 /**
- * Makes a API request without authentication
+ * Makes an API request without authentication
  */
 export async function fetchWithoutAuth(url: string, options: RequestInit = {}): Promise<Response> {
   const { BREBAJE_API_URL } = loadConfig();
 
   const fullUrl = url.startsWith("http") ? url : `${BREBAJE_API_URL}${url}`;
 
-  return fetch(fullUrl, options);
+  return fetch(fullUrl, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...options.headers,
+    },
+  });
 }
 
 /**
