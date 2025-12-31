@@ -28,7 +28,14 @@ export async function fetchWithoutAuth(url: string, options: RequestInit = {}): 
 
   const fullUrl = url.startsWith("http") ? url : `${BREBAJE_API_URL}${url}`;
 
-  return fetch(fullUrl, options);
+  return fetch(fullUrl, {
+    ...options,
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+      ...options.headers,
+    },
+  });
 }
 
 /**
