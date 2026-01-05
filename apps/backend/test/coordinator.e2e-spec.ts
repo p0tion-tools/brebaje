@@ -1,7 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { INestApplication, ExecutionContext } from '@nestjs/common';
+import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
+import { configureApp } from '../src/app.config';
 import { AWS_CEREMONY_BUCKET_POSTFIX, PORT } from 'src/utils/constants';
 import { ceremonyDto, circuits, coordinatorDto, projectDto } from './constants';
 import { User } from 'src/users/user.model';
@@ -20,7 +21,6 @@ import { existsSync, mkdirSync } from 'fs';
 import { downloadAndSaveFile } from 'src/utils';
 import { zKey } from 'snarkjs';
 import { Circuit } from 'src/circuits/circuit.model';
-import { JwtAuthGuard, AuthenticatedRequest } from '../src/auth/guards/jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
 import { Participant } from 'src/participants/participant.model';
 import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
@@ -43,43 +43,15 @@ describe('Coordinator (e2e)', () => {
   beforeAll(async () => {
     const moduleFixture: TestingModule = await Test.createTestingModule({
       imports: [AppModule],
-    })
-      .overrideGuard(JwtAuthGuard)
-      .useValue({
-        canActivate: async (context: ExecutionContext): Promise<boolean> => {
-          const request = context.switchToHttp().getRequest<AuthenticatedRequest>();
-          // Try to find the most recently created user, or use a default test user
-          let testUser: User | null = null;
-          try {
-            // Get the most recently created user (should be the coordinator from the first test)
-            testUser = await User.findOne({
-              order: [['id', 'DESC']],
-            });
-          } catch {
-            // If no user exists yet, we'll use a default
-          }
-
-          // Attach a mock user to the request for testing
-          if (testUser) {
-            request.user = testUser;
-          } else {
-            // For tests that run before user creation, use a default test user
-            request.user = {
-              id: 1,
-              displayName: coordinatorDto.displayName,
-              avatarUrl: coordinatorDto.avatarUrl,
-              provider: coordinatorDto.provider,
-              creationTime: Date.now(),
-            } as User;
-          }
-          return true;
-        },
-      } as JwtAuthGuard)
-      .compile();
+    }).compile();
 
     jwtService = moduleFixture.get<JwtService>(JwtService);
 
     app = moduleFixture.createNestApplication();
+
+    // Apply all global configurations (validation, CORS, Swagger)
+    configureApp(app);
+
     await app.init();
     await app.listen(PORT);
   });
@@ -160,6 +132,7 @@ describe('Coordinator (e2e)', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify(projectDto),
     });
@@ -191,6 +164,7 @@ describe('Coordinator (e2e)', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify({
         ...ceremonyDto,
@@ -254,6 +228,7 @@ describe('Coordinator (e2e)', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify({
         ceremonyId,

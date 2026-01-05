@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "brebaje-backend",
   "version": "0.0.1",
-  "description": "",
+  "description": "The Brebaje backend service to orchestrate actions and manage data (ceremonies, participants and contributions).",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
