@@ -406,6 +406,8 @@ describe('AuthService', () => {
       await expect(service.testAuthWithUserId(userId)).rejects.toThrow(
         new UnauthorizedException('Test authentication not allowed in production'),
       );
+
+      process.env.NODE_ENV = 'test'; // Reset to test environment
     });
   });
 

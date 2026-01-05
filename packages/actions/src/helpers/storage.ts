@@ -292,7 +292,17 @@ export const openMultiPartUploadAPI = async (
   });
 
   if (!result.ok) {
-    throw new Error(result.status.toString());
+    let errorBody = "";
+    try {
+      errorBody = await result.text();
+    } catch {
+      // Ignore errors while reading the error body to avoid masking the original failure.
+    }
+    const statusText = result.statusText || "Unknown status";
+    const message =
+      `Multipart upload start failed: ${result.status} ${statusText}` +
+      (errorBody ? ` - ${errorBody}` : "");
+    throw new Error(message);
   }
 
   const data = (await result.json()) as { uploadId: string };

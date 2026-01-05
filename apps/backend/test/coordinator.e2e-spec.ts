@@ -256,7 +256,6 @@ describe('Coordinator (e2e)', () => {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        userId: coordinatorId,
         ceremonyId,
       }),
     });
@@ -347,7 +346,7 @@ describe('Coordinator (e2e)', () => {
         const alreadyUploadedPot = await checkIfObjectExistAPI(
           jwtToken!,
           ceremonyId!,
-          localPTauPath,
+          `pot/${getFilenameFromUrl(powersOfTauURL)}`,
         );
 
         // If it wasn't uploaded yet, upload it.
