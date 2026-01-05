@@ -23,7 +23,7 @@ export class ProjectsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new project' })
   @ApiResponse({
     status: 201,

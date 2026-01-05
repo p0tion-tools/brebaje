@@ -1,9 +1,8 @@
 import { GenericBar } from "cli-progress";
 import { createReadStream, createWriteStream } from "fs";
-import https from "https";
-import mime from "mime-types";
-import fetchretry from "@adobe/node-fetch-retry";
+import { lookup } from "mime-types";
 import { ChunkWithUrl, ETagWithPartNumber, TemporaryParticipantContributionData } from "../types";
+import { fetchRetry } from "./fetch";
 
 /**
  * Return the bucket name based on the input arguments.
@@ -103,19 +102,18 @@ export const uploadPartsAPI = async (
     i += 1
   ) {
     // Consume the pre-signed url to upload the chunk.
-    const response = await fetchretry(chunksWithUrls[i].preSignedUrl, {
+    const response = await fetchRetry(chunksWithUrls[i].preSignedUrl, {
       retryOptions: {
         retryInitialDelay: 500, // 500 ms.
         socketTimeout: 60000, // 60 seconds.
         retryMaxDuration: 300000, // 5 minutes.
       },
       method: "PUT",
-      body: chunksWithUrls[i].chunk,
+      body: new Uint8Array(chunksWithUrls[i].chunk),
       headers: {
         "Content-Type": contentType ? contentType.toString() : "application/octet-stream",
         "Content-Length": chunksWithUrls[i].chunk.length.toString(),
       },
-      agent: new https.Agent({ keepAlive: true }),
     });
 
     // Verify the response.
@@ -282,7 +280,7 @@ export const openMultiPartUploadAPI = async (
     id: ceremonyId.toString(),
     userId: userId.toString(),
   }).toString();
-  const result = (await fetch(url.toString(), {
+  const result = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -291,8 +289,25 @@ export const openMultiPartUploadAPI = async (
     body: JSON.stringify({
       objectKey,
     }),
-  }).then((res) => res.json())) as { uploadId: string };
-  return result;
+  });
+
+  if (!result.ok) {
+    let errorBody = "";
+    try {
+      errorBody = await result.text();
+    } catch {
+      // Ignore errors while reading the error body to avoid masking the original failure.
+    }
+    const statusText = result.statusText || "Unknown status";
+    const message =
+      `Multipart upload start failed: ${result.status} ${statusText}` +
+      (errorBody ? ` - ${errorBody}` : "");
+    throw new Error(message);
+  }
+
+  const data = (await result.json()) as { uploadId: string };
+
+  return data;
 };
 
 /**
@@ -404,7 +419,7 @@ export const multiPartUploadAPI = async (
   const partNumbersAndETagsZkey = await uploadPartsAPI(
     accessToken,
     chunksWithUrlsZkey,
-    mime.lookup(localFilePath) || false, // content-type.
+    lookup(localFilePath) || false, // content-type.
     ceremonyId,
     userId,
     creatingCeremony,
@@ -500,7 +515,7 @@ export const downloadCeremonyArtifact = async (
   );
 
   // Make fetch to get info about the artifact.
-  const response = await fetchretry(getPreSignedUrl, {
+  const response = await fetchRetry(getPreSignedUrl, {
     retryOptions: {
       retryInitialDelay: 500,
       socketTimeout: 60000,

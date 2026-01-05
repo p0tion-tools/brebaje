@@ -1,7 +1,7 @@
 {
-  "name": "backend",
+  "name": "brebaje-backend",
   "version": "0.0.1",
-  "description": "",
+  "description": "The Brebaje backend service to orchestrate actions and manage data (ceremonies, participants and contributions).",
   "author": "",
   "private": true,
   "license": "UNLICENSED",
@@ -22,7 +22,7 @@
     "test:watch": "jest --watch",
     "test:cov": "jest --coverage",
     "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --config=jest.config.js --runInBand",
-    "test:e2e": "jest --config ./test/jest-e2e.json"
+    "test:e2e": "jest --config ./test/jest-e2e.json --forceExit --runInBand"
   },
   "dependencies": {
     "@aws-sdk/client-ec2": "3.898.0",

@@ -1,9 +1,11 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { Ceremony } from './ceremony.model';
 import { CeremoniesService } from './ceremonies.service';
 import { CreateCeremonyDto } from './dto/create-ceremony.dto';
 import { UpdateCeremonyDto } from './dto/update-ceremony.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IsProjectCoordinatorGuard } from '../projects/guards/is-project-coordinator.guard';
 
 @ApiTags('ceremonies')
 @Controller('ceremonies')
@@ -11,6 +13,8 @@ export class CeremoniesController {
   constructor(private readonly ceremoniesService: CeremoniesService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, IsProjectCoordinatorGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new ceremony' })
   @ApiResponse({
     status: 201,
@@ -18,6 +22,7 @@ export class CeremoniesController {
     type: Ceremony,
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Not the project coordinator.' })
   create(@Body() createCeremonyDto: CreateCeremonyDto) {
     return this.ceremoniesService.create(createCeremonyDto);
   }

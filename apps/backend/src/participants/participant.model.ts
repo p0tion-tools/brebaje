@@ -34,7 +34,16 @@ export type ParticipantCreationAttributes = Optional<
   ParticipantOptionalAttributes
 >;
 
-@Table({ tableName: 'participants' })
+@Table({
+  tableName: 'participants',
+  indexes: [
+    {
+      unique: true,
+      fields: ['ceremonyId', 'userId'],
+      name: 'unique_ceremony_user',
+    },
+  ],
+})
 export class Participant extends Model implements ParticipantAttributes {
   declare createdAt: Date;
   declare updatedAt: Date;

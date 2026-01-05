@@ -2,7 +2,12 @@ import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { DeviceFlowTokenDto, GenerateNonceDto, VerifySignatureDto } from './dto/auth-dto';
+import {
+  DeviceFlowTokenDto,
+  GenerateNonceDto,
+  TestLoginDto,
+  VerifySignatureDto,
+} from './dto/auth-dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -106,5 +111,23 @@ export class AuthController {
       verifySignatureDto.userAddress,
       verifySignatureDto.signature,
     );
+  }
+
+  @Post('test/login')
+  @ApiOperation({ summary: 'Test endpoint to authenticate user by ID (for testing purposes only)' })
+  @ApiResponse({
+    status: 201,
+    description: 'User authenticated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        user: { type: 'object', description: 'User information' },
+        jwt: { type: 'string', description: 'JWT authentication token' },
+      },
+    },
+  })
+  @ApiResponse({ status: 404, description: 'User not found' })
+  async testLogin(@Body() body: TestLoginDto) {
+    return this.authService.testAuthWithUserId(body.userId);
   }
 }

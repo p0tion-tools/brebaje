@@ -1,35 +1,18 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
+import { IsNumber } from 'class-validator';
 
+/**
+ * Data Transfer Object for creating a participant.
+ * @param ceremonyId - The ID of the ceremony the participant is associated with
+ * userId is obtained from the authenticated request context
+ * Status and steps are set to default values upon creation
+ */
 export class CreateParticipantDto {
-  @ApiProperty({ example: 1 })
-  userId: number;
-
-  @ApiProperty({ example: 1 })
-  ceremonyId: number;
-
-  @ApiProperty({ enum: ParticipantStatus, example: ParticipantStatus.CREATED, required: false })
-  status: ParticipantStatus;
-
   @ApiProperty({
-    enum: ParticipantContributionStep,
-    example: ParticipantContributionStep.DOWNLOADING,
-    required: false,
+    example: 1,
+    description:
+      'ID of the ceremony the participant is associated with. The userId is obtained from the authenticated request context and must not be provided in the request body.',
   })
-  contributionStep?: ParticipantContributionStep;
-
-  @ApiProperty({ example: 0, required: false })
-  contributionProgress?: number;
-
-  @ApiProperty({ example: 1675209600, required: false })
-  contributionStartedAt?: number;
-
-  @ApiProperty({ example: 1675209600, required: false })
-  verificationStartedAt?: number;
-
-  @ApiProperty({ example: {}, required: false })
-  tempContributionData?: object;
-
-  @ApiProperty({ example: {}, required: false })
-  timeout?: object;
+  @IsNumber()
+  ceremonyId: number;
 }
