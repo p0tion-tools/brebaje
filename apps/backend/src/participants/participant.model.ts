@@ -40,7 +40,7 @@ export type ParticipantCreationAttributes = Optional<
     {
       unique: true,
       fields: ['ceremonyId', 'userId'],
-      name: 'uniqueCeremonyUser',
+      name: 'unique_ceremony_user',
     },
   ],
 })
