@@ -8,7 +8,11 @@ import { IsNumber } from 'class-validator';
  * Status and steps are set to default values upon creation
  */
 export class CreateParticipantDto {
-  @ApiProperty({ example: 1 })
+  @ApiProperty({
+    example: 1,
+    description:
+      'ID of the ceremony the participant is associated with. The userId is obtained from the authenticated request context and must not be provided in the request body.',
+  })
   @IsNumber()
   ceremonyId: number;
 }
