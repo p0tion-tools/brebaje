@@ -53,3 +53,12 @@ export class VerifySignatureDto {
   @Allow()
   signature: DataSignature; // DataSignature type from MeshSDK
 }
+
+export class TestLoginDto {
+  @ApiProperty({
+    description: 'ID of the user to authenticate',
+    example: 1,
+  })
+  @IsNumber()
+  userId: number;
+}

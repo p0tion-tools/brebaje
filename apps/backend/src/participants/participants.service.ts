@@ -36,16 +36,22 @@ export class ParticipantsService {
    * Creates a new participant.
    *
    * @param createParticipantDto - The DTO containing participant creation data
+   * @param userId - The ID of the authenticated user creating the participant
    * @returns The created participant
    */
-  async create(createParticipantDto: CreateParticipantDto) {
-    const participant = await this.participantModel.create({
-      ...createParticipantDto,
-      status: createParticipantDto.status || ParticipantStatus.CREATED,
-      contributionStep:
-        createParticipantDto.contributionStep || ParticipantContributionStep.DOWNLOADING,
-    });
-    return participant;
+  async create(createParticipantDto: CreateParticipantDto, userId: number) {
+    try {
+      const participant = await this.participantModel.create({
+        ...createParticipantDto,
+        userId,
+        status: ParticipantStatus.CREATED,
+        contributionStep: ParticipantContributionStep.DOWNLOADING,
+      });
+
+      return participant;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
   async findAll() {

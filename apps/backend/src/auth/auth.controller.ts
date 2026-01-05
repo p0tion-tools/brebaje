@@ -2,7 +2,12 @@ import { Body, Controller, Get, Post, Query, Res } from '@nestjs/common';
 import { Response } from 'express';
 import { ApiTags, ApiOperation, ApiResponse, ApiQuery } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
-import { DeviceFlowTokenDto, GenerateNonceDto, VerifySignatureDto } from './dto/auth-dto';
+import {
+  DeviceFlowTokenDto,
+  GenerateNonceDto,
+  TestLoginDto,
+  VerifySignatureDto,
+} from './dto/auth-dto';
 
 @ApiTags('Authentication')
 @Controller('auth')
@@ -122,7 +127,7 @@ export class AuthController {
     },
   })
   @ApiResponse({ status: 404, description: 'User not found' })
-  async testLogin(@Body() body: { userId: number }) {
+  async testLogin(@Body() body: TestLoginDto) {
     return this.authService.testAuthWithUserId(body.userId);
   }
 }

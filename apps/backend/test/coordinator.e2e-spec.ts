@@ -14,6 +14,7 @@ import {
   getFilenameFromUrl,
   genesisZkeyIndex,
   multiPartUploadAPI,
+  checkIfObjectExistAPI,
 } from '@brebaje/actions';
 import { existsSync, mkdirSync } from 'fs';
 import { downloadAndSaveFile } from 'src/utils';
@@ -21,6 +22,8 @@ import { zKey } from 'snarkjs';
 import { Circuit } from 'src/circuits/circuit.model';
 import { JwtAuthGuard, AuthenticatedRequest } from '../src/auth/guards/jwt-auth.guard';
 import { JwtService } from '@nestjs/jwt';
+import { Participant } from 'src/participants/participant.model';
+import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
 
 const DOWNLOAD_DIRECTORY = './.downloads';
 const TEST_URL = `http://localhost:${PORT}`;
@@ -82,11 +85,13 @@ describe('Coordinator (e2e)', () => {
   });
 
   afterAll(async () => {
-    await Ceremony.destroy({ where: { id: ceremonyId || '' } });
-    await Project.destroy({ where: { id: projectId || '' } });
-    await User.destroy({ where: { id: coordinatorId || '' } });
-
-    await app.close();
+    await Promise.all([
+      Participant.destroy({ where: { id: ceremonyId || '' } }),
+      Ceremony.destroy({ where: { id: ceremonyId || '' } }),
+      Project.destroy({ where: { id: projectId || '' } }),
+      User.destroy({ where: { id: coordinatorId || '' } }),
+      app.close(),
+    ]);
   });
 
   it('should create a new user', async () => {
@@ -244,6 +249,40 @@ describe('Coordinator (e2e)', () => {
     expect(body.bucketName).toBe(expectedBucketName);
   });
 
+  it('should create a participant', async () => {
+    const response = await fetch(`${TEST_URL}/participants`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        userId: coordinatorId,
+        ceremonyId,
+      }),
+    });
+
+    const body = (await response.json()) as Participant;
+
+    expect(typeof body.id).toBe('number');
+    expect(body.userId).toBe(coordinatorId);
+    expect(body.ceremonyId).toBe(ceremonyId);
+    expect(body.status).toBe(ParticipantStatus.CREATED);
+    expect(body.contributionStep).toBe(ParticipantContributionStep.DOWNLOADING);
+
+    const participantInstance = await Participant.findByPk(body.id);
+    if (!participantInstance) {
+      throw new Error(`Participant with ID ${body.id} not found`);
+    }
+    const savedParticipant = participantInstance.dataValues as Participant;
+
+    expect(savedParticipant).toBeDefined();
+    expect(savedParticipant.id).toBe(body.id);
+    expect(savedParticipant.userId).toBe(coordinatorId);
+    expect(savedParticipant.ceremonyId).toBe(ceremonyId);
+    expect(savedParticipant.status).toBe(ParticipantStatus.CREATED);
+    expect(savedParticipant.contributionStep).toBe(ParticipantContributionStep.DOWNLOADING);
+  });
+
   it(
     'should upload the circuit artifacts to the bucket',
     async () => {
@@ -270,16 +309,59 @@ describe('Coordinator (e2e)', () => {
         const localZkeyPath = `${DOWNLOAD_DIRECTORY}/${prefix}_${genesisZkeyIndex}.zkey`;
         await zKey.newZKey(localR1csPath, localPTauPath, localZkeyPath);
 
-        await multiPartUploadAPI(
+        // TODO: calculate blake hashes of every file and save it to DB
+        // Use this code as guideline: https://github.com/privacy-ethereum/p0tion/blob/8870cbf6190d45833deeda33285f06a98f6a7ec5/packages/phase2cli/src/commands/ceremony/create.ts#L122
+        // Please find a more up-to-date library for blake2 hashing
+        // Save the hashes in a global variable like coordinatorId or ceremonyId above because we need it for later tests
+
+        await Promise.all([
+          multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            coordinatorId!,
+            `${prefix}.r1cs`,
+            localR1csPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          ),
+          multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            coordinatorId!,
+            `${prefix}.wasm`,
+            localWasmPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          ),
+          multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            coordinatorId!,
+            `${prefix}.zkey`,
+            localZkeyPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          ),
+        ]);
+
+        const alreadyUploadedPot = await checkIfObjectExistAPI(
           jwtToken!,
           ceremonyId!,
-          coordinatorId!,
-          `${prefix}.r1cs`,
-          localR1csPath,
-          Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
-          true,
+          localPTauPath,
         );
-        // TODO: complete other uploads as well (wasm, zkey)
+
+        // If it wasn't uploaded yet, upload it.
+        if (!alreadyUploadedPot) {
+          await multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            coordinatorId!,
+            `pot/${getFilenameFromUrl(powersOfTauURL)}`,
+            localPTauPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          );
+        }
       }
     },
     5 * 60 * 1000, // Sets timeout to 5 minutes
