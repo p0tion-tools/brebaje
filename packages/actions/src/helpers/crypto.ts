@@ -23,5 +23,6 @@ const toUint8Array = async (input: Blake2bInput): Promise<Uint8Array> => {
  */
 export const calculateBlake2bHash = async (input: Blake2bInput): Promise<string> => {
   const data = await toUint8Array(input);
-  return bytesToHex(blake2b(data));
+  // Explicitly use 512-bit (64-byte) output for consistency across consumers.
+  return bytesToHex(blake2b(data, { dkLen: 64 }));
 };
