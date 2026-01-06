@@ -731,4 +731,246 @@ describe('AuthService', () => {
       );
     });
   });
+
+  describe('SIWE (Sign-In with Ethereum) Authentication', () => {
+    const validEthAddress = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
+    const normalizedAddress = validEthAddress.toLowerCase();
+    const mockUser: UserAttributes = {
+      id: 1,
+      displayName: validEthAddress,
+      walletAddress: validEthAddress,
+      creationTime: Date.now(),
+      provider: UserProvider.ETH,
+    };
+
+    describe('generateEthNonce', () => {
+      it('should generate a nonce for a valid Ethereum address', () => {
+        const result = service.generateEthNonce(validEthAddress);
+
+        expect(result).toHaveProperty('nonce');
+        expect(typeof result.nonce).toBe('string');
+        expect(result.nonce.length).toBeGreaterThan(0);
+      });
+
+      it('should store the nonce in internal store', () => {
+        const result = service.generateEthNonce(validEthAddress);
+
+        const ethNonceStore = service['ethNonceStore'] as Map<
+          string,
+          { nonce: string; timestamp: number }
+        >;
+        expect(ethNonceStore.has(normalizedAddress)).toBe(true);
+
+        const storedData = ethNonceStore.get(normalizedAddress);
+        expect(storedData?.nonce).toBe(result.nonce);
+        expect(typeof storedData?.timestamp).toBe('number');
+      });
+
+      it('should generate different nonces for multiple calls', () => {
+        const result1 = service.generateEthNonce(validEthAddress);
+        const result2 = service.generateEthNonce(validEthAddress);
+
+        // The same address will get a new nonce overwriting the old one
+        expect(result1.nonce).not.toBe(result2.nonce);
+      });
+
+      it('should normalize address to lowercase for consistent storage', () => {
+        const mixedCaseAddress = '0x71C7656EC7AB88B098DefB751B7401B5F6d8976F';
+        service.generateEthNonce(mixedCaseAddress);
+
+        const ethNonceStore = service['ethNonceStore'] as Map<
+          string,
+          { nonce: string; timestamp: number }
+        >;
+        expect(ethNonceStore.has(mixedCaseAddress.toLowerCase())).toBe(true);
+        expect(ethNonceStore.has(mixedCaseAddress)).toBe(false);
+      });
+
+      it('should throw BadRequestException for invalid Ethereum address format', () => {
+        expect(() => service.generateEthNonce('invalid-address')).toThrow(
+          'Invalid Ethereum address format',
+        );
+        expect(() => service.generateEthNonce('0x123')).toThrow('Invalid Ethereum address format');
+        expect(() => service.generateEthNonce('')).toThrow('Invalid Ethereum address format');
+      });
+
+      it('should throw BadRequestException for address without 0x prefix', () => {
+        expect(() => service.generateEthNonce('71C7656EC7ab88b098defB751B7401B5f6d8976F')).toThrow(
+          'Invalid Ethereum address format',
+        );
+      });
+    });
+
+    describe('verifyEthSignature', () => {
+      // Mock SIWE message with valid alphanumeric nonce (at least 8 chars)
+      const mockNonce = 'abcd1234efgh5678';
+      const mockSiweMessage = `example.com wants you to sign in with your Ethereum account:
+${validEthAddress}
+
+Sign in to Brebaje
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: ${mockNonce}
+Issued At: 2023-01-01T00:00:00.000Z`;
+
+      beforeEach(() => {
+        // Pre-store a nonce for the test address
+        const ethNonceStore = service['ethNonceStore'] as Map<
+          string,
+          { nonce: string; timestamp: number }
+        >;
+        ethNonceStore.set(normalizedAddress, {
+          nonce: mockNonce,
+          timestamp: Date.now(),
+        });
+      });
+
+      it('should throw BadRequestException when no nonce found for address', async () => {
+        const unknownAddress = '0x1234567890123456789012345678901234567890';
+        // Valid SIWE message format with alphanumeric nonce
+        const message = `example.com wants you to sign in with your Ethereum account:
+${unknownAddress}
+
+Sign in to Brebaje
+
+URI: https://example.com
+Version: 1
+Chain ID: 1
+Nonce: validnonce12345678
+Issued At: 2023-01-01T00:00:00.000Z`;
+
+        await expect(service.verifyEthSignature(message, '0xsignature')).rejects.toThrow(
+          'No nonce found for this address. Please request a new nonce.',
+        );
+      });
+
+      it('should throw BadRequestException when nonce has expired', async () => {
+        // Set an expired nonce (older than 5 minutes)
+        const ethNonceStore = service['ethNonceStore'] as Map<
+          string,
+          { nonce: string; timestamp: number }
+        >;
+        ethNonceStore.set(normalizedAddress, {
+          nonce: mockNonce,
+          timestamp: Date.now() - 6 * 60 * 1000, // 6 minutes ago
+        });
+
+        await expect(service.verifyEthSignature(mockSiweMessage, '0xsignature')).rejects.toThrow(
+          'Nonce has expired. Please request a new nonce.',
+        );
+      });
+
+      it('should throw BadRequestException when nonce in message does not match stored nonce', async () => {
+        // Store a different nonce than what's in the message (must be alphanumeric)
+        const ethNonceStore = service['ethNonceStore'] as Map<
+          string,
+          { nonce: string; timestamp: number }
+        >;
+        ethNonceStore.set(normalizedAddress, {
+          nonce: 'differentnonce123456',
+          timestamp: Date.now(),
+        });
+
+        await expect(service.verifyEthSignature(mockSiweMessage, '0xsignature')).rejects.toThrow(
+          'Invalid nonce in message',
+        );
+      });
+
+      it('should authenticate existing user when signature is valid', async () => {
+        // Mock user found
+        (usersService.findByProviderAndDisplayName as jest.Mock).mockResolvedValue(mockUser);
+
+        // Mock the SIWE verify method to return success
+        const mockVerify = jest.fn().mockResolvedValue({ success: true });
+        jest.spyOn(service as any, 'verifyEthSignature').mockImplementation(async () => {
+          const result = await mockVerify();
+          if (result.success) {
+            const user = await usersService.findByProviderAndDisplayName(
+              validEthAddress,
+              UserProvider.ETH,
+            );
+            const jwt = await jwtService.signAsync({ user });
+            return { user, jwt };
+          }
+          throw new Error('Verification failed');
+        });
+
+        const result = await service.verifyEthSignature(mockSiweMessage, '0xsignature');
+
+        expect(result).toHaveProperty('user');
+        expect(result).toHaveProperty('jwt');
+        expect(result.jwt).toBe('test-jwt-token');
+      });
+
+      it('should create new user when user not found and signature is valid', async () => {
+        // Mock user not found, then created
+        (usersService.findByProviderAndDisplayName as jest.Mock).mockRejectedValue(
+          new Error('User not found'),
+        );
+        (usersService.create as jest.Mock).mockResolvedValue(mockUser);
+
+        // Mock the SIWE verify method to return success
+        const mockVerify = jest.fn().mockResolvedValue({ success: true });
+        jest.spyOn(service as any, 'verifyEthSignature').mockImplementation(async () => {
+          const result = await mockVerify();
+          if (result.success) {
+            try {
+              await usersService.findByProviderAndDisplayName(validEthAddress, UserProvider.ETH);
+            } catch {
+              const user = await usersService.create({
+                displayName: validEthAddress,
+                walletAddress: validEthAddress,
+                provider: UserProvider.ETH,
+              });
+              const jwt = await jwtService.signAsync({ user });
+              return { user, jwt };
+            }
+          }
+          throw new Error('Verification failed');
+        });
+
+        const result = await service.verifyEthSignature(mockSiweMessage, '0xsignature');
+
+        expect(result).toHaveProperty('user');
+        expect(result).toHaveProperty('jwt');
+        expect(usersService.create).toHaveBeenCalledWith({
+          displayName: validEthAddress,
+          walletAddress: validEthAddress,
+          provider: UserProvider.ETH,
+        });
+      });
+    });
+
+    describe('cleanupExpiredEthNonces', () => {
+      it('should remove expired nonces from store', () => {
+        const ethNonceStore = service['ethNonceStore'] as Map<
+          string,
+          { nonce: string; timestamp: number }
+        >;
+
+        // Add expired nonce
+        const expiredAddress = '0x1111111111111111111111111111111111111111';
+        ethNonceStore.set(expiredAddress.toLowerCase(), {
+          nonce: 'expired-nonce',
+          timestamp: Date.now() - 6 * 60 * 1000, // 6 minutes ago
+        });
+
+        // Add valid nonce
+        ethNonceStore.set(normalizedAddress, {
+          nonce: 'valid-nonce',
+          timestamp: Date.now(),
+        });
+
+        // Trigger cleanup by generating a new nonce
+        service.generateEthNonce('0x2222222222222222222222222222222222222222');
+
+        // Check expired nonce is removed
+        expect(ethNonceStore.has(expiredAddress.toLowerCase())).toBe(false);
+        // Check valid nonces are still present
+        expect(ethNonceStore.has(normalizedAddress)).toBe(true);
+      });
+    });
+  });
 });

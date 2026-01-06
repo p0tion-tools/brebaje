@@ -9,12 +9,14 @@ import { randomBytes } from 'crypto';
 import { User } from '../users/user.model';
 import { generateNonce, checkSignature, DataSignature } from '@meshsdk/core';
 import { GithubTokenResponse } from 'src/types';
+import { SiweMessage, generateNonce as generateSiweNonce } from 'siwe';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   private readonly stateStore = new Map<string, { timestamp: number }>();
   private readonly nonceStore = new Map<string, string[]>();
+  private readonly ethNonceStore = new Map<string, { nonce: string; timestamp: number }>();
 
   constructor(
     private readonly jwtService: JwtService,
@@ -388,4 +390,156 @@ export class AuthService {
   }
 
   // async getUserInfoFromCardano() {}
+
+  /**
+   * Generates a nonce for SIWE (Sign-In with Ethereum) authentication
+   * The nonce is stored with a timestamp and expires after 5 minutes
+   * @param address - The Ethereum wallet address (0x prefixed)
+   * @returns Object containing the generated nonce
+   */
+  generateEthNonce(address: string) {
+    this.logger.log(`Generating ETH SIWE nonce for address: ${address.substring(0, 10)}...`);
+
+    // Validate Ethereum address format
+    if (!address || !address.match(/^0x[a-fA-F0-9]{40}$/)) {
+      this.logger.warn(`Invalid Ethereum address format: ${address}`);
+      throw new BadRequestException('Invalid Ethereum address format');
+    }
+
+    // Normalize address to lowercase for consistent storage
+    const normalizedAddress = address.toLowerCase();
+
+    // Clean up expired nonces before generating a new one
+    this.cleanupExpiredEthNonces();
+
+    // Generate a unique nonce using SIWE library
+    const nonce = generateSiweNonce();
+
+    // Store the nonce with timestamp
+    this.ethNonceStore.set(normalizedAddress, {
+      nonce,
+      timestamp: Date.now(),
+    });
+
+    this.logger.debug(`Stored ETH nonce for address: ${normalizedAddress.substring(0, 10)}...`);
+
+    return { nonce };
+  }
+
+  /**
+   * Cleans up expired ETH nonces from memory (older than 5 minutes)
+   */
+  private cleanupExpiredEthNonces(): void {
+    const now = Date.now();
+    const expiredAddresses: string[] = [];
+
+    this.ethNonceStore.forEach((value, key) => {
+      if (now - value.timestamp > 5 * 60 * 1000) {
+        expiredAddresses.push(key);
+      }
+    });
+
+    expiredAddresses.forEach((address) => this.ethNonceStore.delete(address));
+
+    if (expiredAddresses.length > 0) {
+      this.logger.debug(`Cleaned up ${expiredAddresses.length} expired ETH nonces`);
+    }
+  }
+
+  /**
+   * Verifies a SIWE (Sign-In with Ethereum) signature and authenticates the user
+   * Following EIP-4361 standard
+   * @param message - The SIWE message that was signed
+   * @param signature - The cryptographic signature from the wallet
+   * @returns AuthResponseDto with user and JWT token
+   */
+  async verifyEthSignature(message: string, signature: string): Promise<AuthResponseDto> {
+    this.logger.log('Verifying ETH SIWE signature');
+
+    try {
+      // Parse the SIWE message
+      const siweMessage = new SiweMessage(message);
+
+      // Normalize address for lookup
+      const normalizedAddress = siweMessage.address.toLowerCase();
+
+      // Check if we have a nonce stored for this address
+      const storedNonceData = this.ethNonceStore.get(normalizedAddress);
+      if (!storedNonceData) {
+        this.logger.warn(`No nonce found for address: ${normalizedAddress.substring(0, 10)}...`);
+        throw new BadRequestException(
+          'No nonce found for this address. Please request a new nonce.',
+        );
+      }
+
+      // Check if nonce has expired (5 minutes)
+      if (Date.now() - storedNonceData.timestamp > 5 * 60 * 1000) {
+        this.logger.warn(`Nonce expired for address: ${normalizedAddress.substring(0, 10)}...`);
+        this.ethNonceStore.delete(normalizedAddress);
+        throw new BadRequestException('Nonce has expired. Please request a new nonce.');
+      }
+
+      // Verify the nonce in the message matches the stored nonce
+      if (siweMessage.nonce !== storedNonceData.nonce) {
+        this.logger.warn(`Nonce mismatch for address: ${normalizedAddress.substring(0, 10)}...`);
+        throw new BadRequestException('Invalid nonce in message');
+      }
+
+      // Verify the signature using SIWE library
+      const verificationResult = await siweMessage.verify({ signature });
+
+      if (!verificationResult.success) {
+        this.logger.warn(
+          `Invalid signature for address: ${normalizedAddress.substring(0, 10)}... Error: ${verificationResult.error?.type}`,
+        );
+        throw new BadRequestException('Invalid signature provided');
+      }
+
+      // Nonce is now used, remove it from store (one-time use)
+      this.ethNonceStore.delete(normalizedAddress);
+      this.logger.debug(`ETH nonce consumed for address: ${normalizedAddress.substring(0, 10)}...`);
+
+      // Get the verified address from the message
+      const verifiedAddress = siweMessage.address;
+
+      // Find or create user
+      let user: User;
+
+      try {
+        // Try to find existing user by displayName (0x address) and ETH provider
+        user = await this.usersService.findByProviderAndDisplayName(
+          verifiedAddress,
+          UserProvider.ETH,
+        );
+        this.logger.debug(
+          `Found existing ETH user for address: ${verifiedAddress.substring(0, 10)}...`,
+        );
+      } catch {
+        // User not found, create new one
+        this.logger.debug(
+          `Creating new ETH user for address: ${verifiedAddress.substring(0, 10)}...`,
+        );
+        const createUserData: CreateUserDto = {
+          displayName: verifiedAddress,
+          walletAddress: verifiedAddress,
+          provider: UserProvider.ETH,
+        };
+        user = await this.usersService.create(createUserData);
+      }
+
+      // Generate JWT token
+      const jwt = await this.jwtService.signAsync({ user });
+
+      this.logger.log(
+        `ETH SIWE authentication successful for address: ${verifiedAddress.substring(0, 10)}...`,
+      );
+      return { user, jwt };
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+      this.logger.error(`ETH SIWE authentication failed: ${(error as Error).message}`);
+      throw new BadRequestException(`Authentication failed: ${(error as Error).message}`);
+    }
+  }
 }

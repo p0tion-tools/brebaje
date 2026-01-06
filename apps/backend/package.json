@@ -43,11 +43,13 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.2",
     "dotenv": "^17.2.1",
+    "ethers": "^6.16.0",
     "reflect-metadata": "^0.2.2",
     "rxjs": "^7.8.1",
     "sequelize": "^6.37.7",
     "sequelize-auto": "^0.8.8",
     "sequelize-typescript": "^2.1.6",
+    "siwe": "^3.0.0",
     "snarkjs": "^0.7.5",
     "sqlite3": "^5.1.7"
   },

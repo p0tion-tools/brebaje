@@ -7,6 +7,8 @@ import {
   GenerateNonceDto,
   TestLoginDto,
   VerifySignatureDto,
+  GenerateEthNonceDto,
+  VerifyEthSignatureDto,
 } from './dto/auth-dto';
 
 @ApiTags('Authentication')
@@ -129,5 +131,43 @@ export class AuthController {
   @ApiResponse({ status: 404, description: 'User not found' })
   async testLogin(@Body() body: TestLoginDto) {
     return this.authService.testAuthWithUserId(body.userId);
+  }
+
+  @Post('eth/generate-nonce')
+  @ApiOperation({ summary: 'Generate nonce for SIWE (Sign-In with Ethereum) authentication' })
+  @ApiResponse({
+    status: 201,
+    description: 'Nonce generated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        nonce: { type: 'string', description: 'Unique nonce to be included in SIWE message' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid Ethereum address format' })
+  generateEthNonce(@Body() generateEthNonceDto: GenerateEthNonceDto) {
+    return this.authService.generateEthNonce(generateEthNonceDto.address);
+  }
+
+  @Post('eth/verify-signature')
+  @ApiOperation({ summary: 'Verify SIWE signature and authenticate user (EIP-4361)' })
+  @ApiResponse({
+    status: 201,
+    description: 'Signature verified and user authenticated successfully',
+    schema: {
+      type: 'object',
+      properties: {
+        user: { type: 'object', description: 'User information' },
+        jwt: { type: 'string', description: 'JWT authentication token' },
+      },
+    },
+  })
+  @ApiResponse({ status: 400, description: 'Invalid signature, nonce, or message format' })
+  async verifyEthSignature(@Body() verifyEthSignatureDto: VerifyEthSignatureDto) {
+    return this.authService.verifyEthSignature(
+      verifyEthSignatureDto.message,
+      verifyEthSignatureDto.signature,
+    );
   }
 }
