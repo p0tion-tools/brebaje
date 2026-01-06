@@ -16,6 +16,7 @@ import {
   genesisZkeyIndex,
   multiPartUploadAPI,
   checkIfObjectExistAPI,
+  calculateBlake2bHash,
 } from '@brebaje/actions';
 import { existsSync, mkdirSync } from 'fs';
 import { downloadAndSaveFile } from 'src/utils';
@@ -27,6 +28,10 @@ import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums'
 
 const DOWNLOAD_DIRECTORY = './.downloads';
 const TEST_URL = `http://localhost:${PORT}`;
+const circuitArtifactHashes: Record<
+  string,
+  { pot: string; r1cs: string; wasm: string; zkey: string }
+> = {};
 
 // pass the Nest SQLite models to the database in /.db/data.sqlite3
 process.env.DB_SQLITE_SYNCHRONIZE = 'true';
@@ -283,10 +288,20 @@ describe('Coordinator (e2e)', () => {
         const localZkeyPath = `${DOWNLOAD_DIRECTORY}/${prefix}_${genesisZkeyIndex}.zkey`;
         await zKey.newZKey(localR1csPath, localPTauPath, localZkeyPath);
 
-        // TODO: calculate blake hashes of every file and save it to DB
-        // Use this code as guideline: https://github.com/privacy-ethereum/p0tion/blob/8870cbf6190d45833deeda33285f06a98f6a7ec5/packages/phase2cli/src/commands/ceremony/create.ts#L122
-        // Please find a more up-to-date library for blake2 hashing
-        // Save the hashes in a global variable like coordinatorId or ceremonyId above because we need it for later tests
+        const [r1csBlake2bHash, wasmBlake2bHash, potBlake2bHash, zkeyBlake2bHash] =
+          await Promise.all([
+            calculateBlake2bHash(localR1csPath),
+            calculateBlake2bHash(localWasmPath),
+            calculateBlake2bHash(localPTauPath),
+            calculateBlake2bHash(localZkeyPath),
+          ]);
+
+        circuitArtifactHashes[prefix] = {
+          pot: potBlake2bHash,
+          r1cs: r1csBlake2bHash,
+          wasm: wasmBlake2bHash,
+          zkey: zkeyBlake2bHash,
+        };
 
         await Promise.all([
           multiPartUploadAPI(
