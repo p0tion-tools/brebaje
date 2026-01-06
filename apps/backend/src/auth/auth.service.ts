@@ -10,6 +10,7 @@ import { User } from '../users/user.model';
 import { generateNonce, checkSignature, DataSignature } from '@meshsdk/core';
 import { GithubTokenResponse } from 'src/types';
 import { SiweMessage, generateNonce as generateSiweNonce } from 'siwe';
+import { isAddress } from 'ethers';
 
 @Injectable()
 export class AuthService {
@@ -400,8 +401,9 @@ export class AuthService {
   generateEthNonce(address: string) {
     this.logger.log(`Generating ETH SIWE nonce for address: ${address.substring(0, 10)}...`);
 
-    // Validate Ethereum address format
-    if (!address || !address.match(/^0x[a-fA-F0-9]{40}$/)) {
+    // Validate Ethereum address using ethers.js isAddress (EIP-55 checksum aware)
+    // Also require 0x prefix for SIWE compatibility
+    if (!address || !address.startsWith('0x') || !isAddress(address)) {
       this.logger.warn(`Invalid Ethereum address format: ${address}`);
       throw new BadRequestException('Invalid Ethereum address format');
     }

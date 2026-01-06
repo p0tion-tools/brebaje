@@ -775,15 +775,17 @@ describe('AuthService', () => {
       });
 
       it('should normalize address to lowercase for consistent storage', () => {
-        const mixedCaseAddress = '0x71C7656EC7AB88B098DefB751B7401B5F6d8976F';
-        service.generateEthNonce(mixedCaseAddress);
+        // Using a valid checksummed address (EIP-55 compliant)
+        const checksummedAddress = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
+        service.generateEthNonce(checksummedAddress);
 
         const ethNonceStore = service['ethNonceStore'] as Map<
           string,
           { nonce: string; timestamp: number }
         >;
-        expect(ethNonceStore.has(mixedCaseAddress.toLowerCase())).toBe(true);
-        expect(ethNonceStore.has(mixedCaseAddress)).toBe(false);
+        expect(ethNonceStore.has(checksummedAddress.toLowerCase())).toBe(true);
+        // Mixed case (checksummed) version should not be in store since we normalize
+        expect(ethNonceStore.has(checksummedAddress)).toBe(false);
       });
 
       it('should throw BadRequestException for invalid Ethereum address format', () => {
