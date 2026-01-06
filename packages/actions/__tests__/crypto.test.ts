@@ -1,5 +1,5 @@
 import { strictEqual } from "node:assert";
-import { mkdtempSync, writeFileSync } from "node:fs";
+import { mkdtempSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
 import { join } from "node:path";
 import { calculateBlake2bHash } from "src/helpers/crypto";
@@ -19,6 +19,8 @@ const run = async () => {
 
   const fileHash = await calculateBlake2bHash(filePath);
   strictEqual(fileHash, expectedHash);
+
+  rmSync(tempDir, { recursive: true, force: true });
 
   console.info("crypto tests passed");
 };
