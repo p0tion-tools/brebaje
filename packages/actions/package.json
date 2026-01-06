@@ -35,7 +35,7 @@
     "url": "git+https://github.com/NicoSerranoP/brebaje.git"
   },
   "scripts": {
-    "test": "pnpm run build && ts-node ./__tests__/actions.test.ts",
+    "test": "pnpm run build && ts-node ./__tests__/actions.test.ts && ts-node ./__tests__/crypto.test.ts",
     "build": "tsc -p tsconfig.json"
   },
   "bugs": {
