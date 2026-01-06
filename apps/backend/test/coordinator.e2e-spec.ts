@@ -8,8 +8,6 @@ import { ceremonyDto, circuits, coordinatorDto, projectDto } from './constants';
 import { User } from 'src/users/user.model';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Project } from 'src/projects/project.model';
-import { blake2b } from '@noble/hashes/blake2b';
-import { bytesToHex } from '@noble/hashes/utils';
 import {
   getBucketName,
   sanitizeString,
@@ -18,9 +16,9 @@ import {
   genesisZkeyIndex,
   multiPartUploadAPI,
   checkIfObjectExistAPI,
+  calculateBlake2bHash,
 } from '@brebaje/actions';
 import { existsSync, mkdirSync } from 'fs';
-import { readFile } from 'fs/promises';
 import { downloadAndSaveFile } from 'src/utils';
 import { zKey } from 'snarkjs';
 import { Circuit } from 'src/circuits/circuit.model';
@@ -34,11 +32,6 @@ const circuitArtifactHashes: Record<
   string,
   { pot: string; r1cs: string; wasm: string; zkey: string }
 > = {};
-
-const calculateBlake2bHash = async (filePath: string): Promise<string> => {
-  const fileBuffer = await readFile(filePath);
-  return bytesToHex(blake2b(fileBuffer));
-};
 
 // pass the Nest SQLite models to the database in /.db/data.sqlite3
 process.env.DB_SQLITE_SYNCHRONIZE = 'true';
