@@ -1,11 +1,12 @@
-name: Frontend
+name: CLI
 
 on:
   push:
     branches: [main]
   pull_request:
 env:
-  PORT: ${{ vars.PORT }}
+  BREBAJE_API_URL: ${{ vars.BREBAJE_API_URL }}
+  BREBAJE_AUTH_TOKEN_PATH: ${{ vars.BREBAJE_AUTH_TOKEN_PATH }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -43,7 +44,7 @@ jobs:
         run: |
           pnpm run build
 
-      - name: Build the frontend
-        working-directory: apps/frontend
+      - name: Run tests
+        working-directory: apps/cli
         run: |
-          pnpm run build
+          pnpm run test
