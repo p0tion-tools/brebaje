@@ -1,6 +1,6 @@
 Enum UserProvider {
   'GITHUB'
-  'ETH'
+  'ETHEREUM'
 }
 
 Enum CeremonyType {
