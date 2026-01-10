@@ -2,7 +2,7 @@
 
 export enum UserProvider {
   GITHUB = 'GITHUB',
-  ETH = 'ETH',
+  ETHEREUM = 'ETHEREUM',
   CARDANO = 'CARDANO',
 }
 

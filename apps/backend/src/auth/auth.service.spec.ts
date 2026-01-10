@@ -10,6 +10,7 @@ import { UserAttributes } from '../users/user.model';
 import { DeviceFlowTokenDto, AuthResponseDto } from './dto/auth-dto';
 import { GithubUser } from '../types/declarations';
 import { UnauthorizedException } from '@nestjs/common';
+import { formatMessageForSIWE } from '@brebaje/actions';
 
 // Mock fetch globally for device flow OAuth tests only
 global.fetch = jest.fn();
@@ -740,7 +741,7 @@ describe('AuthService', () => {
       displayName: validEthAddress,
       walletAddress: validEthAddress,
       creationTime: Date.now(),
-      provider: UserProvider.ETH,
+      provider: UserProvider.ETHEREUM,
     };
 
     describe('generateEthNonce', () => {
@@ -806,16 +807,17 @@ describe('AuthService', () => {
     describe('verifyEthSignature', () => {
       // Mock SIWE message with valid alphanumeric nonce (at least 8 chars)
       const mockNonce = 'abcd1234efgh5678';
-      const mockSiweMessage = `example.com wants you to sign in with your Ethereum account:
-${validEthAddress}
+      const mockSiweMessage = formatMessageForSIWE(`
+          example.com wants you to sign in with your Ethereum account:
+          ${validEthAddress}
 
-Sign in to Brebaje
+          Sign in to Brebaje
 
-URI: https://example.com
-Version: 1
-Chain ID: 1
-Nonce: ${mockNonce}
-Issued At: 2023-01-01T00:00:00.000Z`;
+          URI: https://example.com
+          Version: 1
+          Chain ID: 1
+          Nonce: ${mockNonce}
+          Issued At: 2023-01-01T00:00:00.000Z`);
 
       beforeEach(() => {
         // Pre-store a nonce for the test address
@@ -832,16 +834,17 @@ Issued At: 2023-01-01T00:00:00.000Z`;
       it('should throw BadRequestException when no nonce found for address', async () => {
         const unknownAddress = '0x1234567890123456789012345678901234567890';
         // Valid SIWE message format with alphanumeric nonce
-        const message = `example.com wants you to sign in with your Ethereum account:
-${unknownAddress}
+        const message = formatMessageForSIWE(`
+            example.com wants you to sign in with your Ethereum account:
+            ${unknownAddress}
 
-Sign in to Brebaje
+            Sign in to Brebaje
 
-URI: https://example.com
-Version: 1
-Chain ID: 1
-Nonce: validnonce12345678
-Issued At: 2023-01-01T00:00:00.000Z`;
+            URI: https://example.com
+            Version: 1
+            Chain ID: 1
+            Nonce: validNonceNotRegistered12345678
+            Issued At: 2023-01-01T00:00:00.000Z`);
 
         await expect(service.verifyEthSignature(message, '0xsignature')).rejects.toThrow(
           'No nonce found for this address. Please request a new nonce.',
@@ -891,7 +894,7 @@ Issued At: 2023-01-01T00:00:00.000Z`;
           if (result.success) {
             const user = await usersService.findByProviderAndDisplayName(
               validEthAddress,
-              UserProvider.ETH,
+              UserProvider.ETHEREUM,
             );
             const jwt = await jwtService.signAsync({ user });
             return { user, jwt };
@@ -919,12 +922,15 @@ Issued At: 2023-01-01T00:00:00.000Z`;
           const result = await mockVerify();
           if (result.success) {
             try {
-              await usersService.findByProviderAndDisplayName(validEthAddress, UserProvider.ETH);
+              await usersService.findByProviderAndDisplayName(
+                validEthAddress,
+                UserProvider.ETHEREUM,
+              );
             } catch {
               const user = await usersService.create({
                 displayName: validEthAddress,
                 walletAddress: validEthAddress,
-                provider: UserProvider.ETH,
+                provider: UserProvider.ETHEREUM,
               });
               const jwt = await jwtService.signAsync({ user });
               return { user, jwt };
@@ -940,7 +946,7 @@ Issued At: 2023-01-01T00:00:00.000Z`;
         expect(usersService.create).toHaveBeenCalledWith({
           displayName: validEthAddress,
           walletAddress: validEthAddress,
-          provider: UserProvider.ETH,
+          provider: UserProvider.ETHEREUM,
         });
       });
     });
