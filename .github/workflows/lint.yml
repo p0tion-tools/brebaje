@@ -1,18 +1,16 @@
-name: Frontend
+name: Lint
 
 on:
   push:
     branches: [main]
   pull_request:
-env:
-  PORT: ${{ vars.PORT }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
   cancel-in-progress: true
 
 jobs:
-  build-and-test:
+  build-and-lint:
     runs-on: ubuntu-22.04
 
     steps:
@@ -43,7 +41,6 @@ jobs:
         run: |
           pnpm run build
 
-      - name: Build the frontend
-        working-directory: apps/frontend
+      - name: Lint
         run: |
-          pnpm run build
+          pnpm run lint

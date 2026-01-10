@@ -58,10 +58,6 @@ jobs:
         run: |
           pnpm run build
 
-      - name: Lint
-        run: |
-          pnpm run lint
-
       - name: Run tests
         working-directory: apps/backend
         run: |

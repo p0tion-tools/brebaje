@@ -1,11 +1,9 @@
-name: Frontend
+name: Actions
 
 on:
   push:
     branches: [main]
   pull_request:
-env:
-  PORT: ${{ vars.PORT }}
 
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
@@ -43,7 +41,7 @@ jobs:
         run: |
           pnpm run build
 
-      - name: Build the frontend
-        working-directory: apps/frontend
+      - name: Run tests
+        working-directory: packages/actions
         run: |
-          pnpm run build
+          pnpm run test
