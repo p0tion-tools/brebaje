@@ -5,7 +5,7 @@ describe('DbmlToNestJSSequelizeGenerator', () => {
   const testDbmlContent = `
 Enum UserProvider {
   'GITHUB'
-  'ETH'
+  'ETHEREUM'
 }
 
 Table users {

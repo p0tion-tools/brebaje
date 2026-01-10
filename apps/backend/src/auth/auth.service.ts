@@ -418,7 +418,7 @@ export class AuthService {
   }
 
   /**
-   * Cleans up expired ETH nonces from memory (older than 5 minutes)
+   * Cleans up expired ETHEREUM nonces from memory (older than 5 minutes)
    */
   private cleanupExpiredEthNonces(): void {
     const now = Date.now();
@@ -433,7 +433,7 @@ export class AuthService {
     expiredAddresses.forEach((address) => this.ethNonceStore.delete(address));
 
     if (expiredAddresses.length > 0) {
-      this.logger.debug(`Cleaned up ${expiredAddresses.length} expired ETH nonces`);
+      this.logger.debug(`Cleaned up ${expiredAddresses.length} expired ETHEREUM nonces`);
     }
   }
 
@@ -445,16 +445,16 @@ export class AuthService {
    * @returns AuthResponseDto with user and JWT token
    */
   async verifyEthSignature(message: string, signature: string): Promise<AuthResponseDto> {
-    this.logger.log('Verifying ETH SIWE signature');
+    this.logger.log('Verifying ETHEREUM SIWE signature');
 
     try {
       const siweMessage = new SiweMessage(message);
 
-      const normalizedAddress = siweMessage.address.toLowerCase();
+      const address = siweMessage.address.toLowerCase();
 
-      const storedNonceData = this.ethNonceStore.get(normalizedAddress);
+      const storedNonceData = this.ethNonceStore.get(address);
       if (!storedNonceData) {
-        this.logger.warn(`No nonce found for address: ${normalizedAddress.substring(0, 10)}...`);
+        this.logger.warn(`No nonce found for address: ${address.substring(0, 10)}...`);
         throw new BadRequestException(
           'No nonce found for this address. Please request a new nonce.',
         );
@@ -462,14 +462,14 @@ export class AuthService {
 
       // Check if nonce has expired
       if (Date.now() - storedNonceData.timestamp > NONCES_TIMEOUT) {
-        this.logger.warn(`Nonce expired for address: ${normalizedAddress.substring(0, 10)}...`);
-        this.ethNonceStore.delete(normalizedAddress);
+        this.logger.warn(`Nonce expired for address: ${address.substring(0, 10)}...`);
+        this.ethNonceStore.delete(address);
         throw new BadRequestException('Nonce has expired. Please request a new nonce.');
       }
 
       // Verify the nonce in the message matches the stored nonce
       if (siweMessage.nonce !== storedNonceData.nonce) {
-        this.logger.warn(`Nonce mismatch for address: ${normalizedAddress.substring(0, 10)}...`);
+        this.logger.warn(`Nonce mismatch for address: ${address.substring(0, 10)}...`);
         throw new BadRequestException('Invalid nonce in message');
       }
 
@@ -478,33 +478,27 @@ export class AuthService {
 
       if (!success) {
         this.logger.warn(
-          `Invalid signature for address: ${normalizedAddress.substring(0, 10)}... Error: ${error?.type}`,
+          `Invalid signature for address: ${address.substring(0, 10)}... Error: ${error?.type}`,
         );
         throw new BadRequestException('Invalid signature provided');
       }
 
-      this.ethNonceStore.delete(normalizedAddress);
+      this.ethNonceStore.delete(address);
 
       let user: User;
-      const verifiedAddress = siweMessage.address;
 
       try {
-        // Try to find existing user by displayName (0x address) and ETH provider
-        user = await this.usersService.findByProviderAndDisplayName(
-          verifiedAddress,
-          UserProvider.ETHEREUM,
-        );
+        // Try to find existing user by displayName (0x address) and ETHEREUM provider
+        user = await this.usersService.findByProviderAndDisplayName(address, UserProvider.ETHEREUM);
         this.logger.debug(
-          `Found existing ETH user for address: ${verifiedAddress.substring(0, 10)}...`,
+          `Found existing ETHEREUM user for address: ${address.substring(0, 10)}...`,
         );
       } catch {
         // User not found, create new one
-        this.logger.debug(
-          `Creating new ETH user for address: ${verifiedAddress.substring(0, 10)}...`,
-        );
+        this.logger.debug(`Creating new ETHEREUM user for address: ${address.substring(0, 10)}...`);
         const createUserData: CreateUserDto = {
-          displayName: verifiedAddress,
-          walletAddress: verifiedAddress,
+          displayName: address,
+          walletAddress: address,
           provider: UserProvider.ETHEREUM,
         };
         user = await this.usersService.create(createUserData);
@@ -514,7 +508,7 @@ export class AuthService {
       const jwt = await this.jwtService.signAsync({ user });
 
       this.logger.log(
-        `ETH SIWE authentication successful for address: ${verifiedAddress.substring(0, 10)}...`,
+        `ETHEREUM SIWE authentication successful for address: ${address.substring(0, 10)}...`,
       );
       return { user, jwt };
     } catch (error) {
@@ -522,7 +516,7 @@ export class AuthService {
         throw error;
       }
 
-      this.logger.error(`ETH SIWE authentication failed: ${(error as Error).message}`);
+      this.logger.error(`ETHEREUM SIWE authentication failed: ${(error as Error).message}`);
       throw new BadRequestException(`Authentication failed: ${(error as Error).message}`);
     }
   }

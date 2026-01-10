@@ -50,7 +50,7 @@ describe('AuthController', () => {
       const message = 'example.com wants you to sign in...';
       const signature = '0xsignature';
       const mockResult = {
-        user: { id: 1, displayName: '0x123...', provider: 'ETH' },
+        user: { id: 1, displayName: '0x123...', provider: 'ETHEREUM' },
         jwt: 'test-jwt-token',
       };
 
