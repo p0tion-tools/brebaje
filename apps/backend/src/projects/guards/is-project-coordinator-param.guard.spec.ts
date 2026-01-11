@@ -33,7 +33,7 @@ describe('IsProjectCoordinatorParamGuard', () => {
 
   const createMockExecutionContext = (userId?: number, projectId?: string): ExecutionContext => {
     const mockRequest: Partial<AuthenticatedRequest> = {
-      user: userId ? { id: userId, displayName: 'Test User' } : undefined,
+      user: userId ? ({ id: userId, displayName: 'Test User' } as any) : undefined,
       params: projectId ? { id: projectId } : {},
     };
 

@@ -45,7 +45,7 @@ describe('IsCircuitCoordinatorGuard', () => {
 
   const createMockExecutionContext = (userId?: number, circuitId?: string): ExecutionContext => {
     const mockRequest: Partial<AuthenticatedRequest> = {
-      user: userId ? { id: userId, displayName: 'Test User' } : undefined,
+      user: userId ? ({ id: userId, displayName: 'Test User' } as any) : undefined,
       params: circuitId ? { id: circuitId } : {},
     };
 

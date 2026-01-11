@@ -37,7 +37,7 @@ describe('IsCeremonyCoordinatorGuard', () => {
     paramId?: string,
   ): ExecutionContext => {
     const mockRequest: Partial<AuthenticatedRequest> = {
-      user: userId ? { id: userId, displayName: 'Test User' } : undefined,
+      user: userId ? ({ id: userId, displayName: 'Test User' } as any) : undefined,
       body: ceremonyId ? { ceremonyId } : {},
       params: paramId ? { id: paramId } : {},
     };
