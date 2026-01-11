@@ -76,10 +76,19 @@ export class ProjectsService {
 
   async remove(id: number) {
     try {
-      const project = await this.projectModel.findByPk(id);
+      const project = await this.projectModel.findByPk(id, {
+        include: [{ association: 'ceremonies' }],
+      });
       if (!project) {
         throw new Error('Project not found');
       }
+
+      // Delete all ceremonies associated with this project first
+      // This is necessary because of foreign key constraints
+      if (project.ceremonies && project.ceremonies.length > 0) {
+        await Promise.all(project.ceremonies.map((ceremony) => ceremony.destroy()));
+      }
+
       await project.destroy();
       return { message: 'Project deleted successfully' };
     } catch (error) {
