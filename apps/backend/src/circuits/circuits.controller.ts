@@ -1,5 +1,22 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, Query, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  Query,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { Circuit } from './circuit.model';
 import { CircuitsService } from './circuits.service';
 import { CreateCircuitDto } from './dto/create-circuit.dto';
@@ -59,7 +76,10 @@ export class CircuitsController {
     type: Circuit,
   })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Not the project coordinator or ceremony is not SCHEDULED.' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Not the project coordinator or ceremony is not SCHEDULED.',
+  })
   @ApiResponse({ status: 404, description: 'Circuit not found.' })
   update(@Param('id') id: string, @Body() updateCircuitDto: UpdateCircuitDto) {
     return this.circuitsService.update(+id, updateCircuitDto);
@@ -72,7 +92,10 @@ export class CircuitsController {
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'The circuit has been successfully deleted.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Not the project coordinator or ceremony is not SCHEDULED.' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Not the project coordinator or ceremony is not SCHEDULED.',
+  })
   @ApiResponse({ status: 404, description: 'Circuit not found.' })
   remove(@Param('id') id: string) {
     return this.circuitsService.remove(+id);

@@ -44,7 +44,7 @@ export class IsCircuitCoordinatorGuard implements CanActivate {
 
     // Get the circuit and its ceremony
     const circuit = await this.circuitsService.findOne(circuitId);
-    
+
     if (!circuit) {
       throw new BadRequestException('Circuit not found');
     }
