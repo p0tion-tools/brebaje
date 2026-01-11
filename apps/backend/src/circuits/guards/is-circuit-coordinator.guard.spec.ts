@@ -1,5 +1,10 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { ExecutionContext, ForbiddenException, BadRequestException } from '@nestjs/common';
+import {
+  ExecutionContext,
+  ForbiddenException,
+  BadRequestException,
+  NotFoundException,
+} from '@nestjs/common';
 import { IsCircuitCoordinatorGuard } from './is-circuit-coordinator.guard';
 import { CircuitsService } from '../circuits.service';
 import { CeremoniesService } from 'src/ceremonies/ceremonies.service';
@@ -92,7 +97,7 @@ describe('IsCircuitCoordinatorGuard', () => {
     await expect(guard.canActivate(context)).rejects.toThrow('circuitId is required');
   });
 
-  it('should throw BadRequestException when circuit is not found', async () => {
+  it('should throw NotFoundException when circuit is not found', async () => {
     const userId = 1;
     const circuitId = '10';
 
@@ -100,7 +105,7 @@ describe('IsCircuitCoordinatorGuard', () => {
 
     const context = createMockExecutionContext(userId, circuitId);
 
-    await expect(guard.canActivate(context)).rejects.toThrow(BadRequestException);
+    await expect(guard.canActivate(context)).rejects.toThrow(NotFoundException);
     await expect(guard.canActivate(context)).rejects.toThrow('Circuit not found');
   });
 
