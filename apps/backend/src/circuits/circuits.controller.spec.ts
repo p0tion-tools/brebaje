@@ -1,6 +1,8 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { CircuitsController } from './circuits.controller';
 import { CircuitsService } from './circuits.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IsCircuitCoordinatorGuard } from './guards/is-circuit-coordinator.guard';
 
 describe('CircuitsController', () => {
   let controller: CircuitsController;
@@ -21,7 +23,12 @@ describe('CircuitsController', () => {
           useValue: mockCircuitsService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .overrideGuard(IsCircuitCoordinatorGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .compile();
 
     controller = module.get<CircuitsController>(CircuitsController);
   });
