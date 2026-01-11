@@ -1,9 +1,8 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Contribution } from './contribution.model';
 import { ContributionsService } from './contributions.service';
 import { CreateContributionDto } from './dto/create-contribution.dto';
-import { UpdateContributionDto } from './dto/update-contribution.dto';
 
 @ApiTags('contributions')
 @Controller('contributions')
@@ -36,27 +35,5 @@ export class ContributionsController {
   @ApiResponse({ status: 404, description: 'Contribution not found.' })
   findOne(@Param('id') id: string) {
     return this.contributionsService.findOne(+id);
-  }
-
-  @Patch(':id')
-  @ApiOperation({ summary: 'Update a contribution' })
-  @ApiParam({ name: 'id', type: 'number' })
-  @ApiResponse({
-    status: 200,
-    description: 'The contribution has been successfully updated.',
-    type: Contribution,
-  })
-  @ApiResponse({ status: 404, description: 'Contribution not found.' })
-  update(@Param('id') id: string, @Body() updateContributionDto: UpdateContributionDto) {
-    return this.contributionsService.update(+id, updateContributionDto);
-  }
-
-  @Delete(':id')
-  @ApiOperation({ summary: 'Delete a contribution' })
-  @ApiParam({ name: 'id', type: 'number' })
-  @ApiResponse({ status: 200, description: 'The contribution has been successfully deleted.' })
-  @ApiResponse({ status: 404, description: 'Contribution not found.' })
-  remove(@Param('id') id: string) {
-    return this.contributionsService.remove(+id);
   }
 }
