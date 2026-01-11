@@ -4,6 +4,7 @@ import {
   ExecutionContext,
   ForbiddenException,
   BadRequestException,
+  NotFoundException,
 } from '@nestjs/common';
 import { CircuitsService } from '../circuits.service';
 import { CeremoniesService } from 'src/ceremonies/ceremonies.service';
@@ -46,7 +47,7 @@ export class IsCircuitCoordinatorGuard implements CanActivate {
     const circuit = await this.circuitsService.findOne(circuitId);
 
     if (!circuit) {
-      throw new BadRequestException('Circuit not found');
+      throw new NotFoundException('Circuit not found');
     }
 
     const ceremonyId = circuit.ceremonyId;

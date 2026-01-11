@@ -85,8 +85,11 @@ export class ProjectsService {
 
       // Delete all ceremonies associated with this project first
       // This is necessary because of foreign key constraints
+      // Using sequential deletion to avoid database connection pool exhaustion
       if (project.ceremonies && project.ceremonies.length > 0) {
-        await Promise.all(project.ceremonies.map((ceremony) => ceremony.destroy()));
+        for (const ceremony of project.ceremonies) {
+          await ceremony.destroy();
+        }
       }
 
       await project.destroy();
