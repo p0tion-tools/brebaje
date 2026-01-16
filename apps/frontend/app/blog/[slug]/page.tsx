@@ -127,6 +127,24 @@ export default function BlogArticlePage({ params }: BlogArticlePageProps) {
                       </blockquote>
                     );
 
+                  case "link":
+                    return (
+                      <p
+                        key={index}
+                        className="text-xl text-gray-700 leading-relaxed mb-6"
+                      >
+                        {block.text}{" "}
+                        <a
+                          href={block.url}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="text-yellow-600 hover:text-yellow-700 underline font-medium"
+                        >
+                          {block.linkText || block.url}
+                        </a>
+                      </p>
+                    );
+
                   default:
                     return null;
                 }
