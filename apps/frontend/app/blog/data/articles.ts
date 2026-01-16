@@ -6,14 +6,724 @@ export interface BlogArticle {
   author: string;
   readTime: string;
   content: {
-    type: "paragraph" | "heading" | "list" | "quote";
+    type: "paragraph" | "heading" | "list" | "quote" | "link";
     text?: string;
     level?: number;
     items?: string[];
+    url?: string;
+    linkText?: string;
   }[];
 }
 
 export const articles: BlogArticle[] = [
+  {
+    slug: "how-to-contribute-perpetual-powers-of-tau",
+    title:
+      "Complete Guide: How to Contribute to Cardano's Perpetual Powers of Tau Ceremony",
+    excerpt:
+      "Step-by-step guide to participating in the Cardano PPOT ceremony using Brebaje CLI. Learn how to install, configure, and make your cryptographic contribution to strengthen Cardano's zero-knowledge infrastructure.",
+    date: "January 16, 2026",
+    author: "Brebaje Team",
+    readTime: "15 min read",
+    content: [
+      {
+        type: "paragraph",
+        text: "Contributing to a Perpetual Powers of Tau (PPOT) ceremony is one of the most impactful ways to participate in Cardano's zero-knowledge infrastructure. This guide will walk you through the entire process of making a contribution using the Brebaje CLI tool, from installation to final verification.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "What is a Perpetual Powers of Tau Ceremony?",
+      },
+      {
+        type: "paragraph",
+        text: "The Perpetual Powers of Tau is a cryptographic trusted setup ceremony that generates public parameters required by Zero-Knowledge proof systems like Groth16 and PLONK. It's called 'perpetual' because unlike traditional ceremonies, it can accept contributions continuously over time, strengthening the security with each participant.",
+      },
+      {
+        type: "paragraph",
+        text: "For Cardano, we use the BLS12-381 elliptic curve, which is the same curve used across the Cardano blockchain. The ceremony we conducted in October 2024 completed successfully with 40 community participants, establishing a strong foundation for privacy-preserving applications on Cardano.",
+      },
+      {
+        type: "quote",
+        text: "As long as at least one participant honestly destroys their secret contribution (the 'toxic waste'), the entire system remains secure. Your contribution helps strengthen this trust assumption.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Prerequisites and System Requirements",
+      },
+      {
+        type: "paragraph",
+        text: "Before starting, ensure your system meets these minimum requirements:",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Hardware Requirements",
+      },
+      {
+        type: "list",
+        items: [
+          "Minimum 16GB RAM (recommended 32GB for faster processing)",
+          "At least 10GB of free disk space for ceremony files",
+          "Stable internet connection for uploading/downloading files",
+          "Estimated contribution time: 3-4 hours on standard computers",
+        ],
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Software Requirements",
+      },
+      {
+        type: "list",
+        items: [
+          "Node.js version 22.17.1 or higher",
+          "pnpm version 9.0.0 or higher (package manager)",
+          "Git installed and configured",
+          "GitHub account (for authentication and contribution records)",
+          "Terminal/command line access",
+        ],
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Step 1: Installing Brebaje CLI",
+      },
+      {
+        type: "paragraph",
+        text: "The Brebaje CLI is the command-line tool that manages the entire contribution process. Let's install it step by step.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Clone the Repository",
+      },
+      {
+        type: "paragraph",
+        text: "First, clone the Brebaje repository to your local machine:",
+      },
+      {
+        type: "paragraph",
+        text: "git clone https://github.com/Xtremono/brebaje.git\ncd brebaje",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Install Dependencies",
+      },
+      {
+        type: "paragraph",
+        text: "Navigate to the CLI directory and install all required dependencies:",
+      },
+      {
+        type: "paragraph",
+        text: "cd apps/cli\npnpm install",
+      },
+      {
+        type: "paragraph",
+        text: "This will download and install all necessary packages including Commander.js for command handling and snarkjs for cryptographic operations.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Build the CLI",
+      },
+      {
+        type: "paragraph",
+        text: "Compile the TypeScript source code to JavaScript:",
+      },
+      {
+        type: "paragraph",
+        text: "pnpm build",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Install Globally (Optional but Recommended)",
+      },
+      {
+        type: "paragraph",
+        text: "For easier access from anywhere on your system, install the CLI globally:",
+      },
+      {
+        type: "paragraph",
+        text: "pnpm link --global",
+      },
+      {
+        type: "paragraph",
+        text: "After this, you can use 'brebaje-cli' from any directory. If you skip this step, you'll need to run commands using 'node ./build/index.js' instead.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Verify Installation",
+      },
+      {
+        type: "paragraph",
+        text: "Confirm the installation was successful:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli --help",
+      },
+      {
+        type: "paragraph",
+        text: "You should see a list of available commands and options.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Step 2: GitHub Configuration",
+      },
+      {
+        type: "paragraph",
+        text: "The ceremony uses GitHub for authentication and storing contribution records. You'll need to create a GitHub account if you don't have one, and generate a special access token.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Fork the Ceremony Repository",
+      },
+      {
+        type: "paragraph",
+        text: "Visit the official Cardano PPOT repository and click the 'Fork' button to create your own copy:",
+      },
+      {
+        type: "paragraph",
+        text: "https://github.com/p0tion-tools/cardano-ppot",
+      },
+      {
+        type: "paragraph",
+        text: "This creates a fork under your GitHub account where your contribution record will be stored.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Generate a GitHub Classic Token",
+      },
+      {
+        type: "paragraph",
+        text: "The CLI needs a GitHub token to post contribution records as gists. Here's how to create one:",
+      },
+      {
+        type: "list",
+        items: [
+          "Go to GitHub Settings → Developer settings → Personal access tokens → Tokens (classic)",
+          "Click 'Generate new token (classic)'",
+          "Give it a descriptive name like 'Brebaje PPOT Contribution'",
+          "Set expiration (recommend 90 days or no expiration for ongoing ceremonies)",
+          "Select ONLY the 'gist' permission scope",
+          "Click 'Generate token' and copy it immediately (you won't see it again)",
+        ],
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Configure the Token in Brebaje CLI",
+      },
+      {
+        type: "paragraph",
+        text: "Store your GitHub token securely in the CLI:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli setup gh-token YOUR_GITHUB_TOKEN_HERE",
+      },
+      {
+        type: "paragraph",
+        text: "This saves the token locally so you don't have to enter it for each contribution. Keep this token secret and never share it publicly.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Step 3: Making Your Contribution (Automatic Method)",
+      },
+      {
+        type: "paragraph",
+        text: "The easiest way to contribute is using the automated flow. This single command handles the entire process for you.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Run Auto-Contribute",
+      },
+      {
+        type: "paragraph",
+        text: "Execute the automated contribution command:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli ppot auto-contribute",
+      },
+      {
+        type: "paragraph",
+        text: "This command will automatically:",
+      },
+      {
+        type: "list",
+        items: [
+          "Download the latest challenge file from the ceremony",
+          "Generate your cryptographic contribution using secure randomness",
+          "Upload your contribution response to cloud storage",
+          "Post a contribution record to GitHub Gist with your contribution hash",
+          "Generate URLs for creating a pull request",
+        ],
+      },
+      {
+        type: "paragraph",
+        text: "The process typically takes 3-4 hours depending on your system. You can monitor progress through the detailed logs shown in your terminal.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "What Happens During Auto-Contribute",
+      },
+      {
+        type: "paragraph",
+        text: "Understanding what the tool does helps you verify the process is working correctly:",
+      },
+      {
+        type: "list",
+        items: [
+          "Download Phase: Fetches the current ceremony state file (usually several GB)",
+          "Contribution Phase: Runs snarkjs to apply your random entropy to the ceremony parameters",
+          "Upload Phase: Securely uploads your contribution using pre-signed URLs",
+          "Record Phase: Creates a permanent public record of your contribution on GitHub Gist",
+        ],
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Step 4: Making Your Contribution (Manual Method)",
+      },
+      {
+        type: "paragraph",
+        text: "For more control or if you need to troubleshoot, you can execute each step manually.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Download the Challenge File",
+      },
+      {
+        type: "paragraph",
+        text: "First, obtain the download URL from ceremony coordinators, then download the file:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli ppot download https://ceremony-storage.url/challenge.ptau",
+      },
+      {
+        type: "paragraph",
+        text: "This downloads the current ceremony state to your local 'output' directory.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Generate Your Contribution",
+      },
+      {
+        type: "paragraph",
+        text: "Create your cryptographic contribution:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli ppot contribute",
+      },
+      {
+        type: "paragraph",
+        text: "This process uses snarkjs internally to:",
+      },
+      {
+        type: "list",
+        items: [
+          "Read the challenge file from the output directory",
+          "Generate secure random values (your secret entropy)",
+          "Apply multi-party computation to create new ceremony parameters",
+          "Save your contribution response file",
+          "Display your contribution hash for verification",
+        ],
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Upload Your Contribution",
+      },
+      {
+        type: "paragraph",
+        text: "After generation completes, upload your contribution (you'll receive an upload URL from coordinators):",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli ppot upload https://ceremony-storage.url/upload-url",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Post Your Contribution Record",
+      },
+      {
+        type: "paragraph",
+        text: "Create a permanent public record of your contribution:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli ppot post-record",
+      },
+      {
+        type: "paragraph",
+        text: "This creates a GitHub Gist containing your contribution metadata including hashes, timestamps, and system information.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Step 5: Completing Your Contribution",
+      },
+      {
+        type: "paragraph",
+        text: "After the automatic or manual contribution process finishes, there are critical final steps you must complete.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Create a Pull Request",
+      },
+      {
+        type: "paragraph",
+        text: "The CLI will provide a pull request URL. You MUST:",
+      },
+      {
+        type: "list",
+        items: [
+          "Click the provided GitHub PR URL in your terminal output",
+          "Review the contribution details in the PR description",
+          "Click the green 'Create pull request' button on GitHub",
+          "Wait for ceremony coordinators to review and merge your contribution",
+        ],
+      },
+      {
+        type: "paragraph",
+        text: "Without creating the PR, your contribution won't be officially included in the ceremony!",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Share Your Participation (Optional)",
+      },
+      {
+        type: "paragraph",
+        text: "The CLI generates a social media sharing link. Consider sharing your participation to:",
+      },
+      {
+        type: "list",
+        items: [
+          "Increase transparency and community awareness",
+          "Encourage others to participate",
+          "Demonstrate the decentralized nature of the ceremony",
+          "Build trust in Cardano's zero-knowledge infrastructure",
+        ],
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Verify Your Contribution (Recommended)",
+      },
+      {
+        type: "paragraph",
+        text: "Optionally verify your contribution was computed correctly:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli ppot verify ./output/your-contribution.ptau",
+      },
+      {
+        type: "paragraph",
+        text: "This runs cryptographic verification to ensure your contribution file is valid and correctly computed.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Understanding the Output Files",
+      },
+      {
+        type: "paragraph",
+        text: "After contributing, you'll have several files in your output directory:",
+      },
+      {
+        type: "list",
+        items: [
+          "Input file: The challenge file you downloaded (e.g., challenge_0040.ptau)",
+          "Output file: Your contribution response (e.g., response_0041.ptau)",
+          "Contribution record: JSON file with metadata and hashes",
+          "Attestation: Proof of your contribution including your contribution hash",
+        ],
+      },
+      {
+        type: "paragraph",
+        text: "You can keep these files for your records, but the most important data is already publicly recorded on GitHub.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Security Best Practices",
+      },
+      {
+        type: "paragraph",
+        text: "Contributing to a trusted setup ceremony is a responsibility. Follow these security practices:",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Toxic Waste Disposal",
+      },
+      {
+        type: "paragraph",
+        text: "The most critical security requirement:",
+      },
+      {
+        type: "list",
+        items: [
+          "Your computer's random entropy during contribution is the 'toxic waste'",
+          "This randomness must be permanently destroyed after contributing",
+          "The CLI handles this automatically, but for extra security consider rebooting your machine after contributing",
+          "Never attempt to recover or save the random values used during contribution",
+        ],
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "GitHub Token Security",
+      },
+      {
+        type: "list",
+        items: [
+          "Never share your GitHub token publicly or commit it to version control",
+          "Use tokens with minimal permissions (only 'gist' scope required)",
+          "Rotate tokens periodically for long-running ceremonies",
+          "Revoke tokens immediately if compromised",
+        ],
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Network Security",
+      },
+      {
+        type: "list",
+        items: [
+          "Use a trusted network connection (avoid public WiFi)",
+          "Verify download URLs are from official ceremony coordinators",
+          "Check file hashes match expected values when provided",
+          "Monitor upload progress to ensure complete file transfer",
+        ],
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Troubleshooting Common Issues",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Out of Memory Errors",
+      },
+      {
+        type: "paragraph",
+        text: "If the contribution process crashes with memory errors:",
+      },
+      {
+        type: "list",
+        items: [
+          "Ensure you have at least 16GB RAM (32GB recommended)",
+          "Close other applications to free memory",
+          "Increase Node.js memory limit: NODE_OPTIONS='--max-old-space-size=8192' brebaje-cli ppot contribute",
+          "Consider using a more powerful machine for contribution",
+        ],
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Download/Upload Failures",
+      },
+      {
+        type: "paragraph",
+        text: "If file transfers fail:",
+      },
+      {
+        type: "list",
+        items: [
+          "Check your internet connection stability",
+          "Verify the provided URLs are not expired (pre-signed URLs have time limits)",
+          "Request new download/upload URLs from ceremony coordinators",
+          "Try again during off-peak hours for better network performance",
+        ],
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "GitHub Authentication Issues",
+      },
+      {
+        type: "paragraph",
+        text: "If posting records fails:",
+      },
+      {
+        type: "list",
+        items: [
+          "Verify your GitHub token has 'gist' permissions",
+          "Check token hasn't expired",
+          "Reconfigure token: brebaje-cli setup gh-token NEW_TOKEN",
+          "Ensure you're authenticated with GitHub (try logging out and back in)",
+        ],
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Advanced: For Ceremony Coordinators",
+      },
+      {
+        type: "paragraph",
+        text: "If you're coordinating a ceremony, the CLI provides additional commands:",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Generate Pre-signed URLs",
+      },
+      {
+        type: "paragraph",
+        text: "Create time-limited upload and download URLs for participants:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli ppot generate-urls challenge_0040.ptau --download-filename response_0041.ptau --expiration 1440",
+      },
+      {
+        type: "paragraph",
+        text: "This generates both URLs with 24-hour expiration (1440 minutes).",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Apply Beacon Randomness",
+      },
+      {
+        type: "paragraph",
+        text: "For finalizing a ceremony with public randomness:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli ppot beacon input.ptau BEACON_HEX 10000 'Final Ceremony'",
+      },
+      {
+        type: "paragraph",
+        text: "This applies beacon randomness to ensure no single party could have predicted the final parameters.",
+      },
+      {
+        type: "heading",
+        level: 3,
+        text: "Initialize New Ceremony",
+      },
+      {
+        type: "paragraph",
+        text: "Start a fresh PPOT ceremony:",
+      },
+      {
+        type: "paragraph",
+        text: "brebaje-cli ppot new",
+      },
+      {
+        type: "paragraph",
+        text: "This creates the initial ceremony parameters for the first contributor.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Why Your Contribution Matters",
+      },
+      {
+        type: "paragraph",
+        text: "Every contribution to the Perpetual Powers of Tau ceremony strengthens Cardano's zero-knowledge infrastructure. Here's the impact you're making:",
+      },
+      {
+        type: "list",
+        items: [
+          "Enabling Privacy: Your contribution helps create the foundation for privacy-preserving applications on Cardano",
+          "Strengthening Security: More contributors mean stronger security assumptions for the entire ecosystem",
+          "Supporting Developers: Projects building ZK-SNARKs applications benefit from your contribution",
+          "Building Trust: Public participation demonstrates the decentralized nature of the trusted setup",
+          "Advancing Technology: Contributing to cutting-edge cryptographic infrastructure",
+        ],
+      },
+      {
+        type: "quote",
+        text: "The Cardano PPOT ceremony with 40 participants established one of the most robust trusted setups in the blockchain space. Every additional contributor makes it even stronger.",
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Next Steps After Contributing",
+      },
+      {
+        type: "paragraph",
+        text: "After successfully contributing to the ceremony:",
+      },
+      {
+        type: "list",
+        items: [
+          "Monitor your pull request for coordinator approval and merge",
+          "Join the community discussion about zero-knowledge development on Cardano",
+          "Explore building ZK-SNARK applications using the ceremony parameters",
+          "Consider contributing to additional ceremonies as they launch",
+          "Share your experience to encourage more community participation",
+        ],
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Additional Resources",
+      },
+      {
+        type: "paragraph",
+        text: "To learn more about PPOT ceremonies and zero-knowledge proofs:",
+      },
+      {
+        type: "link",
+        text: "Official Ceremony Guidelines:",
+        url: "https://github.com/p0tion-tools/cardano-ppot/blob/main/Docs/Ceremony_&_Contribution_Guidelines.md",
+        linkText:
+          "Complete reference documentation from the P0tion Tools collective",
+      },
+      {
+        type: "list",
+        items: [
+          "Brebaje Documentation: Complete technical documentation for all CLI commands and API endpoints",
+          "Cardano PPOT Repository: Official ceremony repository with contribution guidelines and ceremony history",
+          "P0tion Tools: Multi-chain collaboration for trusted setup infrastructure and ceremony coordination",
+          "snarkjs Documentation: Understanding the cryptographic tools and algorithms behind the ceremony",
+          "Zero-Knowledge Proofs on Cardano: Educational resources about ZK implementation and PlutusV3 support",
+        ],
+      },
+      {
+        type: "heading",
+        level: 2,
+        text: "Conclusion",
+      },
+      {
+        type: "paragraph",
+        text: "Contributing to the Cardano Perpetual Powers of Tau ceremony is a meaningful way to participate in building privacy-preserving infrastructure. While the process involves several technical steps, the Brebaje CLI tool automates most of the complexity, making it accessible to anyone with basic command-line skills.",
+      },
+      {
+        type: "paragraph",
+        text: "By following this guide, you've learned how to install the CLI, configure GitHub authentication, make a contribution using both automatic and manual methods, and complete the necessary verification steps. Your contribution joins dozens of others in creating a robust foundation for zero-knowledge applications on Cardano.",
+      },
+      {
+        type: "paragraph",
+        text: "Remember: the security of the entire system relies on at least one participant honestly destroying their toxic waste. By participating and following best practices, you're helping build a more private and secure blockchain ecosystem for everyone.",
+      },
+    ],
+  },
   {
     slug: "trusted-setup-ceremonies-cardano-brebaje",
     title:
