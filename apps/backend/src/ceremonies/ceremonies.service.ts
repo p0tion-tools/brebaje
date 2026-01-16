@@ -14,13 +14,16 @@ import { CreateCeremonyDto } from './dto/create-ceremony.dto';
 import { UpdateCeremonyDto } from './dto/update-ceremony.dto';
 import { Ceremony } from './ceremony.model';
 import { Project } from 'src/projects/project.model';
-import { CeremonyState } from 'src/types/enums';
+import { CeremonyState, ParticipantStatus, ParticipantContributionStep } from 'src/types/enums';
+import { User } from 'src/users/user.model';
+import { ParticipantsService } from 'src/participants/participants.service';
 
 @Injectable()
 export class CeremoniesService {
   constructor(
     @InjectModel(Ceremony)
     private readonly ceremonyModel: typeof Ceremony,
+    private readonly participantsService: ParticipantsService,
   ) {}
 
   async create(createCeremonyDto: CreateCeremonyDto) {
@@ -99,6 +102,75 @@ export class CeremoniesService {
       }
       await ceremony.destroy();
       return { message: 'Ceremony deleted successfully' };
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  async joinCeremony(ceremonyId: number, user: User) {
+    try {
+      // 1. Fetch ceremony
+      const ceremony = await this.findOne(ceremonyId);
+
+      // 2. Validate ceremony is OPENED
+      if (ceremony.state !== CeremonyState.OPENED) {
+        throw new BadRequestException('Ceremony is not open for participation');
+      }
+
+      // 3. Validate user's provider is allowed
+      const authProviders = ceremony.authProviders as string[];
+      const userProviderLower = user.provider.toLowerCase();
+      if (!authProviders.includes(userProviderLower)) {
+        throw new ForbiddenException(
+          `Your authentication provider (${user.provider}) is not allowed for this ceremony`,
+        );
+      }
+
+      // 4. Check if user already joined
+      try {
+        const existing = await this.participantsService.findByUserIdAndCeremonyId(
+          user.id!,
+          ceremonyId,
+        );
+        if (existing) {
+          return { message: 'Already joined', participant: existing };
+        }
+      } catch (error) {
+        // Participant not found, continue to create
+      }
+
+      // 5. Create participant
+      const participant = await this.participantsService.create({
+        userId: user.id!,
+        ceremonyId: ceremonyId,
+        status: ParticipantStatus.READY,
+        contributionStep: ParticipantContributionStep.DOWNLOADING,
+        contributionProgress: 0,
+      });
+
+      return { message: 'Successfully joined ceremony', participant };
+    } catch (error) {
+      if (
+        error instanceof BadRequestException ||
+        error instanceof ForbiddenException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+      this.handleErrors(error as Error);
+    }
+  }
+
+  async getCeremonyParticipants(ceremonyId: number) {
+    try {
+      // Verify ceremony exists
+      await this.findOne(ceremonyId);
+
+      // Fetch participants with user details
+      const participants = await this.participantsService.findAll();
+      const ceremonyParticipants = participants.filter((p) => p.ceremonyId === ceremonyId);
+
+      return ceremonyParticipants;
     } catch (error) {
       this.handleErrors(error as Error);
     }

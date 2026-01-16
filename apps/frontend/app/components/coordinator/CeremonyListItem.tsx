@@ -67,7 +67,7 @@ export const CeremonyListItem = ({ ceremony }: CeremonyListItemProps) => {
         </div>
 
         <div className="flex gap-2">
-          <Link href={`/ceremonies/${ceremony.id}`}>
+          <Link href={`/coordinator/ceremonies/${ceremony.id}`}>
             <Button
               variant="outline-black"
               size="sm"

@@ -6,6 +6,8 @@ import { Card } from "@/app/components/ui/Card";
 import { Chip } from "@/app/components/ui/Chip";
 import { ceremoniesApi, type Ceremony } from "@/app/lib/api/ceremonies";
 import { projectsApi, type Project } from "@/app/lib/api/projects";
+import { participantsApi, type Participant } from "@/app/lib/api/participants";
+import { useAuth } from "@/app/contexts/AuthContext";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
@@ -13,11 +15,14 @@ import { useState, useEffect } from "react";
 export default function CeremonyDetailPage() {
   const params = useParams();
   const ceremonyId = Number(params.id);
+  const { user, jwt, isLoggedIn } = useAuth();
 
   const [ceremony, setCeremony] = useState<Ceremony | null>(null);
   const [project, setProject] = useState<Project | null>(null);
+  const [participants, setParticipants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [joining, setJoining] = useState(false);
 
   // Mock circuits data for now - would be fetched from circuits API
   const mockCircuits = [
@@ -57,6 +62,17 @@ export default function CeremonyDetailPage() {
         const projectData = await projectsApi.findOne(ceremonyData.projectId);
         console.log("Project data received:", projectData);
         setProject(projectData);
+
+        // Fetch participants
+        try {
+          const participantsData =
+            await participantsApi.findByCeremony(ceremonyId);
+          console.log("Participants data received:", participantsData);
+          setParticipants(participantsData);
+        } catch (err) {
+          console.error("Failed to fetch participants:", err);
+          // Don't fail the whole page if participants fail to load
+        }
       } catch (err) {
         console.error("Detailed error:", err);
         setError(
@@ -99,6 +115,34 @@ export default function CeremonyDetailPage() {
     }
   };
 
+  const handleJoinCeremony = async () => {
+    if (!isLoggedIn || !jwt) {
+      alert("Please log in to join this ceremony");
+      return;
+    }
+
+    try {
+      setJoining(true);
+      const result = await ceremoniesApi.joinCeremony(ceremonyId, jwt);
+      alert(result.message || "Successfully joined ceremony!");
+
+      // Refresh participants list
+      const participantsData = await participantsApi.findByCeremony(ceremonyId);
+      setParticipants(participantsData);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to join ceremony");
+      console.error("Join ceremony error:", err);
+    } finally {
+      setJoining(false);
+    }
+  };
+
+  const handleCopyLink = () => {
+    const ceremonyUrl = `${window.location.origin}/ceremonies/${ceremonyId}`;
+    navigator.clipboard.writeText(ceremonyUrl);
+    alert("Ceremony link copied to clipboard!");
+  };
+
   if (loading) {
     return (
       <AppContent
@@ -133,6 +177,10 @@ export default function CeremonyDetailPage() {
   const displayStatus = getDisplayStatus(ceremony.state);
   const isOpen = displayStatus.status === "open";
 
+  console.log("Debug - ceremony.state:", ceremony.state);
+  console.log("Debug - displayStatus:", displayStatus);
+  console.log("Debug - isOpen:", isOpen);
+
   return (
     <AppContent
       containerClassName="bg-light-base py-[140px] min-h-screen"
@@ -156,8 +204,17 @@ export default function CeremonyDetailPage() {
                 <Button
                   variant="outline-black"
                   className="uppercase"
+                  onClick={handleCopyLink}
                 >
-                  Join Ceremony
+                  📋 Copy Link
+                </Button>
+                <Button
+                  variant="outline-black"
+                  className="uppercase"
+                  onClick={handleJoinCeremony}
+                  disabled={!isLoggedIn || joining}
+                >
+                  {joining ? "Joining..." : "Join Ceremony"}
                 </Button>
                 <Button
                   variant="black"
@@ -230,7 +287,9 @@ export default function CeremonyDetailPage() {
           radius="md"
         >
           <div className="p-6 text-center">
-            <div className="text-3xl font-bold text-black mb-2">0</div>
+            <div className="text-3xl font-bold text-black mb-2">
+              {participants.length}
+            </div>
             <div className="text-gray-600">Total Participants</div>
           </div>
         </Card>
@@ -316,6 +375,76 @@ export default function CeremonyDetailPage() {
                 </div>
               </div>
             ))}
+          </div>
+        </div>
+      </Card>
+
+      {/* Participants List */}
+      <Card
+        className="bg-white"
+        radius="md"
+      >
+        <div className="p-6">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-black text-2xl font-medium">Participants</h2>
+            <Chip variant="gray">{participants.length} Total</Chip>
+          </div>
+          <div className="flex flex-col gap-3">
+            {participants.length === 0 ? (
+              <div className="text-gray-600 text-center py-8">
+                No participants yet. Share the ceremony link to invite people!
+              </div>
+            ) : (
+              participants.map((participant) => (
+                <div
+                  key={participant.id}
+                  className="border border-gray-200 rounded-lg p-4 flex items-center justify-between"
+                >
+                  <div className="flex items-center gap-3">
+                    {participant.user?.avatarUrl && (
+                      <img
+                        src={participant.user.avatarUrl}
+                        alt={
+                          participant.user.displayName ||
+                          participant.user.walletAddress
+                        }
+                        className="w-10 h-10 rounded-full"
+                      />
+                    )}
+                    <div>
+                      <div className="text-black font-medium">
+                        {participant.user?.displayName ||
+                          participant.user?.walletAddress ||
+                          "Unknown User"}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        {participant.user?.provider
+                          ? participant.user.provider.toUpperCase()
+                          : "Unknown Provider"}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    {participant.status === "DONE" ? (
+                      <Chip
+                        variant="gray"
+                        withDot
+                        dotColor="green"
+                      >
+                        {participant.status}
+                      </Chip>
+                    ) : participant.status === "CONTRIBUTING" ? (
+                      <Chip variant="yellow">{participant.status}</Chip>
+                    ) : (
+                      <Chip variant="gray">{participant.status}</Chip>
+                    )}
+                    <div className="text-sm text-gray-600">
+                      Progress: {participant.contributionProgress || 0}%
+                    </div>
+                  </div>
+                </div>
+              ))
+            )}
           </div>
         </div>
       </Card>

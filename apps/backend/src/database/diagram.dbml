@@ -1,6 +1,7 @@
 Enum UserProvider {
   'GITHUB'
   'ETH'
+  'CARDANO'
 }
 
 Enum CeremonyType {
@@ -51,6 +52,7 @@ Table users {
   lastSignInTime int
   lastUpdated int
   avatarUrl varchar
+  walletAddress varchar
   provider UserProvider [not null, default: 'GITHUB']
 }
 

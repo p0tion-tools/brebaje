@@ -45,7 +45,9 @@ export class ParticipantsService {
   }
 
   async findAll() {
-    return this.participantModel.findAll();
+    return this.participantModel.findAll({
+      include: ['user'],
+    });
   }
 
   async findOne(id: number) {
@@ -86,6 +88,8 @@ export class ParticipantsService {
 
       return participants;
     } catch (error) {
+      // Log the actual error for debugging
+      console.error('findAllFromOpenCeremonies error:', error);
       this.handleErrors(error as Error);
     }
   }
