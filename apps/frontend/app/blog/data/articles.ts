@@ -22,7 +22,7 @@ export const articles: BlogArticle[] = [
       "Complete Guide: How to Contribute to Cardano's Perpetual Powers of Tau Ceremony",
     excerpt:
       "Step-by-step guide to participating in the Cardano PPOT ceremony using Brebaje CLI. Learn how to install, configure, and make your cryptographic contribution to strengthen Cardano's zero-knowledge infrastructure.",
-    date: "January 16, 2026",
+    date: "January 15, 2026",
     author: "Brebaje Team",
     readTime: "15 min read",
     content: [
