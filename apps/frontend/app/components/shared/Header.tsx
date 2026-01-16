@@ -8,10 +8,16 @@ import { Modal } from "../ui/Modal";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/app/contexts/AuthContext";
+import { useCardanoAuth } from "@/app/hooks/useCardanoAuth";
 
 export const Header = () => {
   const router = useRouter();
   const { isLoggedIn, user, logout } = useAuth();
+  const {
+    authenticateWithCardano,
+    loading: cardanoLoading,
+    error: cardanoError,
+  } = useCardanoAuth();
   const [isOpenLoginModal, setIsOpenLoginModal] = useState(false);
   const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
   const [selectedLoginMethod, setSelectedLoginMethod] = useState<
@@ -29,6 +35,14 @@ export const Header = () => {
       router.push(data.authUrl);
     } catch (error) {
       console.error("GitHub OAuth initialization failed:", error);
+    }
+  };
+
+  const handleCardanoLogin = async () => {
+    const result = await authenticateWithCardano();
+    if (result.success) {
+      setIsOpenLoginModal(false);
+      setSelectedLoginMethod(null);
     }
   };
 
@@ -86,12 +100,18 @@ export const Header = () => {
                 variant={selectedLoginMethod === "cardano" ? "yellow" : "white"}
                 fontWeight="regular"
                 size="xs"
-                onClick={() => setSelectedLoginMethod("cardano")}
+                onClick={handleCardanoLogin}
+                disabled={cardanoLoading}
                 icon={<Icons.Cardano />}
               >
-                Cardano
+                {cardanoLoading ? "Connecting..." : "Cardano"}
               </Button>
             </div>
+            {cardanoError && (
+              <div className="text-red-600 text-sm text-center px-4 py-2 bg-red-50 rounded">
+                {cardanoError}
+              </div>
+            )}
           </div>
           <Button
             className="uppercase"

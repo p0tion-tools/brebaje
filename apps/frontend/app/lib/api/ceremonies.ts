@@ -162,6 +162,40 @@ export const ceremoniesApi = {
     return response.json();
   },
 
+  async joinCeremony(
+    ceremonyId: number,
+    token: string
+  ): Promise<{ message: string; participant: any }> {
+    const response = await fetch(`${API_URL}/ceremonies/${ceremonyId}/join`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response.ok) {
+      const error = await response
+        .json()
+        .catch(() => ({ message: "Failed to join ceremony" }));
+      throw new Error(error.message || "Failed to join ceremony");
+    }
+
+    return response.json();
+  },
+
+  async getCeremonyParticipants(ceremonyId: number): Promise<any[]> {
+    const response = await fetch(
+      `${API_URL}/ceremonies/${ceremonyId}/participants`
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch ceremony participants");
+    }
+
+    return response.json();
+  },
+
   async createWithCircuit(
     data: CreateCeremonyDto & { circuitFile: File | null },
     token: string

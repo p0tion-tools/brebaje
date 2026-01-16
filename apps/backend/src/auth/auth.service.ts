@@ -312,8 +312,12 @@ export class AuthService {
     const latestNonce = usedNonces[usedNonces.length - 1];
     this.logger.debug(`Using latest nonce for verification: ${latestNonce.substring(0, 8)}...`);
 
+    // Convert nonce to hex format for signature verification (must match what wallet signed)
+    const nonceHex = Buffer.from(latestNonce, 'utf8').toString('hex');
+    this.logger.debug(`Nonce in hex: ${nonceHex.substring(0, 16)}...`);
+
     // Verify the signature using Mesh SDK
-    const isValidSignature = await checkSignature(latestNonce, signature, userAddress);
+    const isValidSignature = await checkSignature(nonceHex, signature, userAddress);
 
     this.logger.debug(`Signature verification result: ${isValidSignature}`);
 
@@ -357,6 +361,7 @@ export class AuthService {
       return { user, jwt };
     } catch (error) {
       this.logger.error(`Cardano authentication failed: ${(error as Error).message}`);
+      this.logger.error(`Full error:`, error);
       return error as Error;
     }
   }

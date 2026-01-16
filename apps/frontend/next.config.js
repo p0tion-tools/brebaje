@@ -2,6 +2,7 @@
 
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  transpilePackages: ["@meshsdk/core", "@meshsdk/react"],
   images: {
     dangerouslyAllowSVG: true,
     contentDispositionType: "attachment",

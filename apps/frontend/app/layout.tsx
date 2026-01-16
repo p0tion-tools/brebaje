@@ -5,6 +5,7 @@ import { Footer } from "./components/shared/Footer";
 import { Poppins, Roboto_Mono } from "next/font/google";
 import { QueryClientProviderLayout } from "./components/layouts/QueryClientProviderLayout";
 import { AuthProvider } from "./contexts/AuthContext";
+import { MeshProviderWrapper } from "./components/providers/MeshProviderWrapper";
 
 export const metadata: Metadata = {
   title: "P0tion",
@@ -36,13 +37,15 @@ export default function RootLayout({
       <body
         className={`${poppins.className} ${poppins.variable} ${robotoMono.variable} min-h-screen bg-background antialiased flex flex-col`}
       >
-        <AuthProvider>
-          <QueryClientProviderLayout>
-            <Header />
-            <main className="flex-1 relative">{children}</main>
-            <Footer />
-          </QueryClientProviderLayout>
-        </AuthProvider>
+        <MeshProviderWrapper>
+          <AuthProvider>
+            <QueryClientProviderLayout>
+              <Header />
+              <main className="flex-1 relative">{children}</main>
+              <Footer />
+            </QueryClientProviderLayout>
+          </AuthProvider>
+        </MeshProviderWrapper>
       </body>
     </html>
   );

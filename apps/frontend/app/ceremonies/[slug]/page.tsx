@@ -6,7 +6,8 @@ import { Card } from "@/app/components/ui/Card";
 import { Chip } from "@/app/components/ui/Chip";
 import { Tabs } from "@/app/components/ui/Tabs";
 import Image from "next/image";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
+import { useState } from "react";
 // import { ceremonies } from "@/mocks/ceremonies.mocks";
 // import { useMemo } from "react";
 import { CeremonyDate } from "@/app/components/CeremonyDate";
@@ -16,10 +17,52 @@ import { ContributionsSection } from "@/app/sections/ceremonies/ContributionsSec
 import { AboutSection } from "@/app/sections/ceremonies/AboutSection";
 import { DownloadZkeySection } from "@/app/sections/ceremonies/DownloadZkeySection";
 import { useGetCeremonyById } from "@/app/hooks/useGetCeremonyById";
+import { useAuth } from "@/app/contexts/AuthContext";
+import { ceremoniesApi } from "@/app/lib/api/ceremonies";
 
 export default function ProjectPage() {
   const { slug } = useParams();
+  const router = useRouter();
   const { data: ceremony, isLoading } = useGetCeremonyById(slug as string);
+  const { isLoggedIn, jwt, setShowLoginModal } = useAuth();
+  const [joining, setJoining] = useState(false);
+
+  const handleJoinCeremony = async () => {
+    // If not logged in, show warning
+    if (!isLoggedIn) {
+      alert(
+        "Please log in to join this ceremony. Click on the login button in the header."
+      );
+      return;
+    }
+
+    // If logged in, join ceremony and redirect
+    if (!jwt) {
+      alert("Authentication error. Please log in again.");
+      return;
+    }
+
+    try {
+      setJoining(true);
+      const ceremonyId = Number(slug);
+
+      if (isNaN(ceremonyId)) {
+        alert("Invalid ceremony ID");
+        return;
+      }
+
+      const result = await ceremoniesApi.joinCeremony(ceremonyId, jwt);
+      alert(result.message || "Successfully joined ceremony!");
+
+      // Redirect to coordinator ceremony page
+      router.push(`/coordinator/ceremonies/${ceremonyId}`);
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to join ceremony");
+      console.error("Join ceremony error:", err);
+    } finally {
+      setJoining(false);
+    }
+  };
 
   return (
     <AppContent
@@ -102,6 +145,27 @@ export default function ProjectPage() {
                   </span>
                 </div>
                 <div className="flex gap-4">
+                  <Button
+                    variant="outline-black"
+                    className="uppercase"
+                    onClick={() => {
+                      const ceremonyUrl = `${window.location.origin}/ceremonies/${slug}`;
+                      navigator.clipboard.writeText(ceremonyUrl);
+                      alert("Ceremony link copied to clipboard!");
+                    }}
+                  >
+                    📋 Copy Link
+                  </Button>
+                  {ceremony?.isActive && (
+                    <Button
+                      variant="outline-black"
+                      className="uppercase"
+                      onClick={handleJoinCeremony}
+                      disabled={joining}
+                    >
+                      {joining ? "Joining..." : "Join Ceremony"}
+                    </Button>
+                  )}
                   <Button
                     variant="black"
                     className="uppercase"

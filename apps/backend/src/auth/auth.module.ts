@@ -15,5 +15,6 @@ import { JWT_SECRET, JWT_EXPIRES_IN } from '../utils/constants';
   ],
   controllers: [AuthController],
   providers: [AuthService],
+  exports: [JwtModule, AuthService],
 })
 export class AuthModule {}
