@@ -94,15 +94,38 @@ export class CeremoniesService {
     }
   }
 
-  async remove(id: number) {
+  async remove(id: number, user: User) {
     try {
-      const ceremony = await this.ceremonyModel.findByPk(id);
+      // 1. Fetch ceremony with project relation
+      const ceremony = await this.ceremonyModel.findByPk(id, {
+        include: [{ model: Project, as: 'project' }],
+      });
+
       if (!ceremony) {
-        throw new Error('Ceremony not found');
+        throw new NotFoundException('Ceremony not found');
       }
+
+      // 2. Check if user is the coordinator of the project
+      const project = ceremony.project;
+      if (!project) {
+        throw new InternalServerErrorException('Ceremony project not found');
+      }
+
+      if (project.coordinatorId !== user.id) {
+        throw new ForbiddenException('Only the project coordinator can delete ceremonies');
+      }
+
+      // 3. Delete the ceremony
       await ceremony.destroy();
       return { message: 'Ceremony deleted successfully' };
     } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof ForbiddenException ||
+        error instanceof InternalServerErrorException
+      ) {
+        throw error;
+      }
       this.handleErrors(error as Error);
     }
   }

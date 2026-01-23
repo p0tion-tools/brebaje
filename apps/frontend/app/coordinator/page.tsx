@@ -5,42 +5,34 @@ import { Button } from "@/app/components/ui/Button";
 import { Card } from "@/app/components/ui/Card";
 import { StatsCard } from "@/app/components/coordinator/StatsCard";
 import { ProjectListItem } from "@/app/components/coordinator/ProjectListItem";
-import { ActivityFeed } from "@/app/components/coordinator/ActivityFeed";
 import { ProjectModal } from "@/app/components/coordinator/ProjectModal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useProjects, useCreateProject } from "@/app/hooks/useProjects";
-
-const mockActivities = [
-  {
-    id: "1",
-    message: "User alice_zkp completed contribution",
-    ceremony: "ZK Rollup Ceremony #1",
-    timestamp: "2 hours ago",
-  },
-  {
-    id: "2",
-    message: "Layer 2 Ceremony finalized successfully",
-    ceremony: "Layer 2 Ceremony",
-    timestamp: "5 hours ago",
-  },
-  {
-    id: "3",
-    message: "15 new participants joined",
-    ceremony: "Privacy Protocol Setup",
-    timestamp: "1 day ago",
-  },
-  {
-    id: "4",
-    message: "User bob_contributor completed contribution",
-    ceremony: "ZK Rollup Ceremony #1",
-    timestamp: "2 days ago",
-  },
-];
+import { ceremoniesApi } from "@/app/lib/api/ceremonies";
 
 export default function CoordinatorDashboard() {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [ceremonies, setCeremonies] = useState<any[]>([]);
+  const [ceremoniesLoading, setCeremoniesLoading] = useState(true);
   const { data: projects = [], isLoading } = useProjects();
   const createProject = useCreateProject();
+
+  // Fetch all ceremonies
+  useEffect(() => {
+    const fetchCeremonies = async () => {
+      try {
+        setCeremoniesLoading(true);
+        const data = await ceremoniesApi.findAll();
+        setCeremonies(data);
+      } catch (error) {
+        console.error("Failed to fetch ceremonies:", error);
+      } finally {
+        setCeremoniesLoading(false);
+      }
+    };
+
+    fetchCeremonies();
+  }, []);
 
   const handleCreateProject = async (data: {
     name: string;
@@ -55,25 +47,41 @@ export default function CoordinatorDashboard() {
     }
   };
 
+  // Calculate ceremony counts per project
+  const ceremonyCounts = projects.reduce(
+    (acc, project) => {
+      const projectCeremonies = ceremonies.filter(
+        (c) => c.projectId === project.id
+      );
+      const activeCeremonies = projectCeremonies.filter(
+        (c) => c.state === "OPENED" || c.state === "SCHEDULED"
+      );
+
+      acc[project.id] = {
+        total: projectCeremonies.length,
+        active: activeCeremonies.length,
+      };
+      return acc;
+    },
+    {} as Record<number, { total: number; active: number }>
+  );
+
   // Transform API data to match component expectations
   const transformedProjects = projects.map((project) => ({
     id: String(project.id),
     name: project.name,
     contact: project.contact,
-    ceremoniesCount: 0, // TODO: Get from ceremonies API
-    activeCeremoniesCount: 0, // TODO: Get from ceremonies API
+    ceremoniesCount: ceremonyCounts[project.id]?.total || 0,
+    activeCeremoniesCount: ceremonyCounts[project.id]?.active || 0,
     createdAt: project.createdAt,
   }));
 
-  const mockStats = {
+  const stats = {
     totalProjects: transformedProjects.length,
     activeProjects: transformedProjects.filter(
       (p) => p.activeCeremoniesCount > 0
     ).length,
-    totalCeremonies: transformedProjects.reduce(
-      (sum, project) => sum + project.ceremoniesCount,
-      0
-    ),
+    totalCeremonies: ceremonies.length,
   };
   return (
     <AppContent
@@ -98,18 +106,18 @@ export default function CoordinatorDashboard() {
       <div className="grid grid-cols-3 gap-6">
         <StatsCard
           title="Total Projects"
-          value={mockStats.totalProjects}
+          value={stats.totalProjects}
           icon="📦"
         />
         <StatsCard
           title="Active Projects"
-          value={mockStats.activeProjects}
+          value={stats.activeProjects}
           icon="🟢"
           variant="green"
         />
         <StatsCard
           title="Total Ceremonies"
-          value={mockStats.totalCeremonies}
+          value={stats.totalCeremonies}
           icon="📊"
           variant="gray"
         />
@@ -145,19 +153,6 @@ export default function CoordinatorDashboard() {
               ))}
             </div>
           )}
-        </div>
-      </Card>
-
-      {/* Recent Activity */}
-      <Card
-        className="bg-white"
-        radius="md"
-      >
-        <div className="p-6">
-          <h2 className="text-black text-2xl font-medium mb-6">
-            Recent Activity
-          </h2>
-          <ActivityFeed activities={mockActivities} />
         </div>
       </Card>
 

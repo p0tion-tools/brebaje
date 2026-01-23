@@ -7,7 +7,6 @@ interface Ceremony {
   name: string;
   status: "open" | "closed" | "scheduled";
   participants: number;
-  contributions: number;
   endDate: string;
 }
 
@@ -54,11 +53,7 @@ export const CeremonyListItem = ({ ceremony }: CeremonyListItemProps) => {
               <span>participants</span>
             </div>
             <div className="flex items-center gap-2">
-              <span className="font-medium">{ceremony.contributions}</span>
-              <span>contributions</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <span>{isOpen ? "Ends:" : "Ended:"}</span>
+              <span>Ends:</span>
               <span className="font-medium">
                 {formatDate(ceremony.endDate)}
               </span>

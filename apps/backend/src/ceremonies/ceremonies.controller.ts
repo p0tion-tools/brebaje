@@ -92,11 +92,15 @@ export class CeremoniesController {
   }
 
   @Delete(':id')
-  @ApiOperation({ summary: 'Delete a ceremony' })
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Delete a ceremony (coordinator only)' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'The ceremony has been successfully deleted.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized - Authentication required.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Only coordinators can delete ceremonies.' })
   @ApiResponse({ status: 404, description: 'Ceremony not found.' })
-  remove(@Param('id') id: string) {
-    return this.ceremoniesService.remove(+id);
+  remove(@Param('id') id: string, @Request() req) {
+    return this.ceremoniesService.remove(+id, req.user);
   }
 }

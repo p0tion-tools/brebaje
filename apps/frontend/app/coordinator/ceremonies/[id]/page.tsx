@@ -22,6 +22,10 @@ export default function CeremonyDetailPage() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState(false);
+
+  // Check if current user is the coordinator
+  const isCoordinator = user && project && user.id === project.coordinatorId;
 
   // Mock circuits data for now - would be fetched from circuits API
   const mockCircuits = [
@@ -120,6 +124,39 @@ export default function CeremonyDetailPage() {
     alert("Ceremony link copied to clipboard!");
   };
 
+  const handleFinalizeCeremony = async () => {
+    if (!isCoordinator) {
+      alert("Only the project coordinator can delete this ceremony");
+      return;
+    }
+
+    if (!jwt) {
+      alert("Authentication error. Please log in again.");
+      return;
+    }
+
+    const confirmed = confirm(
+      "Are you sure you want to delete this ceremony? This action cannot be undone."
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    try {
+      setDeleting(true);
+      await ceremoniesApi.delete(ceremonyId, jwt);
+      alert("Ceremony deleted successfully!");
+      // Redirect to project page
+      window.location.href = `/coordinator/projects/${project?.id}`;
+    } catch (err) {
+      alert(err instanceof Error ? err.message : "Failed to delete ceremony");
+      console.error("Delete ceremony error:", err);
+    } finally {
+      setDeleting(false);
+    }
+  };
+
   if (loading) {
     return (
       <AppContent
@@ -153,10 +190,11 @@ export default function CeremonyDetailPage() {
 
   const displayStatus = getDisplayStatus(ceremony.state);
   const isOpen = displayStatus.status === "open";
+  const isScheduled = displayStatus.status === "scheduled";
+  const isClosed = displayStatus.status === "closed";
 
-  console.log("Debug - ceremony.state:", ceremony.state);
-  console.log("Debug - displayStatus:", displayStatus);
-  console.log("Debug - isOpen:", isOpen);
+  // Show management buttons for open or scheduled ceremonies (not closed)
+  const showManagementButtons = isOpen || isScheduled;
 
   return (
     <AppContent
@@ -176,7 +214,7 @@ export default function CeremonyDetailPage() {
             </div>
           </div>
           <div className="flex gap-3">
-            {isOpen ? (
+            {showManagementButtons ? (
               <>
                 <Button
                   variant="outline-black"
@@ -185,12 +223,16 @@ export default function CeremonyDetailPage() {
                 >
                   📋 Copy Link
                 </Button>
-                <Button
-                  variant="black"
-                  className="uppercase"
-                >
-                  Finalize
-                </Button>
+                {isCoordinator && (
+                  <Button
+                    variant="black"
+                    className="uppercase"
+                    onClick={handleFinalizeCeremony}
+                    disabled={deleting}
+                  >
+                    {deleting ? "Deleting..." : "Delete Ceremony"}
+                  </Button>
+                )}
               </>
             ) : (
               <Button

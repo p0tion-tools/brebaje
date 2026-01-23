@@ -256,8 +256,7 @@ export const formatCeremonyForDisplay = (ceremony: Ceremony) => {
     id: ceremony.id.toString(),
     name: ceremony.description,
     status: getDisplayStatus(ceremony.state),
-    participants: 0, // This would come from participants API
-    contributions: 0, // This would come from contributions API
+    participants: 0, // This will be populated from participants API
     endDate: new Date(ceremony.end_date * 1000).toISOString().split("T")[0],
     startDate: new Date(ceremony.start_date * 1000).toISOString().split("T")[0],
     type: ceremony.type,

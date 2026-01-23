@@ -6,7 +6,10 @@ import { ceremoniesApi } from "../lib/api/ceremonies";
 
 const fetchOpenCeremonies = async (): Promise<any> => {
   const allCeremonies = await ceremoniesApi.findAll();
-  return allCeremonies.filter((ceremony: any) => ceremony.state === "OPENED");
+  return allCeremonies.filter(
+    (ceremony: any) =>
+      ceremony.state === "OPENED" || ceremony.state === "SCHEDULED"
+  );
 };
 
 const fetchClosedCeremonies = async (): Promise<any> => {
@@ -29,7 +32,7 @@ export const useGetOpenCeremonies = () => {
           id: ceremony.id,
           title: ceremony.description, // API uses 'description' field
           description: ceremony.description,
-          isActive: true,
+          isActive: ceremony.state === "OPENED",
           startDate: new Date(ceremony.start_date * 1000)
             .toISOString()
             .split("T")[0],

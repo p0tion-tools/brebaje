@@ -11,6 +11,7 @@ import {
   type Ceremony,
 } from "@/app/lib/api/ceremonies";
 import { projectsApi, type Project } from "@/app/lib/api/projects";
+import { participantsApi } from "@/app/lib/api/participants";
 import Link from "next/link";
 import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
@@ -39,7 +40,30 @@ export default function ProjectDetailPage() {
         ]);
 
         setProject(projectData);
-        setCeremonies(ceremoniesData.map(formatCeremonyForDisplay));
+
+        // Fetch participants for each ceremony and update counts
+        const ceremoniesWithParticipants = await Promise.all(
+          ceremoniesData.map(async (ceremony) => {
+            try {
+              const participants = await participantsApi.findByCeremony(
+                ceremony.id
+              );
+              const formatted = formatCeremonyForDisplay(ceremony);
+              return {
+                ...formatted,
+                participants: participants.length,
+              };
+            } catch (err) {
+              console.error(
+                `Failed to fetch participants for ceremony ${ceremony.id}:`,
+                err
+              );
+              return formatCeremonyForDisplay(ceremony);
+            }
+          })
+        );
+
+        setCeremonies(ceremoniesWithParticipants);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Failed to fetch data");
         console.error("Error fetching data:", err);
