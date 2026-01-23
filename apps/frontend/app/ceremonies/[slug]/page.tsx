@@ -24,7 +24,7 @@ export default function ProjectPage() {
   const { slug } = useParams();
   const router = useRouter();
   const { data: ceremony, isLoading } = useGetCeremonyById(slug as string);
-  const { isLoggedIn, jwt, setShowLoginModal } = useAuth();
+  const { isLoggedIn, jwt } = useAuth();
   const [joining, setJoining] = useState(false);
 
   const handleJoinCeremony = async () => {

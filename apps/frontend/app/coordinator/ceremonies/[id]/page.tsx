@@ -9,6 +9,7 @@ import { projectsApi, type Project } from "@/app/lib/api/projects";
 import { participantsApi, type Participant } from "@/app/lib/api/participants";
 import { useAuth } from "@/app/contexts/AuthContext";
 import Link from "next/link";
+import Image from "next/image";
 import { useParams } from "next/navigation";
 import { useState, useEffect } from "react";
 
@@ -413,13 +414,16 @@ export default function CeremonyDetailPage() {
                 >
                   <div className="flex items-center gap-3">
                     {participant.user?.avatarUrl && (
-                      <img
+                      <Image
                         src={participant.user.avatarUrl}
                         alt={
                           participant.user.displayName ||
-                          participant.user.walletAddress
+                          participant.user.walletAddress ||
+                          "User avatar"
                         }
-                        className="w-10 h-10 rounded-full"
+                        width={40}
+                        height={40}
+                        className="rounded-full"
                       />
                     )}
                     <div>
