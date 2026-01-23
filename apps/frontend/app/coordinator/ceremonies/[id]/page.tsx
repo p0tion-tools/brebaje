@@ -22,7 +22,6 @@ export default function CeremonyDetailPage() {
   const [participants, setParticipants] = useState<Participant[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [joining, setJoining] = useState(false);
 
   // Mock circuits data for now - would be fetched from circuits API
   const mockCircuits = [
@@ -115,28 +114,6 @@ export default function CeremonyDetailPage() {
     }
   };
 
-  const handleJoinCeremony = async () => {
-    if (!isLoggedIn || !jwt) {
-      alert("Please log in to join this ceremony");
-      return;
-    }
-
-    try {
-      setJoining(true);
-      const result = await ceremoniesApi.joinCeremony(ceremonyId, jwt);
-      alert(result.message || "Successfully joined ceremony!");
-
-      // Refresh participants list
-      const participantsData = await participantsApi.findByCeremony(ceremonyId);
-      setParticipants(participantsData);
-    } catch (err) {
-      alert(err instanceof Error ? err.message : "Failed to join ceremony");
-      console.error("Join ceremony error:", err);
-    } finally {
-      setJoining(false);
-    }
-  };
-
   const handleCopyLink = () => {
     const ceremonyUrl = `${window.location.origin}/ceremonies/${ceremonyId}`;
     navigator.clipboard.writeText(ceremonyUrl);
@@ -207,14 +184,6 @@ export default function CeremonyDetailPage() {
                   onClick={handleCopyLink}
                 >
                   📋 Copy Link
-                </Button>
-                <Button
-                  variant="outline-black"
-                  className="uppercase"
-                  onClick={handleJoinCeremony}
-                  disabled={!isLoggedIn || joining}
-                >
-                  {joining ? "Joining..." : "Join Ceremony"}
                 </Button>
                 <Button
                   variant="black"

@@ -100,9 +100,6 @@ importers:
       "@nestjs/swagger":
         specifier: ^11.2.0
         version: 11.2.0(@nestjs/common@11.1.5(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)(rxjs@7.8.2))(@nestjs/core@11.1.5)(class-transformer@0.5.1)(class-validator@0.14.2)(reflect-metadata@0.2.2)
-      "@types/multer":
-        specifier: ^2.0.0
-        version: 2.0.0
       class-transformer:
         specifier: ^0.5.1
         version: 0.5.1
@@ -164,6 +161,9 @@ importers:
       "@types/jest":
         specifier: ^29.5.14
         version: 29.5.14
+      "@types/multer":
+        specifier: ^2.0.0
+        version: 2.0.0
       "@types/node":
         specifier: ^22.10.7
         version: 22.17.0
