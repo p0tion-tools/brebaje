@@ -1,0 +1,17 @@
+[**Brebaje Documentation**](../../../../../../index.md)
+
+---
+
+[Brebaje Documentation](../../../../../../index.md) / [apps/cli/src/auth/status](../index.md) / checkAuthStatus
+
+# Function: checkAuthStatus()
+
+> **checkAuthStatus**(): `Promise`&lt;`void`&gt;
+
+Defined in: [apps/cli/src/auth/status.ts:9](https://github.com/p0tion-tools/brebaje/blob/d46df74e1ac0040aa4be8ad632f25004641f167b/apps/cli/src/auth/status.ts#L9)
+
+Check authentication status
+
+## Returns
+
+`Promise`&lt;`void`&gt;

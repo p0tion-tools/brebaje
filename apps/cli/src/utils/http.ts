@@ -3,7 +3,7 @@
  * @param url - The URL to fetch
  * @param options - Fetch options
  * @param timeoutMs - Timeout in milliseconds (default: 10000)
- * @returns Promise<Response>
+ * @returns Promise of Response
  */
 export const fetchWithTimeout = async (
   url: string,

@@ -1,0 +1,39 @@
+{
+  "compilerOptions": {
+    "target": "ES2022",
+    "module": "ES2022",
+    "moduleResolution": "node",
+    "jsx": "react-jsx",
+    "lib": ["ES2022", "DOM"],
+    "strict": false,
+    "skipLibCheck": true,
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "types": ["node"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+    "baseUrl": ".",
+    "paths": {
+      "src/*": ["apps/backend/src/*", "apps/cli/src/*"],
+      "@brebaje/actions": ["packages/actions/src/index.ts"],
+      "@/*": ["apps/frontend/*"]
+    },
+    "strictPropertyInitialization": false,
+    "useUnknownInCatchVariables": false,
+    "noImplicitAny": false
+  },
+  "include": [
+    "apps/backend/src/**/*",
+    "apps/cli/src/**/*",
+    "apps/frontend/app/**/*",
+    "packages/*/src/**/*"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "**/*.test.ts",
+    "**/node_modules/**",
+    "**/dist/**",
+    "**/build/**",
+    "**/.next/**"
+  ]
+}

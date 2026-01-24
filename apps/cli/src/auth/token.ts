@@ -87,7 +87,7 @@ export function isTokenExpired(token: string): boolean {
 
 /**
  * Validates token (exists and not expired)
- * Returns valid boolean, jwt and the payload (user: \{ displayName, provider, etc \})
+ * Returns valid boolean, jwt, and the payload user fields like displayName and provider
  */
 export function validateToken(tokenPath: string): {
   valid: boolean;
