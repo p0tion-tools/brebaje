@@ -6,7 +6,7 @@
 
 # Class: AppController
 
-Defined in: [apps/backend/src/app.controller.ts:5](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/app.controller.ts#L5)
+Defined in: [apps/backend/src/app.controller.ts:5](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/app.controller.ts#L5)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/app.controller.ts:5](https://github.com/p0tion-too
 
 > **new AppController**(`appService`): `AppController`
 
-Defined in: [apps/backend/src/app.controller.ts:6](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/app.controller.ts#L6)
+Defined in: [apps/backend/src/app.controller.ts:6](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/app.controller.ts#L6)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/app.controller.ts:6](https://github.com/p0tion-too
 
 > **getHello**(): `string`
 
-Defined in: [apps/backend/src/app.controller.ts:9](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/app.controller.ts#L9)
+Defined in: [apps/backend/src/app.controller.ts:9](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/app.controller.ts#L9)
 
 #### Returns
 

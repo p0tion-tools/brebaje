@@ -6,7 +6,7 @@
 
 # Class: ScriptLogger
 
-Defined in: [apps/backend/src/utils/logger.ts:5](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/utils/logger.ts#L5)
+Defined in: [apps/backend/src/utils/logger.ts:5](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/utils/logger.ts#L5)
 
 Centralized logger utility for scripts and services
 Uses consistent formatting across the application
@@ -17,7 +17,7 @@ Uses consistent formatting across the application
 
 > **new ScriptLogger**(`context`): `ScriptLogger`
 
-Defined in: [apps/backend/src/utils/logger.ts:8](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/utils/logger.ts#L8)
+Defined in: [apps/backend/src/utils/logger.ts:8](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/utils/logger.ts#L8)
 
 #### Parameters
 
@@ -35,7 +35,7 @@ Defined in: [apps/backend/src/utils/logger.ts:8](https://github.com/p0tion-tools
 
 > **error**(`message`, `error?`): `void`
 
-Defined in: [apps/backend/src/utils/logger.ts:16](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/utils/logger.ts#L16)
+Defined in: [apps/backend/src/utils/logger.ts:16](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/utils/logger.ts#L16)
 
 #### Parameters
 
@@ -57,7 +57,7 @@ Defined in: [apps/backend/src/utils/logger.ts:16](https://github.com/p0tion-tool
 
 > **failure**(`message`): `void`
 
-Defined in: [apps/backend/src/utils/logger.ts:31](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/utils/logger.ts#L31)
+Defined in: [apps/backend/src/utils/logger.ts:31](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/utils/logger.ts#L31)
 
 #### Parameters
 
@@ -75,7 +75,7 @@ Defined in: [apps/backend/src/utils/logger.ts:31](https://github.com/p0tion-tool
 
 > **log**(`message`): `void`
 
-Defined in: [apps/backend/src/utils/logger.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/utils/logger.ts#L12)
+Defined in: [apps/backend/src/utils/logger.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/utils/logger.ts#L12)
 
 #### Parameters
 
@@ -93,7 +93,7 @@ Defined in: [apps/backend/src/utils/logger.ts:12](https://github.com/p0tion-tool
 
 > **success**(`message`): `void`
 
-Defined in: [apps/backend/src/utils/logger.ts:27](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/utils/logger.ts#L27)
+Defined in: [apps/backend/src/utils/logger.ts:27](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/utils/logger.ts#L27)
 
 #### Parameters
 
@@ -111,7 +111,7 @@ Defined in: [apps/backend/src/utils/logger.ts:27](https://github.com/p0tion-tool
 
 > **warn**(`message`): `void`
 
-Defined in: [apps/backend/src/utils/logger.ts:23](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/utils/logger.ts#L23)
+Defined in: [apps/backend/src/utils/logger.ts:23](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/utils/logger.ts#L23)
 
 #### Parameters
 

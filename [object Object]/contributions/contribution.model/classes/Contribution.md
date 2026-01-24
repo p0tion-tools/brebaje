@@ -6,7 +6,7 @@
 
 # Class: Contribution
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:40](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L40)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:40](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L40)
 
 ## Extends
 
@@ -48,7 +48,7 @@ Defined in: node\_modules/.pnpm/sequelize-typescript@2.1.6\_@types+node@22.17.0\
 
 > `optional` **beacon**: `object`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:113](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L113)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:113](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L113)
 
 #### Implementation of
 
@@ -60,7 +60,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:113](https://g
 
 > **circuit**: [`Circuit`](../../../circuits/circuit.model/classes/Circuit.md)
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:116](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L116)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:116](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L116)
 
 ***
 
@@ -68,7 +68,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:116](https://g
 
 > **circuitId**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:45](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L45)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:45](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L45)
 
 #### Implementation of
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:45](https://gi
 
 > `optional` **contributionComputationTime**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:65](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L65)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:65](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L65)
 
 #### Implementation of
 
@@ -92,7 +92,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:65](https://gi
 
 > `optional` **files**: `object`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:101](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L101)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:101](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L101)
 
 #### Implementation of
 
@@ -104,7 +104,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:101](https://g
 
 > `optional` **fullContributionTime**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:71](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L71)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:71](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L71)
 
 #### Implementation of
 
@@ -116,7 +116,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:71](https://gi
 
 > `optional` **id**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:59](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L59)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:59](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L59)
 
 #### Implementation of
 
@@ -132,7 +132,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:59](https://gi
 
 > `optional` **lastUpdated**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:95](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L95)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:95](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L95)
 
 #### Implementation of
 
@@ -144,7 +144,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:95](https://gi
 
 > **participant**: [`Participant`](../../../participants/participant.model/classes/Participant.md)
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:119](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L119)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:119](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L119)
 
 ***
 
@@ -152,7 +152,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:119](https://g
 
 > **participantId**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:51](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L51)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:51](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L51)
 
 #### Implementation of
 
@@ -164,7 +164,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:51](https://gi
 
 > `optional` **valid**: `boolean`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:89](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L89)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:89](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L89)
 
 #### Implementation of
 
@@ -176,7 +176,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:89](https://gi
 
 > `optional` **verificationSoftware**: `object`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:107](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L107)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:107](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L107)
 
 #### Implementation of
 
@@ -188,7 +188,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:107](https://g
 
 > `optional` **verifyContributionTime**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:77](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L77)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:77](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L77)
 
 #### Implementation of
 
@@ -200,7 +200,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:77](https://gi
 
 > `optional` **zkeyIndex**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:83](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L83)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:83](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L83)
 
 #### Implementation of
 

@@ -6,7 +6,7 @@
 
 # Class: Project
 
-Defined in: [apps/backend/src/projects/project.model.ts:19](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L19)
+Defined in: [apps/backend/src/projects/project.model.ts:19](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L19)
 
 ## Extends
 
@@ -48,7 +48,7 @@ Defined in: node\_modules/.pnpm/sequelize-typescript@2.1.6\_@types+node@22.17.0\
 
 > **ceremonies**: [`Ceremony`](../../../ceremonies/ceremony.model/classes/Ceremony.md)[]
 
-Defined in: [apps/backend/src/projects/project.model.ts:52](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L52)
+Defined in: [apps/backend/src/projects/project.model.ts:52](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L52)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [apps/backend/src/projects/project.model.ts:52](https://github.com/p
 
 > **contact**: `string`
 
-Defined in: [apps/backend/src/projects/project.model.ts:40](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L40)
+Defined in: [apps/backend/src/projects/project.model.ts:40](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L40)
 
 #### Implementation of
 
@@ -68,7 +68,7 @@ Defined in: [apps/backend/src/projects/project.model.ts:40](https://github.com/p
 
 > **coordinatorId**: `number`
 
-Defined in: [apps/backend/src/projects/project.model.ts:46](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L46)
+Defined in: [apps/backend/src/projects/project.model.ts:46](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L46)
 
 #### Implementation of
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/projects/project.model.ts:46](https://github.com/p
 
 > `optional` **id**: `number`
 
-Defined in: [apps/backend/src/projects/project.model.ts:26](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L26)
+Defined in: [apps/backend/src/projects/project.model.ts:26](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L26)
 
 #### Implementation of
 
@@ -96,7 +96,7 @@ Defined in: [apps/backend/src/projects/project.model.ts:26](https://github.com/p
 
 > **name**: `string`
 
-Defined in: [apps/backend/src/projects/project.model.ts:33](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L33)
+Defined in: [apps/backend/src/projects/project.model.ts:33](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L33)
 
 #### Implementation of
 
@@ -108,4 +108,4 @@ Defined in: [apps/backend/src/projects/project.model.ts:33](https://github.com/p
 
 > **user**: [`User`](../../../users/user.model/classes/User.md)
 
-Defined in: [apps/backend/src/projects/project.model.ts:49](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L49)
+Defined in: [apps/backend/src/projects/project.model.ts:49](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L49)

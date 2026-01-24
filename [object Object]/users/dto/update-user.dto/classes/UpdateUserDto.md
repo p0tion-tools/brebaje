@@ -6,7 +6,7 @@
 
 # Class: UpdateUserDto
 
-Defined in: [apps/backend/src/users/dto/update-user.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/update-user.dto.ts#L4)
+Defined in: [apps/backend/src/users/dto/update-user.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/update-user.dto.ts#L4)
 
 ## Extends
 
@@ -54,7 +54,7 @@ Defined in: node\_modules/.pnpm/@nestjs+mapped-types@2.1.0\_@nestjs+common@11.1.
 
 > `optional` **avatarUrl**: `string`
 
-Defined in: [apps/backend/src/users/dto/create-user.dto.ts:31](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/create-user.dto.ts#L31)
+Defined in: [apps/backend/src/users/dto/create-user.dto.ts:31](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/create-user.dto.ts#L31)
 
 #### Inherited from
 
@@ -66,7 +66,7 @@ Defined in: [apps/backend/src/users/dto/create-user.dto.ts:31](https://github.co
 
 > `optional` **displayName**: `string`
 
-Defined in: [apps/backend/src/users/dto/create-user.dto.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/create-user.dto.ts#L12)
+Defined in: [apps/backend/src/users/dto/create-user.dto.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/create-user.dto.ts#L12)
 
 #### Inherited from
 
@@ -78,7 +78,7 @@ Defined in: [apps/backend/src/users/dto/create-user.dto.ts:12](https://github.co
 
 > `optional` **provider**: [`UserProvider`](../../../../types/enums/enumerations/UserProvider.md)
 
-Defined in: [apps/backend/src/users/dto/create-user.dto.ts:38](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/create-user.dto.ts#L38)
+Defined in: [apps/backend/src/users/dto/create-user.dto.ts:38](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/create-user.dto.ts#L38)
 
 #### Inherited from
 
@@ -90,7 +90,7 @@ Defined in: [apps/backend/src/users/dto/create-user.dto.ts:38](https://github.co
 
 > `optional` **walletAddress**: `string`
 
-Defined in: [apps/backend/src/users/dto/create-user.dto.ts:22](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/create-user.dto.ts#L22)
+Defined in: [apps/backend/src/users/dto/create-user.dto.ts:22](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/create-user.dto.ts#L22)
 
 #### Inherited from
 

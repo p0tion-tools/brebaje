@@ -6,7 +6,7 @@
 
 # Class: ParticipantsService
 
-Defined in: [apps/backend/src/participants/participants.service.ts:25](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L25)
+Defined in: [apps/backend/src/participants/participants.service.ts:25](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L25)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:25](https://g
 
 > **new ParticipantsService**(`participantModel`, `circuitsService`, `contributionsService`): `ParticipantsService`
 
-Defined in: [apps/backend/src/participants/participants.service.ts:26](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L26)
+Defined in: [apps/backend/src/participants/participants.service.ts:26](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L26)
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:26](https://g
 
 > **addParticipantToCircuitsQueues**(`participant`): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:196](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L196)
+Defined in: [apps/backend/src/participants/participants.service.ts:196](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L196)
 
 #### Parameters
 
@@ -58,7 +58,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:196](https://
 
 > **checkPreConditionForCurrentContributorToInteractWithMultiPartUpload**(`userId`, `ceremonyId`): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:134](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L134)
+Defined in: [apps/backend/src/participants/participants.service.ts:134](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L134)
 
 Check if the pre-condition for interacting with a multi-part upload for an identified current contributor is valid.
 The precondition is to be a current contributor (contributing status) in the uploading contribution step.
@@ -91,7 +91,7 @@ BadRequestException if the participant is not in CONTRIBUTING status or not in U
 
 > **checkUploadingFileValidity**(`userId`, `ceremonyId`, `objectKey`): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:161](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L161)
+Defined in: [apps/backend/src/participants/participants.service.ts:161](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L161)
 
 Helper function to check whether a contributor is uploading a file related to its contribution.
 
@@ -125,7 +125,7 @@ The object key of the file being uploaded
 
 > **create**(`createParticipantDto`, `userId`): `Promise`\<[`Participant`](../../participant.model/classes/Participant.md)\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:42](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L42)
+Defined in: [apps/backend/src/participants/participants.service.ts:42](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L42)
 
 Creates a new participant.
 
@@ -155,7 +155,7 @@ The created participant
 
 > **findAll**(): `Promise`\<[`Participant`](../../participant.model/classes/Participant.md)[]\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:57](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L57)
+Defined in: [apps/backend/src/participants/participants.service.ts:57](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L57)
 
 #### Returns
 
@@ -167,7 +167,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:57](https://g
 
 > **findByUserIdAndCeremonyId**(`userId`, `ceremonyId`): `Promise`\<[`Participant`](../../participant.model/classes/Participant.md)\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:65](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L65)
+Defined in: [apps/backend/src/participants/participants.service.ts:65](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L65)
 
 #### Parameters
 
@@ -189,7 +189,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:65](https://g
 
 > **findOne**(`id`): `Promise`\<[`Participant`](../../participant.model/classes/Participant.md) \| `null`\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:61](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L61)
+Defined in: [apps/backend/src/participants/participants.service.ts:61](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L61)
 
 #### Parameters
 
@@ -207,7 +207,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:61](https://g
 
 > **findTimedOutParticipantsOfOpenCeremonies**(): `Promise`\<[`Participant`](../../participant.model/classes/Participant.md)[]\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:81](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L81)
+Defined in: [apps/backend/src/participants/participants.service.ts:81](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L81)
 
 #### Returns
 
@@ -219,7 +219,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:81](https://g
 
 > **handleErrors**(`error`): `never`
 
-Defined in: [apps/backend/src/participants/participants.service.ts:245](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L245)
+Defined in: [apps/backend/src/participants/participants.service.ts:245](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L245)
 
 #### Parameters
 
@@ -237,7 +237,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:245](https://
 
 > **monitorTimedOutParticipants**(): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:230](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L230)
+Defined in: [apps/backend/src/participants/participants.service.ts:230](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L230)
 
 #### Returns
 
@@ -249,7 +249,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:230](https://
 
 > **remove**(`id`): `Promise`\<\{ `message`: `string`; \}\>
 
-Defined in: [apps/backend/src/participants/participants.service.ts:112](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L112)
+Defined in: [apps/backend/src/participants/participants.service.ts:112](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L112)
 
 #### Parameters
 
@@ -267,7 +267,7 @@ Defined in: [apps/backend/src/participants/participants.service.ts:112](https://
 
 > **update**(`id`, `_updateParticipantDto`): `string`
 
-Defined in: [apps/backend/src/participants/participants.service.ts:108](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.service.ts#L108)
+Defined in: [apps/backend/src/participants/participants.service.ts:108](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.service.ts#L108)
 
 Updates a participant by ID.
 

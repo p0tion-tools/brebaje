@@ -6,7 +6,7 @@
 
 # Interface: ProjectAttributes
 
-Defined in: [apps/backend/src/projects/project.model.ts:6](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L6)
+Defined in: [apps/backend/src/projects/project.model.ts:6](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L6)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/projects/project.model.ts:6](https://github.com/p0
 
 > **contact**: `string`
 
-Defined in: [apps/backend/src/projects/project.model.ts:9](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L9)
+Defined in: [apps/backend/src/projects/project.model.ts:9](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L9)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [apps/backend/src/projects/project.model.ts:9](https://github.com/p0
 
 > **coordinatorId**: `number`
 
-Defined in: [apps/backend/src/projects/project.model.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L10)
+Defined in: [apps/backend/src/projects/project.model.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L10)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [apps/backend/src/projects/project.model.ts:10](https://github.com/p
 
 > `optional` **id**: `number`
 
-Defined in: [apps/backend/src/projects/project.model.ts:7](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L7)
+Defined in: [apps/backend/src/projects/project.model.ts:7](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L7)
 
 ***
 
@@ -38,4 +38,4 @@ Defined in: [apps/backend/src/projects/project.model.ts:7](https://github.com/p0
 
 > **name**: `string`
 
-Defined in: [apps/backend/src/projects/project.model.ts:8](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/project.model.ts#L8)
+Defined in: [apps/backend/src/projects/project.model.ts:8](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/project.model.ts#L8)

@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [types/enums](../README.md) / CeremonyState
+[Brebaje Backend API](../../../index.md) / [types/enums](../index.md) / CeremonyState
 
 # Enumeration: CeremonyState
 
-Defined in: [apps/backend/src/types/enums.ts:14](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L14)
+Defined in: [apps/backend/src/types/enums.ts:14](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L14)
 
 ## Enumeration Members
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/types/enums.ts:14](https://github.com/p0tion-tools
 
 > **CANCELED**: `"CANCELED"`
 
-Defined in: [apps/backend/src/types/enums.ts:19](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L19)
+Defined in: [apps/backend/src/types/enums.ts:19](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L19)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [apps/backend/src/types/enums.ts:19](https://github.com/p0tion-tools
 
 > **CLOSED**: `"CLOSED"`
 
-Defined in: [apps/backend/src/types/enums.ts:18](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L18)
+Defined in: [apps/backend/src/types/enums.ts:18](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L18)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [apps/backend/src/types/enums.ts:18](https://github.com/p0tion-tools
 
 > **FINALIZED**: `"FINALIZED"`
 
-Defined in: [apps/backend/src/types/enums.ts:20](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L20)
+Defined in: [apps/backend/src/types/enums.ts:20](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L20)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [apps/backend/src/types/enums.ts:20](https://github.com/p0tion-tools
 
 > **OPENED**: `"OPENED"`
 
-Defined in: [apps/backend/src/types/enums.ts:16](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L16)
+Defined in: [apps/backend/src/types/enums.ts:16](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L16)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [apps/backend/src/types/enums.ts:16](https://github.com/p0tion-tools
 
 > **PAUSED**: `"PAUSED"`
 
-Defined in: [apps/backend/src/types/enums.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L17)
+Defined in: [apps/backend/src/types/enums.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L17)
 
 ***
 
@@ -54,4 +54,4 @@ Defined in: [apps/backend/src/types/enums.ts:17](https://github.com/p0tion-tools
 
 > **SCHEDULED**: `"SCHEDULED"`
 
-Defined in: [apps/backend/src/types/enums.ts:15](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L15)
+Defined in: [apps/backend/src/types/enums.ts:15](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L15)

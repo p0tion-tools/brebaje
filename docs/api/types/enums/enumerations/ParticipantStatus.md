@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [types/enums](../README.md) / ParticipantStatus
+[Brebaje Backend API](../../../index.md) / [types/enums](../index.md) / ParticipantStatus
 
 # Enumeration: ParticipantStatus
 
-Defined in: [apps/backend/src/types/enums.ts:29](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L29)
+Defined in: [apps/backend/src/types/enums.ts:29](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L29)
 
 ## Enumeration Members
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/types/enums.ts:29](https://github.com/p0tion-tools
 
 > **CONTRIBUTED**: `"CONTRIBUTED"`
 
-Defined in: [apps/backend/src/types/enums.ts:34](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L34)
+Defined in: [apps/backend/src/types/enums.ts:34](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L34)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [apps/backend/src/types/enums.ts:34](https://github.com/p0tion-tools
 
 > **CONTRIBUTING**: `"CONTRIBUTING"`
 
-Defined in: [apps/backend/src/types/enums.ts:33](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L33)
+Defined in: [apps/backend/src/types/enums.ts:33](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L33)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [apps/backend/src/types/enums.ts:33](https://github.com/p0tion-tools
 
 > **CREATED**: `"CREATED"`
 
-Defined in: [apps/backend/src/types/enums.ts:30](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L30)
+Defined in: [apps/backend/src/types/enums.ts:30](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L30)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [apps/backend/src/types/enums.ts:30](https://github.com/p0tion-tools
 
 > **DONE**: `"DONE"`
 
-Defined in: [apps/backend/src/types/enums.ts:35](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L35)
+Defined in: [apps/backend/src/types/enums.ts:35](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L35)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [apps/backend/src/types/enums.ts:35](https://github.com/p0tion-tools
 
 > **EXHUMED**: `"EXHUMED"`
 
-Defined in: [apps/backend/src/types/enums.ts:39](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L39)
+Defined in: [apps/backend/src/types/enums.ts:39](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L39)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [apps/backend/src/types/enums.ts:39](https://github.com/p0tion-tools
 
 > **FINALIZED**: `"FINALIZED"`
 
-Defined in: [apps/backend/src/types/enums.ts:37](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L37)
+Defined in: [apps/backend/src/types/enums.ts:37](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L37)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [apps/backend/src/types/enums.ts:37](https://github.com/p0tion-tools
 
 > **FINALIZING**: `"FINALIZING"`
 
-Defined in: [apps/backend/src/types/enums.ts:36](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L36)
+Defined in: [apps/backend/src/types/enums.ts:36](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L36)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [apps/backend/src/types/enums.ts:36](https://github.com/p0tion-tools
 
 > **READY**: `"READY"`
 
-Defined in: [apps/backend/src/types/enums.ts:32](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L32)
+Defined in: [apps/backend/src/types/enums.ts:32](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L32)
 
 ***
 
@@ -78,7 +78,7 @@ Defined in: [apps/backend/src/types/enums.ts:32](https://github.com/p0tion-tools
 
 > **TIMEDOUT**: `"TIMEDOUT"`
 
-Defined in: [apps/backend/src/types/enums.ts:38](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L38)
+Defined in: [apps/backend/src/types/enums.ts:38](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L38)
 
 ***
 
@@ -86,4 +86,4 @@ Defined in: [apps/backend/src/types/enums.ts:38](https://github.com/p0tion-tools
 
 > **WAITING**: `"WAITING"`
 
-Defined in: [apps/backend/src/types/enums.ts:31](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L31)
+Defined in: [apps/backend/src/types/enums.ts:31](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L31)

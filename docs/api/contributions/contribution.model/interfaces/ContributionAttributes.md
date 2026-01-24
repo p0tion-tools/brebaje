@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [contributions/contribution.model](../README.md) / ContributionAttributes
+[Brebaje Backend API](../../../index.md) / [contributions/contribution.model](../index.md) / ContributionAttributes
 
 # Interface: ContributionAttributes
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:6](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L6)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:6](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L6)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:6](https://git
 
 > `optional` **beacon**: `object`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:18](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L18)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:18](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L18)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:18](https://gi
 
 > **circuitId**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:7](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L7)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:7](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L7)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:7](https://git
 
 > `optional` **contributionComputationTime**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L10)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L10)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:10](https://gi
 
 > `optional` **files**: `object`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:16](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L16)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:16](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L16)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:16](https://gi
 
 > `optional` **fullContributionTime**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:11](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L11)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:11](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L11)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:11](https://gi
 
 > `optional` **id**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:9](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L9)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:9](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L9)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:9](https://git
 
 > `optional` **lastUpdated**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:15](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L15)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:15](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L15)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:15](https://gi
 
 > **participantId**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:8](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L8)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:8](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L8)
 
 ***
 
@@ -78,7 +78,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:8](https://git
 
 > `optional` **valid**: `boolean`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:14](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L14)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:14](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L14)
 
 ***
 
@@ -86,7 +86,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:14](https://gi
 
 > `optional` **verificationSoftware**: `object`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L17)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L17)
 
 ***
 
@@ -94,7 +94,7 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:17](https://gi
 
 > `optional` **verifyContributionTime**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L12)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L12)
 
 ***
 
@@ -102,4 +102,4 @@ Defined in: [apps/backend/src/contributions/contribution.model.ts:12](https://gi
 
 > `optional` **zkeyIndex**: `number`
 
-Defined in: [apps/backend/src/contributions/contribution.model.ts:13](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L13)
+Defined in: [apps/backend/src/contributions/contribution.model.ts:13](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contribution.model.ts#L13)

@@ -6,7 +6,7 @@
 
 # Class: JwtAuthGuard
 
-Defined in: [apps/backend/src/auth/guards/jwt-auth.guard.ts:30](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/guards/jwt-auth.guard.ts#L30)
+Defined in: [apps/backend/src/auth/guards/jwt-auth.guard.ts:30](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/guards/jwt-auth.guard.ts#L30)
 
 JWT authentication guard that validates JWT tokens and attaches user to request.
 
@@ -23,7 +23,7 @@ and attaches the user object to the request for use in controllers.
 
 > **new JwtAuthGuard**(`jwtService`): `JwtAuthGuard`
 
-Defined in: [apps/backend/src/auth/guards/jwt-auth.guard.ts:31](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/guards/jwt-auth.guard.ts#L31)
+Defined in: [apps/backend/src/auth/guards/jwt-auth.guard.ts:31](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/guards/jwt-auth.guard.ts#L31)
 
 #### Parameters
 
@@ -41,7 +41,7 @@ Defined in: [apps/backend/src/auth/guards/jwt-auth.guard.ts:31](https://github.c
 
 > **canActivate**(`context`): `Promise`\<`boolean`\>
 
-Defined in: [apps/backend/src/auth/guards/jwt-auth.guard.ts:40](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/guards/jwt-auth.guard.ts#L40)
+Defined in: [apps/backend/src/auth/guards/jwt-auth.guard.ts:40](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/guards/jwt-auth.guard.ts#L40)
 
 Validates the JWT token and attaches user to request.
 

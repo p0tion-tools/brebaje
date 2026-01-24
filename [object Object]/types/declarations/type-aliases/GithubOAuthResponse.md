@@ -8,7 +8,7 @@
 
 > **GithubOAuthResponse** = `object`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:46](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L46)
+Defined in: [apps/backend/src/types/declarations.d.ts:46](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L46)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:46](https://github.com/p0t
 
 > **access\_token**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:47](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L47)
+Defined in: [apps/backend/src/types/declarations.d.ts:47](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L47)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:47](https://github.com/p0t
 
 > **error**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:50](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L50)
+Defined in: [apps/backend/src/types/declarations.d.ts:50](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L50)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:50](https://github.com/p0t
 
 > **error\_description**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:51](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L51)
+Defined in: [apps/backend/src/types/declarations.d.ts:51](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L51)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:51](https://github.com/p0t
 
 > **error\_uri**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:52](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L52)
+Defined in: [apps/backend/src/types/declarations.d.ts:52](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L52)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:52](https://github.com/p0t
 
 > **scope**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:49](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L49)
+Defined in: [apps/backend/src/types/declarations.d.ts:49](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L49)
 
 ***
 
@@ -56,4 +56,4 @@ Defined in: [apps/backend/src/types/declarations.d.ts:49](https://github.com/p0t
 
 > **token\_type**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:48](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L48)
+Defined in: [apps/backend/src/types/declarations.d.ts:48](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L48)

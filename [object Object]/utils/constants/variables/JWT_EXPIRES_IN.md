@@ -8,4 +8,4 @@
 
 > `const` **JWT\_EXPIRES\_IN**: `string`
 
-Defined in: [apps/backend/src/utils/constants.ts:28](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/utils/constants.ts#L28)
+Defined in: [apps/backend/src/utils/constants.ts:28](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/utils/constants.ts#L28)

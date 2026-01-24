@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../../README.md) / [projects/guards/is-project-coordinator.guard](../README.md) / IsProjectCoordinatorGuard
+[Brebaje Backend API](../../../../index.md) / [projects/guards/is-project-coordinator.guard](../index.md) / IsProjectCoordinatorGuard
 
 # Class: IsProjectCoordinatorGuard
 
-Defined in: [apps/backend/src/projects/guards/is-project-coordinator.guard.ts:19](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/guards/is-project-coordinator.guard.ts#L19)
+Defined in: [apps/backend/src/projects/guards/is-project-coordinator.guard.ts:19](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/guards/is-project-coordinator.guard.ts#L19)
 
 Guard to verify that the authenticated user is the coordinator of the project
 specified in the request body.
@@ -24,7 +24,7 @@ It checks if the user's ID matches the coordinatorId of the project.
 
 > **new IsProjectCoordinatorGuard**(`projectsService`): `IsProjectCoordinatorGuard`
 
-Defined in: [apps/backend/src/projects/guards/is-project-coordinator.guard.ts:20](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/guards/is-project-coordinator.guard.ts#L20)
+Defined in: [apps/backend/src/projects/guards/is-project-coordinator.guard.ts:20](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/guards/is-project-coordinator.guard.ts#L20)
 
 #### Parameters
 
@@ -40,9 +40,9 @@ Defined in: [apps/backend/src/projects/guards/is-project-coordinator.guard.ts:20
 
 ### canActivate()
 
-> **canActivate**(`context`): `Promise`&lt;`boolean`&gt;
+> **canActivate**(`context`): `Promise`\<`boolean`\>
 
-Defined in: [apps/backend/src/projects/guards/is-project-coordinator.guard.ts:22](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/guards/is-project-coordinator.guard.ts#L22)
+Defined in: [apps/backend/src/projects/guards/is-project-coordinator.guard.ts:22](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/guards/is-project-coordinator.guard.ts#L22)
 
 #### Parameters
 
@@ -55,7 +55,7 @@ the current request pipeline.
 
 #### Returns
 
-`Promise`&lt;`boolean`&gt;
+`Promise`\<`boolean`\>
 
 Value indicating whether or not the current request is allowed to
 proceed.

@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../../README.md) / [contributions/dto/update-contribution.dto](../README.md) / UpdateContributionDto
+[Brebaje Backend API](../../../../index.md) / [contributions/dto/update-contribution.dto](../index.md) / UpdateContributionDto
 
 # Class: UpdateContributionDto
 
-Defined in: [apps/backend/src/contributions/dto/update-contribution.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/update-contribution.dto.ts#L4)
+Defined in: [apps/backend/src/contributions/dto/update-contribution.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/update-contribution.dto.ts#L4)
 
 ## Extends
 
@@ -54,7 +54,7 @@ Defined in: node\_modules/.pnpm/@nestjs+mapped-types@2.1.0\_@nestjs+common@11.1.
 
 > `optional` **beacon**: `object`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:35](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L35)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:35](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L35)
 
 #### Inherited from
 
@@ -66,7 +66,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:35](h
 
 > `optional` **circuitId**: `number`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:5](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L5)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:5](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L5)
 
 #### Inherited from
 
@@ -78,7 +78,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:5](ht
 
 > `optional` **contributionComputationTime**: `number`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:11](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L11)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:11](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L11)
 
 #### Inherited from
 
@@ -90,7 +90,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:11](h
 
 > `optional` **files**: `object`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:29](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L29)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:29](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L29)
 
 #### Inherited from
 
@@ -102,7 +102,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:29](h
 
 > `optional` **fullContributionTime**: `number`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:14](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L14)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:14](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L14)
 
 #### Inherited from
 
@@ -114,7 +114,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:14](h
 
 > `optional` **lastUpdated**: `number`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:26](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L26)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:26](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L26)
 
 #### Inherited from
 
@@ -126,7 +126,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:26](h
 
 > `optional` **participantId**: `number`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:8](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L8)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:8](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L8)
 
 #### Inherited from
 
@@ -138,7 +138,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:8](ht
 
 > `optional` **valid**: `boolean`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:23](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L23)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:23](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L23)
 
 #### Inherited from
 
@@ -150,7 +150,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:23](h
 
 > `optional` **verificationSoftware**: `object`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:32](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L32)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:32](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L32)
 
 #### Inherited from
 
@@ -162,7 +162,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:32](h
 
 > `optional` **verifyContributionTime**: `number`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L17)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L17)
 
 #### Inherited from
 
@@ -174,7 +174,7 @@ Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:17](h
 
 > `optional` **zkeyIndex**: `number`
 
-Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:20](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/dto/create-contribution.dto.ts#L20)
+Defined in: [apps/backend/src/contributions/dto/create-contribution.dto.ts:20](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/dto/create-contribution.dto.ts#L20)
 
 #### Inherited from
 

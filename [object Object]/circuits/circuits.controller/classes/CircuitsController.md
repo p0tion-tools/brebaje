@@ -6,7 +6,7 @@
 
 # Class: CircuitsController
 
-Defined in: [apps/backend/src/circuits/circuits.controller.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.controller.ts#L10)
+Defined in: [apps/backend/src/circuits/circuits.controller.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.controller.ts#L10)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/circuits/circuits.controller.ts:10](https://github
 
 > **new CircuitsController**(`circuitsService`): `CircuitsController`
 
-Defined in: [apps/backend/src/circuits/circuits.controller.ts:11](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.controller.ts#L11)
+Defined in: [apps/backend/src/circuits/circuits.controller.ts:11](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.controller.ts#L11)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/circuits/circuits.controller.ts:11](https://github
 
 > **create**(`createCircuitDto`): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md)\>
 
-Defined in: [apps/backend/src/circuits/circuits.controller.ts:21](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.controller.ts#L21)
+Defined in: [apps/backend/src/circuits/circuits.controller.ts:21](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.controller.ts#L21)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [apps/backend/src/circuits/circuits.controller.ts:21](https://github
 
 > **findAll**(): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md)[]\>
 
-Defined in: [apps/backend/src/circuits/circuits.controller.ts:28](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.controller.ts#L28)
+Defined in: [apps/backend/src/circuits/circuits.controller.ts:28](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.controller.ts#L28)
 
 #### Returns
 
@@ -62,7 +62,7 @@ Defined in: [apps/backend/src/circuits/circuits.controller.ts:28](https://github
 
 > **findAllByCeremonyId**(`ceremonyId`): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md)[]\>
 
-Defined in: [apps/backend/src/circuits/circuits.controller.ts:36](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.controller.ts#L36)
+Defined in: [apps/backend/src/circuits/circuits.controller.ts:36](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.controller.ts#L36)
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/circuits/circuits.controller.ts:36](https://github
 
 > **findOne**(`id`): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md) \| `null`\>
 
-Defined in: [apps/backend/src/circuits/circuits.controller.ts:45](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.controller.ts#L45)
+Defined in: [apps/backend/src/circuits/circuits.controller.ts:45](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.controller.ts#L45)
 
 #### Parameters
 
@@ -98,7 +98,7 @@ Defined in: [apps/backend/src/circuits/circuits.controller.ts:45](https://github
 
 > **remove**(`id`): `Promise`\<\{ `message`: `string`; \}\>
 
-Defined in: [apps/backend/src/circuits/circuits.controller.ts:67](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.controller.ts#L67)
+Defined in: [apps/backend/src/circuits/circuits.controller.ts:67](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.controller.ts#L67)
 
 #### Parameters
 
@@ -116,7 +116,7 @@ Defined in: [apps/backend/src/circuits/circuits.controller.ts:67](https://github
 
 > **update**(`id`, `updateCircuitDto`): `string`
 
-Defined in: [apps/backend/src/circuits/circuits.controller.ts:58](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.controller.ts#L58)
+Defined in: [apps/backend/src/circuits/circuits.controller.ts:58](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.controller.ts#L58)
 
 #### Parameters
 

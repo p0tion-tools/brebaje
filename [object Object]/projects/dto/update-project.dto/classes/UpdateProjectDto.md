@@ -6,7 +6,7 @@
 
 # Class: UpdateProjectDto
 
-Defined in: [apps/backend/src/projects/dto/update-project.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/dto/update-project.dto.ts#L4)
+Defined in: [apps/backend/src/projects/dto/update-project.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/dto/update-project.dto.ts#L4)
 
 ## Extends
 
@@ -54,7 +54,7 @@ Defined in: node\_modules/.pnpm/@nestjs+mapped-types@2.1.0\_@nestjs+common@11.1.
 
 > `optional` **contact**: `string`
 
-Defined in: [apps/backend/src/projects/dto/create-project.dto.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/dto/create-project.dto.ts#L17)
+Defined in: [apps/backend/src/projects/dto/create-project.dto.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/dto/create-project.dto.ts#L17)
 
 #### Inherited from
 
@@ -66,7 +66,7 @@ Defined in: [apps/backend/src/projects/dto/create-project.dto.ts:17](https://git
 
 > `optional` **name**: `string`
 
-Defined in: [apps/backend/src/projects/dto/create-project.dto.ts:13](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/dto/create-project.dto.ts#L13)
+Defined in: [apps/backend/src/projects/dto/create-project.dto.ts:13](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/dto/create-project.dto.ts#L13)
 
 #### Inherited from
 

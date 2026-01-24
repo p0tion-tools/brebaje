@@ -6,7 +6,7 @@
 
 # Class: VerifyPhase1Dto
 
-Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/verify-phase1.dto.ts#L4)
+Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/verify-phase1.dto.ts#L4)
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:4](https://github.com/
 
 > `optional` **autoStop**: `boolean`
 
-Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:39](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/verify-phase1.dto.ts#L39)
+Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:39](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/verify-phase1.dto.ts#L39)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:39](https://github.com
 
 > **ceremonyId**: `number`
 
-Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/verify-phase1.dto.ts#L10)
+Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/verify-phase1.dto.ts#L10)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:10](https://github.com
 
 > `optional` **coordinatorEmail**: `string`
 
-Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:23](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/verify-phase1.dto.ts#L23)
+Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:23](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/verify-phase1.dto.ts#L23)
 
 ***
 
@@ -48,7 +48,7 @@ Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:23](https://github.com
 
 > **instanceId**: `string`
 
-Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:6](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/verify-phase1.dto.ts#L6)
+Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:6](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/verify-phase1.dto.ts#L6)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:6](https://github.com/
 
 > **lastPtauStoragePath**: `string`
 
-Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:16](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/verify-phase1.dto.ts#L16)
+Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:16](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/verify-phase1.dto.ts#L16)
 
 ***
 
@@ -64,4 +64,4 @@ Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:16](https://github.com
 
 > `optional` **webhookUrl**: `string`
 
-Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:30](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/verify-phase1.dto.ts#L30)
+Defined in: [apps/backend/src/vm/dto/verify-phase1.dto.ts:30](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/verify-phase1.dto.ts#L30)

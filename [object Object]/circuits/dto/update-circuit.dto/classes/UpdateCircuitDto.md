@@ -6,7 +6,7 @@
 
 # Class: UpdateCircuitDto
 
-Defined in: [apps/backend/src/circuits/dto/update-circuit.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/update-circuit.dto.ts#L4)
+Defined in: [apps/backend/src/circuits/dto/update-circuit.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/update-circuit.dto.ts#L4)
 
 ## Extends
 
@@ -54,7 +54,7 @@ Defined in: node\_modules/.pnpm/@nestjs+mapped-types@2.1.0\_@nestjs+common@11.1.
 
 > `optional` **artifacts**: [`CircuitArtifactsType`](../../../../types/declarations/type-aliases/CircuitArtifactsType.md)
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:80](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L80)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:80](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L80)
 
 #### Inherited from
 
@@ -66,7 +66,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:80](https://git
 
 > `optional` **averageContributionComputationTime**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:52](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L52)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:52](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L52)
 
 #### Inherited from
 
@@ -78,7 +78,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:52](https://git
 
 > `optional` **averageFullContributionTime**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:57](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L57)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:57](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L57)
 
 #### Inherited from
 
@@ -90,7 +90,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:57](https://git
 
 > `optional` **averageVerifyContributionTime**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:62](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L62)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:62](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L62)
 
 #### Inherited from
 
@@ -102,7 +102,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:62](https://git
 
 > `optional` **ceremonyId**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L10)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L10)
 
 #### Inherited from
 
@@ -114,7 +114,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:10](https://git
 
 > `optional` **compiler**: `object`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:67](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L67)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:67](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L67)
 
 #### Inherited from
 
@@ -126,7 +126,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:67](https://git
 
 > `optional` **constraints**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:42](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L42)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:42](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L42)
 
 #### Inherited from
 
@@ -138,7 +138,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:42](https://git
 
 > `optional` **dynamicThreshold**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:23](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L23)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:23](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L23)
 
 #### Inherited from
 
@@ -150,7 +150,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:23](https://git
 
 > `optional` **files**: `object`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:90](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L90)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:90](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L90)
 
 #### Inherited from
 
@@ -162,7 +162,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:90](https://git
 
 > `optional` **fixedTimeWindow**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:28](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L28)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:28](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L28)
 
 #### Inherited from
 
@@ -174,7 +174,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:28](https://git
 
 > `optional` **metadata**: `object`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:85](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L85)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:85](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L85)
 
 #### Inherited from
 
@@ -186,7 +186,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:85](https://git
 
 > `optional` **name**: `string`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:14](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L14)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:14](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L14)
 
 #### Inherited from
 
@@ -198,7 +198,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:14](https://git
 
 > `optional` **pot**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:47](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L47)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:47](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L47)
 
 #### Inherited from
 
@@ -210,7 +210,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:47](https://git
 
 > `optional` **sequencePosition**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:32](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L32)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:32](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L32)
 
 #### Inherited from
 
@@ -222,7 +222,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:32](https://git
 
 > `optional` **template**: `object`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:72](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L72)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:72](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L72)
 
 #### Inherited from
 
@@ -234,7 +234,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:72](https://git
 
 > `optional` **timeoutMechanismType**: [`CircuitTimeoutType`](../../../../types/enums/enumerations/CircuitTimeoutType.md)
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:18](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L18)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:18](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L18)
 
 #### Inherited from
 
@@ -246,7 +246,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:18](https://git
 
 > `optional` **verification**: [`CircuitVerificationType`](../../../../types/declarations/type-aliases/CircuitVerificationType.md)
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:76](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L76)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:76](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L76)
 
 #### Inherited from
 
@@ -258,7 +258,7 @@ Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:76](https://git
 
 > `optional` **zKeySizeInBytes**: `number`
 
-Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:37](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/dto/create-circuit.dto.ts#L37)
+Defined in: [apps/backend/src/circuits/dto/create-circuit.dto.ts:37](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/dto/create-circuit.dto.ts#L37)
 
 #### Inherited from
 

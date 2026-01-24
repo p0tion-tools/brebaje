@@ -6,7 +6,7 @@
 
 # Class: UsersController
 
-Defined in: [apps/backend/src/users/users.controller.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/users.controller.ts#L10)
+Defined in: [apps/backend/src/users/users.controller.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/users.controller.ts#L10)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/users/users.controller.ts:10](https://github.com/p
 
 > **new UsersController**(`usersService`): `UsersController`
 
-Defined in: [apps/backend/src/users/users.controller.ts:11](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/users.controller.ts#L11)
+Defined in: [apps/backend/src/users/users.controller.ts:11](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/users.controller.ts#L11)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/users/users.controller.ts:11](https://github.com/p
 
 > **create**(`createUserDto`): `Promise`\<[`User`](../../user.model/classes/User.md)\>
 
-Defined in: [apps/backend/src/users/users.controller.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/users.controller.ts#L17)
+Defined in: [apps/backend/src/users/users.controller.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/users.controller.ts#L17)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [apps/backend/src/users/users.controller.ts:17](https://github.com/p
 
 > **findAll**(): `Promise`\<[`User`](../../user.model/classes/User.md)[]\>
 
-Defined in: [apps/backend/src/users/users.controller.ts:24](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/users.controller.ts#L24)
+Defined in: [apps/backend/src/users/users.controller.ts:24](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/users.controller.ts#L24)
 
 #### Returns
 
@@ -62,7 +62,7 @@ Defined in: [apps/backend/src/users/users.controller.ts:24](https://github.com/p
 
 > **findByDisplayName**(`displayName`): `Promise`\<[`User`](../../user.model/classes/User.md)\>
 
-Defined in: [apps/backend/src/users/users.controller.ts:42](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/users.controller.ts#L42)
+Defined in: [apps/backend/src/users/users.controller.ts:42](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/users.controller.ts#L42)
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/users/users.controller.ts:42](https://github.com/p
 
 > **findById**(`id`): `Promise`\<[`User`](../../user.model/classes/User.md)\>
 
-Defined in: [apps/backend/src/users/users.controller.ts:33](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/users.controller.ts#L33)
+Defined in: [apps/backend/src/users/users.controller.ts:33](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/users.controller.ts#L33)
 
 #### Parameters
 
@@ -98,7 +98,7 @@ Defined in: [apps/backend/src/users/users.controller.ts:33](https://github.com/p
 
 > **findByIds**(`ids`): `Promise`\<[`User`](../../user.model/classes/User.md)[]\>
 
-Defined in: [apps/backend/src/users/users.controller.ts:50](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/users.controller.ts#L50)
+Defined in: [apps/backend/src/users/users.controller.ts:50](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/users.controller.ts#L50)
 
 #### Parameters
 
@@ -116,7 +116,7 @@ Defined in: [apps/backend/src/users/users.controller.ts:50](https://github.com/p
 
 > **remove**(`id`): `Promise`\<\{ `message`: `string`; \}\>
 
-Defined in: [apps/backend/src/users/users.controller.ts:68](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/users.controller.ts#L68)
+Defined in: [apps/backend/src/users/users.controller.ts:68](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/users.controller.ts#L68)
 
 #### Parameters
 
@@ -134,7 +134,7 @@ Defined in: [apps/backend/src/users/users.controller.ts:68](https://github.com/p
 
 > **update**(`id`, `updateUserDto`): `Promise`\<[`User`](../../user.model/classes/User.md)\>
 
-Defined in: [apps/backend/src/users/users.controller.ts:59](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/users.controller.ts#L59)
+Defined in: [apps/backend/src/users/users.controller.ts:59](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/users.controller.ts#L59)
 
 #### Parameters
 

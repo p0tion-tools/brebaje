@@ -6,7 +6,7 @@
 
 # Enumeration: VerificationMachineType
 
-Defined in: [apps/backend/src/types/enums.ts:57](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L57)
+Defined in: [apps/backend/src/types/enums.ts:57](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L57)
 
 ## Enumeration Members
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/types/enums.ts:57](https://github.com/p0tion-tools
 
 > **SERVER**: `"server"`
 
-Defined in: [apps/backend/src/types/enums.ts:58](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L58)
+Defined in: [apps/backend/src/types/enums.ts:58](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L58)
 
 ***
 
@@ -22,4 +22,4 @@ Defined in: [apps/backend/src/types/enums.ts:58](https://github.com/p0tion-tools
 
 > **VM**: `"vm"`
 
-Defined in: [apps/backend/src/types/enums.ts:59](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L59)
+Defined in: [apps/backend/src/types/enums.ts:59](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L59)

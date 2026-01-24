@@ -6,7 +6,7 @@
 
 # Class: StorageController
 
-Defined in: [apps/backend/src/storage/storage.controller.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/storage.controller.ts#L12)
+Defined in: [apps/backend/src/storage/storage.controller.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/storage.controller.ts#L12)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/storage/storage.controller.ts:12](https://github.c
 
 > **new StorageController**(`storageService`): `StorageController`
 
-Defined in: [apps/backend/src/storage/storage.controller.ts:13](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/storage.controller.ts#L13)
+Defined in: [apps/backend/src/storage/storage.controller.ts:13](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/storage.controller.ts#L13)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/storage/storage.controller.ts:13](https://github.c
 
 > **checkIfObjectExists**(`ceremonyId`, `data`): `Promise`\<\{ `result`: `boolean`; \}\>
 
-Defined in: [apps/backend/src/storage/storage.controller.ts:48](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/storage.controller.ts#L48)
+Defined in: [apps/backend/src/storage/storage.controller.ts:48](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/storage.controller.ts#L48)
 
 #### Parameters
 
@@ -54,7 +54,7 @@ Defined in: [apps/backend/src/storage/storage.controller.ts:48](https://github.c
 
 > **completeMultipartUpload**(`ceremonyId`, `userId`, `data`): `Promise`\<\{ `location`: `string`; \}\>
 
-Defined in: [apps/backend/src/storage/storage.controller.ts:103](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/storage.controller.ts#L103)
+Defined in: [apps/backend/src/storage/storage.controller.ts:103](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/storage.controller.ts#L103)
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/storage/storage.controller.ts:103](https://github.
 
 > **createAndSetupBucket**(`ceremonyId`): `Promise`\<\{ `bucketName`: `string`; \}\>
 
-Defined in: [apps/backend/src/storage/storage.controller.ts:26](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/storage.controller.ts#L26)
+Defined in: [apps/backend/src/storage/storage.controller.ts:26](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/storage.controller.ts#L26)
 
 #### Parameters
 
@@ -98,7 +98,7 @@ Defined in: [apps/backend/src/storage/storage.controller.ts:26](https://github.c
 
 > **deleteCeremonyBucket**(`ceremonyId`): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/storage/storage.controller.ts:36](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/storage.controller.ts#L36)
+Defined in: [apps/backend/src/storage/storage.controller.ts:36](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/storage.controller.ts#L36)
 
 #### Parameters
 
@@ -116,7 +116,7 @@ Defined in: [apps/backend/src/storage/storage.controller.ts:36](https://github.c
 
 > **generateGetObjectPreSignedUrl**(`ceremonyId`, `data`): `Promise`\<\{ `url`: `string`; \} \| `undefined`\>
 
-Defined in: [apps/backend/src/storage/storage.controller.ts:59](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/storage.controller.ts#L59)
+Defined in: [apps/backend/src/storage/storage.controller.ts:59](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/storage.controller.ts#L59)
 
 #### Parameters
 
@@ -138,7 +138,7 @@ Defined in: [apps/backend/src/storage/storage.controller.ts:59](https://github.c
 
 > **generatePreSignedUrlsParts**(`ceremonyId`, `userId`, `data`): `Promise`\<\{ `parts`: `string`[]; \}\>
 
-Defined in: [apps/backend/src/storage/storage.controller.ts:87](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/storage.controller.ts#L87)
+Defined in: [apps/backend/src/storage/storage.controller.ts:87](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/storage.controller.ts#L87)
 
 #### Parameters
 
@@ -164,7 +164,7 @@ Defined in: [apps/backend/src/storage/storage.controller.ts:87](https://github.c
 
 > **startMultipartUpload**(`ceremonyId`, `userId`, `data`): `Promise`\<\{ `uploadId`: `string`; \} \| `undefined`\>
 
-Defined in: [apps/backend/src/storage/storage.controller.ts:71](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/storage.controller.ts#L71)
+Defined in: [apps/backend/src/storage/storage.controller.ts:71](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/storage.controller.ts#L71)
 
 #### Parameters
 

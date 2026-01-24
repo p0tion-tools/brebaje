@@ -6,7 +6,7 @@
 
 # Interface: UserAttributes
 
-Defined in: [apps/backend/src/users/user.model.ts:7](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L7)
+Defined in: [apps/backend/src/users/user.model.ts:7](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L7)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/users/user.model.ts:7](https://github.com/p0tion-t
 
 > `optional` **avatarUrl**: `string`
 
-Defined in: [apps/backend/src/users/user.model.ts:14](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L14)
+Defined in: [apps/backend/src/users/user.model.ts:14](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L14)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [apps/backend/src/users/user.model.ts:14](https://github.com/p0tion-
 
 > **creationTime**: `number`
 
-Defined in: [apps/backend/src/users/user.model.ts:11](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L11)
+Defined in: [apps/backend/src/users/user.model.ts:11](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L11)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [apps/backend/src/users/user.model.ts:11](https://github.com/p0tion-
 
 > **displayName**: `string`
 
-Defined in: [apps/backend/src/users/user.model.ts:9](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L9)
+Defined in: [apps/backend/src/users/user.model.ts:9](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L9)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [apps/backend/src/users/user.model.ts:9](https://github.com/p0tion-t
 
 > `optional` **id**: `number`
 
-Defined in: [apps/backend/src/users/user.model.ts:8](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L8)
+Defined in: [apps/backend/src/users/user.model.ts:8](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L8)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [apps/backend/src/users/user.model.ts:8](https://github.com/p0tion-t
 
 > `optional` **lastSignInTime**: `number`
 
-Defined in: [apps/backend/src/users/user.model.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L12)
+Defined in: [apps/backend/src/users/user.model.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L12)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [apps/backend/src/users/user.model.ts:12](https://github.com/p0tion-
 
 > `optional` **lastUpdated**: `number`
 
-Defined in: [apps/backend/src/users/user.model.ts:13](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L13)
+Defined in: [apps/backend/src/users/user.model.ts:13](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L13)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [apps/backend/src/users/user.model.ts:13](https://github.com/p0tion-
 
 > **provider**: [`UserProvider`](../../../types/enums/enumerations/UserProvider.md)
 
-Defined in: [apps/backend/src/users/user.model.ts:15](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L15)
+Defined in: [apps/backend/src/users/user.model.ts:15](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L15)
 
 ***
 
@@ -70,4 +70,4 @@ Defined in: [apps/backend/src/users/user.model.ts:15](https://github.com/p0tion-
 
 > `optional` **walletAddress**: `string`
 
-Defined in: [apps/backend/src/users/user.model.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L10)
+Defined in: [apps/backend/src/users/user.model.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L10)

@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [types/enums](../README.md) / UserProvider
+[Brebaje Backend API](../../../index.md) / [types/enums](../index.md) / UserProvider
 
 # Enumeration: UserProvider
 
-Defined in: [apps/backend/src/types/enums.ts:3](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L3)
+Defined in: [apps/backend/src/types/enums.ts:3](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L3)
 
 ## Enumeration Members
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/types/enums.ts:3](https://github.com/p0tion-tools/
 
 > **CARDANO**: `"CARDANO"`
 
-Defined in: [apps/backend/src/types/enums.ts:6](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L6)
+Defined in: [apps/backend/src/types/enums.ts:6](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L6)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [apps/backend/src/types/enums.ts:6](https://github.com/p0tion-tools/
 
 > **ETHEREUM**: `"ETHEREUM"`
 
-Defined in: [apps/backend/src/types/enums.ts:5](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L5)
+Defined in: [apps/backend/src/types/enums.ts:5](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L5)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [apps/backend/src/types/enums.ts:5](https://github.com/p0tion-tools/
 
 > **GITHUB**: `"GITHUB"`
 
-Defined in: [apps/backend/src/types/enums.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L4)
+Defined in: [apps/backend/src/types/enums.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L4)

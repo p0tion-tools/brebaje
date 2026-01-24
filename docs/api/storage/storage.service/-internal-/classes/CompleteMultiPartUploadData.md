@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../../README.md) / [storage/storage.service](../../README.md) / [\<internal\>](../README.md) / CompleteMultiPartUploadData
+[Brebaje Backend API](../../../../index.md) / [storage/storage.service](../../index.md) / [\<internal\>](../index.md) / CompleteMultiPartUploadData
 
 # Class: CompleteMultiPartUploadData
 
-Defined in: [apps/backend/src/storage/dto/storage-dto.ts:49](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/dto/storage-dto.ts#L49)
+Defined in: [apps/backend/src/storage/dto/storage-dto.ts:49](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/dto/storage-dto.ts#L49)
 
 ## Extends
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/storage/dto/storage-dto.ts:49](https://github.com/
 
 > **objectKey**: `string`
 
-Defined in: [apps/backend/src/storage/dto/storage-dto.ts:15](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/dto/storage-dto.ts#L15)
+Defined in: [apps/backend/src/storage/dto/storage-dto.ts:15](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/dto/storage-dto.ts#L15)
 
 #### Inherited from
 
@@ -44,7 +44,7 @@ Defined in: [apps/backend/src/storage/dto/storage-dto.ts:15](https://github.com/
 
 > **parts**: [`ETagWithPartNumber`](ETagWithPartNumber.md)[]
 
-Defined in: [apps/backend/src/storage/dto/storage-dto.ts:57](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/dto/storage-dto.ts#L57)
+Defined in: [apps/backend/src/storage/dto/storage-dto.ts:57](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/dto/storage-dto.ts#L57)
 
 ***
 
@@ -52,4 +52,4 @@ Defined in: [apps/backend/src/storage/dto/storage-dto.ts:57](https://github.com/
 
 > **uploadId**: `string`
 
-Defined in: [apps/backend/src/storage/dto/storage-dto.ts:51](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/dto/storage-dto.ts#L51)
+Defined in: [apps/backend/src/storage/dto/storage-dto.ts:51](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/dto/storage-dto.ts#L51)

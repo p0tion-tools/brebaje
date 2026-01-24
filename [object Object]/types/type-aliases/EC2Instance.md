@@ -8,7 +8,7 @@
 
 > **EC2Instance** = `object`
 
-Defined in: [apps/backend/src/types/index.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/index.ts#L4)
+Defined in: [apps/backend/src/types/index.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/index.ts#L4)
 
 Group the details for a VM EC2 instance.
 
@@ -18,7 +18,7 @@ Group the details for a VM EC2 instance.
 
 > **imageId**: `string`
 
-Defined in: [apps/backend/src/types/index.ts:8](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/index.ts#L8)
+Defined in: [apps/backend/src/types/index.ts:8](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/index.ts#L8)
 
 The unique identifier of the image
 
@@ -28,7 +28,7 @@ The unique identifier of the image
 
 > **instanceId**: `string`
 
-Defined in: [apps/backend/src/types/index.ts:6](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/index.ts#L6)
+Defined in: [apps/backend/src/types/index.ts:6](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/index.ts#L6)
 
 The unique identifier of the VM
 
@@ -38,7 +38,7 @@ The unique identifier of the VM
 
 > **instanceType**: `string`
 
-Defined in: [apps/backend/src/types/index.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/index.ts#L10)
+Defined in: [apps/backend/src/types/index.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/index.ts#L10)
 
 The VM type
 
@@ -48,7 +48,7 @@ The VM type
 
 > **keyName**: `string`
 
-Defined in: [apps/backend/src/types/index.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/index.ts#L12)
+Defined in: [apps/backend/src/types/index.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/index.ts#L12)
 
 The name of the key
 
@@ -58,6 +58,6 @@ The name of the key
 
 > **launchTime**: `string`
 
-Defined in: [apps/backend/src/types/index.ts:14](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/index.ts#L14)
+Defined in: [apps/backend/src/types/index.ts:14](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/index.ts#L14)
 
 The timestamp of the launch of the VM

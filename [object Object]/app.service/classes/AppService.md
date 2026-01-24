@@ -6,7 +6,7 @@
 
 # Class: AppService
 
-Defined in: [apps/backend/src/app.service.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/app.service.ts#L4)
+Defined in: [apps/backend/src/app.service.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/app.service.ts#L4)
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: [apps/backend/src/app.service.ts:4](https://github.com/p0tion-tools/
 
 > **getHello**(): `string`
 
-Defined in: [apps/backend/src/app.service.ts:5](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/app.service.ts#L5)
+Defined in: [apps/backend/src/app.service.ts:5](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/app.service.ts#L5)
 
 #### Returns
 

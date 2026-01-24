@@ -6,7 +6,7 @@
 
 # Class: AuthService
 
-Defined in: [apps/backend/src/auth/auth.service.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L17)
+Defined in: [apps/backend/src/auth/auth.service.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L17)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/auth/auth.service.ts:17](https://github.com/p0tion
 
 > **new AuthService**(`jwtService`, `usersService`): `AuthService`
 
-Defined in: [apps/backend/src/auth/auth.service.ts:23](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L23)
+Defined in: [apps/backend/src/auth/auth.service.ts:23](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L23)
 
 #### Parameters
 
@@ -36,7 +36,7 @@ Defined in: [apps/backend/src/auth/auth.service.ts:23](https://github.com/p0tion
 
 > **authenticateWithGithubCode**(`code`, `state?`): `Promise`\<[`AuthResponseDto`](../-internal-/interfaces/AuthResponseDto.md)\>
 
-Defined in: [apps/backend/src/auth/auth.service.ts:218](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L218)
+Defined in: [apps/backend/src/auth/auth.service.ts:218](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L218)
 
 GitHub OAuth 2.0 Authorization Code Flow
 Step 2: Exchange authorization code for access token and authenticate user
@@ -61,7 +61,7 @@ Step 2: Exchange authorization code for access token and authenticate user
 
 > **authWithGithub**(`deviceFlowTokenDto`): `Promise`\<[`AuthResponseDto`](../-internal-/interfaces/AuthResponseDto.md) \| `Error`\>
 
-Defined in: [apps/backend/src/auth/auth.service.ts:124](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L124)
+Defined in: [apps/backend/src/auth/auth.service.ts:124](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L124)
 
 #### Parameters
 
@@ -79,7 +79,7 @@ Defined in: [apps/backend/src/auth/auth.service.ts:124](https://github.com/p0tio
 
 > **generateCardanoNonce**(`userAddress`): `object`
 
-Defined in: [apps/backend/src/auth/auth.service.ts:293](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L293)
+Defined in: [apps/backend/src/auth/auth.service.ts:293](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L293)
 
 #### Parameters
 
@@ -101,7 +101,7 @@ Defined in: [apps/backend/src/auth/auth.service.ts:293](https://github.com/p0tio
 
 > **generateEthNonce**(`address`): `object`
 
-Defined in: [apps/backend/src/auth/auth.service.ts:402](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L402)
+Defined in: [apps/backend/src/auth/auth.service.ts:402](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L402)
 
 Generates a nonce for SIWE (Sign-In with Ethereum) authentication
 The nonce is stored with a timestamp and expires after 5 minutes
@@ -130,7 +130,7 @@ Object containing the generated nonce
 
 > **getGithubAuthUrl**(): `object`
 
-Defined in: [apps/backend/src/auth/auth.service.ts:182](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L182)
+Defined in: [apps/backend/src/auth/auth.service.ts:182](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L182)
 
 GitHub OAuth 2.0 Authorization Code Flow
 Step 1: Generate authorization URL for frontend redirect
@@ -153,7 +153,7 @@ Step 1: Generate authorization URL for frontend redirect
 
 > **getGithubClientId**(): `object`
 
-Defined in: [apps/backend/src/auth/auth.service.ts:28](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L28)
+Defined in: [apps/backend/src/auth/auth.service.ts:28](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L28)
 
 #### Returns
 
@@ -169,7 +169,7 @@ Defined in: [apps/backend/src/auth/auth.service.ts:28](https://github.com/p0tion
 
 > **testAuthWithUserId**(`userId`): `Promise`\<[`AuthResponseDto`](../-internal-/interfaces/AuthResponseDto.md)\>
 
-Defined in: [apps/backend/src/auth/auth.service.ts:157](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L157)
+Defined in: [apps/backend/src/auth/auth.service.ts:157](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L157)
 
 Test-only authentication method
 Generates JWT token for existing user without OAuth flow
@@ -191,7 +191,7 @@ Only available in test/development environments
 
 > **verifyCardanoNonce**(`userAddress`, `signature`): `Promise`\<[`AuthResponseDto`](../-internal-/interfaces/AuthResponseDto.md) \| `Error`\>
 
-Defined in: [apps/backend/src/auth/auth.service.ts:322](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L322)
+Defined in: [apps/backend/src/auth/auth.service.ts:322](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L322)
 
 #### Parameters
 
@@ -213,7 +213,7 @@ Defined in: [apps/backend/src/auth/auth.service.ts:322](https://github.com/p0tio
 
 > **verifyEthSignature**(`message`, `signature`): `Promise`\<[`AuthResponseDto`](../-internal-/interfaces/AuthResponseDto.md)\>
 
-Defined in: [apps/backend/src/auth/auth.service.ts:447](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.service.ts#L447)
+Defined in: [apps/backend/src/auth/auth.service.ts:447](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.service.ts#L447)
 
 Verifies a SIWE (Sign-In with Ethereum) signature and authenticates the user
 Following EIP-4361 standard

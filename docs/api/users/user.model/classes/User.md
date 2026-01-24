@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [users/user.model](../README.md) / User
+[Brebaje Backend API](../../../index.md) / [users/user.model](../index.md) / User
 
 # Class: User
 
-Defined in: [apps/backend/src/users/user.model.ts:30](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L30)
+Defined in: [apps/backend/src/users/user.model.ts:30](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L30)
 
 ## Extends
 
@@ -48,7 +48,7 @@ Defined in: node\_modules/.pnpm/sequelize-typescript@2.1.6\_@types+node@22.17.0\
 
 > `optional` **avatarUrl**: `string`
 
-Defined in: [apps/backend/src/users/user.model.ts:68](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L68)
+Defined in: [apps/backend/src/users/user.model.ts:68](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L68)
 
 #### Implementation of
 
@@ -60,7 +60,7 @@ Defined in: [apps/backend/src/users/user.model.ts:68](https://github.com/p0tion-
 
 > **creationTime**: `number`
 
-Defined in: [apps/backend/src/users/user.model.ts:50](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L50)
+Defined in: [apps/backend/src/users/user.model.ts:50](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L50)
 
 #### Implementation of
 
@@ -72,7 +72,7 @@ Defined in: [apps/backend/src/users/user.model.ts:50](https://github.com/p0tion-
 
 > **displayName**: `string`
 
-Defined in: [apps/backend/src/users/user.model.ts:44](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L44)
+Defined in: [apps/backend/src/users/user.model.ts:44](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L44)
 
 #### Implementation of
 
@@ -84,7 +84,7 @@ Defined in: [apps/backend/src/users/user.model.ts:44](https://github.com/p0tion-
 
 > `optional` **id**: `number`
 
-Defined in: [apps/backend/src/users/user.model.ts:37](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L37)
+Defined in: [apps/backend/src/users/user.model.ts:37](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L37)
 
 #### Implementation of
 
@@ -100,7 +100,7 @@ Defined in: [apps/backend/src/users/user.model.ts:37](https://github.com/p0tion-
 
 > `optional` **lastSignInTime**: `number`
 
-Defined in: [apps/backend/src/users/user.model.ts:56](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L56)
+Defined in: [apps/backend/src/users/user.model.ts:56](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L56)
 
 #### Implementation of
 
@@ -112,7 +112,7 @@ Defined in: [apps/backend/src/users/user.model.ts:56](https://github.com/p0tion-
 
 > `optional` **lastUpdated**: `number`
 
-Defined in: [apps/backend/src/users/user.model.ts:62](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L62)
+Defined in: [apps/backend/src/users/user.model.ts:62](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L62)
 
 #### Implementation of
 
@@ -124,7 +124,7 @@ Defined in: [apps/backend/src/users/user.model.ts:62](https://github.com/p0tion-
 
 > **participants**: [`Participant`](../../../participants/participant.model/classes/Participant.md)[]
 
-Defined in: [apps/backend/src/users/user.model.ts:87](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L87)
+Defined in: [apps/backend/src/users/user.model.ts:87](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L87)
 
 ***
 
@@ -132,7 +132,7 @@ Defined in: [apps/backend/src/users/user.model.ts:87](https://github.com/p0tion-
 
 > **projects**: [`Project`](../../../projects/project.model/classes/Project.md)[]
 
-Defined in: [apps/backend/src/users/user.model.ts:84](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L84)
+Defined in: [apps/backend/src/users/user.model.ts:84](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L84)
 
 ***
 
@@ -140,7 +140,7 @@ Defined in: [apps/backend/src/users/user.model.ts:84](https://github.com/p0tion-
 
 > **provider**: [`UserProvider`](../../../types/enums/enumerations/UserProvider.md)
 
-Defined in: [apps/backend/src/users/user.model.ts:81](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L81)
+Defined in: [apps/backend/src/users/user.model.ts:81](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L81)
 
 #### Implementation of
 
@@ -152,7 +152,7 @@ Defined in: [apps/backend/src/users/user.model.ts:81](https://github.com/p0tion-
 
 > `optional` **walletAddress**: `string`
 
-Defined in: [apps/backend/src/users/user.model.ts:74](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/user.model.ts#L74)
+Defined in: [apps/backend/src/users/user.model.ts:74](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/user.model.ts#L74)
 
 #### Implementation of
 

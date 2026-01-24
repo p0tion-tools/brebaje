@@ -1,14 +1,14 @@
-[**Brebaje Backend API v0.0.1**](../../README.md)
+[**Brebaje Backend API v0.0.1**](../../index.md)
 
 ***
 
-[Brebaje Backend API](../../README.md) / [utils](../README.md) / fetchWithTimeout
+[Brebaje Backend API](../../index.md) / [utils](../index.md) / fetchWithTimeout
 
 # Function: fetchWithTimeout()
 
-> **fetchWithTimeout**(`url`, `options`, `timeoutMs`): `Promise`&lt;`Response`&gt;
+> **fetchWithTimeout**(`url`, `options`, `timeoutMs`): `Promise`\<`Response`\>
 
-Defined in: [apps/backend/src/utils/index.ts:45](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/utils/index.ts#L45)
+Defined in: [apps/backend/src/utils/index.ts:45](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/utils/index.ts#L45)
 
 Fetch with timeout and proper error handling
 
@@ -34,6 +34,6 @@ Timeout in milliseconds (default: 10000)
 
 ## Returns
 
-`Promise`&lt;`Response`&gt;
+`Promise`\<`Response`\>
 
 Promise&lt;Response&gt;

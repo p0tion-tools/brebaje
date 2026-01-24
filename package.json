@@ -44,7 +44,7 @@
     "prepare": "husky",
     "test": "lerna run test --stream",
     "build": "lerna run build --ignore=website",
-    "docs": "typedoc && ./scripts/fix-mdx-generics.sh",
+    "docs": "typedoc && ./scripts/fix-mdx-generics.sh && ./scripts/fix-sidebar-labels.sh",
     "docs:watch": "typedoc --watch",
     "docs:build": "pnpm docs && cd website && pnpm install && pnpm build",
     "docs:start": "cd website && pnpm start",

@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../../README.md) / [users/dto/create-user.dto](../README.md) / CreateUserDto
+[Brebaje Backend API](../../../../index.md) / [users/dto/create-user.dto](../index.md) / CreateUserDto
 
 # Class: CreateUserDto
 
-Defined in: [apps/backend/src/users/dto/create-user.dto.ts:6](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/create-user.dto.ts#L6)
+Defined in: [apps/backend/src/users/dto/create-user.dto.ts:6](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/create-user.dto.ts#L6)
 
 ## Implements
 
@@ -28,7 +28,7 @@ Defined in: [apps/backend/src/users/dto/create-user.dto.ts:6](https://github.com
 
 > `optional` **avatarUrl**: `string`
 
-Defined in: [apps/backend/src/users/dto/create-user.dto.ts:31](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/create-user.dto.ts#L31)
+Defined in: [apps/backend/src/users/dto/create-user.dto.ts:31](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/create-user.dto.ts#L31)
 
 #### Implementation of
 
@@ -40,7 +40,7 @@ Defined in: [apps/backend/src/users/dto/create-user.dto.ts:31](https://github.co
 
 > **displayName**: `string`
 
-Defined in: [apps/backend/src/users/dto/create-user.dto.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/create-user.dto.ts#L12)
+Defined in: [apps/backend/src/users/dto/create-user.dto.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/create-user.dto.ts#L12)
 
 #### Implementation of
 
@@ -52,7 +52,7 @@ Defined in: [apps/backend/src/users/dto/create-user.dto.ts:12](https://github.co
 
 > **provider**: [`UserProvider`](../../../../types/enums/enumerations/UserProvider.md)
 
-Defined in: [apps/backend/src/users/dto/create-user.dto.ts:38](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/create-user.dto.ts#L38)
+Defined in: [apps/backend/src/users/dto/create-user.dto.ts:38](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/create-user.dto.ts#L38)
 
 #### Implementation of
 
@@ -64,7 +64,7 @@ Defined in: [apps/backend/src/users/dto/create-user.dto.ts:38](https://github.co
 
 > `optional` **walletAddress**: `string`
 
-Defined in: [apps/backend/src/users/dto/create-user.dto.ts:22](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/users/dto/create-user.dto.ts#L22)
+Defined in: [apps/backend/src/users/dto/create-user.dto.ts:22](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/users/dto/create-user.dto.ts#L22)
 
 #### Implementation of
 

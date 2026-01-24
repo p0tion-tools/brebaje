@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [ceremonies/ceremony.model](../README.md) / CeremonyAttributes
+[Brebaje Backend API](../../../index.md) / [ceremonies/ceremony.model](../index.md) / CeremonyAttributes
 
 # Interface: CeremonyAttributes
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:8](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L8)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:8](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L8)
 
 ## Properties
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:8](https://github.com
 
 > **authProviders**: `object`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L17)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L17)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:17](https://github.co
 
 > `optional` **description**: `string`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:11](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L11)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:11](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L11)
 
 ***
 
@@ -30,7 +30,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:11](https://github.co
 
 > **end\_date**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:15](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L15)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:15](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L15)
 
 ***
 
@@ -38,7 +38,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:15](https://github.co
 
 > `optional` **id**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L10)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L10)
 
 ***
 
@@ -46,7 +46,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:10](https://github.co
 
 > **penalty**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:16](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L16)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:16](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L16)
 
 ***
 
@@ -54,7 +54,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:16](https://github.co
 
 > **projectId**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:9](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L9)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:9](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L9)
 
 ***
 
@@ -62,7 +62,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:9](https://github.com
 
 > **start\_date**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:14](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L14)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:14](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L14)
 
 ***
 
@@ -70,7 +70,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:14](https://github.co
 
 > **state**: [`CeremonyState`](../../../types/enums/enumerations/CeremonyState.md)
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:13](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L13)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:13](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L13)
 
 ***
 
@@ -78,4 +78,4 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:13](https://github.co
 
 > **type**: [`CeremonyType`](../../../types/enums/enumerations/CeremonyType.md)
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L12)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L12)

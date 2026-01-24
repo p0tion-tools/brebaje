@@ -6,7 +6,7 @@
 
 # Enumeration: CircuitTimeoutType
 
-Defined in: [apps/backend/src/types/enums.ts:23](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L23)
+Defined in: [apps/backend/src/types/enums.ts:23](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L23)
 
 ## Enumeration Members
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/types/enums.ts:23](https://github.com/p0tion-tools
 
 > **DYNAMIC**: `"DYNAMIC"`
 
-Defined in: [apps/backend/src/types/enums.ts:24](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L24)
+Defined in: [apps/backend/src/types/enums.ts:24](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L24)
 
 ***
 
@@ -22,7 +22,7 @@ Defined in: [apps/backend/src/types/enums.ts:24](https://github.com/p0tion-tools
 
 > **FIXED**: `"FIXED"`
 
-Defined in: [apps/backend/src/types/enums.ts:25](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L25)
+Defined in: [apps/backend/src/types/enums.ts:25](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L25)
 
 ***
 
@@ -30,4 +30,4 @@ Defined in: [apps/backend/src/types/enums.ts:25](https://github.com/p0tion-tools
 
 > **LOBBY**: `"LOBBY"`
 
-Defined in: [apps/backend/src/types/enums.ts:26](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/enums.ts#L26)
+Defined in: [apps/backend/src/types/enums.ts:26](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/enums.ts#L26)

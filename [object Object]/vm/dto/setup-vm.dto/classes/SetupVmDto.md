@@ -6,7 +6,7 @@
 
 # Class: SetupVmDto
 
-Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/setup-vm.dto.ts#L4)
+Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/setup-vm.dto.ts#L4)
 
 ## Constructors
 
@@ -24,7 +24,7 @@ Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:4](https://github.com/p0tio
 
 > **bucketName**: `string`
 
-Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:19](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/setup-vm.dto.ts#L19)
+Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:19](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/setup-vm.dto.ts#L19)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:19](https://github.com/p0ti
 
 > **instanceId**: `string`
 
-Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:11](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/setup-vm.dto.ts#L11)
+Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:11](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/setup-vm.dto.ts#L11)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:11](https://github.com/p0ti
 
 > `optional` **potPath**: `string`
 
-Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:34](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/setup-vm.dto.ts#L34)
+Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:34](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/setup-vm.dto.ts#L34)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:34](https://github.com/p0ti
 
 > `optional` **zKeyPath**: `string`
 
-Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:27](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/dto/setup-vm.dto.ts#L27)
+Defined in: [apps/backend/src/vm/dto/setup-vm.dto.ts:27](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/dto/setup-vm.dto.ts#L27)

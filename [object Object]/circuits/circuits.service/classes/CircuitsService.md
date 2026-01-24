@@ -6,7 +6,7 @@
 
 # Class: CircuitsService
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:31](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L31)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:31](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L31)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:31](https://github.co
 
 > **new CircuitsService**(`circuitModel`, `vmService`, `storageService`, `participantsService`): `CircuitsService`
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:32](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L32)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:32](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L32)
 
 #### Parameters
 
@@ -44,7 +44,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:32](https://github.co
 
 > **addTimeOut**(`participant`, `circuit`, `type`): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:221](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L221)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:221](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L221)
 
 #### Parameters
 
@@ -70,7 +70,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:221](https://github.c
 
 > **checkAndAddTimeout**(`participant`, `circuit`, `type`): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:243](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L243)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:243](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L243)
 
 #### Parameters
 
@@ -96,7 +96,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:243](https://github.c
 
 > **coordinate**(): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:296](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L296)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:296](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L296)
 
 Coordinates the ceremony contribution process by managing participant status transitions
 and circuit queue progression for all circuits in opened ceremonies.
@@ -147,7 +147,7 @@ and circuit queue progression for all circuits in opened ceremonies.
 
 > **create**(`createCircuitDto`): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md)\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:44](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L44)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:44](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L44)
 
 #### Parameters
 
@@ -165,7 +165,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:44](https://github.co
 
 > **findAll**(): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md)[]\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:103](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L103)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:103](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L103)
 
 #### Returns
 
@@ -177,7 +177,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:103](https://github.c
 
 > **findAllByCeremonyId**(`ceremonyId`): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md)[]\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:119](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L119)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:119](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L119)
 
 #### Parameters
 
@@ -195,7 +195,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:119](https://github.c
 
 > **findAllFromOpenedCeremonies**(): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md)[]\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:107](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L107)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:107](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L107)
 
 #### Returns
 
@@ -207,7 +207,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:107](https://github.c
 
 > **findOne**(`id`): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md) \| `null`\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:123](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L123)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:123](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L123)
 
 #### Parameters
 
@@ -225,7 +225,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:123](https://github.c
 
 > **findOneByCeremonyIdAndProgress**(`ceremonyId`, `progress`): `Promise`\<[`Circuit`](../../circuit.model/classes/Circuit.md)\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:127](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L127)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:127](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L127)
 
 #### Parameters
 
@@ -247,7 +247,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:127](https://github.c
 
 > **isParticipantTimedOutOnCircuit**(`participant`, `circuit`): `boolean`
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:193](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L193)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:193](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L193)
 
 #### Parameters
 
@@ -269,7 +269,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:193](https://github.c
 
 > **remove**(`id`): `Promise`\<\{ `message`: `string`; \}\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:152](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L152)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:152](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L152)
 
 #### Parameters
 
@@ -287,7 +287,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:152](https://github.c
 
 > **shiftToNextContributor**(`circuit`): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:179](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L179)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:179](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L179)
 
 #### Parameters
 
@@ -305,7 +305,7 @@ Defined in: [apps/backend/src/circuits/circuits.service.ts:179](https://github.c
 
 > **update**(`id`, `_updateCircuitDto`): `string`
 
-Defined in: [apps/backend/src/circuits/circuits.service.ts:148](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuits.service.ts#L148)
+Defined in: [apps/backend/src/circuits/circuits.service.ts:148](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuits.service.ts#L148)
 
 #### Parameters
 

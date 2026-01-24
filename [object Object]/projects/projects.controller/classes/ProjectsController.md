@@ -6,7 +6,7 @@
 
 # Class: ProjectsController
 
-Defined in: [apps/backend/src/projects/projects.controller.ts:21](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.controller.ts#L21)
+Defined in: [apps/backend/src/projects/projects.controller.ts:21](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.controller.ts#L21)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/projects/projects.controller.ts:21](https://github
 
 > **new ProjectsController**(`projectsService`): `ProjectsController`
 
-Defined in: [apps/backend/src/projects/projects.controller.ts:22](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.controller.ts#L22)
+Defined in: [apps/backend/src/projects/projects.controller.ts:22](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.controller.ts#L22)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/projects/projects.controller.ts:22](https://github
 
 > **create**(`req`, `createProjectDto`): `Promise`\<[`Project`](../../project.model/classes/Project.md)\>
 
-Defined in: [apps/backend/src/projects/projects.controller.ts:35](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.controller.ts#L35)
+Defined in: [apps/backend/src/projects/projects.controller.ts:35](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.controller.ts#L35)
 
 #### Parameters
 
@@ -54,7 +54,7 @@ Defined in: [apps/backend/src/projects/projects.controller.ts:35](https://github
 
 > **findAll**(): `Promise`\<[`Project`](../../project.model/classes/Project.md)[]\>
 
-Defined in: [apps/backend/src/projects/projects.controller.ts:42](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.controller.ts#L42)
+Defined in: [apps/backend/src/projects/projects.controller.ts:42](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.controller.ts#L42)
 
 #### Returns
 
@@ -66,7 +66,7 @@ Defined in: [apps/backend/src/projects/projects.controller.ts:42](https://github
 
 > **findOne**(`id`): `Promise`\<[`Project`](../../project.model/classes/Project.md)\>
 
-Defined in: [apps/backend/src/projects/projects.controller.ts:51](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.controller.ts#L51)
+Defined in: [apps/backend/src/projects/projects.controller.ts:51](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.controller.ts#L51)
 
 #### Parameters
 
@@ -84,7 +84,7 @@ Defined in: [apps/backend/src/projects/projects.controller.ts:51](https://github
 
 > **remove**(`id`): `Promise`\<\{ `message`: `string`; \}\>
 
-Defined in: [apps/backend/src/projects/projects.controller.ts:73](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.controller.ts#L73)
+Defined in: [apps/backend/src/projects/projects.controller.ts:73](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.controller.ts#L73)
 
 #### Parameters
 
@@ -102,7 +102,7 @@ Defined in: [apps/backend/src/projects/projects.controller.ts:73](https://github
 
 > **update**(`id`, `updateProjectDto`): `Promise`\<[`Project`](../../project.model/classes/Project.md)\>
 
-Defined in: [apps/backend/src/projects/projects.controller.ts:64](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.controller.ts#L64)
+Defined in: [apps/backend/src/projects/projects.controller.ts:64](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.controller.ts#L64)
 
 #### Parameters
 

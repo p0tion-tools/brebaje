@@ -6,7 +6,7 @@
 
 # Class: HealthService
 
-Defined in: [apps/backend/src/health/health.service.ts:9](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/health/health.service.ts#L9)
+Defined in: [apps/backend/src/health/health.service.ts:9](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/health/health.service.ts#L9)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/health/health.service.ts:9](https://github.com/p0t
 
 > **new HealthService**(`sequelize`, `storageService`): `HealthService`
 
-Defined in: [apps/backend/src/health/health.service.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/health/health.service.ts#L12)
+Defined in: [apps/backend/src/health/health.service.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/health/health.service.ts#L12)
 
 #### Parameters
 
@@ -36,7 +36,7 @@ Defined in: [apps/backend/src/health/health.service.ts:12](https://github.com/p0
 
 > **checkDatabaseConnection**(): `Promise`\<\{ `message?`: `string`; `status`: `"error"` \| `"ok"`; \}\>
 
-Defined in: [apps/backend/src/health/health.service.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/health/health.service.ts#L17)
+Defined in: [apps/backend/src/health/health.service.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/health/health.service.ts#L17)
 
 #### Returns
 
@@ -48,7 +48,7 @@ Defined in: [apps/backend/src/health/health.service.ts:17](https://github.com/p0
 
 > **checkEnvironmentVariables**(): `object`
 
-Defined in: [apps/backend/src/health/health.service.ts:34](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/health/health.service.ts#L34)
+Defined in: [apps/backend/src/health/health.service.ts:34](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/health/health.service.ts#L34)
 
 #### Returns
 
@@ -68,7 +68,7 @@ Defined in: [apps/backend/src/health/health.service.ts:34](https://github.com/p0
 
 > **checkS3Connection**(): `Promise`\<\{ `message?`: `string`; `status`: `"error"` \| `"ok"`; \}\>
 
-Defined in: [apps/backend/src/health/health.service.ts:55](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/health/health.service.ts#L55)
+Defined in: [apps/backend/src/health/health.service.ts:55](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/health/health.service.ts#L55)
 
 #### Returns
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/health/health.service.ts:55](https://github.com/p0
 
 > **getHealthStatus**(): `Promise`\<\{ `checks`: \{ `database`: \{ `message?`: `string`; `status`: `"error"` \| `"ok"`; \}; `environment`: \{ `message?`: `string`; `status`: `"error"` \| `"ok"`; \}; `s3`: \{ `message?`: `string`; `status`: `"error"` \| `"ok"`; \}; \}; `status`: `string`; `timestamp`: `string`; \} \| \{ `checks`: \{ `database`: \{ `message`: `string`; `status`: `string`; \}; `environment`: \{ `message`: `string`; `status`: `string`; \}; `s3`: \{ `message`: `string`; `status`: `string`; \}; \}; `status`: `string`; `timestamp`: `string`; \}\>
 
-Defined in: [apps/backend/src/health/health.service.ts:114](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/health/health.service.ts#L114)
+Defined in: [apps/backend/src/health/health.service.ts:114](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/health/health.service.ts#L114)
 
 #### Returns
 

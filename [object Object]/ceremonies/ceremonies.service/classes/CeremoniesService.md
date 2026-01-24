@@ -6,7 +6,7 @@
 
 # Class: CeremoniesService
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:19](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L19)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:19](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L19)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:19](https://githu
 
 > **new CeremoniesService**(`ceremonyModel`): `CeremoniesService`
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:20](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L20)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:20](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L20)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:20](https://githu
 
 > **create**(`createCeremonyDto`): `Promise`\<[`Ceremony`](../../ceremony.model/classes/Ceremony.md)\>
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:25](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L25)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:25](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L25)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:25](https://githu
 
 > **findAll**(): `Promise`\<[`Ceremony`](../../ceremony.model/classes/Ceremony.md)[]\>
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:43](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L43)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:43](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L43)
 
 #### Returns
 
@@ -62,7 +62,7 @@ Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:43](https://githu
 
 > **findCoordinatorOfCeremony**(`userId`, `ceremonyId`): `Promise`\<[`Ceremony`](../../ceremony.model/classes/Ceremony.md) \| `null`\>
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:63](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L63)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:63](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L63)
 
 #### Parameters
 
@@ -84,7 +84,7 @@ Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:63](https://githu
 
 > **findOne**(`id`): `Promise`\<[`Ceremony`](../../ceremony.model/classes/Ceremony.md)\>
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:51](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L51)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:51](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L51)
 
 #### Parameters
 
@@ -102,7 +102,7 @@ Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:51](https://githu
 
 > **handleErrors**(`error`): `never`
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:107](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L107)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:107](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L107)
 
 #### Parameters
 
@@ -120,7 +120,7 @@ Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:107](https://gith
 
 > **isCoordinator**(`userId`, `ceremonyId`): `Promise`\<\{ `isCoordinator`: `boolean`; \}\>
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:76](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L76)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:76](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L76)
 
 #### Parameters
 
@@ -142,7 +142,7 @@ Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:76](https://githu
 
 > **remove**(`id`): `Promise`\<\{ `message`: `string`; \}\>
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:94](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L94)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:94](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L94)
 
 #### Parameters
 
@@ -160,7 +160,7 @@ Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:94](https://githu
 
 > **update**(`id`, `updateCeremonyDto`): `Promise`\<[`Ceremony`](../../ceremony.model/classes/Ceremony.md)\>
 
-Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:81](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremonies.service.ts#L81)
+Defined in: [apps/backend/src/ceremonies/ceremonies.service.ts:81](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremonies.service.ts#L81)
 
 #### Parameters
 

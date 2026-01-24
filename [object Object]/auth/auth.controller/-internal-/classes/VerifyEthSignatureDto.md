@@ -6,7 +6,7 @@
 
 # Class: VerifyEthSignatureDto
 
-Defined in: [apps/backend/src/auth/dto/auth-dto.ts:81](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/dto/auth-dto.ts#L81)
+Defined in: [apps/backend/src/auth/dto/auth-dto.ts:81](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/dto/auth-dto.ts#L81)
 
 DTO for verifying SIWE signature
 
@@ -26,7 +26,7 @@ DTO for verifying SIWE signature
 
 > **message**: `string`
 
-Defined in: [apps/backend/src/auth/dto/auth-dto.ts:88](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/dto/auth-dto.ts#L88)
+Defined in: [apps/backend/src/auth/dto/auth-dto.ts:88](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/dto/auth-dto.ts#L88)
 
 ***
 
@@ -34,4 +34,4 @@ Defined in: [apps/backend/src/auth/dto/auth-dto.ts:88](https://github.com/p0tion
 
 > **signature**: `string`
 
-Defined in: [apps/backend/src/auth/dto/auth-dto.ts:96](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/dto/auth-dto.ts#L96)
+Defined in: [apps/backend/src/auth/dto/auth-dto.ts:96](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/dto/auth-dto.ts#L96)

@@ -6,7 +6,7 @@
 
 # Class: UpdateCeremonyDto
 
-Defined in: [apps/backend/src/ceremonies/dto/update-ceremony.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/dto/update-ceremony.dto.ts#L4)
+Defined in: [apps/backend/src/ceremonies/dto/update-ceremony.dto.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/dto/update-ceremony.dto.ts#L4)
 
 ## Extends
 
@@ -54,7 +54,7 @@ Defined in: node\_modules/.pnpm/@nestjs+mapped-types@2.1.0\_@nestjs+common@11.1.
 
 > `optional` **authProviders**: `object`
 
-Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:36](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L36)
+Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:36](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L36)
 
 #### Inherited from
 
@@ -66,7 +66,7 @@ Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:36](https://
 
 > `optional` **description**: `string`
 
-Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L12)
+Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L12)
 
 #### Inherited from
 
@@ -78,7 +78,7 @@ Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:12](https://
 
 > `optional` **end\_date**: `number`
 
-Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:28](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L28)
+Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:28](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L28)
 
 #### Inherited from
 
@@ -90,7 +90,7 @@ Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:28](https://
 
 > `optional` **penalty**: `number`
 
-Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:32](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L32)
+Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:32](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L32)
 
 #### Inherited from
 
@@ -102,7 +102,7 @@ Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:32](https://
 
 > `optional` **projectId**: `number`
 
-Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:8](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L8)
+Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:8](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L8)
 
 #### Inherited from
 
@@ -114,7 +114,7 @@ Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:8](https://g
 
 > `optional` **start\_date**: `number`
 
-Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:24](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L24)
+Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:24](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L24)
 
 #### Inherited from
 
@@ -126,7 +126,7 @@ Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:24](https://
 
 > `optional` **state**: [`CeremonyState`](../../../../types/enums/enumerations/CeremonyState.md)
 
-Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:20](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L20)
+Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:20](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L20)
 
 #### Inherited from
 
@@ -138,7 +138,7 @@ Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:20](https://
 
 > `optional` **type**: [`CeremonyType`](../../../../types/enums/enumerations/CeremonyType.md)
 
-Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:16](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L16)
+Defined in: [apps/backend/src/ceremonies/dto/create-ceremony.dto.ts:16](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/dto/create-ceremony.dto.ts#L16)
 
 #### Inherited from
 

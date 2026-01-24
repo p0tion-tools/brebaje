@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../../README.md) / [participants/dto/create-participant.dto](../README.md) / CreateParticipantDto
+[Brebaje Backend API](../../../../index.md) / [participants/dto/create-participant.dto](../index.md) / CreateParticipantDto
 
 # Class: CreateParticipantDto
 
-Defined in: [apps/backend/src/participants/dto/create-participant.dto.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/dto/create-participant.dto.ts#L10)
+Defined in: [apps/backend/src/participants/dto/create-participant.dto.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/dto/create-participant.dto.ts#L10)
 
 Data Transfer Object for creating a participant.
 
@@ -32,4 +32,4 @@ Status and steps are set to default values upon creation
 
 > **ceremonyId**: `number`
 
-Defined in: [apps/backend/src/participants/dto/create-participant.dto.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/dto/create-participant.dto.ts#L17)
+Defined in: [apps/backend/src/participants/dto/create-participant.dto.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/dto/create-participant.dto.ts#L17)

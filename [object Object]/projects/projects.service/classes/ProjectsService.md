@@ -6,7 +6,7 @@
 
 # Class: ProjectsService
 
-Defined in: [apps/backend/src/projects/projects.service.ts:18](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.service.ts#L18)
+Defined in: [apps/backend/src/projects/projects.service.ts:18](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.service.ts#L18)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/projects/projects.service.ts:18](https://github.co
 
 > **new ProjectsService**(`projectModel`): `ProjectsService`
 
-Defined in: [apps/backend/src/projects/projects.service.ts:19](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.service.ts#L19)
+Defined in: [apps/backend/src/projects/projects.service.ts:19](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.service.ts#L19)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/projects/projects.service.ts:19](https://github.co
 
 > **create**(`createProjectDto`, `coordinatorId`): `Promise`\<[`Project`](../../project.model/classes/Project.md)\>
 
-Defined in: [apps/backend/src/projects/projects.service.ts:31](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.service.ts#L31)
+Defined in: [apps/backend/src/projects/projects.service.ts:31](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.service.ts#L31)
 
 Creates a new project.
 
@@ -62,7 +62,7 @@ The created project
 
 > **findAll**(): `Promise`\<[`Project`](../../project.model/classes/Project.md)[]\>
 
-Defined in: [apps/backend/src/projects/projects.service.ts:44](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.service.ts#L44)
+Defined in: [apps/backend/src/projects/projects.service.ts:44](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.service.ts#L44)
 
 #### Returns
 
@@ -74,7 +74,7 @@ Defined in: [apps/backend/src/projects/projects.service.ts:44](https://github.co
 
 > **findOne**(`id`): `Promise`\<[`Project`](../../project.model/classes/Project.md)\>
 
-Defined in: [apps/backend/src/projects/projects.service.ts:52](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.service.ts#L52)
+Defined in: [apps/backend/src/projects/projects.service.ts:52](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.service.ts#L52)
 
 #### Parameters
 
@@ -92,7 +92,7 @@ Defined in: [apps/backend/src/projects/projects.service.ts:52](https://github.co
 
 > **handleErrors**(`error`): `never`
 
-Defined in: [apps/backend/src/projects/projects.service.ts:90](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.service.ts#L90)
+Defined in: [apps/backend/src/projects/projects.service.ts:90](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.service.ts#L90)
 
 #### Parameters
 
@@ -110,7 +110,7 @@ Defined in: [apps/backend/src/projects/projects.service.ts:90](https://github.co
 
 > **remove**(`id`): `Promise`\<\{ `message`: `string`; \}\>
 
-Defined in: [apps/backend/src/projects/projects.service.ts:77](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.service.ts#L77)
+Defined in: [apps/backend/src/projects/projects.service.ts:77](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.service.ts#L77)
 
 #### Parameters
 
@@ -128,7 +128,7 @@ Defined in: [apps/backend/src/projects/projects.service.ts:77](https://github.co
 
 > **update**(`id`, `updateProjectDto`): `Promise`\<[`Project`](../../project.model/classes/Project.md)\>
 
-Defined in: [apps/backend/src/projects/projects.service.ts:64](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/projects/projects.service.ts#L64)
+Defined in: [apps/backend/src/projects/projects.service.ts:64](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/projects/projects.service.ts#L64)
 
 #### Parameters
 

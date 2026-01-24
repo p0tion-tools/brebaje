@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../../README.md) / [storage/storage.service](../../README.md) / [\<internal\>](../README.md) / UploadIdDto
+[Brebaje Backend API](../../../../index.md) / [storage/storage.service](../../index.md) / [\<internal\>](../index.md) / UploadIdDto
 
 # Class: UploadIdDto
 
-Defined in: [apps/backend/src/storage/dto/storage-dto.ts:18](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/dto/storage-dto.ts#L18)
+Defined in: [apps/backend/src/storage/dto/storage-dto.ts:18](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/dto/storage-dto.ts#L18)
 
 ## Constructors
 
@@ -24,4 +24,4 @@ Defined in: [apps/backend/src/storage/dto/storage-dto.ts:18](https://github.com/
 
 > **uploadId**: `string`
 
-Defined in: [apps/backend/src/storage/dto/storage-dto.ts:20](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/storage/dto/storage-dto.ts#L20)
+Defined in: [apps/backend/src/storage/dto/storage-dto.ts:20](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/storage/dto/storage-dto.ts#L20)

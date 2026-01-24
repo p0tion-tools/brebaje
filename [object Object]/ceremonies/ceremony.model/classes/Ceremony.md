@@ -6,7 +6,7 @@
 
 # Class: Ceremony
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:26](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L26)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:26](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L26)
 
 ## Extends
 
@@ -48,7 +48,7 @@ Defined in: node\_modules/.pnpm/sequelize-typescript@2.1.6\_@types+node@22.17.0\
 
 > **authProviders**: `object`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:85](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L85)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:85](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L85)
 
 #### Implementation of
 
@@ -60,7 +60,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:85](https://github.co
 
 > **circuits**: [`Circuit`](../../../circuits/circuit.model/classes/Circuit.md)[]
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:91](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L91)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:91](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L91)
 
 ***
 
@@ -68,7 +68,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:91](https://github.co
 
 > `optional` **description**: `string`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:46](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L46)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:46](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L46)
 
 #### Implementation of
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:46](https://github.co
 
 > **end\_date**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:72](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L72)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:72](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L72)
 
 #### Implementation of
 
@@ -92,7 +92,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:72](https://github.co
 
 > `optional` **id**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:39](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L39)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:39](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L39)
 
 #### Implementation of
 
@@ -108,7 +108,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:39](https://github.co
 
 > **participants**: [`Participant`](../../../participants/participant.model/classes/Participant.md)[]
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:94](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L94)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:94](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L94)
 
 ***
 
@@ -116,7 +116,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:94](https://github.co
 
 > **penalty**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:78](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L78)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:78](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L78)
 
 #### Implementation of
 
@@ -128,7 +128,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:78](https://github.co
 
 > **project**: [`Project`](../../../projects/project.model/classes/Project.md)
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:88](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L88)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:88](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L88)
 
 ***
 
@@ -136,7 +136,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:88](https://github.co
 
 > **projectId**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:31](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L31)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:31](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L31)
 
 #### Implementation of
 
@@ -148,7 +148,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:31](https://github.co
 
 > **start\_date**: `number`
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:66](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L66)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:66](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L66)
 
 #### Implementation of
 
@@ -160,7 +160,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:66](https://github.co
 
 > **state**: [`CeremonyState`](../../../types/enums/enumerations/CeremonyState.md)
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:60](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L60)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:60](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L60)
 
 #### Implementation of
 
@@ -172,7 +172,7 @@ Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:60](https://github.co
 
 > **type**: [`CeremonyType`](../../../types/enums/enumerations/CeremonyType.md)
 
-Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:53](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/ceremonies/ceremony.model.ts#L53)
+Defined in: [apps/backend/src/ceremonies/ceremony.model.ts:53](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/ceremonies/ceremony.model.ts#L53)
 
 #### Implementation of
 

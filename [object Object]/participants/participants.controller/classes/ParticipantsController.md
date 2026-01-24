@@ -6,7 +6,7 @@
 
 # Class: ParticipantsController
 
-Defined in: [apps/backend/src/participants/participants.controller.ts:21](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.controller.ts#L21)
+Defined in: [apps/backend/src/participants/participants.controller.ts:21](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.controller.ts#L21)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/participants/participants.controller.ts:21](https:
 
 > **new ParticipantsController**(`participantsService`): `ParticipantsController`
 
-Defined in: [apps/backend/src/participants/participants.controller.ts:22](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.controller.ts#L22)
+Defined in: [apps/backend/src/participants/participants.controller.ts:22](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.controller.ts#L22)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/participants/participants.controller.ts:22](https:
 
 > **create**(`req`, `createParticipantDto`): `Promise`\<[`Participant`](../../participant.model/classes/Participant.md)\>
 
-Defined in: [apps/backend/src/participants/participants.controller.ts:34](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.controller.ts#L34)
+Defined in: [apps/backend/src/participants/participants.controller.ts:34](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.controller.ts#L34)
 
 #### Parameters
 
@@ -54,7 +54,7 @@ Defined in: [apps/backend/src/participants/participants.controller.ts:34](https:
 
 > **findAll**(): `Promise`\<[`Participant`](../../participant.model/classes/Participant.md)[]\>
 
-Defined in: [apps/backend/src/participants/participants.controller.ts:41](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.controller.ts#L41)
+Defined in: [apps/backend/src/participants/participants.controller.ts:41](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.controller.ts#L41)
 
 #### Returns
 
@@ -66,7 +66,7 @@ Defined in: [apps/backend/src/participants/participants.controller.ts:41](https:
 
 > **findOne**(`id`): `Promise`\<[`Participant`](../../participant.model/classes/Participant.md) \| `null`\>
 
-Defined in: [apps/backend/src/participants/participants.controller.ts:50](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.controller.ts#L50)
+Defined in: [apps/backend/src/participants/participants.controller.ts:50](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.controller.ts#L50)
 
 #### Parameters
 
@@ -84,7 +84,7 @@ Defined in: [apps/backend/src/participants/participants.controller.ts:50](https:
 
 > **remove**(`id`): `Promise`\<\{ `message`: `string`; \}\>
 
-Defined in: [apps/backend/src/participants/participants.controller.ts:72](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.controller.ts#L72)
+Defined in: [apps/backend/src/participants/participants.controller.ts:72](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.controller.ts#L72)
 
 #### Parameters
 
@@ -102,7 +102,7 @@ Defined in: [apps/backend/src/participants/participants.controller.ts:72](https:
 
 > **update**(`id`, `updateParticipantDto`): `string`
 
-Defined in: [apps/backend/src/participants/participants.controller.ts:63](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participants.controller.ts#L63)
+Defined in: [apps/backend/src/participants/participants.controller.ts:63](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participants.controller.ts#L63)
 
 #### Parameters
 

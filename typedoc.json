@@ -49,7 +49,11 @@
     "hidePageTitle": false,
     "indexFormat": "table",
     "entryFileName": "index.md",
-    "readmeFile": false
+    "readmeFile": false,
+    "fileExtension": ".md",
+    "flattenOutputFiles": false,
+    "entryDocument": "index.md",
+    "objectFileName": "index.md"
   }
 }
 

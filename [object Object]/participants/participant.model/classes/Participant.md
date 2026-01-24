@@ -6,7 +6,7 @@
 
 # Class: Participant
 
-Defined in: [apps/backend/src/participants/participant.model.ts:47](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L47)
+Defined in: [apps/backend/src/participants/participant.model.ts:47](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L47)
 
 ## Extends
 
@@ -48,7 +48,7 @@ Defined in: node\_modules/.pnpm/sequelize-typescript@2.1.6\_@types+node@22.17.0\
 
 > **ceremony**: [`Ceremony`](../../../ceremonies/ceremony.model/classes/Ceremony.md)
 
-Defined in: [apps/backend/src/participants/participant.model.ts:118](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L118)
+Defined in: [apps/backend/src/participants/participant.model.ts:118](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L118)
 
 ***
 
@@ -56,7 +56,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:118](https://git
 
 > **ceremonyId**: `number`
 
-Defined in: [apps/backend/src/participants/participant.model.ts:61](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L61)
+Defined in: [apps/backend/src/participants/participant.model.ts:61](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L61)
 
 #### Implementation of
 
@@ -68,7 +68,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:61](https://gith
 
 > `optional` **contributionProgress**: `number`
 
-Defined in: [apps/backend/src/participants/participant.model.ts:87](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L87)
+Defined in: [apps/backend/src/participants/participant.model.ts:87](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L87)
 
 #### Implementation of
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:87](https://gith
 
 > **contributions**: [`Contribution`](../../../contributions/contribution.model/classes/Contribution.md)[]
 
-Defined in: [apps/backend/src/participants/participant.model.ts:121](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L121)
+Defined in: [apps/backend/src/participants/participant.model.ts:121](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L121)
 
 ***
 
@@ -88,7 +88,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:121](https://git
 
 > `optional` **contributionStartedAt**: `number`
 
-Defined in: [apps/backend/src/participants/participant.model.ts:93](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L93)
+Defined in: [apps/backend/src/participants/participant.model.ts:93](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L93)
 
 #### Implementation of
 
@@ -100,7 +100,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:93](https://gith
 
 > **contributionStep**: [`ParticipantContributionStep`](../../../types/enums/enumerations/ParticipantContributionStep.md)
 
-Defined in: [apps/backend/src/participants/participant.model.ts:81](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L81)
+Defined in: [apps/backend/src/participants/participant.model.ts:81](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L81)
 
 #### Implementation of
 
@@ -112,7 +112,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:81](https://gith
 
 > **createdAt**: `Date`
 
-Defined in: [apps/backend/src/participants/participant.model.ts:48](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L48)
+Defined in: [apps/backend/src/participants/participant.model.ts:48](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L48)
 
 #### Overrides
 
@@ -124,7 +124,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:48](https://gith
 
 > **id**: `number`
 
-Defined in: [apps/backend/src/participants/participant.model.ts:68](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L68)
+Defined in: [apps/backend/src/participants/participant.model.ts:68](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L68)
 
 #### Implementation of
 
@@ -140,7 +140,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:68](https://gith
 
 > **status**: [`ParticipantStatus`](../../../types/enums/enumerations/ParticipantStatus.md)
 
-Defined in: [apps/backend/src/participants/participant.model.ts:75](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L75)
+Defined in: [apps/backend/src/participants/participant.model.ts:75](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L75)
 
 #### Implementation of
 
@@ -152,7 +152,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:75](https://gith
 
 > `optional` **tempContributionData**: [`TemporaryParticipantContributionData`](../../../types/type-aliases/TemporaryParticipantContributionData.md)
 
-Defined in: [apps/backend/src/participants/participant.model.ts:105](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L105)
+Defined in: [apps/backend/src/participants/participant.model.ts:105](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L105)
 
 #### Implementation of
 
@@ -164,7 +164,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:105](https://git
 
 > `optional` **timeout**: [`ParticipantTimeout`](../../../types/declarations/type-aliases/ParticipantTimeout.md)[]
 
-Defined in: [apps/backend/src/participants/participant.model.ts:112](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L112)
+Defined in: [apps/backend/src/participants/participant.model.ts:112](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L112)
 
 #### Implementation of
 
@@ -176,7 +176,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:112](https://git
 
 > **updatedAt**: `Date`
 
-Defined in: [apps/backend/src/participants/participant.model.ts:49](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L49)
+Defined in: [apps/backend/src/participants/participant.model.ts:49](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L49)
 
 #### Overrides
 
@@ -188,7 +188,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:49](https://gith
 
 > **user**: [`User`](../../../users/user.model/classes/User.md)
 
-Defined in: [apps/backend/src/participants/participant.model.ts:115](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L115)
+Defined in: [apps/backend/src/participants/participant.model.ts:115](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L115)
 
 ***
 
@@ -196,7 +196,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:115](https://git
 
 > **userId**: `number`
 
-Defined in: [apps/backend/src/participants/participant.model.ts:55](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L55)
+Defined in: [apps/backend/src/participants/participant.model.ts:55](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L55)
 
 #### Implementation of
 
@@ -208,7 +208,7 @@ Defined in: [apps/backend/src/participants/participant.model.ts:55](https://gith
 
 > `optional` **verificationStartedAt**: `number`
 
-Defined in: [apps/backend/src/participants/participant.model.ts:99](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/participants/participant.model.ts#L99)
+Defined in: [apps/backend/src/participants/participant.model.ts:99](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/participants/participant.model.ts#L99)
 
 #### Implementation of
 

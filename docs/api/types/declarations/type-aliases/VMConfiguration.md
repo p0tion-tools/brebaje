@@ -1,14 +1,14 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [types/declarations](../README.md) / VMConfiguration
+[Brebaje Backend API](../../../index.md) / [types/declarations](../index.md) / VMConfiguration
 
 # Type Alias: VMConfiguration
 
 > **VMConfiguration** = `object`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:76](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L76)
+Defined in: [apps/backend/src/types/declarations.d.ts:76](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L76)
 
 Group information about the VM configuration for circuit contribution verification.
 the coordinator could choose among CF and VM.
@@ -24,7 +24,7 @@ vmInstanceId - the VM instance identifier (after VM instantiation).
 
 > **vmConfigurationType**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:77](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L77)
+Defined in: [apps/backend/src/types/declarations.d.ts:77](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L77)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:77](https://github.com/p0t
 
 > `optional` **vmDiskSize**: `number`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:79](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L79)
+Defined in: [apps/backend/src/types/declarations.d.ts:79](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L79)
 
 ***
 
@@ -40,7 +40,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:79](https://github.com/p0t
 
 > **vmDiskType**: `VolumeType`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:78](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L78)
+Defined in: [apps/backend/src/types/declarations.d.ts:78](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L78)
 
 ***
 
@@ -48,4 +48,4 @@ Defined in: [apps/backend/src/types/declarations.d.ts:78](https://github.com/p0t
 
 > `optional` **vmInstanceId**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:80](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L80)
+Defined in: [apps/backend/src/types/declarations.d.ts:80](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L80)

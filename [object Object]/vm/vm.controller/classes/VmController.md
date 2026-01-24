@@ -6,7 +6,7 @@
 
 # Class: VmController
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:12](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L12)
+Defined in: [apps/backend/src/vm/vm.controller.ts:12](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L12)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:12](https://github.com/p0tion-
 
 > **new VmController**(`vmService`, `verificationMonitoringService`, `storageService`): `VmController`
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:13](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L13)
+Defined in: [apps/backend/src/vm/vm.controller.ts:13](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L13)
 
 #### Parameters
 
@@ -40,7 +40,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:13](https://github.com/p0tion-
 
 > **getCommandOutput**(`commandId`, `instanceId`): `Promise`\<\{ `commandId`: `string`; `error?`: `undefined`; `instanceId`: `string`; `note`: `string`; `output`: \{ `stdout`: `string`; `timestamp`: `string`; \}; `status`: `string`; \} \| \{ `commandId`: `string`; `error`: `string`; `instanceId`: `string`; `note`: `string`; `output?`: `undefined`; `status?`: `undefined`; \}\>
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:153](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L153)
+Defined in: [apps/backend/src/vm/vm.controller.ts:153](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L153)
 
 #### Parameters
 
@@ -62,7 +62,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:153](https://github.com/p0tion
 
 > **getInstanceStatus**(`instanceId`): `Promise`\<\{ `instanceId`: `string`; `isRunning`: `boolean`; `message?`: `undefined`; `status`: `string`; `timestamp`: `string`; \} \| \{ `instanceId`: `string`; `isRunning?`: `undefined`; `message`: `string`; `status`: `string`; `timestamp`: `string`; \}\>
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:262](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L262)
+Defined in: [apps/backend/src/vm/vm.controller.ts:262](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L262)
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:262](https://github.com/p0tion
 
 > **getMonitoringStatus**(): `object`
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:285](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L285)
+Defined in: [apps/backend/src/vm/vm.controller.ts:285](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L285)
 
 #### Returns
 
@@ -100,7 +100,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:285](https://github.com/p0tion
 
 > **getVerificationStatus**(`commandId`, `instanceId`): `Promise`\<\{ `commandId`: `string`; `completedAt`: `string`; `httpStatus`: `number`; `message?`: `undefined`; `result`: `string`; `status`: `string`; \} \| \{ `commandId`: `string`; `completedAt?`: `undefined`; `httpStatus?`: `undefined`; `message`: `string`; `result?`: `undefined`; `status`: `string`; \}\>
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:116](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L116)
+Defined in: [apps/backend/src/vm/vm.controller.ts:116](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L116)
 
 #### Parameters
 
@@ -122,7 +122,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:116](https://github.com/p0tion
 
 > **setupVm**(`setupDto`): `Promise`\<\{ `commandId`: `string`; `instanceId`: `string`; `message`: `string`; `note`: `string`; `statusUrl`: `string`; \}\>
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:92](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L92)
+Defined in: [apps/backend/src/vm/vm.controller.ts:92](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L92)
 
 #### Parameters
 
@@ -140,7 +140,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:92](https://github.com/p0tion-
 
 > **startInstance**(`lifecycleDto`): `Promise`\<\{ `action`: `string`; `instanceId`: `string`; `message`: `string`; `status`: `string`; \}\>
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:189](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L189)
+Defined in: [apps/backend/src/vm/vm.controller.ts:189](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L189)
 
 #### Parameters
 
@@ -158,7 +158,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:189](https://github.com/p0tion
 
 > **startVerification**(`verifyDto`): `Promise`\<\{ `autoStop`: `string`; `commandId`: `string`; `instanceId`: `string`; `message`: `string`; `monitoring`: `string`; `statusUrl`: `string`; \}\>
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:23](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L23)
+Defined in: [apps/backend/src/vm/vm.controller.ts:23](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L23)
 
 #### Parameters
 
@@ -176,7 +176,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:23](https://github.com/p0tion-
 
 > **stopInstance**(`lifecycleDto`): `Promise`\<\{ `action`: `string`; `instanceId`: `string`; `message`: `string`; `status`: `string`; \}\>
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:213](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L213)
+Defined in: [apps/backend/src/vm/vm.controller.ts:213](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L213)
 
 #### Parameters
 
@@ -194,7 +194,7 @@ Defined in: [apps/backend/src/vm/vm.controller.ts:213](https://github.com/p0tion
 
 > **terminateInstance**(`lifecycleDto`): `Promise`\<\{ `action`: `string`; `instanceId`: `string`; `message`: `string`; `status`: `string`; `warning`: `string`; \} \| \{ `action`: `string`; `instanceId`: `string`; `message`: `string`; `status`: `string`; `warning?`: `undefined`; \}\>
 
-Defined in: [apps/backend/src/vm/vm.controller.ts:237](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/vm.controller.ts#L237)
+Defined in: [apps/backend/src/vm/vm.controller.ts:237](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/vm.controller.ts#L237)
 
 #### Parameters
 

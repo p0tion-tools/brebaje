@@ -1,14 +1,14 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [types/declarations](../README.md) / UserErrorResponse
+[Brebaje Backend API](../../../index.md) / [types/declarations](../index.md) / UserErrorResponse
 
 # Type Alias: UserErrorResponse
 
 > **UserErrorResponse** = `object`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:4](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L4)
+Defined in: [apps/backend/src/types/declarations.d.ts:4](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L4)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:4](https://github.com/p0ti
 
 > **message**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:5](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L5)
+Defined in: [apps/backend/src/types/declarations.d.ts:5](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L5)
 
 ***
 
@@ -24,7 +24,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:5](https://github.com/p0ti
 
 > **name**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:6](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L6)
+Defined in: [apps/backend/src/types/declarations.d.ts:6](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L6)
 
 ***
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:6](https://github.com/p0ti
 
 > **statusCode**: `number`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:7](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L7)
+Defined in: [apps/backend/src/types/declarations.d.ts:7](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L7)
 
 ***
 
@@ -40,4 +40,4 @@ Defined in: [apps/backend/src/types/declarations.d.ts:7](https://github.com/p0ti
 
 > **user**: `null`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:8](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L8)
+Defined in: [apps/backend/src/types/declarations.d.ts:8](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L8)

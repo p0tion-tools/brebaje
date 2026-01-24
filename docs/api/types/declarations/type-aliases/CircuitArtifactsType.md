@@ -1,14 +1,14 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [types/declarations](../README.md) / CircuitArtifactsType
+[Brebaje Backend API](../../../index.md) / [types/declarations](../index.md) / CircuitArtifactsType
 
 # Type Alias: CircuitArtifactsType
 
 > **CircuitArtifactsType** = `object`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:62](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L62)
+Defined in: [apps/backend/src/types/declarations.d.ts:62](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L62)
 
 ## Properties
 
@@ -16,7 +16,7 @@ Defined in: [apps/backend/src/types/declarations.d.ts:62](https://github.com/p0t
 
 > **r1csStoragePath**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:63](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L63)
+Defined in: [apps/backend/src/types/declarations.d.ts:63](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L63)
 
 ***
 
@@ -24,4 +24,4 @@ Defined in: [apps/backend/src/types/declarations.d.ts:63](https://github.com/p0t
 
 > **wasmStoragePath**: `string`
 
-Defined in: [apps/backend/src/types/declarations.d.ts:64](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/types/declarations.d.ts#L64)
+Defined in: [apps/backend/src/types/declarations.d.ts:64](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/types/declarations.d.ts#L64)

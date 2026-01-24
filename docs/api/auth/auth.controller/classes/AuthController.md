@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [auth/auth.controller](../README.md) / AuthController
+[Brebaje Backend API](../../../index.md) / [auth/auth.controller](../index.md) / AuthController
 
 # Class: AuthController
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:16](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L16)
+Defined in: [apps/backend/src/auth/auth.controller.ts:16](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L16)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:16](https://github.com/p0t
 
 > **new AuthController**(`authService`): `AuthController`
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:17](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L17)
+Defined in: [apps/backend/src/auth/auth.controller.ts:17](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L17)
 
 #### Parameters
 
@@ -30,9 +30,9 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:17](https://github.com/p0t
 
 ### authorizeLogin()
 
-> **authorizeLogin**(`code`, `res`, `state?`): `Promise`&lt;`void`&gt;
+> **authorizeLogin**(`code`, `res`, `state?`): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:58](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L58)
+Defined in: [apps/backend/src/auth/auth.controller.ts:58](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L58)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:58](https://github.com/p0t
 
 #### Returns
 
-`Promise`&lt;`void`&gt;
+`Promise`\<`void`\>
 
 ***
 
@@ -58,7 +58,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:58](https://github.com/p0t
 
 > **generateAuth**(): `object`
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:47](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L47)
+Defined in: [apps/backend/src/auth/auth.controller.ts:47](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L47)
 
 #### Returns
 
@@ -78,7 +78,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:47](https://github.com/p0t
 
 > **generateCardanoNonce**(`generateNonceDto`): `object`
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:92](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L92)
+Defined in: [apps/backend/src/auth/auth.controller.ts:92](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L92)
 
 #### Parameters
 
@@ -100,7 +100,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:92](https://github.com/p0t
 
 > **generateEthNonce**(`generateEthNonceDto`): `object`
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:149](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L149)
+Defined in: [apps/backend/src/auth/auth.controller.ts:149](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L149)
 
 #### Parameters
 
@@ -122,7 +122,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:149](https://github.com/p0
 
 > **getGithubClientId**(): `object`
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:22](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L22)
+Defined in: [apps/backend/src/auth/auth.controller.ts:22](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L22)
 
 #### Returns
 
@@ -138,7 +138,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:22](https://github.com/p0t
 
 > **githubUser**(`deviceFlowTokenDto`): `Promise`\<[`AuthResponseDto`](../../auth.service/-internal-/interfaces/AuthResponseDto.md) \| `Error`\>
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:30](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L30)
+Defined in: [apps/backend/src/auth/auth.controller.ts:30](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L30)
 
 #### Parameters
 
@@ -156,7 +156,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:30](https://github.com/p0t
 
 > **testLogin**(`body`): `Promise`\<[`AuthResponseDto`](../../auth.service/-internal-/interfaces/AuthResponseDto.md)\>
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:132](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L132)
+Defined in: [apps/backend/src/auth/auth.controller.ts:132](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L132)
 
 #### Parameters
 
@@ -174,7 +174,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:132](https://github.com/p0
 
 > **verifyCardanoSignature**(`verifySignatureDto`): `Promise`\<[`AuthResponseDto`](../../auth.service/-internal-/interfaces/AuthResponseDto.md) \| `Error`\>
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:111](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L111)
+Defined in: [apps/backend/src/auth/auth.controller.ts:111](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L111)
 
 #### Parameters
 
@@ -192,7 +192,7 @@ Defined in: [apps/backend/src/auth/auth.controller.ts:111](https://github.com/p0
 
 > **verifyEthSignature**(`verifyEthSignatureDto`): `Promise`\<[`AuthResponseDto`](../../auth.service/-internal-/interfaces/AuthResponseDto.md)\>
 
-Defined in: [apps/backend/src/auth/auth.controller.ts:167](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/auth/auth.controller.ts#L167)
+Defined in: [apps/backend/src/auth/auth.controller.ts:167](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/auth/auth.controller.ts#L167)
 
 #### Parameters
 

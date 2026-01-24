@@ -6,7 +6,7 @@
 
 # Class: Circuit
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:53](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L53)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:53](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L53)
 
 ## Extends
 
@@ -48,7 +48,7 @@ Defined in: node\_modules/.pnpm/sequelize-typescript@2.1.6\_@types+node@22.17.0\
 
 > **artifacts**: [`CircuitArtifactsType`](../../../types/declarations/type-aliases/CircuitArtifactsType.md)
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:187](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L187)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:187](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L187)
 
 #### Implementation of
 
@@ -60,7 +60,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:187](https://github.com/
 
 > `optional` **averageContributionComputationTime**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:124](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L124)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:124](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L124)
 
 #### Implementation of
 
@@ -72,7 +72,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:124](https://github.com/
 
 > `optional` **averageFullContributionTime**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:130](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L130)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:130](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L130)
 
 #### Implementation of
 
@@ -84,7 +84,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:130](https://github.com/
 
 > `optional` **averageVerifyContributionTime**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:136](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L136)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:136](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L136)
 
 #### Implementation of
 
@@ -96,7 +96,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:136](https://github.com/
 
 > **ceremony**: [`Ceremony`](../../../ceremonies/ceremony.model/classes/Ceremony.md)
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:202](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L202)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:202](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L202)
 
 ***
 
@@ -104,7 +104,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:202](https://github.com/
 
 > **ceremonyId**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:61](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L61)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:61](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L61)
 
 #### Implementation of
 
@@ -116,7 +116,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:61](https://github.com/p
 
 > `optional` **compiler**: `object`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:169](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L169)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:169](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L169)
 
 #### Implementation of
 
@@ -128,7 +128,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:169](https://github.com/
 
 > **completedContributions**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:143](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L143)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:143](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L143)
 
 #### Implementation of
 
@@ -140,7 +140,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:143](https://github.com/
 
 > `optional` **constraints**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:112](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L112)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:112](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L112)
 
 #### Implementation of
 
@@ -152,7 +152,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:112](https://github.com/
 
 > **contributions**: [`Contribution`](../../../contributions/contribution.model/classes/Contribution.md)[]
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:205](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L205)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:205](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L205)
 
 ***
 
@@ -160,7 +160,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:205](https://github.com/
 
 > `optional` **contributors**: `number`[]
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:163](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L163)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:163](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L163)
 
 #### Implementation of
 
@@ -172,7 +172,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:163](https://github.com/
 
 > **createdAt**: `Date`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:54](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L54)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:54](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L54)
 
 #### Overrides
 
@@ -184,7 +184,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:54](https://github.com/p
 
 > `optional` **currentContributor**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:156](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L156)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:156](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L156)
 
 #### Implementation of
 
@@ -196,7 +196,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:156](https://github.com/
 
 > `optional` **dynamicThreshold**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:88](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L88)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:88](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L88)
 
 #### Implementation of
 
@@ -208,7 +208,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:88](https://github.com/p
 
 > **failedContributions**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:150](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L150)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:150](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L150)
 
 #### Implementation of
 
@@ -220,7 +220,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:150](https://github.com/
 
 > `optional` **files**: `object`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:199](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L199)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:199](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L199)
 
 #### Implementation of
 
@@ -232,7 +232,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:199](https://github.com/
 
 > `optional` **fixedTimeWindow**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:94](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L94)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:94](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L94)
 
 #### Implementation of
 
@@ -244,7 +244,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:94](https://github.com/p
 
 > **id**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:69](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L69)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:69](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L69)
 
 #### Implementation of
 
@@ -260,7 +260,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:69](https://github.com/p
 
 > `optional` **metadata**: `object`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:193](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L193)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:193](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L193)
 
 #### Implementation of
 
@@ -272,7 +272,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:193](https://github.com/
 
 > **name**: `string`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:75](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L75)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:75](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L75)
 
 #### Implementation of
 
@@ -284,7 +284,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:75](https://github.com/p
 
 > `optional` **pot**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:118](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L118)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:118](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L118)
 
 #### Implementation of
 
@@ -296,7 +296,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:118](https://github.com/
 
 > **sequencePosition**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:100](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L100)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:100](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L100)
 
 #### Implementation of
 
@@ -308,7 +308,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:100](https://github.com/
 
 > `optional` **template**: `object`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:175](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L175)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:175](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L175)
 
 #### Implementation of
 
@@ -320,7 +320,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:175](https://github.com/
 
 > **timeoutMechanismType**: [`CircuitTimeoutType`](../../../types/enums/enumerations/CircuitTimeoutType.md)
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:82](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L82)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:82](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L82)
 
 #### Implementation of
 
@@ -332,7 +332,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:82](https://github.com/p
 
 > **updatedAt**: `Date`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:55](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L55)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:55](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L55)
 
 #### Overrides
 
@@ -344,7 +344,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:55](https://github.com/p
 
 > **verification**: [`CircuitVerificationType`](../../../types/declarations/type-aliases/CircuitVerificationType.md)
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:181](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L181)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:181](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L181)
 
 #### Implementation of
 
@@ -356,7 +356,7 @@ Defined in: [apps/backend/src/circuits/circuit.model.ts:181](https://github.com/
 
 > `optional` **zKeySizeInBytes**: `number`
 
-Defined in: [apps/backend/src/circuits/circuit.model.ts:106](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/circuits/circuit.model.ts#L106)
+Defined in: [apps/backend/src/circuits/circuit.model.ts:106](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/circuits/circuit.model.ts#L106)
 
 #### Implementation of
 

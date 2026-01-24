@@ -1,12 +1,12 @@
-[**Brebaje Backend API v0.0.1**](../../../README.md)
+[**Brebaje Backend API v0.0.1**](../../../index.md)
 
 ***
 
-[Brebaje Backend API](../../../README.md) / [contributions/contributions.controller](../README.md) / ContributionsController
+[Brebaje Backend API](../../../index.md) / [contributions/contributions.controller](../index.md) / ContributionsController
 
 # Class: ContributionsController
 
-Defined in: [apps/backend/src/contributions/contributions.controller.ts:10](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contributions.controller.ts#L10)
+Defined in: [apps/backend/src/contributions/contributions.controller.ts:10](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contributions.controller.ts#L10)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/contributions/contributions.controller.ts:10](http
 
 > **new ContributionsController**(`contributionsService`): `ContributionsController`
 
-Defined in: [apps/backend/src/contributions/contributions.controller.ts:11](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contributions.controller.ts#L11)
+Defined in: [apps/backend/src/contributions/contributions.controller.ts:11](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contributions.controller.ts#L11)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/contributions/contributions.controller.ts:11](http
 
 > **create**(`createContributionDto`): `string`
 
-Defined in: [apps/backend/src/contributions/contributions.controller.ts:21](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contributions.controller.ts#L21)
+Defined in: [apps/backend/src/contributions/contributions.controller.ts:21](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contributions.controller.ts#L21)
 
 #### Parameters
 
@@ -50,7 +50,7 @@ Defined in: [apps/backend/src/contributions/contributions.controller.ts:21](http
 
 > **findAll**(): `string`
 
-Defined in: [apps/backend/src/contributions/contributions.controller.ts:28](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contributions.controller.ts#L28)
+Defined in: [apps/backend/src/contributions/contributions.controller.ts:28](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contributions.controller.ts#L28)
 
 #### Returns
 
@@ -62,7 +62,7 @@ Defined in: [apps/backend/src/contributions/contributions.controller.ts:28](http
 
 > **findOne**(`id`): `string`
 
-Defined in: [apps/backend/src/contributions/contributions.controller.ts:37](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contributions.controller.ts#L37)
+Defined in: [apps/backend/src/contributions/contributions.controller.ts:37](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contributions.controller.ts#L37)
 
 #### Parameters
 
@@ -80,7 +80,7 @@ Defined in: [apps/backend/src/contributions/contributions.controller.ts:37](http
 
 > **remove**(`id`): `string`
 
-Defined in: [apps/backend/src/contributions/contributions.controller.ts:59](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contributions.controller.ts#L59)
+Defined in: [apps/backend/src/contributions/contributions.controller.ts:59](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contributions.controller.ts#L59)
 
 #### Parameters
 
@@ -98,7 +98,7 @@ Defined in: [apps/backend/src/contributions/contributions.controller.ts:59](http
 
 > **update**(`id`, `updateContributionDto`): `string`
 
-Defined in: [apps/backend/src/contributions/contributions.controller.ts:50](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contributions.controller.ts#L50)
+Defined in: [apps/backend/src/contributions/contributions.controller.ts:50](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/contributions/contributions.controller.ts#L50)
 
 #### Parameters
 

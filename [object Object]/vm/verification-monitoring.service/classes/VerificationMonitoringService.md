@@ -6,7 +6,7 @@
 
 # Class: VerificationMonitoringService
 
-Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:9](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/verification-monitoring.service.ts#L9)
+Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:9](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/verification-monitoring.service.ts#L9)
 
 ## Constructors
 
@@ -14,7 +14,7 @@ Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:9](https://g
 
 > **new VerificationMonitoringService**(`vmService`): `VerificationMonitoringService`
 
-Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:21](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/verification-monitoring.service.ts#L21)
+Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:21](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/verification-monitoring.service.ts#L21)
 
 #### Parameters
 
@@ -32,7 +32,7 @@ Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:21](https://
 
 > **checkVerificationStatus**(): `Promise`\<`void`\>
 
-Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:51](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/verification-monitoring.service.ts#L51)
+Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:51](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/verification-monitoring.service.ts#L51)
 
 CRON job to check verification status every 5 minutes.
 
@@ -46,7 +46,7 @@ CRON job to check verification status every 5 minutes.
 
 > **getMonitoringStatus**(): `object`
 
-Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:198](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/verification-monitoring.service.ts#L198)
+Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:198](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/verification-monitoring.service.ts#L198)
 
 Get current monitoring status.
 
@@ -70,7 +70,7 @@ Object with monitoring statistics.
 
 > **startMonitoring**(`commandId`, `instanceId`, `notificationConfig?`, `autoStop?`, `ptauFilename?`): `void`
 
-Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:31](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/vm/verification-monitoring.service.ts#L31)
+Defined in: [apps/backend/src/vm/verification-monitoring.service.ts:31](https://github.com/p0tion-tools/brebaje/blob/904e9eb12c4f184407795877a8c70cca972bcb97/apps/backend/src/vm/verification-monitoring.service.ts#L31)
 
 Start monitoring a verification job.
 
