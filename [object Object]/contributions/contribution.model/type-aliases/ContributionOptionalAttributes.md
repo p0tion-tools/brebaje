@@ -1,0 +1,11 @@
+[**Brebaje Backend API v0.0.1**](../../../README.md)
+
+***
+
+[Brebaje Backend API](../../../README.md) / [contributions/contribution.model](../README.md) / ContributionOptionalAttributes
+
+# Type Alias: ContributionOptionalAttributes
+
+> **ContributionOptionalAttributes** = `"id"` \| `"contributionComputationTime"` \| `"fullContributionTime"` \| `"verifyContributionTime"` \| `"zkeyIndex"` \| `"valid"` \| `"lastUpdated"` \| `"files"` \| `"verificationSoftware"` \| `"beacon"`
+
+Defined in: [apps/backend/src/contributions/contribution.model.ts:23](https://github.com/p0tion-tools/brebaje/blob/adec25cb37dc5c3412576402afa3a4ca679730fd/apps/backend/src/contributions/contribution.model.ts#L23)

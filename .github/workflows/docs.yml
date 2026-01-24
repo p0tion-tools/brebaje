@@ -1,43 +1,103 @@
-name: Docs
+name: Documentation
 
 on:
   push:
-    branches:
-      - main
+    branches: [main]
+    paths:
+      - 'apps/backend/**'
+      - 'docs/**'
+      - 'website/**'
+      - 'typedoc.json'
+      - 'package.json'
+      - 'pnpm-lock.yaml'
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   build-and-deploy:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
+
     steps:
-      - name: Checkout
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up pnpm
+      - name: Install pnpm 10.24.0
         uses: pnpm/action-setup@v4
         with:
-          version: 10
+          version: 10.24.0
+          run_install: false
 
-      - name: Set up Node
+      - name: Verify pnpm version
+        run: |
+          pnpm --version
+          which pnpm
+
+      - name: Use Node.js 22
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-          cache: pnpm
+          node-version: 22.17.x
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
 
-      - name: Install dependencies
-        run: pnpm install --frozen-lockfile
+      - name: Install all dependencies
+        run: |
+          pnpm install --frozen-lockfile --prefer-offline
 
-      - name: Generate API reference
-        run: pnpm exec typedoc
+      - name: Build backend (for TypeDoc)
+        working-directory: apps/backend
+        run: |
+          pnpm run build
+
+      - name: Generate TypeDoc API documentation
+        run: |
+          pnpm run docs
 
       - name: Build Docusaurus site
-        run: pnpm exec docusaurus build
+        working-directory: website
+        run: |
+          pnpm install
+          pnpm build
 
-      - name: Trigger Read the Docs build
+      - name: Prepare build artifact
+        working-directory: website
+        run: |
+          # Create a tarball of the build directory for deployment
+          tar -czf ../docusaurus-build.tar.gz build/
+          echo "Build artifact created: docusaurus-build.tar.gz"
+
+      - name: Deploy to Read the Docs
         env:
           RTD_WEBHOOK_URL: ${{ secrets.RTD_WEBHOOK_URL }}
         run: |
           if [ -z "$RTD_WEBHOOK_URL" ]; then
-            echo "RTD_WEBHOOK_URL is not set"
+            echo "Warning: RTD_WEBHOOK_URL secret not set. Skipping deployment."
+            echo "To enable deployment, set the RTD_WEBHOOK_URL secret in GitHub repository settings."
+            exit 0
+          fi
+          
+          # Send build notification to Read the Docs webhook
+          # The webhook should trigger a rebuild on Read the Docs
+          response=$(curl -s -w "\n%{http_code}" -X POST "$RTD_WEBHOOK_URL" \
+            -H "Content-Type: application/json" \
+            -d "{
+              \"build\": {
+                \"version\": \"${{ github.sha }}\",
+                \"branch\": \"${{ github.ref_name }}\",
+                \"commit\": \"${{ github.event.head_commit.id }}\",
+                \"repository\": \"${{ github.repository }}\"
+              }
+            }")
+          
+          http_code=$(echo "$response" | tail -n1)
+          body=$(echo "$response" | head -n-1)
+          
+          if [ "$http_code" -ge 200 ] && [ "$http_code" -lt 300 ]; then
+            echo "✅ Deployment trigger sent successfully to Read the Docs"
+            echo "Response: $body"
+          else
+            echo "❌ Failed to trigger deployment. HTTP $http_code"
+            echo "Response: $body"
             exit 1
           fi
-          curl -sSf -X POST "$RTD_WEBHOOK_URL"

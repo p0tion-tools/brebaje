@@ -1,0 +1,15 @@
+[**Brebaje Backend API v0.0.1**](../../../README.md)
+
+***
+
+[Brebaje Backend API](../../../README.md) / [auth/auth.controller](../README.md) / \<internal\>
+
+# \<internal\>
+
+## Classes
+
+- [GenerateEthNonceDto](classes/GenerateEthNonceDto.md)
+- [GenerateNonceDto](classes/GenerateNonceDto.md)
+- [TestLoginDto](classes/TestLoginDto.md)
+- [VerifyEthSignatureDto](classes/VerifyEthSignatureDto.md)
+- [VerifySignatureDto](classes/VerifySignatureDto.md)

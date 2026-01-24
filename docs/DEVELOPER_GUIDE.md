@@ -21,14 +21,12 @@
 ### Initial Setup
 
 1. Clone the repository:
-
    ```bash
    git clone <repository-url>
    cd brebaje
    ```
 
 2. Install dependencies:
-
    ```bash
    pnpm install
    ```
@@ -45,21 +43,18 @@
 ### Running the Project
 
 #### Backend
-
 ```bash
 cd apps/backend
 pnpm start:dev
 ```
 
 #### Frontend
-
 ```bash
 cd apps/frontend
 pnpm dev
 ```
 
 #### CLI
-
 ```bash
 cd apps/cli
 pnpm build
@@ -113,7 +108,6 @@ We follow [Conventional Commits](https://www.conventionalcommits.org/) format:
 ```
 
 Types:
-
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation changes
@@ -131,7 +125,6 @@ Before each commit, the following validations run automatically:
 3. **Prettier**: Formats code consistently
 
 To bypass hooks (not recommended):
-
 ```bash
 git commit --no-verify
 ```
@@ -190,13 +183,12 @@ We use Prettier with the following standards:
 4. Type-only imports (use `import type`)
 
 Example:
-
 ```typescript
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
+import { Injectable } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 
-import type { User } from "../types";
-import { UserService } from "./user.service";
+import type { User } from '../types';
+import { UserService } from './user.service';
 ```
 
 ## Documentation
@@ -214,7 +206,7 @@ All public APIs must have TSDoc comments. See [TSDoc Guide](./TSDOC_GUIDE.md) fo
 
 #### Example
 
-````typescript
+```typescript
 /**
  * Authenticates a user using GitHub OAuth.
  *
@@ -231,7 +223,7 @@ All public APIs must have TSDoc comments. See [TSDoc Guide](./TSDOC_GUIDE.md) fo
 async authenticate(code: string): Promise<User> {
   // Implementation
 }
-````
+```
 
 ### Generating Documentation
 
@@ -286,15 +278,14 @@ pnpm test:cov
 - Test edge cases and error conditions
 
 Example:
-
 ```typescript
-describe("UserService", () => {
-  describe("findById", () => {
-    it("should return user when found", async () => {
+describe('UserService', () => {
+  describe('findById', () => {
+    it('should return user when found', async () => {
       // Arrange
       const userId = 1;
-      const expectedUser = { id: 1, name: "Test User" };
-      jest.spyOn(userRepository, "findOne").mockResolvedValue(expectedUser);
+      const expectedUser = { id: 1, name: 'Test User' };
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(expectedUser);
 
       // Act
       const result = await userService.findById(userId);
@@ -304,12 +295,12 @@ describe("UserService", () => {
       expect(userRepository.findOne).toHaveBeenCalledWith(userId);
     });
 
-    it("should throw error when user not found", async () => {
+    it('should throw error when user not found', async () => {
       // Arrange
-      jest.spyOn(userRepository, "findOne").mockResolvedValue(null);
+      jest.spyOn(userRepository, 'findOne').mockResolvedValue(null);
 
       // Act & Assert
-      await expect(userService.findById(999)).rejects.toThrow("User not found");
+      await expect(userService.findById(999)).rejects.toThrow('User not found');
     });
   });
 });
@@ -380,7 +371,7 @@ pnpm prettier:fix
 
 - [TSDoc Guide](./TSDOC_GUIDE.md)
 - [Contributing Guide](./CONTRIBUTING.md)
-- [API Documentation](/api) (generated)
+- [API Documentation](/docs) (generated)
 - [NestJS Documentation](https://docs.nestjs.com/)
 - [Next.js Documentation](https://nextjs.org/docs)
 
@@ -390,3 +381,4 @@ pnpm prettier:fix
 - Search existing issues
 - Ask in team chat
 - Create a new issue with detailed information
+

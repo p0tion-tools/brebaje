@@ -11,11 +11,10 @@
     "node": ">=22.17.1"
   },
   "devDependencies": {
-    "@docusaurus/core": "^3.8.1",
-    "@docusaurus/preset-classic": "^3.8.1",
-    "@types/node": "^20.19.13",
     "@commitlint/cli": "^19.8.1",
     "@commitlint/config-conventional": "^19.8.1",
+    "@docusaurus/core": "^3.9.2",
+    "@docusaurus/preset-classic": "^3.9.2",
     "@eslint/js": "^9.18.0",
     "@typescript-eslint/eslint-plugin": "^8.35.1",
     "@typescript-eslint/parser": "^8.35.1",
@@ -25,15 +24,15 @@
     "eslint-plugin-tsdoc": "^0.2.17",
     "globals": "^16.0.0",
     "husky": "^9.1.7",
-    "katex": "^0.16.22",
+    "katex": "^0.16.27",
     "lerna": "^8.2.3",
     "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
     "rehype-katex": "^7.0.1",
     "remark-math": "^6.0.0",
     "typedoc": "^0.28.15",
+    "typedoc-plugin-markdown": "^4.9.0",
     "typedoc-plugin-missing-exports": "^4.1.2",
-    "typedoc-plugin-markdown": "^4.5.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.35.1"
   },
@@ -45,8 +44,11 @@
     "prepare": "husky",
     "test": "lerna run test --stream",
     "build": "lerna run build --ignore=website",
-    "docs": "typedoc",
-    "docs:watch": "typedoc --watch"
+    "docs": "typedoc && ./scripts/fix-mdx-generics.sh",
+    "docs:watch": "typedoc --watch",
+    "docs:build": "pnpm docs && cd website && pnpm install && pnpm build",
+    "docs:start": "cd website && pnpm start",
+    "docs:serve": "cd website && pnpm serve"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [

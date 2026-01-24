@@ -1,0 +1,13 @@
+{
+  // This file is not used, but is provided for IDE support
+  // Docusaurus uses its own TypeScript configuration
+  "extends": "@docusaurus/tsconfig",
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "@site/*": ["./src/*"],
+      "@docusaurus/*": ["node_modules/@docusaurus/*"]
+    }
+  },
+  "include": ["src/**/*", "src/**/*.tsx", "src/**/*.ts"]
+}

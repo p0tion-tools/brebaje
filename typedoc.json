@@ -1,7 +1,15 @@
 {
   "$schema": "https://typedoc.org/schema.json",
-  "entryPoints": ["apps/backend/src", "apps/cli/src", "apps/frontend/app", "packages/actions/src"],
-  "entryPointStrategy": "expand",
+  "entryPoints": [
+    "apps/backend/src/**/*.module.ts",
+    "apps/backend/src/**/*.controller.ts",
+    "apps/backend/src/**/*.service.ts",
+    "apps/backend/src/**/*.model.ts",
+    "apps/backend/src/**/*.dto.ts",
+    "apps/backend/src/**/*.guard.ts",
+    "apps/backend/src/utils/**/*.ts",
+    "apps/backend/src/types/**/*.ts"
+  ],
   "out": "docs/api",
   "exclude": [
     "**/*.spec.ts",
@@ -15,12 +23,13 @@
   "excludeProtected": false,
   "excludeInternal": false,
   "readme": "none",
-  "name": "Brebaje Documentation",
+  "name": "Brebaje Backend API",
   "includeVersion": true,
-  "plugin": ["typedoc-plugin-missing-exports", "typedoc-plugin-markdown"],
-  "theme": "markdown",
-  "entryFileName": "index",
-  "tsconfig": "tsconfig.docs.json",
+  "plugin": [
+    "typedoc-plugin-markdown",
+    "typedoc-plugin-missing-exports"
+  ],
+  "tsconfig": "apps/backend/tsconfig.json",
   "compilerOptions": {
     "skipLibCheck": true
   },
@@ -34,6 +43,13 @@
     "invalidLink": true,
     "notDocumented": true
   },
-  "skipErrorChecking": true,
-  "useHTMLEncodedBrackets": true
+  "markdown": {
+    "hidePageHeader": true,
+    "hideBreadcrumbs": false,
+    "hidePageTitle": false,
+    "indexFormat": "table",
+    "entryFileName": "index.md",
+    "readmeFile": false
+  }
 }
+
