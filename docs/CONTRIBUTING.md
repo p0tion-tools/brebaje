@@ -33,22 +33,26 @@ Thank you for your interest in contributing to Brebaje! This guide will help you
 1. **Fork the repository** on GitHub
 
 2. **Clone your fork**:
+
    ```bash
    git clone https://github.com/YOUR_USERNAME/brebaje.git
    cd brebaje
    ```
 
 3. **Add upstream remote**:
+
    ```bash
    git remote add upstream https://github.com/ORIGINAL_OWNER/brebaje.git
    ```
 
 4. **Install dependencies**:
+
    ```bash
    pnpm install
    ```
 
 5. **Set up Git hooks**:
+
    ```bash
    pnpm prepare
    ```
@@ -71,6 +75,7 @@ Thank you for your interest in contributing to Brebaje! This guide will help you
 ### Making Changes
 
 1. **Create a feature branch** from `main`:
+
    ```bash
    git checkout main
    git pull upstream main
@@ -80,18 +85,21 @@ Thank you for your interest in contributing to Brebaje! This guide will help you
 2. **Make your changes** following the coding standards
 
 3. **Test your changes**:
+
    ```bash
    pnpm test
    pnpm lint
    ```
 
 4. **Commit your changes** using conventional commits:
+
    ```bash
    git add .
    git commit -m "feat: add new authentication method"
    ```
 
 5. **Push to your fork**:
+
    ```bash
    git push origin feature/your-feature
    ```
@@ -159,12 +167,14 @@ export class userService {
 All public APIs must have TSDoc comments. See [TSDoc Guide](./TSDOC_GUIDE.md) for details.
 
 **Required for:**
+
 - Exported functions
 - Exported classes and their public methods
 - Exported interfaces and types
 - Complex internal functions
 
 **Example:**
+
 ```typescript
 /**
  * Authenticates a user using GitHub OAuth.
@@ -181,6 +191,7 @@ async authenticate(code: string): Promise<User> {
 ### README Updates
 
 Update README files when:
+
 - Adding new features
 - Changing setup instructions
 - Modifying API usage
@@ -198,13 +209,13 @@ Update README files when:
 ### Test Structure
 
 ```typescript
-describe('UserService', () => {
-  describe('findById', () => {
-    it('should return user when found', async () => {
+describe("UserService", () => {
+  describe("findById", () => {
+    it("should return user when found", async () => {
       // Arrange
       const userId = 1;
-      const expectedUser = { id: 1, name: 'Test' };
-      jest.spyOn(repository, 'findOne').mockResolvedValue(expectedUser);
+      const expectedUser = { id: 1, name: "Test" };
+      jest.spyOn(repository, "findOne").mockResolvedValue(expectedUser);
 
       // Act
       const result = await service.findById(userId);
@@ -213,7 +224,7 @@ describe('UserService', () => {
       expect(result).toEqual(expectedUser);
     });
 
-    it('should throw error when user not found', async () => {
+    it("should throw error when user not found", async () => {
       // Test error case
     });
   });
@@ -248,6 +259,7 @@ pnpm test path/to/file.spec.ts
    - [ ] Code follows style guidelines
 
 2. **Update your branch**:
+
    ```bash
    git checkout main
    git pull upstream main
@@ -256,6 +268,7 @@ pnpm test path/to/file.spec.ts
    ```
 
 3. **Push your changes**:
+
    ```bash
    git push origin feature/your-feature
    ```
@@ -269,6 +282,7 @@ pnpm test path/to/file.spec.ts
 ### PR Title Format
 
 Follow conventional commits format:
+
 - `feat: add user authentication`
 - `fix: resolve memory leak in service`
 - `docs: update API documentation`
@@ -278,18 +292,22 @@ Follow conventional commits format:
 
 ```markdown
 ## Description
+
 Brief description of changes
 
 ## Type of Change
+
 - [ ] Bug fix
 - [ ] New feature
 - [ ] Breaking change
 - [ ] Documentation update
 
 ## Testing
+
 Describe how you tested your changes
 
 ## Checklist
+
 - [ ] Code follows style guidelines
 - [ ] Self-review completed
 - [ ] Comments added for complex code
@@ -317,6 +335,7 @@ Describe how you tested your changes
 ### Pre-commit Hook Failures
 
 If hooks fail:
+
 ```bash
 # Run linting manually
 pnpm lint:fix
@@ -358,9 +377,9 @@ npx tsc --noEmit
 ## Recognition
 
 Contributors will be:
+
 - Listed in CONTRIBUTORS.md
 - Credited in release notes
 - Appreciated by the community
 
 Thank you for contributing to Brebaje! 🚀
-

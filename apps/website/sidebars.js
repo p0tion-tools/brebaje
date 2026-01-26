@@ -32,7 +32,14 @@ const sidebars = {
         type: "doc",
         id: "api/index",
       },
-      items: require("./docs/api/typedoc-sidebar.cjs"),
+      items: (() => {
+        try {
+          return require("./docs/api/typedoc-sidebar.cjs");
+        } catch (e) {
+          // TypeDoc sidebar will be generated during build
+          return [];
+        }
+      })(),
     },
   ],
 };

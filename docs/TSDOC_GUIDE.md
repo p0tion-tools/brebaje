@@ -54,10 +54,10 @@ export class AuthService {
 export interface User {
   /** The unique identifier for the user */
   id: number;
-  
+
   /** The user's display name */
   name: string;
-  
+
   /** The user's email address */
   email: string;
 }
@@ -104,7 +104,7 @@ Documents exceptions that may be thrown.
  */
 function getUser(id: number): User {
   if (!id) {
-    throw new ValidationError('ID is required');
+    throw new ValidationError("ID is required");
   }
   // ...
 }
@@ -114,7 +114,7 @@ function getUser(id: number): User {
 
 Provides usage examples.
 
-```typescript
+````typescript
 /**
  * Formats a date to a readable string.
  *
@@ -130,7 +130,7 @@ Provides usage examples.
 function formatDate(date: Date): string {
   // ...
 }
-```
+````
 
 ### @remarks
 
@@ -239,7 +239,7 @@ function updatePreferences(
   preferences: {
     theme: string;
     notifications: boolean;
-  }
+  },
 ): void {
   // ...
 }
@@ -247,7 +247,7 @@ function updatePreferences(
 
 ### Async Functions
 
-```typescript
+````typescript
 /**
  * Fetches data from the API.
  *
@@ -262,7 +262,7 @@ function updatePreferences(
 async function fetchData(endpoint: string): Promise<ApiResponse> {
   // ...
 }
-```
+````
 
 ### Method Overloads
 
@@ -332,7 +332,7 @@ function createCeremony(name: string, startDate: Date): Ceremony {
 
 ### 3. Include Examples for Complex APIs
 
-```typescript
+````typescript
 /**
  * Validates a contribution file.
  *
@@ -350,13 +350,10 @@ function createCeremony(name: string, startDate: Date): Ceremony {
  * }
  * ```
  */
-async function validateContribution(
-  file: File,
-  ceremonyId: number
-): Promise<ValidationResult> {
+async function validateContribution(file: File, ceremonyId: number): Promise<ValidationResult> {
   // ...
 }
-```
+````
 
 ### 4. Document Error Conditions
 
@@ -446,6 +443,7 @@ pnpm docs
 ```
 
 The generated documentation includes:
+
 - All exported APIs
 - Parameter descriptions
 - Return types
@@ -469,4 +467,3 @@ Before committing code, ensure:
 - [ ] Complex APIs have @example sections
 - [ ] ESLint TSDoc validation passes
 - [ ] Documentation generates without errors
-

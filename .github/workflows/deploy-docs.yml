@@ -37,6 +37,7 @@ jobs:
         with:
           node-version: "22.17.x"
           cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
 
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
@@ -47,6 +48,7 @@ jobs:
           pnpm build
         env:
           NODE_ENV: production
+          # Ensure API docs are generated before build
 
       - name: Upload build artifacts
         uses: actions/upload-pages-artifact@v3

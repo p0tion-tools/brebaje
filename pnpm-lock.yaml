@@ -49,12 +49,6 @@ importers:
       prettier:
         specifier: ^3.6.2
         version: 3.6.2
-      typedoc:
-        specifier: ^0.28.15
-        version: 0.28.15(typescript@5.9.2)
-      typedoc-plugin-missing-exports:
-        specifier: ^4.1.2
-        version: 4.1.2(typedoc@0.28.15(typescript@5.9.2))
       typescript:
         specifier: ^5.9.2
         version: 5.9.2
@@ -394,6 +388,9 @@ importers:
       typedoc-plugin-mermaid:
         specifier: ^1.12.0
         version: 1.12.0(typedoc@0.28.15(typescript@5.9.3))
+      typedoc-plugin-missing-exports:
+        specifier: ^4.1.2
+        version: 4.1.2(typedoc@0.28.15(typescript@5.9.3))
     devDependencies:
       "@docusaurus/module-type-aliases":
         specifier: ^3.7.0
@@ -39373,18 +39370,9 @@ snapshots:
       html-escaper: 3.0.3
       typedoc: 0.28.15(typescript@5.9.3)
 
-  typedoc-plugin-missing-exports@4.1.2(typedoc@0.28.15(typescript@5.9.2)):
+  typedoc-plugin-missing-exports@4.1.2(typedoc@0.28.15(typescript@5.9.3)):
     dependencies:
-      typedoc: 0.28.15(typescript@5.9.2)
-
-  typedoc@0.28.15(typescript@5.9.2):
-    dependencies:
-      "@gerrit0/mini-shiki": 3.19.0
-      lunr: 2.3.9
-      markdown-it: 14.1.0
-      minimatch: 9.0.5
-      typescript: 5.9.2
-      yaml: 2.8.2
+      typedoc: 0.28.15(typescript@5.9.3)
 
   typedoc@0.28.15(typescript@5.9.3):
     dependencies:

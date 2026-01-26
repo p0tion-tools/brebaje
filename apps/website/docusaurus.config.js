@@ -19,7 +19,6 @@ const config = {
   projectName: "brebaje", // Usually your repo name.
 
   onBrokenLinks: "throw",
-  onBrokenMarkdownLinks: "warn",
 
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
@@ -51,6 +50,9 @@ const config = {
   markdown: {
     mermaid: true,
     format: "detect",
+    hooks: {
+      onBrokenMarkdownLinks: "warn",
+    },
   },
 
   themes: ["@docusaurus/theme-mermaid"],
@@ -131,20 +133,9 @@ const config = {
       "docusaurus-plugin-typedoc",
       {
         // Entry points configuration - all backend modules
-        entryPoints: [
-          "../backend/src/auth/**/*.ts",
-          "../backend/src/ceremonies/**/*.ts",
-          "../backend/src/circuits/**/*.ts",
-          "../backend/src/contributions/**/*.ts",
-          "../backend/src/health/**/*.ts",
-          "../backend/src/participants/**/*.ts",
-          "../backend/src/projects/**/*.ts",
-          "../backend/src/storage/**/*.ts",
-          "../backend/src/users/**/*.ts",
-          "../backend/src/vm/**/*.ts",
-          "../backend/src/types/**/*.ts",
-          "../backend/src/utils/**/*.ts",
-        ],
+        // Use the entire src directory to ensure all files are discovered
+        entryPoints: ["../backend/src"],
+        entryPointStrategy: "expand", // Expand to discover all files in the directory
 
         // Exclusion patterns
         exclude: [
@@ -159,44 +150,30 @@ const config = {
         // TypeScript configuration
         tsconfig: "../backend/tsconfig.json",
 
+        // Project metadata - required for index page generation
+        name: "Brebaje API",
+
         // Output configuration
         out: "docs/api",
+        cleanOutputDir: false, // Don't clean output dir - we generate manually in prebuild
 
         // Documentation structure
-        outputFileStrategy: "members",
+        router: "member", // Use "member" router (individual files per member)
+        entryFileName: "index",
         hideBreadcrumbs: true,
-        flattenOutputFiles: false,
-        disableSources: false,
         categoryOrder: ["Modules", "Classes", "Interfaces", "Enums", "*"],
         indexFormat: "table", // Use table format for index
 
         // Sidebar configuration
         sidebar: {
           autoConfiguration: true,
-          pretty: true,
         },
 
         // Visibility settings
         excludePrivate: true,
-        excludeProtected: false,
-
-        // Validation
-        validation: {
-          invalidLink: true,
-          notDocumented: false,
-        },
-
-        // Documentation content
-        readme: "none",
 
         // Watch mode for development
         watch: process.env.NODE_ENV !== "production",
-
-        // Sidebar configuration
-        sidebar: {
-          autoConfiguration: true,
-          pretty: true,
-        },
       },
     ],
   ],

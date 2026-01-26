@@ -6,6 +6,10 @@
   "scripts": {
     "docusaurus": "docusaurus",
     "start": "docusaurus start",
+    "prebuild": "npm run generate-api-docs",
+    "generate-api-docs": "npx typedoc --entryPoints '../backend/src' --entryPointStrategy expand --tsconfig ../backend/tsconfig.json --plugin typedoc-plugin-markdown --out docs/api --router member --entryFileName index --hideBreadcrumbs --excludePrivate --name 'Brebaje API' --exclude '**/main.ts' --exclude '**/*.spec.ts' --exclude '**/*.test.ts' --exclude '**/node_modules/**' --exclude '**/dist/**' --exclude '**/build/**' --exclude '**/database/**'",
+    "docs": "npm run generate-api-docs",
+    "docs:watch": "npx typedoc --entryPoints ../backend/src/app.module.ts --entryPointStrategy expand --tsconfig ../backend/tsconfig.json --plugin typedoc-plugin-markdown --out docs/api --router member --entryFileName index --hideBreadcrumbs --excludePrivate --name 'Brebaje API' --exclude '**/main.ts' --exclude '**/*.spec.ts' --exclude '**/*.test.ts' --exclude '**/node_modules/**' --exclude '**/dist/**' --exclude '**/build/**' --watch",
     "build": "docusaurus build",
     "swizzle": "docusaurus swizzle",
     "deploy": "docusaurus deploy",
@@ -26,7 +30,8 @@
     "react-dom": "^18.3.1",
     "typedoc": "^0.28.15",
     "typedoc-plugin-markdown": "^4.4.3",
-    "typedoc-plugin-mermaid": "^1.12.0"
+    "typedoc-plugin-mermaid": "^1.12.0",
+    "typedoc-plugin-missing-exports": "^4.1.2"
   },
   "devDependencies": {
     "@docusaurus/module-type-aliases": "^3.7.0",
