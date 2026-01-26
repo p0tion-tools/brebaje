@@ -164,7 +164,7 @@ export class userService {
 
 ### TSDoc Comments
 
-All public APIs must have TSDoc comments. See [TSDoc Guide](./TSDOC_GUIDE.md) for details.
+All public APIs must have TSDoc comments. See [TSDoc Guide](/tsdoc-guide) for details.
 
 **Required for:**
 

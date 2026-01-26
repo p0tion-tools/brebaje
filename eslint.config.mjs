@@ -28,11 +28,17 @@ export default tseslint.config(
       "**/dist/**",
       "**/build/**",
       "**/.next/**",
+      "**/.docusaurus/**",
       "**/coverage/**",
       "**/*.config.js",
       "**/*.config.mjs",
       "**/pnpm-lock.yaml",
       "**/package-lock.json",
+      "**/docusaurus.config.js",
+      "**/sidebars.js",
+      "**/.docusaurus/**",
+      "**/typedoc-sidebar.cjs", // Generated file by TypeDoc plugin
+      "**/docs/api/**", // Generated API documentation files
     ],
   },
   {
