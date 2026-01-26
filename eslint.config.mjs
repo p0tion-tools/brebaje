@@ -33,6 +33,8 @@ export default tseslint.config(
       "**/*.config.mjs",
       "**/pnpm-lock.yaml",
       "**/package-lock.json",
+      "**/docusaurus.config.js",
+      "**/sidebars.js",
     ],
   },
   {
