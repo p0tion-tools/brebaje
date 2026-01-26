@@ -74,5 +74,5 @@ For API documentation, see the [API Reference](/api).
 
 For questions and support:
 
-- GitHub Issues: [github.com/zkpservices/brebaje/issues](https://github.com/zkpservices/brebaje/issues)
-- Documentation: [brebaje.io](https://brebaje.io)
+- GitHub Issues: [github.com/p0tion-tools/brebaje/issues](https://github.com/p0tion-tools/brebaje/issues)
+- Documentation: [p0tion-tools.github.io/brebaje](https://p0tion-tools.github.io/brebaje)

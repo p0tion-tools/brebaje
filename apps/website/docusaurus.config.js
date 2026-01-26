@@ -8,14 +8,14 @@ const config = {
   favicon: "img/favicon.ico",
 
   // Set the production url of your site here
-  url: "https://brebaje.io",
+  url: "https://p0tion-tools.github.io",
   // Set the /<baseUrl>/ pathname under which your site is served
   // For GitHub pages deployment, it is often '/<projectName>/'
-  baseUrl: "/",
+  baseUrl: "/brebaje/",
 
   // GitHub pages deployment config.
   // If you aren't using GitHub pages, you don't need these.
-  organizationName: "zkpservices", // Usually your GitHub org/user name.
+  organizationName: "p0tion-tools", // Usually your GitHub org/user name.
   projectName: "brebaje", // Usually your repo name.
 
   onBrokenLinks: "throw",
@@ -38,7 +38,7 @@ const config = {
           sidebarPath: "./sidebars.js",
           routeBasePath: "/",
           // Remove this to remove the "edit this page" links.
-          editUrl: "https://github.com/zkpservices/brebaje/tree/main/apps/website/",
+          editUrl: "https://github.com/p0tion-tools/brebaje/tree/main/apps/website/",
         },
         blog: false,
         theme: {
@@ -80,7 +80,7 @@ const config = {
             label: "API Reference",
           },
           {
-            href: "https://github.com/zkpservices/brebaje",
+            href: "https://github.com/p0tion-tools/brebaje",
             position: "right",
             className: "header-github-link",
             "aria-label": "GitHub repository",
@@ -108,12 +108,12 @@ const config = {
             items: [
               {
                 label: "GitHub",
-                href: "https://github.com/zkpservices/brebaje",
+                href: "https://github.com/p0tion-tools/brebaje",
               },
             ],
           },
         ],
-        copyright: `Copyright © ${new Date().getFullYear()} Brebaje. Built with Docusaurus.`,
+        copyright: `Copyright © ${new Date().getFullYear()} The Brebaje Community. Built with Docusaurus.`,
       },
       prism: {
         theme: require("prism-react-renderer").themes.github,
