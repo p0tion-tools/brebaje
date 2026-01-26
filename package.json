@@ -37,7 +37,7 @@
     "prettier:fix": "prettier --write .",
     "prepare": "husky",
     "test": "lerna run test --stream",
-    "build": "lerna run build --ignore=website",
+    "build": "lerna run build --ignore=@brebaje/website",
     "docs": "typedoc",
     "docs:watch": "typedoc --watch"
   },

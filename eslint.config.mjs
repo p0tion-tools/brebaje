@@ -35,6 +35,8 @@ export default tseslint.config(
       "**/package-lock.json",
       "**/docusaurus.config.js",
       "**/sidebars.js",
+      "**/.docusaurus/**",
+      "**/docs/api/**",
     ],
   },
   {
