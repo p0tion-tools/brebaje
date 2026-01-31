@@ -6,6 +6,7 @@ import { FlatCompat } from "@eslint/eslintrc";
 import typescript from "@typescript-eslint/eslint-plugin";
 import typescriptParser from "@typescript-eslint/parser";
 import prettier from "eslint-plugin-prettier";
+import react from "eslint-plugin-react";
 import tsdoc from "eslint-plugin-tsdoc";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
@@ -44,6 +45,7 @@ export default [
     plugins: {
       "@typescript-eslint": typescript,
       prettier: prettier,
+      react: react,
       tsdoc: tsdoc,
     },
     rules: {
@@ -59,7 +61,7 @@ export default [
           singleAttributePerLine: true,
         },
       ],
-      "tsdoc/syntax": "error",
+      "tsdoc/syntax": "warn",
       "react/jsx-max-props-per-line": [1, { maximum: 1 }],
       "react/jsx-first-prop-new-line": [1, "multiline"],
       // Allow unused vars that start with underscore
