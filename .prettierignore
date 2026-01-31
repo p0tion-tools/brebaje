@@ -1,3 +1,5 @@
 node_modules
 dist
 build
+apps/website/docs/api/**
+apps/website/.docusaurus/**

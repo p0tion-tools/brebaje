@@ -283,9 +283,9 @@ pnpm exec lint-staged
 
 ## Next Steps
 
-1. Read the [Developer Guide](./DEVELOPER_GUIDE.md)
-2. Review [TSDoc Guide](./TSDOC_GUIDE.md)
-3. Check [Contributing Guide](./CONTRIBUTING.md)
+1. Read the [Developer Guide](/developer-guide)
+2. Review [TSDoc Guide](/tsdoc-guide)
+3. Check [Contributing Guide](/contributing)
 4. Explore the codebase
 5. Start contributing!
 

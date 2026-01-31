@@ -25,8 +25,6 @@
     "lerna": "^8.2.3",
     "lint-staged": "^16.1.2",
     "prettier": "^3.6.2",
-    "typedoc": "^0.28.15",
-    "typedoc-plugin-missing-exports": "^4.1.2",
     "typescript": "^5.9.2",
     "typescript-eslint": "^8.35.1"
   },
@@ -37,9 +35,7 @@
     "prettier:fix": "prettier --write .",
     "prepare": "husky",
     "test": "lerna run test --stream",
-    "build": "lerna run build --ignore=website",
-    "docs": "typedoc",
-    "docs:watch": "typedoc --watch"
+    "build": "lerna run build --ignore=website"
   },
   "lint-staged": {
     "**/*.{js,jsx,ts,tsx}": [
