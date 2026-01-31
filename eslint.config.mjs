@@ -28,7 +28,6 @@ export default tseslint.config(
       "**/dist/**",
       "**/build/**",
       "**/.next/**",
-      "**/.docusaurus/**",
       "**/coverage/**",
       "**/*.config.js",
       "**/*.config.mjs",
