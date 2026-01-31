@@ -145,6 +145,7 @@ const config = {
           "**/node_modules/**",
           "**/dist/**",
           "**/build/**",
+          "**/database/**",
         ],
 
         // TypeScript configuration
@@ -153,9 +154,9 @@ const config = {
         // Project metadata - required for index page generation
         name: "Brebaje API",
 
-        // Output configuration
+        // Output configuration (plugin is the sole generator)
         out: "docs/api",
-        cleanOutputDir: false, // Don't clean output dir - we generate manually in prebuild
+        cleanOutputDir: true,
 
         // Documentation structure
         router: "member", // Use "member" router (individual files per member)
