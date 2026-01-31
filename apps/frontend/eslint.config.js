@@ -1,11 +1,19 @@
+import path from "node:path";
+import { fileURLToPath } from "node:url";
+
 import js from "@eslint/js";
+import { FlatCompat } from "@eslint/eslintrc";
 import typescript from "@typescript-eslint/eslint-plugin";
 import typescriptParser from "@typescript-eslint/parser";
 import prettier from "eslint-plugin-prettier";
 import tsdoc from "eslint-plugin-tsdoc";
 
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
+const compat = new FlatCompat({ baseDirectory: __dirname });
+
 export default [
   js.configs.recommended,
+  ...compat.extends("next/core-web-vitals"),
   {
     files: ["**/*.{js,ts,tsx,jsx}"],
     languageOptions: {
