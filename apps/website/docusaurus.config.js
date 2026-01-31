@@ -61,7 +61,7 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       // Replace with your project's social card
-      image: "img/brebaje-social-card.jpg",
+      image: "img/logo.svg",
       navbar: {
         title: "Brebaje",
         logo: {
