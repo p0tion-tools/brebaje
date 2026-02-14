@@ -5,24 +5,24 @@ import { User } from 'src/users/user.model';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Contribution } from 'src/contributions/contribution.model';
 import { TemporaryParticipantContributionData } from 'src/types';
+import { ParticipantTimeout } from 'src/types/declarations';
 
 export interface ParticipantAttributes {
   userId: number;
   ceremonyId: number;
-  id?: number;
+  id: number;
   status: ParticipantStatus;
   contributionStep: ParticipantContributionStep;
   contributionProgress?: number;
   contributionStartedAt?: number;
   verificationStartedAt?: number;
   tempContributionData?: object;
-  timeout?: object;
+  timeout?: ParticipantTimeout[];
 }
 
 export type ParticipantPk = 'id';
 export type ParticipantId = Participant[ParticipantPk];
 export type ParticipantOptionalAttributes =
-  | 'id'
   | 'status'
   | 'contributionProgress'
   | 'contributionStartedAt'
@@ -34,8 +34,20 @@ export type ParticipantCreationAttributes = Optional<
   ParticipantOptionalAttributes
 >;
 
-@Table({ tableName: 'participants' })
+@Table({
+  tableName: 'participants',
+  indexes: [
+    {
+      unique: true,
+      fields: ['ceremonyId', 'userId'],
+      name: 'unique_ceremony_user',
+    },
+  ],
+})
 export class Participant extends Model implements ParticipantAttributes {
+  declare createdAt: Date;
+  declare updatedAt: Date;
+
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
@@ -52,9 +64,8 @@ export class Participant extends Model implements ParticipantAttributes {
     type: DataType.INTEGER,
     primaryKey: true,
     autoIncrement: true,
-    allowNull: false,
   })
-  declare id?: number;
+  declare id: number;
 
   @Column({
     type: DataType.ENUM(...Object.values(ParticipantStatus)),
@@ -98,7 +109,7 @@ export class Participant extends Model implements ParticipantAttributes {
     allowNull: true,
     comment: 'Array of timeouts. Check Timeout class',
   })
-  declare timeout?: object;
+  declare timeout?: ParticipantTimeout[];
 
   @BelongsTo(() => User, 'userId')
   declare user: User;

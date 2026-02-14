@@ -1,16 +1,15 @@
 import { GenericBar } from "cli-progress";
 import { createReadStream, createWriteStream } from "fs";
-import https from "https";
-import mime from "mime-types";
-import fetchretry from "@adobe/node-fetch-retry";
+import { lookup } from "mime-types";
 import { ChunkWithUrl, ETagWithPartNumber, TemporaryParticipantContributionData } from "../types";
+import { fetchRetry } from "./fetch";
 
 /**
  * Return the bucket name based on the input arguments.
- * @param postfix <string> - the s3 postfix to identify created buckets.
- * @param project <string> - the project name.
- * @param description <string> - the ceremony description.
- * @returns <string>
+ * @param postfix - the s3 postfix to identify created buckets.
+ * @param project - the project name.
+ * @param description - the ceremony description.
+ * @returns - the bucket name.
  */
 export const getBucketName = (postfix: string, project: string, description?: string): string => {
   const sanitize = (value?: string) =>
@@ -21,20 +20,19 @@ export const getBucketName = (postfix: string, project: string, description?: st
 
 /**
  * Get chunks and signed urls related to an object that must be uploaded using a multi-part upload.
- * @param cloudFunctions <Functions> - the Firebase Cloud Functions service instance.
- * @param bucketName <string> - the name of the ceremony artifacts bucket (AWS S3).
- * @param objectKey <string> - the unique key to identify the object inside the given AWS S3 bucket.
- * @param localFilePath <string> - the local path where the artifact will be downloaded.
- * @param uploadId <string> - the unique identifier of the multi-part upload.
- * @param configStreamChunkSize <number> - size of each chunk into which the artifact is going to be splitted (nb. will be converted in MB).
- * @param [ceremonyId] <string> - the unique identifier of the ceremony.
- * @param userId <string> - the unique identifier of the user.
- * @returns Promise<Array<ChunkWithUrl>> - the chunks with related pre-signed url.
+ * @param accessToken - the access token for authentication.
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param userId - the unique identifier of the user.
+ * @param objectKey - the unique key to identify the object inside the given AWS S3 bucket.
+ * @param localFilePath - the local path where the artifact will be downloaded.
+ * @param uploadId - the unique identifier of the multi-part upload.
+ * @param configStreamChunkSize - size of each chunk into which the artifact is going to be splitted (nb. will be converted in MB).
+ * @returns - the chunks with related pre-signed url.
  */
 export const getChunksAndPreSignedUrlsAPI = async (
   accessToken: string,
   ceremonyId: number,
-  userId: string,
+  userId: number,
   objectKey: string,
   localFilePath: string,
   uploadId: string,
@@ -72,21 +70,21 @@ export const getChunksAndPreSignedUrlsAPI = async (
 
 /**
  * Forward the request to upload each single chunk of the related ceremony artifact.
- * @param chunksWithUrls <Array<ChunkWithUrl>> - the array containing each chunk mapped with the corresponding pre-signed urls.
- * @param contentType <string | false> - the content type of the ceremony artifact.
- * @param cloudFunctions <Functions> - the Firebase Cloud Functions service instance.
- * @param ceremonyId <string> - the unique identifier of the ceremony.
- * @param userId <string> - the unique identifier of the user.
- * @param alreadyUploadedChunks Array<ETagWithPartNumber> - the temporary information about the already uploaded chunks.
- * @param logger <GenericBar> - an optional logger to show progress.
- * @returns <Promise<Array<ETagWithPartNumber>>> - the completed (uploaded) chunks information.
+ * @param chunksWithUrls - the array containing each chunk mapped with the corresponding pre-signed urls.
+ * @param contentType - the content type of the ceremony artifact.
+ * @param cloudFunctions - the Firebase Cloud Functions service instance.
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param userId - the unique identifier of the user.
+ * @param alreadyUploadedChunks - the temporary information about the already uploaded chunks.
+ * @param logger - an optional logger to show progress.
+ * @returns - the completed (uploaded) chunks information.
  */
 export const uploadPartsAPI = async (
   accessToken: string,
   chunksWithUrls: Array<ChunkWithUrl>,
   contentType: string | false,
   ceremonyId: number,
-  userId: string,
+  userId: number,
   creatingCeremony?: boolean,
   alreadyUploadedChunks?: Array<ETagWithPartNumber>,
   logger?: GenericBar,
@@ -104,19 +102,18 @@ export const uploadPartsAPI = async (
     i += 1
   ) {
     // Consume the pre-signed url to upload the chunk.
-    const response = await fetchretry(chunksWithUrls[i].preSignedUrl, {
+    const response = await fetchRetry(chunksWithUrls[i].preSignedUrl, {
       retryOptions: {
         retryInitialDelay: 500, // 500 ms.
         socketTimeout: 60000, // 60 seconds.
         retryMaxDuration: 300000, // 5 minutes.
       },
       method: "PUT",
-      body: chunksWithUrls[i].chunk,
+      body: new Uint8Array(chunksWithUrls[i].chunk),
       headers: {
         "Content-Type": contentType ? contentType.toString() : "application/octet-stream",
         "Content-Length": chunksWithUrls[i].chunk.length.toString(),
       },
-      agent: new https.Agent({ keepAlive: true }),
     });
 
     // Verify the response.
@@ -151,25 +148,28 @@ export const uploadPartsAPI = async (
 
 /**
  * Complete a multi-part upload for a specific object in the given AWS S3 bucket.
- * @param functions <Functions> - the Firebase cloud functions object instance.
- * @param bucketName <string> - the name of the ceremony bucket.
- * @param objectKey <string> - the storage path that locates the artifact to be downloaded in the bucket.
- * @param uploadId <string> - the unique identifier of the multi-part upload.
- * @param parts Array<ETagWithPartNumber> - the completed .
- * @param ceremonyId <string> - the unique identifier of the ceremony.
- * @param userId <string> - the unique identifier of the user.
- * @returns Promise<string> - the location of the uploaded ceremony artifact.
+ * @param functions - the Firebase cloud functions object instance.
+ * @param bucketName - the name of the ceremony bucket.
+ * @param objectKey - the storage path that locates the artifact to be downloaded in the bucket.
+ * @param uploadId - the unique identifier of the multi-part upload.
+ * @param parts - the completed .
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param userId - the unique identifier of the user.
+ * @returns - the location of the uploaded ceremony artifact.
  */
 export const completeMultiPartUploadAPI = async (
   ceremonyId: number,
-  userId: string,
+  userId: number,
   token: string,
   objectKey: string,
   uploadId: string,
   parts: Array<ETagWithPartNumber>,
 ) => {
   const url = new URL(`${process.env.API_URL}/storage/multipart/complete`);
-  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
+  url.search = new URLSearchParams({
+    id: ceremonyId.toString(),
+    userId: userId.toString(),
+  }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -187,21 +187,24 @@ export const completeMultiPartUploadAPI = async (
 
 /**
  * Write temporary information about the etags and part numbers for each uploaded chunk in order to make the upload resumable from last chunk.
- * @param functions <Functions> - the Firebase cloud functions object instance.
- * @param ceremonyId <string> - the unique identifier of the ceremony.
- * @param userId <string> - the unique identifier of the user.
- * @param chunk <ETagWithPartNumber> - the information about the already uploaded chunk.
+ * @param functions - the Firebase cloud functions object instance.
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param userId - the unique identifier of the user.
+ * @param chunk - the information about the already uploaded chunk.
  */
 export const temporaryStoreCurrentContributionUploadedChunkDataAPI = async (
   ceremonyId: number,
-  userId: string,
+  userId: number,
   token: string,
   chunk: ETagWithPartNumber,
 ) => {
   const url = new URL(
     `${process.env.API_URL}/storage/temporary-store-current-contribution-uploaded-chunk-data`,
   );
-  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
+  url.search = new URLSearchParams({
+    id: ceremonyId.toString(),
+    userId: userId.toString(),
+  }).toString();
   const result = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -220,25 +223,28 @@ export const temporaryStoreCurrentContributionUploadedChunkDataAPI = async (
 
 /**
  * Generate a new pre-signed url for each chunk related to a started multi-part upload.
- * @param functions <Functions> - the Firebase cloud functions object instance.
- * @param bucketName <string> - the name of the ceremony bucket.
- * @param objectKey <string> - the storage path that locates the artifact to be downloaded in the bucket.
- * @param uploadId <string> - the unique identifier of the multi-part upload.
- * @param numberOfChunks <number> - the number of pre-signed urls to be generated.
- * @param ceremonyId <string> - the unique identifier of the ceremony.
- * @param userId <string> - the unique identifier of the user.
- * @returns Promise<Array<string>> - the set of pre-signed urls (one for each chunk).
+ * @param functions - the Firebase cloud functions object instance.
+ * @param bucketName - the name of the ceremony bucket.
+ * @param objectKey - the storage path that locates the artifact to be downloaded in the bucket.
+ * @param uploadId - the unique identifier of the multi-part upload.
+ * @param numberOfChunks - the number of pre-signed urls to be generated.
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param userId - the unique identifier of the user.
+ * @returns - the set of pre-signed urls (one for each chunk).
  */
 export const generatePreSignedUrlsPartsAPI = async (
   objectKey: string,
   uploadId: string,
   numberOfParts: number,
   ceremonyId: number,
-  userId: string,
+  userId: number,
   token: string,
 ) => {
   const url = new URL(`${process.env.API_URL}/storage/multipart/urls`);
-  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
+  url.search = new URLSearchParams({
+    id: ceremonyId.toString(),
+    userId: userId.toString(),
+  }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -256,22 +262,25 @@ export const generatePreSignedUrlsPartsAPI = async (
 
 /**
  * Start a new multi-part upload for a specific object in the given AWS S3 bucket.
- * @param functions <Functions> - the Firebase cloud functions object instance.
- * @param bucketName <string> - the name of the ceremony bucket.
- * @param objectKey <string> - the storage path that locates the artifact to be downloaded in the bucket.
- * @param ceremonyId <string> - the unique identifier of the ceremony.
- * @param userId <string> - the unique identifier of the user.
- * @returns Promise<string> - the multi-part upload id.
+ * @param functions - the Firebase cloud functions object instance.
+ * @param bucketName - the name of the ceremony bucket.
+ * @param objectKey - the storage path that locates the artifact to be downloaded in the bucket.
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param userId - the unique identifier of the user.
+ * @returns - the multi-part upload id.
  */
 export const openMultiPartUploadAPI = async (
   objectKey: string,
   ceremonyId: number,
-  userId: string,
+  userId: number,
   token: string,
 ) => {
   const url = new URL(`${process.env.API_URL}/storage/multipart/start`);
-  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
-  const result = (await fetch(url.toString(), {
+  url.search = new URLSearchParams({
+    id: ceremonyId.toString(),
+    userId: userId.toString(),
+  }).toString();
+  const result = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
       "Content-Type": "application/json",
@@ -280,27 +289,47 @@ export const openMultiPartUploadAPI = async (
     body: JSON.stringify({
       objectKey,
     }),
-  }).then((res) => res.json())) as { uploadId: string };
-  return result;
+  });
+
+  if (!result.ok) {
+    let errorBody = "";
+    try {
+      errorBody = await result.text();
+    } catch {
+      // Ignore errors while reading the error body to avoid masking the original failure.
+    }
+    const statusText = result.statusText || "Unknown status";
+    const message =
+      `Multipart upload start failed: ${result.status} ${statusText}` +
+      (errorBody ? ` - ${errorBody}` : "");
+    throw new Error(message);
+  }
+
+  const data = (await result.json()) as { uploadId: string };
+
+  return data;
 };
 
 /**
  * Write temporary information about the unique identifier about the opened multi-part upload to eventually resume the contribution.
- * @param functions <Functions> - the Firebase cloud functions object instance.
- * @param ceremonyId <string> - the unique identifier of the ceremony.
- * @param userId <string> - the unique identifier of the user.
- * @param uploadId <string> - the unique identifier of the multi-part upload.
+ * @param functions - the Firebase cloud functions object instance.
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param userId - the unique identifier of the user.
+ * @param uploadId - the unique identifier of the multi-part upload.
  */
 export const temporaryStoreCurrentContributionMultiPartUploadIdAPI = async (
   ceremonyId: number,
-  userId: string,
+  userId: number,
   uploadId: string,
   token: string,
 ) => {
   const url = new URL(
     `${process.env.API_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
   );
-  url.search = new URLSearchParams({ id: ceremonyId.toString(), userId }).toString();
+  url.search = new URLSearchParams({
+    id: ceremonyId.toString(),
+    userId: userId.toString(),
+  }).toString();
   const result = await fetch(url.toString(), {
     headers: {
       Authorization: `Bearer ${token}`,
@@ -318,7 +347,7 @@ export const temporaryStoreCurrentContributionMultiPartUploadIdAPI = async (
 
 /**
  * Upload a ceremony artifact to the corresponding bucket.
- * @notice this method implements the multi-part upload using pre-signed urls, optimal for large files.
+ * this method implements the multi-part upload using pre-signed urls, optimal for large files.
  * Steps:
  * 0) Check if current contributor could resume a multi-part upload.
  *    0.A) If yes, continue from last uploaded chunk using the already opened multi-part upload.
@@ -326,20 +355,20 @@ export const temporaryStoreCurrentContributionMultiPartUploadIdAPI = async (
  * 1) Generate a pre-signed url for each (remaining) chunk of the ceremony artifact.
  * 2) Consume the pre-signed urls to upload chunks.
  * 3) Complete the multi-part upload.
- * @param cloudFunctions <Functions> - the Firebase Cloud Functions service instance.
- * @param bucketName <string> - the name of the ceremony artifacts bucket (AWS S3).
- * @param objectKey <string> - the unique key to identify the object inside the given AWS S3 bucket.
- * @param localPath <string> - the local path where the artifact will be downloaded.
- * @param configStreamChunkSize <number> - size of each chunk into which the artifact is going to be splitted (nb. will be converted in MB).
- * @param userId <string> - the unique identifier of the user.
- * @param [ceremonyId] <string> - the unique identifier of the ceremony (used as a double-edge sword - as identifier and as a check if current contributor is the coordinator finalizing the ceremony).
- * @param [temporaryDataToResumeMultiPartUpload] <TemporaryParticipantContributionData> - the temporary information necessary to resume an already started multi-part upload.
- * @param logger <GenericBar> - an optional logger to show progress.
+ * @param cloudFunctions - the Firebase Cloud Functions service instance.
+ * @param bucketName - the name of the ceremony artifacts bucket (AWS S3).
+ * @param objectKey - the unique key to identify the object inside the given AWS S3 bucket.
+ * @param localPath - the local path where the artifact will be downloaded.
+ * @param configStreamChunkSize - size of each chunk into which the artifact is going to be splitted (nb. will be converted in MB).
+ * @param userId - the unique identifier of the user.
+ * @param ceremonyId - the unique identifier of the ceremony (used as a double-edge sword - as identifier and as a check if current contributor is the coordinator finalizing the ceremony).
+ * @param temporaryDataToResumeMultiPartUpload - the temporary information necessary to resume an already started multi-part upload.
+ * @param logger - an optional logger to show progress.
  */
 export const multiPartUploadAPI = async (
   accessToken: string,
   ceremonyId: number,
-  userId: string,
+  userId: number,
   objectKey: string,
   localFilePath: string,
   configStreamChunkSize: number,
@@ -390,7 +419,7 @@ export const multiPartUploadAPI = async (
   const partNumbersAndETagsZkey = await uploadPartsAPI(
     accessToken,
     chunksWithUrlsZkey,
-    mime.lookup(localFilePath) || false, // content-type.
+    lookup(localFilePath) || false, // content-type.
     ceremonyId,
     userId,
     creatingCeremony,
@@ -411,10 +440,10 @@ export const multiPartUploadAPI = async (
 
 /**
  * Return a pre-signed url for a given object contained inside the provided AWS S3 bucket in order to perform a GET request.
- * @param accessToken <string> - the access token for authentication.
- * @param ceremonyId <number> - the unique identifier of the ceremony.
- * @param objectKey <string> - the storage path that locates the artifact to be downloaded in the bucket.
- * @returns <Promise<string>> - the pre-signed url w/ GET request permissions for specified object key.
+ * @param accessToken - the access token for authentication.
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param objectKey - the storage path that locates the artifact to be downloaded in the bucket.
+ * @returns - the pre-signed url w/ GET request permissions for specified object key.
  */
 export const generateGetObjectPreSignedUrlAPI = async (
   accessToken: string,
@@ -440,10 +469,10 @@ export const generateGetObjectPreSignedUrlAPI = async (
 
 /**
  * Check if a specified object exist in a given AWS S3 bucket.
- * @param accessToken <string> - the access token for authentication.
- * @param ceremonyId <number> - the unique identifier of the ceremony.
- * @param objectKey <string> - the storage path that locates the artifact to be downloaded in the bucket.
- * @returns <Promise<boolean>> - true if and only if the object exists, otherwise false.
+ * @param accessToken - the access token for authentication.
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param objectKey - the storage path that locates the artifact to be downloaded in the bucket.
+ * @returns - true if and only if the object exists, otherwise false.
  */
 export const checkIfObjectExistAPI = async (
   accessToken: string,
@@ -467,10 +496,10 @@ export const checkIfObjectExistAPI = async (
 
 /**
  * Download an artifact from S3 (only for authorized users)
- * @param accessToken <string> - the access token for authentication.
- * @param ceremonyId <number> - the unique identifier of the ceremony.
- * @param storagePath <string> - Path to the artifact in the bucket.
- * @param localPath <string> - Path to the local file where the artifact will be saved.
+ * @param accessToken - the access token for authentication.
+ * @param ceremonyId - the unique identifier of the ceremony.
+ * @param storagePath - Path to the artifact in the bucket.
+ * @param localPath - Path to the local file where the artifact will be saved.
  */
 export const downloadCeremonyArtifact = async (
   accessToken: string,
@@ -486,7 +515,7 @@ export const downloadCeremonyArtifact = async (
   );
 
   // Make fetch to get info about the artifact.
-  const response = await fetchretry(getPreSignedUrl, {
+  const response = await fetchRetry(getPreSignedUrl, {
     retryOptions: {
       retryInitialDelay: 500,
       socketTimeout: 60000,

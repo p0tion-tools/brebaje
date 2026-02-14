@@ -12,7 +12,7 @@ CREATE TABLE "users" (
   "lastSignInTime" INTEGER,
   "lastUpdated" INTEGER,
   "avatarUrl" VARCHAR,
-  "provider" TEXT CHECK("provider" IN ('GITHUB', 'ETH')) NOT NULL DEFAULT 'GITHUB'
+  "provider" TEXT CHECK("provider" IN ('GITHUB', 'ETHEREUM')) NOT NULL DEFAULT 'GITHUB'
 );
 
 CREATE TABLE "projects" (

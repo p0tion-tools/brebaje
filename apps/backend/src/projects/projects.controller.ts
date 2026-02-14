@@ -6,10 +6,10 @@ import {
   Param,
   Patch,
   Post,
-  UseGuards,
   Request,
+  UseGuards,
 } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
 import { Request as ExpressRequest } from 'express';
 import { User } from 'src/users/user.model';
 import { Project } from './project.model';

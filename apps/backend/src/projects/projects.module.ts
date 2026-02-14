@@ -6,10 +6,12 @@ import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ProjectOwnershipGuard } from './guards/project-ownership.guard';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [
     SequelizeModule.forFeature([Project]),
+    AuthModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '1d' },

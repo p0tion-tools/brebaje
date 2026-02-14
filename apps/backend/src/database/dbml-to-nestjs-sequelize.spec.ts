@@ -1,5 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unsafe-assignment */
-/* eslint-disable @typescript-eslint/no-unsafe-member-access */
 import { DbmlToNestJSSequelizeGenerator } from './dbml-to-nestjs-sequelize';
 import * as fs from 'node:fs';
 
@@ -7,7 +5,7 @@ describe('DbmlToNestJSSequelizeGenerator', () => {
   const testDbmlContent = `
 Enum UserProvider {
   'GITHUB'
-  'ETH'
+  'ETHEREUM'
 }
 
 Table users {

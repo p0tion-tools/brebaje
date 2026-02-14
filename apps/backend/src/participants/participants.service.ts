@@ -14,10 +14,12 @@ import {
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Participant } from './participant.model';
-import { ParticipantStatus, ParticipantContributionStep } from 'src/types/enums';
+import { ParticipantStatus, ParticipantContributionStep, CeremonyState } from 'src/types/enums';
 import { InjectModel } from '@nestjs/sequelize';
 import { formatZkeyIndex } from '@brebaje/actions';
 import { CircuitsService } from 'src/circuits/circuits.service';
+import { ContributionsService } from 'src/contributions/contributions.service';
+import { Cron, CronExpression } from '@nestjs/schedule';
 
 @Injectable()
 export class ParticipantsService {
@@ -26,16 +28,30 @@ export class ParticipantsService {
     private participantModel: typeof Participant,
     @Inject(forwardRef(() => CircuitsService))
     private readonly circuitsService: CircuitsService,
+    @Inject(forwardRef(() => ContributionsService))
+    private readonly contributionsService: ContributionsService,
   ) {}
 
-  async create(createParticipantDto: CreateParticipantDto) {
-    const participant = await this.participantModel.create({
-      ...createParticipantDto,
-      status: createParticipantDto.status || ParticipantStatus.CREATED,
-      contributionStep:
-        createParticipantDto.contributionStep || ParticipantContributionStep.DOWNLOADING,
-    });
-    return participant;
+  /**
+   * Creates a new participant.
+   *
+   * @param createParticipantDto - The DTO containing participant creation data
+   * @param userId - The ID of the authenticated user creating the participant
+   * @returns The created participant
+   */
+  async create(createParticipantDto: CreateParticipantDto, userId: number) {
+    try {
+      const participant = await this.participantModel.create({
+        ...createParticipantDto,
+        userId,
+        status: ParticipantStatus.CREATED,
+        contributionStep: ParticipantContributionStep.DOWNLOADING,
+      });
+
+      return participant;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
   async findAll() {
@@ -46,7 +62,7 @@ export class ParticipantsService {
     return this.participantModel.findByPk(id);
   }
 
-  async findByUserIdAndCeremonyId(userId: string, ceremonyId: number) {
+  async findByUserIdAndCeremonyId(userId: number, ceremonyId: number) {
     try {
       const participant = await this.participantModel.findOne({
         where: { userId: userId, ceremonyId: ceremonyId },
@@ -62,7 +78,34 @@ export class ParticipantsService {
     }
   }
 
-  update(id: number, updateParticipantDto: UpdateParticipantDto) {
+  async findTimedOutParticipantsOfOpenCeremonies() {
+    try {
+      const participants = await this.participantModel.findAll({
+        where: {
+          status: ParticipantStatus.TIMEDOUT,
+        },
+        include: [
+          {
+            association: 'ceremony',
+            where: { state: CeremonyState.OPENED },
+            required: true,
+          },
+        ],
+      });
+      return participants;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  /**
+   * Updates a participant by ID.
+   *
+   * @param id - The participant's unique identifier
+   * @param _updateParticipantDto - The DTO containing the updated participant data
+   * @returns A message indicating the update action (not yet implemented)
+   */
+  update(id: number, _updateParticipantDto: UpdateParticipantDto) {
     return `This action updates a #${id} participant`;
   }
 
@@ -82,12 +125,14 @@ export class ParticipantsService {
 
   /**
    * Check if the pre-condition for interacting with a multi-part upload for an identified current contributor is valid.
-   * @notice the precondition is to be a current contributor (contributing status) in the uploading contribution step.
-   * @param participant - the participant entity to check.
+   * The precondition is to be a current contributor (contributing status) in the uploading contribution step.
+   *
+   * @param userId - The user ID of the participant
+   * @param ceremonyId - The ceremony ID
    * @throws BadRequestException if the participant is not in CONTRIBUTING status or not in UPLOADING step.
    */
   async checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(
-    userId: string,
+    userId: number,
     ceremonyId: number,
   ) {
     const participant = await this.findByUserIdAndCeremonyId(userId, ceremonyId);
@@ -108,11 +153,12 @@ export class ParticipantsService {
 
   /**
    * Helper function to check whether a contributor is uploading a file related to its contribution.
-   * @param contributorId <string> - the unique identifier of the contributor.
-   * @param ceremonyId <string> - the unique identifier of the ceremony.
-   * @param objectKey <string> - the object key of the file being uploaded.
+   *
+   * @param userId - The unique identifier of the contributor
+   * @param ceremonyId - The unique identifier of the ceremony
+   * @param objectKey - The object key of the file being uploaded
    */
-  async checkUploadingFileValidity(userId: string, ceremonyId: number, objectKey: string) {
+  async checkUploadingFileValidity(userId: number, ceremonyId: number, objectKey: string) {
     const participant = await this.findByUserIdAndCeremonyId(userId, ceremonyId);
     if (!participant) {
       throw new NotFoundException('Participant not found');
@@ -144,6 +190,55 @@ export class ParticipantsService {
     const zkeyNameContributor = `circuits/${name}/contributions/${name}_${contributorZKeyIndex}.zkey`;
     if (objectKey !== zkeyNameContributor) {
       throw new BadRequestException('Provided object key does not match contributor file name');
+    }
+  }
+
+  async addParticipantToCircuitsQueues(participant: Participant) {
+    const { userId, ceremonyId, contributionProgress } = participant;
+    const circuits = await this.circuitsService.findAllByCeremonyId(ceremonyId);
+
+    for (let index = contributionProgress || 0; index < circuits.length; index++) {
+      const circuit = circuits[index];
+      const { contributors } = circuit;
+
+      const isAlreadyInQueue = contributors?.includes(userId);
+
+      if (isAlreadyInQueue) {
+        continue;
+      }
+
+      const alreadyContributed =
+        await this.contributionsService.findValidOneByCircuitIdAndParticipantId(
+          circuit.id,
+          participant.id,
+        );
+
+      if (alreadyContributed) {
+        continue;
+      }
+
+      const newContributors = contributors ? [...contributors, userId] : [userId];
+
+      circuit.contributors = newContributors;
+
+      participant.contributionProgress = index;
+      await Promise.all([participant.save(), circuit.save()]);
+    }
+  }
+
+  @Cron(CronExpression.EVERY_10_SECONDS)
+  async monitorTimedOutParticipants() {
+    const participants = await this.findTimedOutParticipantsOfOpenCeremonies();
+
+    for (const participant of participants) {
+      const { timeout } = participant;
+
+      const lastTimeout = timeout ? timeout[timeout.length - 1] : null;
+      const timeoutExpired = lastTimeout && lastTimeout.endDate < Date.now();
+
+      if (timeoutExpired) {
+        await this.addParticipantToCircuitsQueues(participant);
+      }
     }
   }
 

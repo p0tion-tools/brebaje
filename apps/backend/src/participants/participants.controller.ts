@@ -1,9 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Request,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { Participant } from './participant.model';
 import { ParticipantsService } from './participants.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
+import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('participants')
 @Controller('participants')
@@ -11,6 +22,8 @@ export class ParticipantsController {
   constructor(private readonly participantsService: ParticipantsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new participant' })
   @ApiResponse({
     status: 201,
@@ -18,8 +31,8 @@ export class ParticipantsController {
     type: Participant,
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
-  create(@Body() createParticipantDto: CreateParticipantDto) {
-    return this.participantsService.create(createParticipantDto);
+  create(@Request() req: AuthenticatedRequest, @Body() createParticipantDto: CreateParticipantDto) {
+    return this.participantsService.create(createParticipantDto, req.user!.id!);
   }
 
   @Get()
@@ -34,8 +47,8 @@ export class ParticipantsController {
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'Return the participant.', type: Participant })
   @ApiResponse({ status: 404, description: 'Participant not found.' })
-  findOne(@Param('id') id: string) {
-    return this.participantsService.findOne(+id);
+  findOne(@Param('id') id: number) {
+    return this.participantsService.findOne(id);
   }
 
   @Patch(':id')
@@ -47,8 +60,8 @@ export class ParticipantsController {
     type: Participant,
   })
   @ApiResponse({ status: 404, description: 'Participant not found.' })
-  update(@Param('id') id: string, @Body() updateParticipantDto: UpdateParticipantDto) {
-    return this.participantsService.update(+id, updateParticipantDto);
+  update(@Param('id') id: number, @Body() updateParticipantDto: UpdateParticipantDto) {
+    return this.participantsService.update(id, updateParticipantDto);
   }
 
   @Delete(':id')
@@ -56,7 +69,7 @@ export class ParticipantsController {
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'The participant has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Participant not found.' })
-  remove(@Param('id') id: string) {
-    return this.participantsService.remove(+id);
+  remove(@Param('id') id: number) {
+    return this.participantsService.remove(id);
   }
 }

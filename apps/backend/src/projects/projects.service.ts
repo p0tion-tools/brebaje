@@ -22,6 +22,13 @@ export class ProjectsService {
     private readonly projectModel: typeof Project,
   ) {}
 
+  /**
+   * Creates a new project.
+   *
+   * @param createProjectDto - The project data
+   * @param user - The authenticated user creating the project
+   * @returns The created project
+   */
   async create(createProjectDto: CreateProjectDto, user: User) {
     try {
       const project = await this.projectModel.create({

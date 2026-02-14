@@ -60,11 +60,20 @@ export class CeremoniesService {
     }
   }
 
-  findCoordinatorOfCeremony(userId: string, ceremonyId: number) {
-    return this.ceremonyModel.findOne({ where: { id: ceremonyId, coordinatorId: userId } });
+  async findCoordinatorOfCeremony(userId: number, ceremonyId: number) {
+    return this.ceremonyModel.findOne({
+      where: { id: ceremonyId },
+      include: [
+        {
+          model: Project,
+          where: { coordinatorId: userId },
+          required: true,
+        },
+      ],
+    });
   }
 
-  async isCoordinator(userId: string, ceremonyId: number) {
+  async isCoordinator(userId: number, ceremonyId: number) {
     const isCoordinator = await this.findCoordinatorOfCeremony(userId, ceremonyId);
     return { isCoordinator: !!isCoordinator };
   }

@@ -3,9 +3,9 @@ import { genesisZkeyIndex, potFileDownloadMainUrl, potFilenameTemplate } from ".
 
 /**
  * Calculate the smallest amount of Powers of Tau needed for a circuit with a constraint size.
- * @param constraints <number> - the number of circuit constraints (extracted from metadata).
- * @param outputs <number> - the number of circuit outputs (extracted from metadata)
- * @returns <number> - the smallest amount of Powers of Tau for the given constraint size.
+ * @param constraints - The number of circuit constraints (extracted from metadata).
+ * @param outputs - The number of circuit outputs (extracted from metadata)
+ * @returns The smallest amount of Powers of Tau for the given constraint size.
  */
 export const computeSmallestPowersOfTauForCircuit = (constraints: number, outputs: number) => {
   let power = 2;
@@ -21,26 +21,26 @@ export const computeSmallestPowersOfTauForCircuit = (constraints: number, output
 
 /**
  * Return a string with double digits if the provided input is one digit only.
- * @param in <number> - the input number to be converted.
- * @returns <string> - the two digits stringified number derived from the conversion.
+ * @param amount - The input number to be converted.
+ * @returns The two digits stringified number derived from the conversion.
  */
 export const convertToDoubleDigits = (amount: number): string =>
   amount < 10 ? `0${amount}` : amount.toString();
 
 /**
  * Convert bytes or chilobytes into gigabytes with customizable precision.
- * @param bytesOrKb <number> - the amount of bytes or chilobytes to be converted.
- * @param isBytes <boolean> - true when the amount to be converted is in bytes; otherwise false (= Chilobytes).
- * @returns <number> - the converted amount in GBs.
+ * @param bytesOrKb - The amount of bytes or chilobytes to be converted.
+ * @param isBytes - True when the amount to be converted is in bytes; otherwise false (= Chilobytes).
+ * @returns The converted amount in GBs.
  */
 export const convertBytesOrKbToGb = (bytesOrKb: number, isBytes: boolean): number =>
   Number(bytesOrKb / 1024 ** (isBytes ? 3 : 2));
 
 /**
  * Transform a number in a zKey index format.
- * @dev this method is aligned with the number of characters of the genesis zKey index (which is a constant).
- * @param progress <number> - the progression in zKey index.
- * @returns <string> - the progression in a zKey index format (`XYZAB`).
+ * @remarks This method is aligned with the number of characters of the genesis zKey index (which is a constant).
+ * @param progress - The progression in zKey index.
+ * @returns The progression in a zKey index format (`XYZAB`).
  */
 export const formatZkeyIndex = (progress: number): string => {
   let index = progress.toString();
@@ -55,8 +55,8 @@ export const formatZkeyIndex = (progress: number): string => {
 
 /**
  * Get the URL of the Powers of Tau file for a given R1CS file (using predefined root URL and filename template).
- * @param localR1csPath <string> - the local path to the r1cs file from which to extract the metadata.
- * @returns <Promise<string>> - the URL of the Powers of Tau file.
+ * @param localR1csPath - The local path to the r1cs file from which to extract the metadata.
+ * @returns The URL of the Powers of Tau file.
  */
 export const getURLOfPowersOfTau = async (localR1csPath: string): Promise<string> => {
   const { nConstraints, nOutputs } = await r1cs.info(localR1csPath);
@@ -79,10 +79,13 @@ export const getFilenameFromUrl = (url: string): string => {
 
 /**
  * Sanitize a string by replacing all special symbols and whitespaces with a hyphen ('-') and converting all uppercase characters to lowercase.
- * @dev Useful for normalizing filenames or artifact names.
- * @notice example: str = 'Multiplier-2!2.4.zkey'; output = 'multiplier-2-2-4-zkey'.
- * @param str <string> - the arbitrary string to sanitize.
- * @returns <string> - the sanitized string.
+ * @remarks Useful for normalizing filenames or artifact names.
+ * @example
+ * ```ts
+ * str = 'Multiplier-2!2.4.zkey'; output = 'multiplier-2-2-4-zkey'
+ * ```
+ * @param str - The arbitrary string to sanitize.
+ * @returns The sanitized string.
  */
 export const sanitizeString = (str: string): string =>
   // eslint-disable-next-line no-useless-escape

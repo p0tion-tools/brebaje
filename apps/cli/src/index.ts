@@ -9,6 +9,7 @@ import { setUpCeremonyCommands } from "./ceremonies/index.js";
 import { setUpConfigCommands } from "./config/index.js";
 import { setUpParticipantCommands } from "./participants/index.js";
 import { setUpPerpetualPowersOfTau } from "./perpetual-powers-of-tau/index.js";
+import { setUpProjectCommands } from "./projects/index.js";
 import { setUpVmCommands } from "./vm/index.js";
 
 // Get pkg info (e.g., name, version).
@@ -27,6 +28,7 @@ setUpCeremonyCommands(program);
 setUpConfigCommands(program);
 setUpParticipantCommands(program);
 setUpPerpetualPowersOfTau(program);
+setUpProjectCommands(program);
 setUpVmCommands(program);
 
 program.parseAsync(process.argv);

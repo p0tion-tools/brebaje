@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { ParticipantsController } from './participants.controller';
 import { ParticipantsService } from './participants.service';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 describe('ParticipantsController', () => {
   let controller: ParticipantsController;
@@ -17,7 +18,10 @@ describe('ParticipantsController', () => {
           useValue: mockParticipantService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .compile();
 
     controller = module.get<ParticipantsController>(ParticipantsController);
     participantService = module.get<ParticipantsService>(

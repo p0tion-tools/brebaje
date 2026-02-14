@@ -1,6 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty, MinLength, MaxLength, IsNumber, IsOptional } from 'class-validator';
 
+/**
+ * DTO for creating a new project.
+ *
+ * Note: coordinatorId is automatically set from the authenticated user
+ * and should not be included in the request body.
+ */
 export class CreateProjectDto {
   @ApiProperty({ example: 'My ZK Project', description: 'Project name' })
   @IsString()

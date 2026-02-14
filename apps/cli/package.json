@@ -22,22 +22,55 @@
     "url": "git+https://github.com/NicoSerranoP/brebaje.git"
   },
   "scripts": {
-    "start": "ts-node src/index.ts",
+    "start": "tsx src/index.ts",
     "build": "tsc",
-    "test": "echo \"No tests yet - TODO: Implement unit tests for CLI commands\""
+    "test": "jest",
+    "test:watch": "jest --watch",
+    "test:cov": "jest --coverage"
   },
   "bugs": {
     "url": "https://github.com/NicoSerranoP/brebaje/issues"
   },
   "dependencies": {
+    "@octokit/auth-oauth-device": "^8.0.3",
     "aws-sdk": "^2.1692.0",
-    "commander": "^11.0.0",
+    "commander": "14.0.2",
     "dotenv": "^17.2.1",
+    "jsonwebtoken": "^9.0.3",
     "snarkjs": "^0.7.5"
   },
   "devDependencies": {
+    "@types/jest": "^29.5.14",
+    "@types/jsonwebtoken": "^9.0.10",
     "@types/node": "^20.8.9",
+    "jest": "^29.7.0",
+    "ts-jest": "^29.2.5",
     "ts-node": "^10.9.1",
+    "tsx": "^4.21.0",
     "typescript": "^5.2.2"
+  },
+  "jest": {
+    "preset": "ts-jest",
+    "testEnvironment": "node",
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "ts",
+      "d.ts"
+    ],
+    "rootDir": "src",
+    "testRegex": ".*\\.spec\\.ts$",
+    "transform": {
+      "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "collectCoverageFrom": [
+      "**/*.(t|j)s"
+    ],
+    "coverageDirectory": "../coverage",
+    "testTimeout": 10000,
+    "moduleNameMapper": {
+      "^(\\.{1,2}/.*)\\.js$": "$1",
+      "^src/(.*)": "<rootDir>/../src/$1"
+    }
   }
 }

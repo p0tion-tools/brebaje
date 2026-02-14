@@ -9,12 +9,16 @@ import { randomBytes } from 'crypto';
 import { User } from '../users/user.model';
 import { generateNonce, checkSignature, DataSignature } from '@meshsdk/core';
 import { GithubTokenResponse } from 'src/types';
+import { SiweMessage, generateNonce as generateSiweNonce } from 'siwe';
+import { isAddress } from 'ethers';
+import { NONCES_TIMEOUT } from 'src/utils/constants';
 
 @Injectable()
 export class AuthService {
   private readonly logger = new Logger(AuthService.name);
   private readonly stateStore = new Map<string, { timestamp: number }>();
   private readonly nonceStore = new Map<string, string[]>();
+  private readonly ethNonceStore = new Map<string, { nonce: string; timestamp: number }>();
 
   constructor(
     private readonly jwtService: JwtService,
@@ -46,8 +50,8 @@ export class AuthService {
       return false;
     }
 
-    // Check if state is expired (5 minutes)
-    const isExpired = Date.now() - stored.timestamp > 5 * 60 * 1000;
+    // Check if state is expired
+    const isExpired = Date.now() - stored.timestamp > NONCES_TIMEOUT;
     if (isExpired) {
       this.logger.warn('OAuth callback received with expired state parameter');
       this.stateStore.delete(state);
@@ -68,7 +72,7 @@ export class AuthService {
     const expiredStates: string[] = [];
 
     this.stateStore.forEach((value, key) => {
-      if (now - value.timestamp > 5 * 60 * 1000) {
+      if (now - value.timestamp > NONCES_TIMEOUT) {
         // 5 minutes
         expiredStates.push(key);
       }
@@ -142,6 +146,32 @@ export class AuthService {
       return { user, jwt };
     } catch (error) {
       return error as Error;
+    }
+  }
+
+  /**
+   * Test-only authentication method
+   * Generates JWT token for existing user without OAuth flow
+   * Only available in test/development environments
+   */
+  async testAuthWithUserId(userId: number): Promise<AuthResponseDto> {
+    if (process.env.NODE_ENV === 'production') {
+      throw new UnauthorizedException('Test authentication not allowed in production');
+    }
+
+    try {
+      const user = await this.usersService.findById(userId);
+      if (!user) {
+        throw new BadRequestException(`User with ID ${userId} not found`);
+      }
+
+      const jwt = await this.jwtService.signAsync({ user: user });
+      return { user, jwt };
+    } catch (error) {
+      if (error instanceof BadRequestException || error instanceof UnauthorizedException) {
+        throw error;
+      }
+      throw new BadRequestException(`Failed to authenticate user: ${error}`);
     }
   }
 
@@ -362,4 +392,132 @@ export class AuthService {
   }
 
   // async getUserInfoFromCardano() {}
+
+  /**
+   * Generates a nonce for SIWE (Sign-In with Ethereum) authentication
+   * The nonce is stored with a timestamp and expires after 5 minutes
+   * @param address - The Ethereum wallet address (0x prefixed)
+   * @returns Object containing the generated nonce
+   */
+  generateEthNonce(address: string) {
+    if (!address || !address.startsWith('0x') || !isAddress(address)) {
+      this.logger.warn(`Invalid Ethereum address format: ${address}`);
+      throw new BadRequestException('Invalid Ethereum address format');
+    }
+
+    this.cleanupExpiredEthNonces();
+
+    const nonce = generateSiweNonce();
+
+    this.ethNonceStore.set(address.toLowerCase(), {
+      nonce,
+      timestamp: Date.now(),
+    });
+
+    return { nonce };
+  }
+
+  /**
+   * Cleans up expired ETHEREUM nonces from memory (older than 5 minutes)
+   */
+  private cleanupExpiredEthNonces(): void {
+    const now = Date.now();
+    const expiredAddresses: string[] = [];
+
+    this.ethNonceStore.forEach((value, key) => {
+      if (now - value.timestamp > NONCES_TIMEOUT) {
+        expiredAddresses.push(key);
+      }
+    });
+
+    expiredAddresses.forEach((address) => this.ethNonceStore.delete(address));
+
+    if (expiredAddresses.length > 0) {
+      this.logger.debug(`Cleaned up ${expiredAddresses.length} expired ETHEREUM nonces`);
+    }
+  }
+
+  /**
+   * Verifies a SIWE (Sign-In with Ethereum) signature and authenticates the user
+   * Following EIP-4361 standard
+   * @param message - The SIWE message that was signed
+   * @param signature - The cryptographic signature from the wallet
+   * @returns AuthResponseDto with user and JWT token
+   */
+  async verifyEthSignature(message: string, signature: string): Promise<AuthResponseDto> {
+    this.logger.log('Verifying ETHEREUM SIWE signature');
+
+    try {
+      const siweMessage = new SiweMessage(message);
+
+      const address = siweMessage.address.toLowerCase();
+
+      const storedNonceData = this.ethNonceStore.get(address);
+      if (!storedNonceData) {
+        this.logger.warn(`No nonce found for address: ${address.substring(0, 10)}...`);
+        throw new BadRequestException(
+          'No nonce found for this address. Please request a new nonce.',
+        );
+      }
+
+      // Check if nonce has expired
+      if (Date.now() - storedNonceData.timestamp > NONCES_TIMEOUT) {
+        this.logger.warn(`Nonce expired for address: ${address.substring(0, 10)}...`);
+        this.ethNonceStore.delete(address);
+        throw new BadRequestException('Nonce has expired. Please request a new nonce.');
+      }
+
+      // Verify the nonce in the message matches the stored nonce
+      if (siweMessage.nonce !== storedNonceData.nonce) {
+        this.logger.warn(`Nonce mismatch for address: ${address.substring(0, 10)}...`);
+        throw new BadRequestException('Invalid nonce in message');
+      }
+
+      // Verify the signature using SIWE library
+      const { success, error } = await siweMessage.verify({ signature });
+
+      if (!success) {
+        this.logger.warn(
+          `Invalid signature for address: ${address.substring(0, 10)}... Error: ${error?.type}`,
+        );
+        throw new BadRequestException('Invalid signature provided');
+      }
+
+      this.ethNonceStore.delete(address);
+
+      let user: User;
+
+      try {
+        // Try to find existing user by displayName (0x address) and ETHEREUM provider
+        user = await this.usersService.findByProviderAndDisplayName(address, UserProvider.ETHEREUM);
+        this.logger.debug(
+          `Found existing ETHEREUM user for address: ${address.substring(0, 10)}...`,
+        );
+      } catch {
+        // User not found, create new one
+        this.logger.debug(`Creating new ETHEREUM user for address: ${address.substring(0, 10)}...`);
+        const createUserData: CreateUserDto = {
+          displayName: address,
+          walletAddress: address,
+          provider: UserProvider.ETHEREUM,
+        };
+        user = await this.usersService.create(createUserData);
+      }
+
+      // Generate JWT token
+      const jwt = await this.jwtService.signAsync({ user });
+
+      this.logger.log(
+        `ETHEREUM SIWE authentication successful for address: ${address.substring(0, 10)}...`,
+      );
+      return { user, jwt };
+    } catch (error) {
+      if (error instanceof BadRequestException) {
+        throw error;
+      }
+
+      this.logger.error(`ETHEREUM SIWE authentication failed: ${(error as Error).message}`);
+      throw new BadRequestException(`Authentication failed: ${(error as Error).message}`);
+    }
+  }
 }

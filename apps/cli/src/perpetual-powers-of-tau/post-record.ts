@@ -1,3 +1,5 @@
+/* eslint-disable */
+
 import { getNewerFile, getUrlsJson } from "../utils/file_handling.js";
 import { loadConfig } from "../utils/config.js";
 import { fetchWithTimeout } from "../utils/http.js";

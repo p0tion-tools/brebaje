@@ -78,7 +78,7 @@ describe('StorageController', () => {
   describe('startMultipartUpload', () => {
     it('should call storageService.startMultipartUpload with data, ceremonyId, and userId', async () => {
       const ceremonyId = 1;
-      const userId = 'user-id';
+      const userId = 1;
       const data: ObjectKeyDto = { objectKey: 'test-key' };
       await controller.startMultipartUpload(ceremonyId, userId, data);
       expect(storageService.startMultipartUpload).toHaveBeenCalledWith(data, ceremonyId, userId);
@@ -88,7 +88,7 @@ describe('StorageController', () => {
   describe('generatePreSignedUrlsParts', () => {
     it('should call storageService.generatePreSignedUrlsParts with data, ceremonyId, and userId', async () => {
       const ceremonyId = 1;
-      const userId = 'user-id';
+      const userId = 1;
       const data: GeneratePreSignedUrlsPartsData = {
         objectKey: 'test-key',
         uploadId: 'test-upload-id',
@@ -106,7 +106,7 @@ describe('StorageController', () => {
   describe('completeMultipartUpload', () => {
     it('should call storageService.completeMultipartUpload with data, ceremonyId, and userId', async () => {
       const ceremonyId = 1;
-      const userId = 'user-id';
+      const userId = 1;
       const data: CompleteMultiPartUploadData = {
         objectKey: 'test-key',
         uploadId: 'test-upload-id',

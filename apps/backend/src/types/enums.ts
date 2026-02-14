@@ -2,7 +2,7 @@
 
 export enum UserProvider {
   GITHUB = 'GITHUB',
-  ETH = 'ETH',
+  ETHEREUM = 'ETHEREUM',
   CARDANO = 'CARDANO',
 }
 
@@ -45,4 +45,16 @@ export enum ParticipantContributionStep {
   UPLOADING = 'UPLOADING',
   VERIFYING = 'VERIFYING',
   COMPLETED = 'COMPLETED',
+}
+
+export enum ParticipantTimeoutType {
+  BLOCKING_CONTRIBUTION = 'BLOCKING_CONTRIBUTION',
+  BLOCKING_BACKEND_FUNCTION = 'BLOCKING_BACKEND_FUNCTION',
+  BLOCKING_VERIFICATION = 'BLOCKING_VERIFICATION',
+  UNKNOWN = 'UNKNOWN',
+}
+
+export enum VerificationMachineType {
+  SERVER = 'server',
+  VM = 'vm',
 }

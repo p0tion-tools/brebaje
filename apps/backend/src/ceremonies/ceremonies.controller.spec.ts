@@ -4,6 +4,8 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CeremonyState, CeremonyType } from 'src/types/enums';
 import { CreateCeremonyDto } from './dto/create-ceremony.dto';
 import { UpdateCeremonyDto } from './dto/update-ceremony.dto';
+import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IsProjectCoordinatorGuard } from '../projects/guards/is-project-coordinator.guard';
 
 jest.mock('./ceremonies.service', () => {
   return {
@@ -35,7 +37,12 @@ describe('CeremoniesController', () => {
           useValue: mockCeremoniesService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .overrideGuard(IsProjectCoordinatorGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .compile();
 
     controller = module.get<CeremoniesController>(CeremoniesController);
     service = module.get<CeremoniesService>(CeremoniesService);
@@ -63,7 +70,6 @@ describe('CeremoniesController', () => {
         ...createCeremonyDto,
       };
 
-      // jest.spyOn(service, 'create').mockResolvedValue(expectedResult as any);
       jest
         .spyOn(service, 'create')
         .mockImplementation(() => Promise.resolve(expectedResult as any));

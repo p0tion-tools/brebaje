@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
 import { AppModule } from '../src/app.module';
+import { configureApp } from '../src/app.config';
 import { AWS_CEREMONY_BUCKET_POSTFIX, PORT } from 'src/utils/constants';
 import { ceremonyDto, circuits, coordinatorDto, projectDto } from './constants';
 import { User } from 'src/users/user.model';
@@ -13,14 +14,24 @@ import {
   getURLOfPowersOfTau,
   getFilenameFromUrl,
   genesisZkeyIndex,
+  multiPartUploadAPI,
+  checkIfObjectExistAPI,
+  calculateBlake2bHash,
 } from '@brebaje/actions';
 import { existsSync, mkdirSync } from 'fs';
 import { downloadAndSaveFile } from 'src/utils';
 import { zKey } from 'snarkjs';
 import { Circuit } from 'src/circuits/circuit.model';
+import { JwtService } from '@nestjs/jwt';
+import { Participant } from 'src/participants/participant.model';
+import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
 
 const DOWNLOAD_DIRECTORY = './.downloads';
 const TEST_URL = `http://localhost:${PORT}`;
+const circuitArtifactHashes: Record<
+  string,
+  { pot: string; r1cs: string; wasm: string; zkey: string }
+> = {};
 
 // pass the Nest SQLite models to the database in /.db/data.sqlite3
 process.env.DB_SQLITE_SYNCHRONIZE = 'true';
@@ -28,6 +39,8 @@ process.env.API_URL = TEST_URL;
 
 describe('Coordinator (e2e)', () => {
   let app: INestApplication<App>;
+  let jwtService: JwtService;
+  let jwtToken: string | undefined;
   let coordinatorId: number | undefined;
   let projectId: number | undefined;
   let ceremonyId: number | undefined;
@@ -37,17 +50,25 @@ describe('Coordinator (e2e)', () => {
       imports: [AppModule],
     }).compile();
 
+    jwtService = moduleFixture.get<JwtService>(JwtService);
+
     app = moduleFixture.createNestApplication();
+
+    // Apply all global configurations (validation, CORS, Swagger)
+    configureApp(app);
+
     await app.init();
     await app.listen(PORT);
   });
 
   afterAll(async () => {
-    await Ceremony.destroy({ where: { id: ceremonyId || '' } });
-    await Project.destroy({ where: { id: projectId || '' } });
-    await User.destroy({ where: { id: coordinatorId || '' } });
-
-    await app.close();
+    await Promise.all([
+      Participant.destroy({ where: { id: ceremonyId || '' } }),
+      Ceremony.destroy({ where: { id: ceremonyId || '' } }),
+      Project.destroy({ where: { id: projectId || '' } }),
+      User.destroy({ where: { id: coordinatorId || '' } }),
+      app.close(),
+    ]);
   });
 
   it('should create a new user', async () => {
@@ -82,16 +103,43 @@ describe('Coordinator (e2e)', () => {
     coordinatorId = body.id;
   });
 
-  it('should create a project', async () => {
-    const response = await fetch(`${TEST_URL}/projects`, {
+  it('should authenticate the user using test endpoint', async () => {
+    const response = await fetch(`${TEST_URL}/auth/test/login`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        ...projectDto,
-        coordinatorId,
+        userId: coordinatorId,
       }),
+    });
+
+    const body = (await response.json()) as { user: User; jwt: string };
+
+    expect(response.status).toBe(201);
+    expect(typeof body.jwt).toBe('string');
+    expect(body.user.id).toBe(coordinatorId);
+    expect(body.user.displayName).toBe(coordinatorDto.displayName);
+
+    // Verify and decode JWT token
+    const decoded = await jwtService.verifyAsync<{ user: User }>(body.jwt);
+
+    expect(decoded.user).toBeDefined();
+    expect(decoded.user.id).toBe(coordinatorId);
+    expect(decoded.user.displayName).toBe(coordinatorDto.displayName);
+    expect(decoded.user.provider).toBe(coordinatorDto.provider);
+
+    jwtToken = body.jwt;
+  });
+
+  it('should create a project', async () => {
+    const response = await fetch(`${TEST_URL}/projects`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify(projectDto),
     });
 
     const body = (await response.json()) as Project;
@@ -121,6 +169,7 @@ describe('Coordinator (e2e)', () => {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
       },
       body: JSON.stringify({
         ...ceremonyDto,
@@ -179,6 +228,40 @@ describe('Coordinator (e2e)', () => {
     expect(body.bucketName).toBe(expectedBucketName);
   });
 
+  it('should create a participant', async () => {
+    const response = await fetch(`${TEST_URL}/participants`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({
+        ceremonyId,
+      }),
+    });
+
+    const body = (await response.json()) as Participant;
+
+    expect(typeof body.id).toBe('number');
+    expect(body.userId).toBe(coordinatorId);
+    expect(body.ceremonyId).toBe(ceremonyId);
+    expect(body.status).toBe(ParticipantStatus.CREATED);
+    expect(body.contributionStep).toBe(ParticipantContributionStep.DOWNLOADING);
+
+    const participantInstance = await Participant.findByPk(body.id);
+    if (!participantInstance) {
+      throw new Error(`Participant with ID ${body.id} not found`);
+    }
+    const savedParticipant = participantInstance.dataValues as Participant;
+
+    expect(savedParticipant).toBeDefined();
+    expect(savedParticipant.id).toBe(body.id);
+    expect(savedParticipant.userId).toBe(coordinatorId);
+    expect(savedParticipant.ceremonyId).toBe(ceremonyId);
+    expect(savedParticipant.status).toBe(ParticipantStatus.CREATED);
+    expect(savedParticipant.contributionStep).toBe(ParticipantContributionStep.DOWNLOADING);
+  });
+
   it(
     'should upload the circuit artifacts to the bucket',
     async () => {
@@ -205,18 +288,69 @@ describe('Coordinator (e2e)', () => {
         const localZkeyPath = `${DOWNLOAD_DIRECTORY}/${prefix}_${genesisZkeyIndex}.zkey`;
         await zKey.newZKey(localR1csPath, localPTauPath, localZkeyPath);
 
-        /*
-        // TODO: complete the storage.service migration first
-        await multiPartUploadAPI(
-          'accessToken',
+        const [r1csBlake2bHash, wasmBlake2bHash, potBlake2bHash, zkeyBlake2bHash] =
+          await Promise.all([
+            calculateBlake2bHash(localR1csPath),
+            calculateBlake2bHash(localWasmPath),
+            calculateBlake2bHash(localPTauPath),
+            calculateBlake2bHash(localZkeyPath),
+          ]);
+
+        circuitArtifactHashes[prefix] = {
+          pot: potBlake2bHash,
+          r1cs: r1csBlake2bHash,
+          wasm: wasmBlake2bHash,
+          zkey: zkeyBlake2bHash,
+        };
+
+        await Promise.all([
+          multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            coordinatorId!,
+            `${prefix}.r1cs`,
+            localR1csPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          ),
+          multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            coordinatorId!,
+            `${prefix}.wasm`,
+            localWasmPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          ),
+          multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            coordinatorId!,
+            `${prefix}.zkey`,
+            localZkeyPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          ),
+        ]);
+
+        const alreadyUploadedPot = await checkIfObjectExistAPI(
+          jwtToken!,
           ceremonyId!,
-          'userId',
-          `${prefix}.r1cs`,
-          localR1csPath,
-          Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
-          true,
+          `pot/${getFilenameFromUrl(powersOfTauURL)}`,
         );
-        */
+
+        // If it wasn't uploaded yet, upload it.
+        if (!alreadyUploadedPot) {
+          await multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            coordinatorId!,
+            `pot/${getFilenameFromUrl(powersOfTauURL)}`,
+            localPTauPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          );
+        }
       }
     },
     5 * 60 * 1000, // Sets timeout to 5 minutes

@@ -6,7 +6,7 @@ import { Contribution } from 'src/contributions/contribution.model';
 import { CircuitArtifactsType, CircuitVerificationType } from 'src/types/declarations';
 export interface CircuitAttributes {
   ceremonyId: number;
-  id?: number;
+  id: number;
   name: string;
   timeoutMechanismType: CircuitTimeoutType;
   dynamicThreshold?: number;
@@ -18,6 +18,10 @@ export interface CircuitAttributes {
   averageContributionComputationTime?: number;
   averageFullContributionTime?: number;
   averageVerifyContributionTime?: number;
+  completedContributions: number;
+  failedContributions: number;
+  currentContributor?: number;
+  contributors?: number[];
   compiler?: object;
   template?: object;
   verification: CircuitVerificationType;
@@ -29,8 +33,6 @@ export interface CircuitAttributes {
 export type CircuitPk = 'id';
 export type CircuitId = Circuit[CircuitPk];
 export type CircuitOptionalAttributes =
-  | 'id'
-  | 'timeoutMechanismType'
   | 'dynamicThreshold'
   | 'fixedTimeWindow'
   | 'zKeySizeInBytes'
@@ -39,14 +41,19 @@ export type CircuitOptionalAttributes =
   | 'averageContributionComputationTime'
   | 'averageFullContributionTime'
   | 'averageVerifyContributionTime'
+  | 'currentContributor'
   | 'compiler'
   | 'template'
   | 'metadata'
-  | 'files';
+  | 'files'
+  | 'contributors';
 export type CircuitCreationAttributes = Optional<CircuitAttributes, CircuitOptionalAttributes>;
 
 @Table({ tableName: 'circuits' })
 export class Circuit extends Model implements CircuitAttributes {
+  declare createdAt: Date;
+  declare updatedAt: Date;
+
   @Column({
     type: DataType.INTEGER,
     allowNull: false,
@@ -59,7 +66,7 @@ export class Circuit extends Model implements CircuitAttributes {
     autoIncrement: true,
     allowNull: false,
   })
-  declare id?: number;
+  declare id: number;
 
   @Column({
     type: DataType.STRING,
@@ -146,14 +153,14 @@ export class Circuit extends Model implements CircuitAttributes {
     type: DataType.INTEGER,
     allowNull: true,
   })
-  declare currentContributor: number;
+  declare currentContributor?: number;
 
   @Column({
     type: DataType.JSON,
     allowNull: true,
     comment: 'Array of participant contributors ids',
   })
-  declare contributors: number[];
+  declare contributors?: number[];
 
   @Column({
     type: DataType.JSON,

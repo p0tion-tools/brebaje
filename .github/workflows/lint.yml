@@ -1,0 +1,46 @@
+name: Lint
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.head_ref || github.run_id }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-lint:
+    runs-on: ubuntu-22.04
+
+    steps:
+      - uses: actions/checkout@v4
+      - name: Install pnpm 10.24.0
+        uses: pnpm/action-setup@v4
+        with:
+          version: 10.24.0
+          run_install: false
+
+      - name: Verify pnpm version
+        run: |
+          pnpm --version
+          which pnpm
+
+      - name: Use Node.js 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22.17.x
+          cache: "pnpm"
+          cache-dependency-path: pnpm-lock.yaml
+
+      - name: Install all dependencies
+        run: |
+          pnpm install --frozen-lockfile --prefer-offline
+
+      - name: Build all the packages
+        run: |
+          pnpm run build
+
+      - name: Lint
+        run: |
+          pnpm run lint

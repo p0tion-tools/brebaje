@@ -14,6 +14,7 @@ jest.mock('./projects.service', () => {
 // Import after mocking
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
+import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 describe('ProjectsController', () => {
   let controller: ProjectsController;
@@ -28,6 +29,10 @@ describe('ProjectsController', () => {
       remove: jest.fn(),
     };
 
+    const mockJwtAuthGuard = {
+      canActivate: jest.fn(() => true),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProjectsController],
       providers: [
@@ -36,13 +41,14 @@ describe('ProjectsController', () => {
           useValue: mockProjectsService,
         },
         {
-          provide: JwtService,
-          useValue: {
-            verifyAsync: jest.fn(),
-          },
+          provide: JwtAuthGuard,
+          useValue: mockJwtAuthGuard,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue(mockJwtAuthGuard)
+      .compile();
 
     controller = module.get<ProjectsController>(ProjectsController);
     service = module.get<ProjectsService>(ProjectsService);
