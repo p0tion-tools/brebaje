@@ -203,7 +203,7 @@ import { UserService } from "./user.service";
 
 ### TSDoc Comments
 
-All public APIs must have TSDoc comments. See [TSDoc Guide](./TSDOC_GUIDE.md) for details.
+All public APIs must have TSDoc comments. See [TSDoc Guide](/tsdoc-guide) for details.
 
 #### Required Documentation
 
@@ -378,9 +378,9 @@ pnpm prettier:fix
 
 ## Additional Resources
 
-- [TSDoc Guide](./TSDOC_GUIDE.md)
-- [Contributing Guide](./CONTRIBUTING.md)
-- [API Documentation](../docs/index.html) (generated)
+- [TSDoc Guide](/tsdoc-guide)
+- [Contributing Guide](/contributing)
+- [API Documentation](/intro) (generated)
 - [NestJS Documentation](https://docs.nestjs.com/)
 - [Next.js Documentation](https://nextjs.org/docs)
 

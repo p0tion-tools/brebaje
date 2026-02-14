@@ -66,11 +66,11 @@ Thank you for your interest in contributing to Brebaje! This guide will help you
 
 ### Branch Naming
 
-- `feature/description` - New features
-- `fix/description` - Bug fixes
-- `docs/description` - Documentation updates
-- `refactor/description` - Code refactoring
-- `test/description` - Test additions/updates
+- `feature(app | package): description` - New features
+- `fix(app | package): description` - Bug fixes
+- `docs(app | package): description` - Documentation updates
+- `refactor(app | package): description` - Code refactoring
+- `test(app | package): description` - Test additions/updates
 
 ### Making Changes
 
@@ -164,7 +164,7 @@ export class userService {
 
 ### TSDoc Comments
 
-All public APIs must have TSDoc comments. See [TSDoc Guide](./TSDOC_GUIDE.md) for details.
+All public APIs must have TSDoc comments. See [TSDoc Guide](/tsdoc-guide) for details.
 
 **Required for:**
 
