@@ -25,22 +25,23 @@ const sidebars = {
       label: "Getting Started",
       items: ["setup", "contributing", "developer-guide", "tsdoc-guide"],
     },
-    {
-      type: "category",
-      label: "API Reference",
-      link: {
-        type: "doc",
-        id: "api/index",
-      },
-      items: (() => {
-        try {
-          return require("./docs/api/typedoc-sidebar.cjs");
-        } catch (e) {
-          // TypeDoc sidebar will be generated during build
-          return [];
-        }
-      })(),
-    },
+    // API Reference will be enabled once TypeDoc is configured
+    // {
+    //   type: "category",
+    //   label: "API Reference",
+    //   link: {
+    //     type: "doc",
+    //     id: "api/index",
+    //   },
+    //   items: (() => {
+    //     try {
+    //       return require("./docs/api/typedoc-sidebar.cjs");
+    //     } catch (e) {
+    //       // TypeDoc sidebar will be generated during build
+    //       return [];
+    //     }
+    //   })(),
+    // },
   ],
 };
 

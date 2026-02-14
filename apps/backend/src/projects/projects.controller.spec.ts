@@ -1,5 +1,8 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
+import { JwtService } from '@nestjs/jwt';
+import { Request } from 'express';
+import { User } from 'src/users/user.model';
 
 // Mock the dependencies
 jest.mock('./projects.service', () => {
@@ -61,14 +64,14 @@ describe('ProjectsController', () => {
         name: 'New Project',
         contact: 'contact@example.com',
       };
-      const mockUser = { id: 1, displayName: 'Test User' };
-      const mockRequest = { user: mockUser } as AuthenticatedRequest;
+      const mockUser = { id: 1, displayName: 'Test User' } as User;
+      const mockReq = { user: mockUser } as Request & { user: User };
       const mockResult = { id: 1, name: 'New Project' };
 
       jest.spyOn(service, 'create').mockImplementation(() => Promise.resolve(mockResult as any));
 
-      expect(await controller.create(mockRequest, createProjectDto)).toBe(mockResult);
-      expect(service.create).toHaveBeenCalledWith(createProjectDto, 1);
+      expect(await controller.create(createProjectDto, mockReq)).toBe(mockResult);
+      expect(service.create).toHaveBeenCalledWith(createProjectDto, mockUser);
     });
   });
 

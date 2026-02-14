@@ -165,7 +165,7 @@ async function createRepositoryContribution(
   console.log(`📁 Creating repository contribution...`);
 
   // Parse repository URL to get owner and repo
-  const repoMatch = repositoryUrl.match(/github\.com\/([^\/]+)\/([^\/]+)$/);
+  const repoMatch = repositoryUrl.match(/github\.com\/([^/]+)\/([^/]+)$/);
   if (!repoMatch) {
     throw new Error(`Invalid repository URL format: ${repositoryUrl}`);
   }
@@ -253,7 +253,7 @@ async function createPullRequest(
   console.log(`🔄 Creating pull request link to original ceremony repository...`);
 
   // Parse forked repository URL to get owner and repo
-  const forkedMatch = forkedRepoUrl.match(/github\.com\/([^\/]+)\/([^\/]+)$/);
+  const forkedMatch = forkedRepoUrl.match(/github\.com\/([^/]+)\/([^/]+)$/);
   if (!forkedMatch) {
     throw new Error(`Invalid forked repository URL format: ${forkedRepoUrl}`);
   }
@@ -361,7 +361,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
         contributionFileUrl = ceremonyUrls.upload_info.upload_url.split("?")[0];
         console.log(`📎 Found contribution file URL: ${contributionFileUrl}`);
       }
-    } catch (error) {
+    } catch {
       // getUrlsJson throws and exits on critical errors, so this handles JSON parsing errors
       console.warn(`⚠️ Could not parse ceremony URLs file, using index from record file: ${index}`);
     }
@@ -422,7 +422,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     try {
       githubUsername = await getGitHubUsername(repoToken);
       console.log(`👤 GitHub username: ${githubUsername}`);
-    } catch (error) {
+    } catch {
       console.error(`❌ Failed to get GitHub username. Please check your fine-grained token.`);
       process.exit(1);
     }
@@ -535,7 +535,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     // Get ceremony URL (original repository) for social sharing
     let ceremonyUrl = repositoryUrl; // fallback to fork URL
     try {
-      const repoMatch = repositoryUrl.match(/github\.com\/([^\/]+)\/([^\/]+)$/);
+      const repoMatch = repositoryUrl.match(/github\.com\/([^/]+)\/([^/]+)$/);
       if (repoMatch) {
         const [, forkedOwner, forkedRepo] = repoMatch;
         const { originalOwner, originalRepo } = await getOriginalRepository(
@@ -546,7 +546,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
         );
         ceremonyUrl = `https://github.com/${originalOwner}/${originalRepo}`;
       }
-    } catch (error) {
+    } catch {
       console.warn(
         `⚠️ Could not determine original ceremony repository, using fork URL for social sharing.`,
       );
@@ -556,8 +556,7 @@ export async function postRecordPerpetualPowersOfTau(githubToken?: string): Prom
     const tweetText = `🎉 Contributed to Cardano Perpetual Powers of Tau Ceremony!
 
 📋 Official ceremony: ${ceremonyUrl}
-👁️ Quick view: ${gistUrl}`;
-    `
+👁️ Quick view: ${gistUrl}
 
 #Cardano #ZK #Catalyst`;
     const twitterUrl = `https://twitter.com/intent/tweet?text=${encodeURIComponent(tweetText)}`;

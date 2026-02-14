@@ -8,11 +8,13 @@ export interface ProjectAttributes {
   name: string;
   contact: string;
   coordinatorId: number;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export type ProjectPk = 'id';
 export type ProjectId = Project[ProjectPk];
-export type ProjectOptionalAttributes = 'id';
+export type ProjectOptionalAttributes = 'id' | 'createdAt' | 'updatedAt';
 export type ProjectCreationAttributes = Optional<ProjectAttributes, ProjectOptionalAttributes>;
 
 @Table({ tableName: 'projects' })
@@ -44,6 +46,9 @@ export class Project extends Model implements ProjectAttributes {
     allowNull: false,
   })
   declare coordinatorId: number;
+
+  declare createdAt: Date;
+  declare updatedAt: Date;
 
   @BelongsTo(() => User, 'coordinatorId')
   declare user: User;

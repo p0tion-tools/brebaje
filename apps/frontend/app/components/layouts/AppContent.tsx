@@ -12,7 +12,7 @@ export const AppContent = ({
   containerClassName,
 }: AppContentProps) => {
   return (
-    <div className={cn("relative overflow-auto", containerClassName)}>
+    <div className={cn("relative", containerClassName)}>
       <div className={cn("container mx-auto relative")}>
         <div className={cn("px-10", className)}>{children}</div>
       </div>

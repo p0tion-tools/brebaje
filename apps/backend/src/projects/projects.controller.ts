@@ -10,11 +10,14 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
+import { Request as ExpressRequest } from 'express';
+import { User } from 'src/users/user.model';
 import { Project } from './project.model';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
-import { AuthenticatedRequest, JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { ProjectOwnershipGuard } from './guards/project-ownership.guard';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -23,7 +26,7 @@ export class ProjectsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new project' })
   @ApiResponse({
     status: 201,
@@ -32,8 +35,11 @@ export class ProjectsController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  create(@Request() req: AuthenticatedRequest, @Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto, req.user!.id!);
+  create(
+    @Body() createProjectDto: CreateProjectDto,
+    @Request() req: ExpressRequest & { user: User },
+  ) {
+    return this.projectsService.create(createProjectDto, req.user);
   }
 
   @Get()
@@ -53,6 +59,8 @@ export class ProjectsController {
   }
 
   @Patch(':id')
+  @UseGuards(JwtAuthGuard, ProjectOwnershipGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Update a project' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({
@@ -61,15 +69,21 @@ export class ProjectsController {
     type: Project,
   })
   @ApiResponse({ status: 404, description: 'Project not found.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Not the project owner.' })
   update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
     return this.projectsService.update(+id, updateProjectDto);
   }
 
   @Delete(':id')
+  @UseGuards(JwtAuthGuard, ProjectOwnershipGuard)
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Delete a project' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'The project has been successfully deleted.' })
   @ApiResponse({ status: 404, description: 'Project not found.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Not the project owner.' })
   remove(@Param('id') id: string) {
     return this.projectsService.remove(+id);
   }
