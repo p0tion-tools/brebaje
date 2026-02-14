@@ -13,8 +13,15 @@ jest.mock('./ceremonies.service', () => {
   };
 });
 
+jest.mock('./guards/is-ceremony-coordinator.guard', () => {
+  return {
+    IsCeremonyCoordinatorGuard: jest.fn(),
+  };
+});
+
 import { CeremoniesController } from './ceremonies.controller';
 import { CeremoniesService } from './ceremonies.service';
+import { IsCeremonyCoordinatorGuard } from './guards/is-ceremony-coordinator.guard';
 
 describe('CeremoniesController', () => {
   let controller: CeremoniesController;
@@ -41,6 +48,8 @@ describe('CeremoniesController', () => {
       .overrideGuard(JwtAuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
       .overrideGuard(IsProjectCoordinatorGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .overrideGuard(IsCeremonyCoordinatorGuard)
       .useValue({ canActivate: jest.fn(() => true) })
       .compile();
 
