@@ -13,6 +13,13 @@ interface JwtPayload {
 }
 
 /**
+ * Custom request interface that includes the authenticated user.
+ */
+export interface AuthenticatedRequest extends Request {
+  user?: User;
+}
+
+/**
  * JWT authentication guard that validates JWT tokens and attaches user to request.
  *
  * Extracts the JWT token from the Authorization header, verifies it,
