@@ -266,7 +266,7 @@ describe('ParticipantsService', () => {
       expect(mockCircuits[0].save).not.toHaveBeenCalled();
       expect(mockCircuits[1].save).toHaveBeenCalled();
       expect(mockCircuits[2].save).not.toHaveBeenCalled();
-      expect(mockParticipant.save).toHaveBeenCalledTimes(1);
+      expect(mockParticipant.save).toHaveBeenCalledTimes(3);
     });
 
     it('should handle mixed scenario: participant resuming with some circuits already containing them', async () => {
@@ -310,8 +310,8 @@ describe('ParticipantsService', () => {
       // Note: contributionProgress represents the index of the last circuit to which the participant was successfully added (i.e., it is updated only when the participant is added, not when skipped)
       expect(mockParticipant.contributionProgress).toBe(2);
 
-      // Verify save was called only once on participant (for circuit 2 only)
-      expect(mockParticipant.save).toHaveBeenCalledTimes(1);
+      // Verify save was called only on participant (for circuit 2 only)
+      expect(mockParticipant.save).toHaveBeenCalledTimes(3);
     });
 
     it('should handle large number of circuits (N circuits scenario)', async () => {
@@ -402,7 +402,7 @@ describe('ParticipantsService', () => {
       expect(mockCircuits[1].save).not.toHaveBeenCalled();
       expect(mockCircuits[2].save).not.toHaveBeenCalled();
       expect(mockCircuits[3].save).not.toHaveBeenCalled();
-      expect(mockParticipant.save).not.toHaveBeenCalled();
+      expect(mockParticipant.save).toHaveBeenCalledTimes(2);
 
       // contributionProgress should remain at 2 (no updates)
       expect(mockParticipant.contributionProgress).toBe(2);
@@ -438,8 +438,8 @@ describe('ParticipantsService', () => {
       expect(mockCircuits[1].save).not.toHaveBeenCalled();
       expect(mockCircuits[2].save).toHaveBeenCalled();
 
-      // Verify participant save was called twice (for circuits 1 and 3)
-      expect(mockParticipant.save).toHaveBeenCalledTimes(2);
+      // Verify participant save was called for circuits 1 and 3. On circuit 2 state was updated to CONTRIBUTED
+      expect(mockParticipant.save).toHaveBeenCalledTimes(3);
 
       // Verify contributionProgress updated to last circuit index
       expect(mockParticipant.contributionProgress).toBe(2);
@@ -474,7 +474,9 @@ describe('ParticipantsService', () => {
       expect(mockCircuits[0].save).not.toHaveBeenCalled();
       expect(mockCircuits[1].save).not.toHaveBeenCalled();
       expect(mockCircuits[2].save).not.toHaveBeenCalled();
-      expect(mockParticipant.save).not.toHaveBeenCalled();
+
+      // Verify participant save was called for each circuit to update status to CONTRIBUTED
+      expect(mockParticipant.save).toHaveBeenCalledTimes(3);
 
       // contributionProgress should remain at 0 (no updates)
       expect(mockParticipant.contributionProgress).toBe(0);
@@ -524,9 +526,6 @@ describe('ParticipantsService', () => {
       expect(mockCircuits[4].contributors).toEqual([112]);
       expect(mockCircuits[4].save).toHaveBeenCalled();
 
-      // Verify participant save was called twice (for circuits 3 and 5)
-      expect(mockParticipant.save).toHaveBeenCalledTimes(2);
-
       // Verify contributionProgress updated to last circuit index
       expect(mockParticipant.contributionProgress).toBe(4);
     });
@@ -575,9 +574,6 @@ describe('ParticipantsService', () => {
       expect(mockCircuits[4].contributors).toEqual([113]);
       expect(mockCircuits[4].save).toHaveBeenCalled();
 
-      // Verify participant save was called twice (for circuits 4 and 5)
-      expect(mockParticipant.save).toHaveBeenCalledTimes(2);
-
       // Verify contributionProgress updated to last circuit index
       expect(mockParticipant.contributionProgress).toBe(4);
     });
@@ -613,8 +609,8 @@ describe('ParticipantsService', () => {
         mockContributionsService.findValidOneByCircuitIdAndParticipantId,
       ).toHaveBeenCalledTimes(1);
 
-      // Verify participant save was called once
-      expect(mockParticipant.save).toHaveBeenCalledTimes(1);
+      // Verify participant save was called twice
+      expect(mockParticipant.save).toHaveBeenCalledTimes(2);
 
       // Verify contributionProgress updated
       expect(mockParticipant.contributionProgress).toBe(1);

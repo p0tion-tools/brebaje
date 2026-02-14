@@ -58,6 +58,33 @@ $ mau deploy
 
 With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
 
+## Diagrams
+
+### Participant state changes
+
+```mermaid
+stateDiagram-v2
+    [*] --> CREATED
+    %% Happy path (participant joins, contributes and finishes)
+    CREATED --> WAITING: POST participant joinCeremony
+    WAITING --> READY: CRON - circuit coordinate
+    READY --> CONTRIBUTING: POST - contribution downloadPrevious (TODO: implement endpoint)
+    CONTRIBUTING --> CONTRIBUTED: POST - /storage/multipart/complete (upload finished)
+    CONTRIBUTED --> DONE: CRON - circuit coordinate
+
+    %% Coordination (participant timeouts)
+    READY --> TIMEDOUT: CRON - circuit coordinate
+    CONTRIBUTING --> TIMEDOUT: CRON - circuit coordinate
+    TIMEDOUT --> WAITING: CRON - participant monitorTimedOutParticipants
+
+    %% Finalizing path (participant contributes and finalizes the ceremony)
+    READY --> FINALIZING: POST - contribution downloadPrevious
+    FINALIZING --> FINALIZED: Post - contribution uploadLast
+    FINALIZED --> DONE: CRON - circuit coordinate
+
+    DONE --> [*]
+```
+
 ## Load DBML (dbdiagram.io file) to the backend service
 
 Remember that in order to keep track of the database schema, you should always add new changes to the `/src/database/diagram.dbml` file and then load it into the backend service (transform DBML to SQL, load SQL to the database using Sequelize and export the models as Typescript objects using sequelize-auto). To run all this automatically, you can use the following command:
