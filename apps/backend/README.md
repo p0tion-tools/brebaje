@@ -79,7 +79,7 @@ stateDiagram-v2
 
     %% Finalizing path (participant contributes and finalizes the ceremony)
     READY --> FINALIZING: POST - contribution downloadPrevious
-    FINALIZING --> FINALIZED: Post - contribution uploadLast
+    FINALIZING --> FINALIZED: POST - contribution uploadLast
     FINALIZED --> DONE: CRON - circuit coordinate
 
     DONE --> [*]
