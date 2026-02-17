@@ -11,10 +11,17 @@ jest.mock('./projects.service', () => {
   };
 });
 
+jest.mock('./guards/is-project-coordinator-param.guard', () => {
+  return {
+    IsProjectCoordinatorParamGuard: jest.fn(),
+  };
+});
+
 // Import after mocking
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IsProjectCoordinatorParamGuard } from './guards/is-project-coordinator-param.guard';
 
 describe('ProjectsController', () => {
   let controller: ProjectsController;
@@ -33,6 +40,10 @@ describe('ProjectsController', () => {
       canActivate: jest.fn(() => true),
     };
 
+    const mockIsProjectCoordinatorParamGuard = {
+      canActivate: jest.fn(() => true),
+    };
+
     const module: TestingModule = await Test.createTestingModule({
       controllers: [ProjectsController],
       providers: [
@@ -44,10 +55,16 @@ describe('ProjectsController', () => {
           provide: JwtAuthGuard,
           useValue: mockJwtAuthGuard,
         },
+        {
+          provide: IsProjectCoordinatorParamGuard,
+          useValue: mockIsProjectCoordinatorParamGuard,
+        },
       ],
     })
       .overrideGuard(JwtAuthGuard)
       .useValue(mockJwtAuthGuard)
+      .overrideGuard(IsProjectCoordinatorParamGuard)
+      .useValue(mockIsProjectCoordinatorParamGuard)
       .compile();
 
     controller = module.get<ProjectsController>(ProjectsController);

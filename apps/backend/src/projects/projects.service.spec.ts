@@ -170,8 +170,32 @@ describe('ProjectsService', () => {
 
       const result = await service.remove(1);
 
-      expect(mockProjectModel.findByPk).toHaveBeenCalledWith(1);
+      expect(mockProjectModel.findByPk).toHaveBeenCalledWith(1, {
+        include: [{ association: 'ceremonies' }],
+      });
       expect(mockProject.destroy).toHaveBeenCalled();
+      expect(result).toEqual({ message: 'Project deleted successfully' });
+    });
+
+    it('should delete all associated ceremonies before deleting project', async () => {
+      const mockCeremony1 = { id: 1, destroy: jest.fn().mockResolvedValue(undefined) };
+      const mockCeremony2 = { id: 2, destroy: jest.fn().mockResolvedValue(undefined) };
+      const projectWithCeremonies = {
+        ...mockProject,
+        ceremonies: [mockCeremony1, mockCeremony2],
+      };
+
+      mockProjectModel.findByPk.mockResolvedValue(projectWithCeremonies);
+      projectWithCeremonies.destroy = jest.fn().mockResolvedValue(undefined);
+
+      const result = await service.remove(1);
+
+      expect(mockProjectModel.findByPk).toHaveBeenCalledWith(1, {
+        include: [{ association: 'ceremonies' }],
+      });
+      expect(mockCeremony1.destroy).toHaveBeenCalled();
+      expect(mockCeremony2.destroy).toHaveBeenCalled();
+      expect(projectWithCeremonies.destroy).toHaveBeenCalled();
       expect(result).toEqual({ message: 'Project deleted successfully' });
     });
 

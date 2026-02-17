@@ -6,6 +6,9 @@ import { CircuitsService } from './circuits.service';
 import { VmModule } from 'src/vm/vm.module';
 import { StorageModule } from 'src/storage/storage.module';
 import { ParticipantsModule } from 'src/participants/participants.module';
+import { AuthModule } from 'src/auth/auth.module';
+import { CeremoniesModule } from 'src/ceremonies/ceremonies.module';
+import { IsCircuitCoordinatorGuard } from './guards/is-circuit-coordinator.guard';
 
 @Module({
   imports: [
@@ -13,9 +16,11 @@ import { ParticipantsModule } from 'src/participants/participants.module';
     VmModule,
     forwardRef(() => StorageModule),
     forwardRef(() => ParticipantsModule),
+    CeremoniesModule,
+    AuthModule,
   ],
   controllers: [CircuitsController],
-  providers: [CircuitsService],
+  providers: [CircuitsService, IsCircuitCoordinatorGuard],
   exports: [CircuitsService],
 })
 export class CircuitsModule {}

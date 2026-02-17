@@ -10,14 +10,12 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiParam, ApiResponse, ApiTags } from '@nestjs/swagger';
-import { Request as ExpressRequest } from 'express';
-import { User } from 'src/users/user.model';
 import { Project } from './project.model';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
-import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { ProjectOwnershipGuard } from './guards/project-ownership.guard';
+import { AuthenticatedRequest, JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { IsProjectCoordinatorParamGuard } from './guards/is-project-coordinator-param.guard';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -35,10 +33,7 @@ export class ProjectsController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  create(
-    @Body() createProjectDto: CreateProjectDto,
-    @Request() req: ExpressRequest & { user: User },
-  ) {
+  create(@Body() createProjectDto: CreateProjectDto, @Request() req: AuthenticatedRequest) {
     return this.projectsService.create(createProjectDto, req.user);
   }
 
@@ -59,8 +54,8 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, ProjectOwnershipGuard)
-  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, IsProjectCoordinatorParamGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update a project' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({
@@ -68,6 +63,8 @@ export class ProjectsController {
     description: 'The project has been successfully updated.',
     type: Project,
   })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Not the project coordinator.' })
   @ApiResponse({ status: 404, description: 'Project not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - Not the project owner.' })
@@ -76,11 +73,13 @@ export class ProjectsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, ProjectOwnershipGuard)
-  @ApiBearerAuth()
+  @UseGuards(JwtAuthGuard, IsProjectCoordinatorParamGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete a project' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({ status: 200, description: 'The project has been successfully deleted.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden - Not the project coordinator.' })
   @ApiResponse({ status: 404, description: 'Project not found.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - Not the project owner.' })

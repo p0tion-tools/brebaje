@@ -204,6 +204,9 @@ export class ParticipantsService {
       const isAlreadyInQueue = contributors?.includes(userId);
 
       if (isAlreadyInQueue) {
+        participant.status = ParticipantStatus.WAITING;
+        await participant.save();
+
         continue;
       }
 
@@ -214,6 +217,9 @@ export class ParticipantsService {
         );
 
       if (alreadyContributed) {
+        participant.status = ParticipantStatus.CONTRIBUTED;
+        await participant.save();
+
         continue;
       }
 
@@ -222,6 +228,8 @@ export class ParticipantsService {
       circuit.contributors = newContributors;
 
       participant.contributionProgress = index;
+      participant.status = ParticipantStatus.WAITING;
+
       await Promise.all([participant.save(), circuit.save()]);
     }
   }
