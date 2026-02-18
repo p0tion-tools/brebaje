@@ -1,7 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { JwtService } from '@nestjs/jwt';
-import { Request } from 'express';
 import { User } from 'src/users/user.model';
 
 // Mock the dependencies
@@ -11,9 +9,9 @@ jest.mock('./projects.service', () => {
   };
 });
 
-jest.mock('./guards/is-project-coordinator-param.guard', () => {
+jest.mock('./guards/project-ownership.guard', () => {
   return {
-    IsProjectCoordinatorParamGuard: jest.fn(),
+    ProjectOwnershipGuard: jest.fn(),
   };
 });
 
@@ -21,7 +19,7 @@ jest.mock('./guards/is-project-coordinator-param.guard', () => {
 import { ProjectsController } from './projects.controller';
 import { ProjectsService } from './projects.service';
 import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
-import { IsProjectCoordinatorParamGuard } from './guards/is-project-coordinator-param.guard';
+import { ProjectOwnershipGuard } from './guards/project-ownership.guard';
 
 describe('ProjectsController', () => {
   let controller: ProjectsController;
@@ -40,7 +38,7 @@ describe('ProjectsController', () => {
       canActivate: jest.fn(() => true),
     };
 
-    const mockIsProjectCoordinatorParamGuard = {
+    const mockProjectOwnershipGuard = {
       canActivate: jest.fn(() => true),
     };
 
@@ -56,15 +54,15 @@ describe('ProjectsController', () => {
           useValue: mockJwtAuthGuard,
         },
         {
-          provide: IsProjectCoordinatorParamGuard,
-          useValue: mockIsProjectCoordinatorParamGuard,
+          provide: ProjectOwnershipGuard,
+          useValue: mockProjectOwnershipGuard,
         },
       ],
     })
       .overrideGuard(JwtAuthGuard)
       .useValue(mockJwtAuthGuard)
-      .overrideGuard(IsProjectCoordinatorParamGuard)
-      .useValue(mockIsProjectCoordinatorParamGuard)
+      .overrideGuard(ProjectOwnershipGuard)
+      .useValue(mockProjectOwnershipGuard)
       .compile();
 
     controller = module.get<ProjectsController>(ProjectsController);
@@ -82,7 +80,7 @@ describe('ProjectsController', () => {
         contact: 'contact@example.com',
       };
       const mockUser = { id: 1, displayName: 'Test User' } as User;
-      const mockReq = { user: mockUser } as Request & { user: User };
+      const mockReq = { user: mockUser } as AuthenticatedRequest;
       const mockResult = { id: 1, name: 'New Project' };
 
       jest.spyOn(service, 'create').mockImplementation(() => Promise.resolve(mockResult as any));
