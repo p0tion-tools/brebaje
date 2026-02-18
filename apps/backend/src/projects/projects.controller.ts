@@ -15,7 +15,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
 import { AuthenticatedRequest, JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { IsProjectCoordinatorParamGuard } from './guards/is-project-coordinator-param.guard';
+import { ProjectOwnershipGuard } from './guards/project-ownership.guard';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -54,7 +54,7 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, IsProjectCoordinatorParamGuard)
+  @UseGuards(JwtAuthGuard, ProjectOwnershipGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update a project' })
   @ApiParam({ name: 'id', type: 'number' })
@@ -66,14 +66,12 @@ export class ProjectsController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - Not the project coordinator.' })
   @ApiResponse({ status: 404, description: 'Project not found.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Not the project owner.' })
   update(@Param('id') id: string, @Body() updateProjectDto: UpdateProjectDto) {
     return this.projectsService.update(+id, updateProjectDto);
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, IsProjectCoordinatorParamGuard)
+  @UseGuards(JwtAuthGuard, ProjectOwnershipGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete a project' })
   @ApiParam({ name: 'id', type: 'number' })
@@ -81,8 +79,6 @@ export class ProjectsController {
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 403, description: 'Forbidden - Not the project coordinator.' })
   @ApiResponse({ status: 404, description: 'Project not found.' })
-  @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  @ApiResponse({ status: 403, description: 'Forbidden - Not the project owner.' })
   remove(@Param('id') id: string) {
     return this.projectsService.remove(+id);
   }
