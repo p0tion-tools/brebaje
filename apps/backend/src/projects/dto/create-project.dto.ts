@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString, IsNotEmpty, MinLength, MaxLength, IsNumber, IsOptional } from 'class-validator';
+import { IsString, IsNotEmpty, MinLength, MaxLength } from 'class-validator';
 
 /**
  * DTO for creating a new project.
@@ -21,9 +21,4 @@ export class CreateProjectDto {
   @MinLength(3)
   @MaxLength(200)
   contact: string;
-
-  @ApiProperty({ example: 1, description: 'Coordinator user ID', required: false })
-  @IsNumber()
-  @IsOptional()
-  coordinatorId?: number;
 }
