@@ -10,6 +10,7 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { User } from 'src/users/user.model';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { Project } from './project.model';
@@ -25,15 +26,15 @@ export class ProjectsService {
    * Creates a new project.
    *
    * @param createProjectDto - The project data
-   * @param coordinatorId - The ID of the authenticated user creating the project
+   * @param user - The authenticated user creating the project
    * @returns The created project
    */
-  async create(createProjectDto: CreateProjectDto, coordinatorId: number) {
+  async create(createProjectDto: CreateProjectDto, user: User) {
     try {
       const project = await this.projectModel.create({
         name: createProjectDto.name,
         contact: createProjectDto.contact,
-        coordinatorId,
+        coordinatorId: user.id,
       });
       return project;
     } catch (error) {

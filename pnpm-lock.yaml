@@ -14,7 +14,7 @@ importers:
         specifier: ^19.8.1
         version: 19.8.1
       "@eslint/js":
-        specifier: ^9.18.0
+        specifier: ^9.32.0
         version: 9.32.0
       "@typescript-eslint/eslint-plugin":
         specifier: ^8.35.1
@@ -35,7 +35,7 @@ importers:
         specifier: ^0.2.17
         version: 0.2.17
       globals:
-        specifier: ^16.0.0
+        specifier: ^16.3.0
         version: 16.3.0
       husky:
         specifier: ^9.1.7
@@ -53,7 +53,7 @@ importers:
         specifier: ^5.9.2
         version: 5.9.2
       typescript-eslint:
-        specifier: ^8.35.1
+        specifier: ^8.38.0
         version: 8.38.0(eslint@9.32.0(jiti@2.5.1))(typescript@5.9.2)
 
   apps/backend:
@@ -24394,7 +24394,7 @@ snapshots:
       bech32: 2.0.0
       cross-fetch: 3.2.0(encoding@0.1.13)
       fastq: 1.19.1
-      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.0.9))
+      isomorphic-ws: 4.0.1(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5))
       nanoid: 3.3.11
       ts-custom-error: 3.3.1
       ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)
@@ -34259,7 +34259,7 @@ snapshots:
 
   isobject@3.0.1: {}
 
-  isomorphic-ws@4.0.1(ws@7.5.10(bufferutil@4.0.9)):
+  isomorphic-ws@4.0.1(ws@7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)):
     dependencies:
       ws: 7.5.10(bufferutil@4.0.9)(utf-8-validate@6.0.5)
 

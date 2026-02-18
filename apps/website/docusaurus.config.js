@@ -75,12 +75,13 @@ const config = {
             position: "left",
             label: "Documentation",
           },
-          {
-            type: "doc",
-            docId: "api/index",
-            position: "left",
-            label: "API Reference",
-          },
+          // API Reference will be enabled once TypeDoc generates docs/api/
+          // {
+          //   type: "doc",
+          //   docId: "api/index",
+          //   position: "left",
+          //   label: "API Reference",
+          // },
           {
             href: "https://github.com/p0tion-tools/brebaje",
             position: "right",
@@ -99,10 +100,10 @@ const config = {
                 label: "Getting Started",
                 to: "/intro",
               },
-              {
-                label: "API Reference",
-                to: "/api",
-              },
+              // {
+              //   label: "API Reference",
+              //   to: "/api",
+              // },
             ],
           },
           {

@@ -4,6 +4,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
+import { User } from 'src/users/user.model';
 
 // Mock the Project model to avoid import issues
 jest.mock('./project.model', () => {
@@ -32,6 +33,12 @@ describe('ProjectsService', () => {
     update: jest.fn(),
     destroy: jest.fn(),
   };
+
+  const mockUser = {
+    id: 1,
+    displayName: 'Test User',
+    // Add other User properties if needed by tests
+  } as User;
 
   beforeEach(async () => {
     mockProjectModel = {
@@ -64,23 +71,22 @@ describe('ProjectsService', () => {
         name: 'New Project',
         contact: 'contact@example.com',
       };
-      const coordinatorId = 1;
 
-      const expectedProjectData = {
+      const expectedProject = {
         name: createProjectDto.name,
         contact: createProjectDto.contact,
-        coordinatorId,
+        coordinatorId: mockUser.id,
       };
 
       mockProjectModel.create.mockResolvedValue({
         id: 1,
-        ...expectedProjectData,
+        ...expectedProject,
       });
 
-      const result = await service.create(createProjectDto, coordinatorId);
+      const result = await service.create(createProjectDto, mockUser);
 
-      expect(mockProjectModel.create).toHaveBeenCalledWith(expectedProjectData);
-      expect(result).toEqual({ id: 1, ...expectedProjectData });
+      expect(mockProjectModel.create).toHaveBeenCalledWith(expectedProject);
+      expect(result).toEqual({ id: 1, ...expectedProject });
     });
 
     it('should throw a ConflictException when a project with the same name already exists', async () => {
@@ -88,15 +94,12 @@ describe('ProjectsService', () => {
         name: 'Existing Project',
         contact: 'contact@example.com',
       };
-      const coordinatorId = 1;
 
       const error = new Error('Project already exists');
       error.name = 'SequelizeUniqueConstraintError';
       mockProjectModel.create.mockRejectedValue(error);
 
-      await expect(service.create(createProjectDto, coordinatorId)).rejects.toThrow(
-        ConflictException,
-      );
+      await expect(service.create(createProjectDto, mockUser)).rejects.toThrow(ConflictException);
     });
   });
 

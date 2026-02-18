@@ -2,22 +2,22 @@ import { Injectable, CanActivate, ExecutionContext, UnauthorizedException } from
 import { JwtService } from '@nestjs/jwt';
 import { Request } from 'express';
 import { JWT_SECRET } from '../../utils/constants';
-import { User } from '../../users/user.model';
+import { User } from 'src/users/user.model';
 
 /**
  * Interface for JWT payload structure.
  */
 interface JwtPayload {
   user: User;
-  iat?: number;
-  exp?: number;
+  iat: number;
+  exp: number;
 }
 
 /**
  * Custom request interface that includes the authenticated user.
  */
 export interface AuthenticatedRequest extends Request {
-  user?: User;
+  user: User;
 }
 
 /**
@@ -28,7 +28,7 @@ export interface AuthenticatedRequest extends Request {
  */
 @Injectable()
 export class JwtAuthGuard implements CanActivate {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(private jwtService: JwtService) {}
 
   /**
    * Validates the JWT token and attaches user to request.
@@ -42,7 +42,7 @@ export class JwtAuthGuard implements CanActivate {
     const token = this.extractTokenFromHeader(request);
 
     if (!token) {
-      throw new UnauthorizedException('No authentication token provided');
+      throw new UnauthorizedException('No token provided');
     }
 
     try {
@@ -52,11 +52,12 @@ export class JwtAuthGuard implements CanActivate {
 
       // Attach user to request object
       request.user = payload.user;
-      return true;
-    } catch (error: any) {
+    } catch (error) {
       console.error('JWT verification error:', (error as Error).message);
       throw new UnauthorizedException('Invalid or expired authentication token');
     }
+
+    return true;
   }
 
   /**

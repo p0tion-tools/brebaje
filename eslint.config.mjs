@@ -38,6 +38,9 @@ export default tseslint.config(
       "**/.docusaurus/**",
       "**/typedoc-sidebar.cjs", // Generated file by TypeDoc plugin
       "**/docs/api/**", // Generated API documentation files
+      "apps/backend/eslint.config.mjs",
+      "apps/backend/**",
+      "apps/frontend/**",
     ],
   },
   {
@@ -74,6 +77,7 @@ export default tseslint.config(
         {
           argsIgnorePattern: "^_",
           varsIgnorePattern: "^_",
+          args: "none",
         },
       ],
       "@typescript-eslint/no-explicit-any": "off",
@@ -84,6 +88,19 @@ export default tseslint.config(
     files: ["**/*.ts", "**/*.tsx"],
     rules: {
       "tsdoc/syntax": "error",
+    },
+  },
+  // CommonJS files
+  {
+    files: ["**/*.js"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+      },
+      sourceType: "commonjs",
+    },
+    rules: {
+      "@typescript-eslint/no-require-imports": "off",
     },
   },
 );

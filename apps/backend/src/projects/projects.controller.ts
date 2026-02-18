@@ -15,7 +15,7 @@ import { CreateProjectDto } from './dto/create-project.dto';
 import { UpdateProjectDto } from './dto/update-project.dto';
 import { ProjectsService } from './projects.service';
 import { AuthenticatedRequest, JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
-import { IsProjectCoordinatorParamGuard } from './guards/is-project-coordinator-param.guard';
+import { ProjectOwnershipGuard } from './guards/project-ownership.guard';
 
 @ApiTags('projects')
 @Controller('projects')
@@ -24,7 +24,7 @@ export class ProjectsController {
 
   @Post()
   @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth('access-token')
+  @ApiBearerAuth()
   @ApiOperation({ summary: 'Create a new project' })
   @ApiResponse({
     status: 201,
@@ -33,8 +33,8 @@ export class ProjectsController {
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
   @ApiResponse({ status: 401, description: 'Unauthorized.' })
-  create(@Request() req: AuthenticatedRequest, @Body() createProjectDto: CreateProjectDto) {
-    return this.projectsService.create(createProjectDto, req.user!.id!);
+  create(@Body() createProjectDto: CreateProjectDto, @Request() req: AuthenticatedRequest) {
+    return this.projectsService.create(createProjectDto, req.user);
   }
 
   @Get()
@@ -54,7 +54,7 @@ export class ProjectsController {
   }
 
   @Patch(':id')
-  @UseGuards(JwtAuthGuard, IsProjectCoordinatorParamGuard)
+  @UseGuards(JwtAuthGuard, ProjectOwnershipGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Update a project' })
   @ApiParam({ name: 'id', type: 'number' })
@@ -71,7 +71,7 @@ export class ProjectsController {
   }
 
   @Delete(':id')
-  @UseGuards(JwtAuthGuard, IsProjectCoordinatorParamGuard)
+  @UseGuards(JwtAuthGuard, ProjectOwnershipGuard)
   @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Delete a project' })
   @ApiParam({ name: 'id', type: 'number' })
