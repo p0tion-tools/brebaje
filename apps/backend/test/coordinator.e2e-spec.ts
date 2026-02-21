@@ -362,6 +362,7 @@ describe('Coordinator (e2e)', () => {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`,
         },
         body: JSON.stringify({
           ...circuit,
@@ -369,6 +370,7 @@ describe('Coordinator (e2e)', () => {
         }),
       });
 
+      expect(response.ok).toBe(true);
       const body = (await response.json()) as Circuit;
 
       expect(typeof body.id).toBe('number');
