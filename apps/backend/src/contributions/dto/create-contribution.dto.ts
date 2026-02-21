@@ -18,10 +18,8 @@ export class CreateContributionDto {
 
   @ApiProperty({
     example: 120,
-    required: false,
     description: 'Time spent computing the contribution (ms)',
   })
-  @IsOptional()
   @IsNumber()
   contributionComputationTime?: number;
 
