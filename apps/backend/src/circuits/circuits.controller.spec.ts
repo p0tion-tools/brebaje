@@ -3,6 +3,7 @@ import { CircuitsController } from './circuits.controller';
 import { CircuitsService } from './circuits.service';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IsCircuitCoordinatorGuard } from './guards/is-circuit-coordinator.guard';
+import { IsCircuitCreateCoordinatorGuard } from './guards/is-circuit-create-coordinator.guard';
 
 describe('CircuitsController', () => {
   let controller: CircuitsController;
@@ -27,6 +28,8 @@ describe('CircuitsController', () => {
       .overrideGuard(JwtAuthGuard)
       .useValue({ canActivate: jest.fn(() => true) })
       .overrideGuard(IsCircuitCoordinatorGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .overrideGuard(IsCircuitCreateCoordinatorGuard)
       .useValue({ canActivate: jest.fn(() => true) })
       .compile();
 

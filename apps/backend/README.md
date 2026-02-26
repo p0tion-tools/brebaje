@@ -64,6 +64,7 @@ With Mau, you can deploy your application in just a few clicks, allowing you to 
 
 ```mermaid
 stateDiagram-v2
+    direction LR
     [*] --> CREATED
     %% Happy path (participant joins, contributes and finishes)
     CREATED --> WAITING: POST participant joinCeremony
