@@ -19,6 +19,12 @@ import { Circuit } from 'src/circuits/circuit.model';
 import { Participant } from 'src/participants/participant.model';
 import { CircuitsService } from 'src/circuits/circuits.service';
 import { ParticipantsService } from 'src/participants/participants.service';
+import {
+  canCreateContribution,
+  canSetContributionValidity,
+  CREATE_TRANSITION_ERROR,
+  SET_VALID_TRANSITION_ERROR,
+} from './contribution-transitions';
 
 @Injectable()
 export class ContributionsService {
@@ -32,12 +38,18 @@ export class ContributionsService {
   ) {}
 
   /**
-   * Creates a new contribution after validating the referenced circuit and participant.
+   * Creates a new contribution after validating the referenced circuit, participant,
+   * lifecycle state, and duplicate-contribution constraints.
+   *
+   * The participant must be in `CONTRIBUTING` status with contribution step
+   * `UPLOADING` or `VERIFYING` — matching p0tion's flow where the contribution
+   * record is created during the upload/verification phase.
    *
    * @param createContributionDto - The DTO containing contribution creation data
    * @returns The created contribution record
    * @throws {NotFoundException} If the circuit or participant does not exist
    * @throws {BadRequestException} If the participant does not belong to the circuit's ceremony
+   *   or is not in a valid lifecycle state to contribute
    * @throws {ConflictException} If a valid contribution already exists for this circuit and participant
    */
   async create(createContributionDto: CreateContributionDto) {
@@ -58,6 +70,10 @@ export class ContributionsService {
         throw new BadRequestException(
           'Participant does not belong to the ceremony of this circuit',
         );
+      }
+
+      if (!canCreateContribution(participant)) {
+        throw new BadRequestException(CREATE_TRANSITION_ERROR);
       }
 
       const existingValid = await this.findValidOneByCircuitIdAndParticipantId(
@@ -145,10 +161,19 @@ export class ContributionsService {
   /**
    * Updates a contribution by ID with partial data.
    *
+   * When the payload includes `valid`, the owning participant's lifecycle state
+   * is checked: the participant must be `CONTRIBUTED` or `FINALIZED` with step
+   * `VERIFYING` or `COMPLETED`. If the contribution already has the same `valid`
+   * value, the update proceeds idempotently (no state corruption on retries).
+   *
+   * Fields other than `valid` (timing, files, etc.) can be updated without
+   * lifecycle checks.
+   *
    * @param id - The contribution's unique identifier
    * @param updateContributionDto - The DTO containing the fields to update
    * @returns The updated contribution record
    * @throws {NotFoundException} If the contribution does not exist
+   * @throws {BadRequestException} If setting `valid` while participant is not in a valid lifecycle state
    */
   async update(id: number, updateContributionDto: UpdateContributionDto) {
     try {
@@ -156,6 +181,20 @@ export class ContributionsService {
       if (!contribution) {
         throw new Error('Contribution not found');
       }
+
+      if (updateContributionDto.valid !== undefined) {
+        const isIdempotent = contribution.valid === updateContributionDto.valid;
+        if (!isIdempotent) {
+          const participant = await this.participantsService.findOne(contribution.participantId);
+          if (!participant) {
+            throw new Error('Participant not found');
+          }
+          if (!canSetContributionValidity(participant)) {
+            throw new BadRequestException(SET_VALID_TRANSITION_ERROR);
+          }
+        }
+      }
+
       await contribution.update(updateContributionDto);
       return contribution;
     } catch (error) {
