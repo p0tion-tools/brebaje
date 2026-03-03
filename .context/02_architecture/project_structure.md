@@ -61,15 +61,3 @@ root/
 ├── eslint.config.mjs          # ESLint v9 flat config (TSDoc, Prettier)
 └── .husky/                    # Pre-commit: ESLint, Prettier
 ```
-
-## Brebaje Domain Mapping
-
-The main domain concepts from the p0tion protocol—**Ceremony**, **Circuit**, **Participant**, **Contribution**, **Waitlist**—map onto the codebase as follows:
-
-- **Domain layer:** Ceremony, circuit, contribution, participant, and waitlist entities and invariants (e.g. ceremony state transitions, participant status rules). In the backend these appear as **Sequelize models** and **enums** (`types/enums.ts`) derived from `diagram.dbml`; business rules live in **services**.
-- **Application layer:** Ceremony lifecycle (initialization, queueing, contribution, validation, finalization), queue coordination, contribution verification orchestration, timeout and exhumation logic. Implemented in NestJS **services** and **VmModule**; CLI reuses logic via **@brebaje/actions** where applicable.
-- **Infrastructure layer:** SQLite (Sequelize), object storage (e.g. AWS S3 via presigned URLs in **StorageModule**), cryptographic provider (snarkjs, used in backend and **@brebaje/actions**), HTTP API (NestJS), UI (Next.js).
-
-## Schema and Code Generation
-
-- **Database schema:** `apps/backend/src/database/diagram.dbml` (DBML). Enums and table definitions drive `types/enums.ts` and Sequelize models. Use the project’s scripts (e.g. `generate-models` / DBML-to-Sequelize) to regenerate models after schema changes; do not edit generated files by hand when avoidable.
