@@ -19,6 +19,6 @@
 
 ## Logging
 
-- **Structured Logging:** Use pino or winston with JSON formatting.
+- **Structured Logging:** Use winston with JSON formatting.
 - **Context:** Include request IDs and user IDs in logs for traceability.
 - **Levels:** `INFO` for milestones, `WARN` for recoverable issues, `ERROR` for failures that need attention.

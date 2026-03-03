@@ -62,14 +62,6 @@ root/
 └── .husky/                    # Pre-commit: ESLint, Prettier
 ```
 
-## Module Definitions
-
-- **`apps/backend/`**: NestJS application. Feature modules: `AuthModule`, `UsersModule`, `ProjectsModule`, `CeremoniesModule`, `CircuitsModule`, `ParticipantsModule`, `ContributionsModule`, `StorageModule`, `VmModule`, `HealthModule`. Database: Sequelize with SQLite; schema is defined in `src/database/diagram.dbml`; enums and models are generated/derived from it (`types/enums.ts`, `*.model.ts`). DTOs use **class-validator** and **class-transformer**. API documented with **Swagger**.
-- **`apps/frontend/`**: Next.js 14 with **App Router** (`app/`). State: **TanStack React Query** for server state; React context for auth. Styling: **TailwindCSS**. Components under `app/components/`, `app/sections/`, route pages under `app/`, `app/coordinator/`, `app/ceremonies/`, etc.
-- **`apps/cli/`**: **Commander.js** CLI; **ESM** (`"type": "module"`). Command groups: auth, ceremonies, config, participants, perpetual-powers-of-tau, projects, vm. Uses `@brebaje/actions`, **snarkjs**, **dotenv**, GitHub OAuth device flow.
-- **`apps/website/`**: **Docusaurus 3** for documentation; can reference Typedoc for API docs.
-- **`packages/actions/`**: Shared package **@brebaje/actions**. Used by backend and CLI. Contains crypto/contribution helpers, snarkjs, hashing, upload/download utilities. Build: `tsc`; tests: Jest.
-
 ## Brebaje Domain Mapping
 
 The main domain concepts from the p0tion protocol—**Ceremony**, **Circuit**, **Participant**, **Contribution**, **Waitlist**—map onto the codebase as follows:

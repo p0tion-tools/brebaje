@@ -7,6 +7,7 @@
 - **SOLID:** Strictly adhere to SOLID principles.
 - **Explicit over Implicit:** Prefer explicit code over "magic".
 - **Composition over Inheritance:** Use composition for better flexibility.
+- **Premature abstractions:** Avoid premature abstractions.
 
 ## Naming Conventions
 
@@ -28,23 +29,6 @@
 - **Why, not What:** Comment _why_ the code does something (business context).
 - **TSDoc:** Use **TSDoc** for public APIs and non-obvious behavior. TSDoc syntax is validated by ESLint (`eslint-plugin-tsdoc`); follow the project’s TSDoc guide if present (e.g. `docs/TSDOC_GUIDE.md`).
 - **Self-documenting code:** Prioritize clear names over comments.
-
-## Import Organization
-
-1. External dependencies (NestJS, React, Next, etc.).
-2. Internal packages (e.g. `@brebaje/actions`).
-3. Relative imports.
-4. Type-only imports: use `import type` where possible.
-
-Example (backend):
-
-```typescript
-import { Injectable } from "@nestjs/common";
-import { ConfigService } from "@nestjs/config";
-
-import type { User } from "../types";
-import { UserService } from "./user.service";
-```
 
 ## Git: Conventional Commits
 
