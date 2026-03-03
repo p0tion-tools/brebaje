@@ -60,4 +60,5 @@ root/
 ├── package.json               # Root: pnpm workspaces, lint, test, build
 ├── eslint.config.mjs          # ESLint v9 flat config (TSDoc, Prettier)
 └── .husky/                    # Pre-commit: ESLint, Prettier
+``
 ```

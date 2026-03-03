@@ -2,8 +2,8 @@
 
 ## Architectural Pattern
 
-- We follow **Clean Architecture** (or Hexagonal/MVC). Dependency rule: dependencies point inwards; core logic depends on nothing.
-- **Backend:** Implemented as **NestJS** with feature modules (auth, users, projects, ceremonies, circuits, participants, contributions, storage, vm, health). Each module typically has controller(s), service(s), DTOs, and guards; domain entities are Sequelize models backed by DBML.
+- We follow **Clean Architecture**. Dependency rule: dependencies point inwards; core logic depends on nothing.
+- **Backend:** Implemented as **NestJS** with feature modules. Each module typically has controller(s), service(s), DTOs, and guards; domain entities are Sequelize models backed by DBML.
 - **Frontend:** **Next.js App Router**; server state via TanStack React Query; auth and UI in React.
 - **CLI:** **Commander.js** command groups; shared logic in **@brebaje/actions**.
 
@@ -18,9 +18,9 @@
 - **Backend:** Request → Router → Middleware → Controller/Handler → Service → Repository/DB.
 - **Frontend:** User action → React component → API client → Node API → DB; response flows back to UI.
 
-## Brebaje Protocol
+## Brebaje
 
-### Ceremony Lifecycle (Five Phases)
+### Ceremony Lifecycle
 
 1. **Initialization:** Coordinator creates the ceremony and circuits, uploads artifacts (R1CS, PoT, WASM, genesis zKey) to storage; ceremony state is **SCHEDULED**.
 2. **Queueing:** When start date is reached, ceremony transitions to **OPENED**. Participants join the waitlist per circuit; one participant per circuit is **READY** (at head of queue).
@@ -30,10 +30,23 @@
 
 ### State Machines
 
-- **Ceremony:** SCHEDULED → OPENED (start date); OPENED ↔ PAUSED (coordinator); OPENED → CLOSED (end date); CLOSED → FINALIZED (beacon + export).
-- **Participant:** CREATED → WAITING → READY → CONTRIBUTING (with steps: DOWNLOADING → COMPUTING → UPLOADING → VERIFYING → COMPLETED) → CONTRIBUTED or DONE, or CONTRIBUTING → TIMEDOUT → EXHUMED (after penalty) → READY when re-queued. Coordinator path: DONE → FINALIZING → FINALIZED.
+#### Ceremony:
 
-Detailed states and transitions are in `.p0tion/architecture/03-protocol-state-machine-map.md`.
+SCHEDULED → OPENED (start date); OPENED ↔ PAUSED (coordinator); OPENED → CLOSED (end date); CLOSED → FINALIZED (beacon + export).
+
+#### Participant:
+
+##### Happy path:
+
+CREATED → WAITING (joinCeremony) → READY (circuit coordinate) → CONTRIBUTING (downloadPrevious; steps: DOWNLOADING → COMPUTING → UPLOADING → VERIFYING → COMPLETED) → CONTRIBUTED (upload complete) → DONE (circuit coordinate) → end.
+
+##### Timeout:
+
+READY or CONTRIBUTING → TIMEDOUT (circuit coordinate) → WAITING (monitorTimedOutParticipants).
+
+### Coordinator
+
+READY → FINALIZING (downloadPrevious) → FINALIZED (uploadLast) → DONE (circuit coordinate).
 
 ### Data Flow (High Level)
 
