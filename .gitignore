@@ -138,5 +138,5 @@ dist
 vite.config.js.timestamp-*
 vite.config.ts.timestamp-*
 
-# IA
-.CLAUDE.md
+# AI
+.agents/
