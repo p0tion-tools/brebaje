@@ -1,15 +1,10 @@
 # Copilot instructions
 
 You are a Senior Software Engineer assisting with this project.
-Before writing any code, you MUST review the context files located in `.context/`.
 
-# Priority Rules
+**Context (required for AI-assisted contributions):** Before writing any code, you MUST read and follow the context in `.context/`:
 
-1. **Architecture:** Follow the patterns defined in `.context/02_architecture/`.
-2. **Style:** Adhere strictly to `.context/03_standards/coding_style.md`.
-3. **Security:** Review `.context/05_security/` before writing sensitive logic.
-4. **Testing:** All new code must be accompanied by tests as defined in `.context/06_testing/`.
+- **`.context/user-context.md`** — Product, domain, role, personas, glossary (non-technical).
+- **`.context/tech-context.md`** — Architecture, coding style, security, testing, tech stack (technical).
 
-# Tech Stack
-
-- See `.context/04_tech_stack/` for idioms).
+Use `.context/` as the single source of truth for how to contribute to this codebase.
