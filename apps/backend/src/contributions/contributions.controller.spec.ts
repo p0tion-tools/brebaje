@@ -39,7 +39,7 @@ describe('ContributionsController', () => {
       create: jest.fn(),
       findAll: jest.fn(),
       findOne: jest.fn(),
-      findValidOneByCircuitIdAndParticipantId: jest.fn(),
+      findValidOneByCircuitIdAndParticipantIdOrFail: jest.fn(),
       update: jest.fn(),
       remove: jest.fn(),
     };
@@ -129,15 +129,17 @@ describe('ContributionsController', () => {
       };
 
       jest
-        .spyOn(service, 'findValidOneByCircuitIdAndParticipantId')
+        .spyOn(service, 'findValidOneByCircuitIdAndParticipantIdOrFail')
         .mockResolvedValue(expectedResult as any);
 
       expect(await controller.findValid('1', '1')).toBe(expectedResult);
-      expect(service.findValidOneByCircuitIdAndParticipantId).toHaveBeenCalledWith(1, 1);
+      expect(service.findValidOneByCircuitIdAndParticipantIdOrFail).toHaveBeenCalledWith(1, 1);
     });
 
     it('should throw NotFoundException when no valid contribution exists', async () => {
-      jest.spyOn(service, 'findValidOneByCircuitIdAndParticipantId').mockResolvedValue(null);
+      jest
+        .spyOn(service, 'findValidOneByCircuitIdAndParticipantIdOrFail')
+        .mockRejectedValue(new NotFoundException());
 
       await expect(controller.findValid('1', '1')).rejects.toThrow(NotFoundException);
     });
