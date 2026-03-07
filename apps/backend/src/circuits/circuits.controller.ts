@@ -23,6 +23,7 @@ import { CreateCircuitDto } from './dto/create-circuit.dto';
 import { UpdateCircuitDto } from './dto/update-circuit.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IsCircuitCoordinatorGuard } from './guards/is-circuit-coordinator.guard';
+import { IsCircuitCreateCoordinatorGuard } from './guards/is-circuit-create-coordinator.guard';
 
 @ApiTags('circuits')
 @Controller('circuits')
@@ -30,6 +31,8 @@ export class CircuitsController {
   constructor(private readonly circuitsService: CircuitsService) {}
 
   @Post()
+  @UseGuards(JwtAuthGuard, IsCircuitCreateCoordinatorGuard)
+  @ApiBearerAuth('access-token')
   @ApiOperation({ summary: 'Create a new circuit' })
   @ApiResponse({
     status: 201,
@@ -37,6 +40,11 @@ export class CircuitsController {
     type: Circuit,
   })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden - Not the project coordinator or ceremony is not SCHEDULED.',
+  })
   create(@Body() createCircuitDto: CreateCircuitDto) {
     return this.circuitsService.create(createCircuitDto);
   }
