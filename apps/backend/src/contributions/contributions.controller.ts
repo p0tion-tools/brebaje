@@ -9,7 +9,6 @@ import {
   Query,
   Req,
   UseGuards,
-  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -105,18 +104,11 @@ export class ContributionsController {
     status: 404,
     description: 'No valid contribution found.',
   })
-  async findValid(
-    @Query('circuitId') circuitId: string,
-    @Query('participantId') participantId: string,
-  ) {
-    const contribution = await this.contributionsService.findValidOneByCircuitIdAndParticipantId(
+  findValid(@Query('circuitId') circuitId: string, @Query('participantId') participantId: string) {
+    return this.contributionsService.findValidOneByCircuitIdAndParticipantIdOrFail(
       +circuitId,
       +participantId,
     );
-    if (!contribution) {
-      throw new NotFoundException('No valid contribution found for this circuit and participant');
-    }
-    return contribution;
   }
 
   @Get(':id')

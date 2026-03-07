@@ -143,6 +143,28 @@ export class ContributionsService {
   }
 
   /**
+   * Finds a valid contribution for a specific circuit and participant, or throws if none exists.
+   *
+   * @param circuitId - The circuit's unique identifier
+   * @param participantId - The participant's unique identifier
+   * @returns The valid contribution
+   * @throws {NotFoundException} If no valid contribution exists for this circuit and participant
+   */
+  async findValidOneByCircuitIdAndParticipantIdOrFail(
+    circuitId: number,
+    participantId: number,
+  ): Promise<Contribution> {
+    const contribution = await this.findValidOneByCircuitIdAndParticipantId(
+      circuitId,
+      participantId,
+    );
+    if (!contribution) {
+      throw new NotFoundException('No valid contribution found for this circuit and participant');
+    }
+    return contribution;
+  }
+
+  /**
    * Updates a contribution by ID with partial data.
    *
    * @param id - The contribution's unique identifier
