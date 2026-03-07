@@ -7,6 +7,7 @@ import {
   Body,
   Param,
   Query,
+  Req,
   UseGuards,
   NotFoundException,
 } from '@nestjs/common';
@@ -24,7 +25,10 @@ import { CreateContributionDto } from './dto/create-contribution.dto';
 import { UpdateContributionDto } from './dto/update-contribution.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IsContributionParticipantOrCoordinatorGuard } from './guards/is-contribution-participant-or-coordinator.guard';
-import { IsContributionCoordinatorGuard } from './guards/is-contribution-coordinator.guard';
+import {
+  IsContributionCoordinatorGuard,
+  RequestWithContribution,
+} from './guards/is-contribution-coordinator.guard';
 
 @ApiTags('contributions')
 @Controller('contributions')
@@ -163,7 +167,7 @@ export class ContributionsController {
     description: 'Forbidden - Not the ceremony coordinator.',
   })
   @ApiResponse({ status: 404, description: 'Contribution not found.' })
-  remove(@Param('id') id: string) {
-    return this.contributionsService.remove(+id);
+  remove(@Param('id') id: string, @Req() request: RequestWithContribution) {
+    return this.contributionsService.remove(+id, request.contribution);
   }
 }

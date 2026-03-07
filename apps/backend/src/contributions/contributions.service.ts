@@ -164,19 +164,21 @@ export class ContributionsService {
   }
 
   /**
-   * Removes a contribution by ID.
+   * Removes a contribution by ID or by instance.
+   * When a contribution instance is provided (e.g. from a guard), skips the fetch.
    *
    * @param id - The contribution's unique identifier
+   * @param contribution - Optional pre-loaded contribution to avoid a second fetch
    * @returns A success message
    * @throws {NotFoundException} If the contribution does not exist
    */
-  async remove(id: number) {
+  async remove(id: number, contribution?: Contribution) {
     try {
-      const contribution = await this.contributionModel.findByPk(id);
-      if (!contribution) {
+      const toDestroy = contribution ?? (await this.contributionModel.findByPk(id));
+      if (!toDestroy) {
         throw new Error('Contribution not found');
       }
-      await contribution.destroy();
+      await toDestroy.destroy();
       return { message: 'Contribution removed successfully' };
     } catch (error) {
       this.handleErrors(error as Error);

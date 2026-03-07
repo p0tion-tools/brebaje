@@ -82,6 +82,9 @@ describe('IsContributionCoordinatorGuard', () => {
 
     expect(await guard.canActivate(context)).toBe(true);
     expect(mockCeremoniesService.findCoordinatorOfCeremony).toHaveBeenCalledWith(userId, 10);
+
+    const request = context.switchToHttp().getRequest();
+    expect(request.contribution).toBe(contribution);
   });
 
   it('should throw ForbiddenException when user is not authenticated', async () => {

@@ -299,6 +299,18 @@ describe('ContributionsService', () => {
 
       await expect(service.remove(999)).rejects.toThrow(NotFoundException);
     });
+
+    it('should use pre-loaded contribution when provided and not fetch by id', async () => {
+      mockContribution.destroy.mockResolvedValueOnce(undefined);
+
+      const result = await service.remove(1, mockContribution as unknown as Contribution);
+
+      expect(mockContributionModel.findByPk).not.toHaveBeenCalled();
+      expect(mockContribution.destroy).toHaveBeenCalled();
+      expect(result).toEqual({
+        message: 'Contribution removed successfully',
+      });
+    });
   });
 
   describe('handleErrors', () => {
