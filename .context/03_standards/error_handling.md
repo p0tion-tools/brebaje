@@ -2,23 +2,25 @@
 
 ## Core Principles
 
-- **Fail Fast:** Validate inputs early (e.g. Zod at API boundary).
+- **Fail Fast:** Validate inputs early (e.g. class-validator at API boundary in backend).
 - **Graceful Degradation:** Return meaningful error responses, not generic 500s.
 - **No Silent Failures:** Always catch, log, and re-throw or return typed errors.
+- **Consistent Format:** Use a uniform error response format across API endpoints so the frontend can handle errors predictably.
 
-## Node.js (Backend)
+## Backend (NestJS)
 
-- **Centralized Error Middleware:** Use a single error-handling middleware that maps thrown errors to HTTP status and a consistent JSON shape (e.g. `{ error: string, code?: string }`).
-- **Typed Error Responses:** Define response types for errors; use Zod or a small set of error classes for consistency.
-- **Validation Errors:** Use Zod's `.parse()` or `.safeParse()`; return 400 with validation details.
+- **Exception filters:** Use NestJS exception filters and custom exceptions to map thrown errors to HTTP status and a consistent JSON shape (e.g. `{ statusCode, message, error? }`).
+- **Typed error responses:** Define response types for errors; use a small set of exception classes (e.g. `BadRequestException`, `UnauthorizedException`) for consistency.
+- **Validation errors:** DTOs validated with class-validator via `ValidationPipe`; return 400 with validation details when validation fails.
 
-## React (Frontend)
+## Frontend (Next.js / React)
 
-- **Error Boundaries:** Use React Error Boundaries for component-tree failures; avoid full-app white screens.
-- **API Errors:** Surface user-friendly messages; log full details for debugging.
+- **Error boundaries:** Use React Error Boundaries for component-tree failures; avoid full-app white screens.
+- **React Query:** Use React Query error handling (error boundaries or per-query error state) to surface API errors.
+- **API errors:** Surface user-friendly messages to the user; log full details for debugging.
 
 ## Logging
 
-- **Structured Logging:** Use winston with JSON formatting.
-- **Context:** Include request IDs and user IDs in logs for traceability.
+- **Structured logging:** Use NestJS built-in logger or structured logging (e.g. JSON) where configured.
+- **Context:** Include request IDs and user IDs in logs for traceability where available.
 - **Levels:** `INFO` for milestones, `WARN` for recoverable issues, `ERROR` for failures that need attention.

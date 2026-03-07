@@ -60,5 +60,25 @@ root/
 ├── package.json               # Root: pnpm workspaces, lint, test, build
 ├── eslint.config.mjs          # ESLint v9 flat config (TSDoc, Prettier)
 └── .husky/                    # Pre-commit: ESLint, Prettier
-``
 ```
+
+## Module Definitions
+
+- **`apps/backend/`**: NestJS application. Feature modules: `AuthModule`, `UsersModule`, `ProjectsModule`, `CeremoniesModule`, `CircuitsModule`, `ParticipantsModule`, `ContributionsModule`, `StorageModule`, `VmModule`, `HealthModule`. Database: Sequelize with SQLite; schema is defined in `src/database/diagram.dbml`; enums and models are generated/derived from it (`types/enums.ts`, `*.model.ts`). DTOs use **class-validator** and **class-transformer**. API documented with **Swagger**.
+- **`apps/frontend/`**: Next.js 14 with **App Router** (`app/`). State: **TanStack React Query** for server state; React context for auth. Styling: **TailwindCSS**. Components under `app/components/`, `app/sections/`, route pages under `app/`, `app/coordinator/`, `app/ceremonies/`, etc.
+- **`apps/cli/`**: **Commander.js** CLI; **ESM** (`"type": "module"`). Command groups: auth, ceremonies, config, participants, perpetual-powers-of-tau, projects, vm. Uses `@brebaje/actions`, **snarkjs**, **dotenv**, GitHub OAuth device flow.
+- **`apps/website/`**: **Docusaurus 3** for documentation; can reference Typedoc for API docs.
+- **`packages/actions/`**: Shared package **@brebaje/actions**. Used by backend and CLI. Contains crypto/contribution helpers, snarkjs, hashing, upload/download utilities. Build: `tsc`; tests: Jest.
+
+## Brebaje Domain Mapping
+
+The main domain concepts from the p0tion protocol—**Ceremony**, **Circuit**, **Participant**, **Contribution**, **Waitlist**—map onto the codebase as follows:
+
+- **Domain layer:** Ceremony, circuit, contribution, participant, and waitlist entities and invariants (e.g. ceremony state transitions, participant status rules). In the backend these appear as **Sequelize models** and **enums** (`types/enums.ts`) derived from `diagram.dbml`; business rules live in **services**.
+- **Application layer:** Ceremony lifecycle (initialization, queueing, contribution, validation, finalization), queue coordination, contribution verification orchestration, timeout and exhumation logic. Implemented in NestJS **services** and **VmModule**; CLI reuses logic via **@brebaje/actions** where applicable.
+- **Infrastructure layer:** SQLite (Sequelize), object storage (e.g. AWS S3 via presigned URLs in **StorageModule**), cryptographic provider (snarkjs, used in backend and **@brebaje/actions**), HTTP API (NestJS), UI (Next.js).
+
+## Schema and Code Generation
+
+- **Database schema:** `apps/backend/src/database/diagram.dbml` (DBML). Enums and table definitions drive `types/enums.ts` and Sequelize models. **Do not edit auto-generated model files manually.**
+- **After schema changes:** Update `diagram.dbml` first, then run the database generation commands. From `apps/backend`: run `pnpm run generate-models` (runs DBML-to-Sequelize). If the project uses separate steps: `pnpm convert` to generate SQL from DBML, then `pnpm setup-dml-to-database` (or equivalent) to generate TypeScript models and enums—see `apps/backend/README.md` or `.github/copilot-instructions.md`. Always run these after changing the schema.

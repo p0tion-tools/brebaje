@@ -19,6 +19,7 @@ This document reflects the frameworks used in the Brebaje workspace. Follow thes
 - **Data fetching:** Use **TanStack React Query** (e.g. `useGetCeremonies`, `useGetCeremonyById`) for server state. Define hooks in `app/hooks/` that call the backend API.
 - **State:** Server state via React Query; auth state via React context (e.g. `AuthContext`). Keep local component state minimal.
 - **Styling:** **TailwindCSS**. Use utility classes; shared patterns can use `clsx` / `tailwind-merge` or `@tw-classed/react` if adopted in the project.
+- **Icons:** **Lucide React** for icons.
 - **Routing:** File-based routing only (App Router). No React Router; use `Link` and `useRouter` from `next/navigation` when needed.
 
 ## CLI: Commander.js

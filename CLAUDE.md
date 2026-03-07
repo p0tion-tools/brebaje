@@ -12,4 +12,4 @@ Before writing any code, you MUST review the context files located in `.context/
 
 # Tech Stack
 
-- We are using: TypeScript, React, and Node.js (see `.context/04_tech_stack/` for idioms).
+- See `.context/04_tech_stack/` for idioms).

@@ -4,7 +4,7 @@ This section reflects the testing stack used in Brebaje.
 
 ## Core Framework
 
-- **Jest:** Primary test runner for **backend**, **CLI**, and **packages/actions**. Config lives in each app’s or package’s `package.json` (e.g. `jest` key) or `jest.config.js`. Use `pnpm test` at root (Lerna runs tests across packages) or run tests per app: e.g. `cd apps/backend && pnpm test`, `cd apps/cli && pnpm test`.
+- **Jest:** Primary test runner for **backend**, **CLI**, and **packages/actions**. Config lives in each app’s or package’s `package.json` (e.g. `jest` key) or `jest.config.js`. **Test files** use the `.spec.ts` suffix. Use `pnpm test` at root (Lerna runs tests across packages) or per app: in backend, `pnpm test` for unit tests and `pnpm test:e2e` for E2E/integration tests; E2E tests live in the `test/` directory.
 - **Coverage:** Use Jest’s coverage (e.g. `pnpm test:cov` in backend). Coverage output is typically under `coverage/` in each package.
 
 ## Backend (NestJS) Testing
