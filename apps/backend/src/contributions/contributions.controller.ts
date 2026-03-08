@@ -7,8 +7,8 @@ import {
   Body,
   Param,
   Query,
+  Req,
   UseGuards,
-  NotFoundException,
 } from '@nestjs/common';
 import {
   ApiTags,
@@ -24,7 +24,10 @@ import { CreateContributionDto } from './dto/create-contribution.dto';
 import { UpdateContributionDto } from './dto/update-contribution.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IsContributionParticipantOrCoordinatorGuard } from './guards/is-contribution-participant-or-coordinator.guard';
-import { IsContributionCoordinatorGuard } from './guards/is-contribution-coordinator.guard';
+import {
+  IsContributionCoordinatorGuard,
+  RequestWithContribution,
+} from './guards/is-contribution-coordinator.guard';
 
 @ApiTags('contributions')
 @Controller('contributions')
@@ -101,18 +104,11 @@ export class ContributionsController {
     status: 404,
     description: 'No valid contribution found.',
   })
-  async findValid(
-    @Query('circuitId') circuitId: string,
-    @Query('participantId') participantId: string,
-  ) {
-    const contribution = await this.contributionsService.findValidOneByCircuitIdAndParticipantId(
+  findValid(@Query('circuitId') circuitId: string, @Query('participantId') participantId: string) {
+    return this.contributionsService.findValidOneByCircuitIdAndParticipantIdOrFail(
       +circuitId,
       +participantId,
     );
-    if (!contribution) {
-      throw new NotFoundException('No valid contribution found for this circuit and participant');
-    }
-    return contribution;
   }
 
   @Get(':id')
@@ -163,7 +159,7 @@ export class ContributionsController {
     description: 'Forbidden - Not the ceremony coordinator.',
   })
   @ApiResponse({ status: 404, description: 'Contribution not found.' })
-  remove(@Param('id') id: string) {
-    return this.contributionsService.remove(+id);
+  remove(@Param('id') id: string, @Req() request: RequestWithContribution) {
+    return this.contributionsService.remove(+id, request.contribution);
   }
 }

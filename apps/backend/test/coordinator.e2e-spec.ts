@@ -226,7 +226,7 @@ describe('Coordinator (e2e)', () => {
     );
 
     expect(body.bucketName).toBe(expectedBucketName);
-  });
+  }, 15000); // S3 bucket creation can be slow in CI
 
   it('should create a participant', async () => {
     const response = await fetch(`${TEST_URL}/participants`, {

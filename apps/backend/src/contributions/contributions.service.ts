@@ -159,6 +159,28 @@ export class ContributionsService {
   }
 
   /**
+   * Finds a valid contribution for a specific circuit and participant, or throws if none exists.
+   *
+   * @param circuitId - The circuit's unique identifier
+   * @param participantId - The participant's unique identifier
+   * @returns The valid contribution
+   * @throws {NotFoundException} If no valid contribution exists for this circuit and participant
+   */
+  async findValidOneByCircuitIdAndParticipantIdOrFail(
+    circuitId: number,
+    participantId: number,
+  ): Promise<Contribution> {
+    const contribution = await this.findValidOneByCircuitIdAndParticipantId(
+      circuitId,
+      participantId,
+    );
+    if (!contribution) {
+      throw new NotFoundException('No valid contribution found for this circuit and participant');
+    }
+    return contribution;
+  }
+
+  /**
    * Updates a contribution by ID with partial data.
    *
    * When the payload includes `valid`, the owning participant's lifecycle state
@@ -203,19 +225,21 @@ export class ContributionsService {
   }
 
   /**
-   * Removes a contribution by ID.
+   * Removes a contribution by ID or by instance.
+   * When a contribution instance is provided (e.g. from a guard), skips the fetch.
    *
    * @param id - The contribution's unique identifier
+   * @param contribution - Optional pre-loaded contribution to avoid a second fetch
    * @returns A success message
    * @throws {NotFoundException} If the contribution does not exist
    */
-  async remove(id: number) {
+  async remove(id: number, contribution?: Contribution) {
     try {
-      const contribution = await this.contributionModel.findByPk(id);
-      if (!contribution) {
+      const toDestroy = contribution ?? (await this.contributionModel.findByPk(id));
+      if (!toDestroy) {
         throw new Error('Contribution not found');
       }
-      await contribution.destroy();
+      await toDestroy.destroy();
       return { message: 'Contribution removed successfully' };
     } catch (error) {
       this.handleErrors(error as Error);

@@ -26,6 +26,7 @@ jest.mock('./guards/is-contribution-coordinator.guard', () => {
 
 import { ContributionsController } from './contributions.controller';
 import { ContributionsService } from './contributions.service';
+import type { RequestWithContribution } from './guards/is-contribution-coordinator.guard';
 import { IsContributionParticipantOrCoordinatorGuard } from './guards/is-contribution-participant-or-coordinator.guard';
 import { IsContributionCoordinatorGuard } from './guards/is-contribution-coordinator.guard';
 
@@ -38,7 +39,7 @@ describe('ContributionsController', () => {
       create: jest.fn(),
       findAll: jest.fn(),
       findOne: jest.fn(),
-      findValidOneByCircuitIdAndParticipantId: jest.fn(),
+      findValidOneByCircuitIdAndParticipantIdOrFail: jest.fn(),
       update: jest.fn(),
       remove: jest.fn(),
     };
@@ -128,15 +129,17 @@ describe('ContributionsController', () => {
       };
 
       jest
-        .spyOn(service, 'findValidOneByCircuitIdAndParticipantId')
+        .spyOn(service, 'findValidOneByCircuitIdAndParticipantIdOrFail')
         .mockResolvedValue(expectedResult as any);
 
       expect(await controller.findValid('1', '1')).toBe(expectedResult);
-      expect(service.findValidOneByCircuitIdAndParticipantId).toHaveBeenCalledWith(1, 1);
+      expect(service.findValidOneByCircuitIdAndParticipantIdOrFail).toHaveBeenCalledWith(1, 1);
     });
 
     it('should throw NotFoundException when no valid contribution exists', async () => {
-      jest.spyOn(service, 'findValidOneByCircuitIdAndParticipantId').mockResolvedValue(null);
+      jest
+        .spyOn(service, 'findValidOneByCircuitIdAndParticipantIdOrFail')
+        .mockRejectedValue(new NotFoundException());
 
       await expect(controller.findValid('1', '1')).rejects.toThrow(NotFoundException);
     });
@@ -182,11 +185,27 @@ describe('ContributionsController', () => {
       const expectedResult = {
         message: 'Contribution removed successfully',
       };
+      const request = { contribution: undefined } as RequestWithContribution;
 
       jest.spyOn(service, 'remove').mockResolvedValue(expectedResult);
 
-      expect(await controller.remove('1')).toBe(expectedResult);
-      expect(service.remove).toHaveBeenCalledWith(1);
+      expect(await controller.remove('1', request)).toBe(expectedResult);
+      expect(service.remove).toHaveBeenCalledWith(1, undefined);
+    });
+
+    it('should pass pre-loaded contribution from guard to service when present', async () => {
+      const expectedResult = {
+        message: 'Contribution removed successfully',
+      };
+      const mockContribution = { id: 1 };
+      const request = {
+        contribution: mockContribution,
+      } as RequestWithContribution;
+
+      jest.spyOn(service, 'remove').mockResolvedValue(expectedResult);
+
+      expect(await controller.remove('1', request)).toBe(expectedResult);
+      expect(service.remove).toHaveBeenCalledWith(1, mockContribution);
     });
   });
 });
