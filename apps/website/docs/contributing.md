@@ -66,12 +66,9 @@ Thank you for your interest in contributing to Brebaje! This guide will help you
 
 ### Project context and AI-assisted development
 
-Before writing code, use **`.context/`** as the single source of truth:
+Before writing code, use **`.context.md`** (project root) as the single source of truth. It contains product, domain, personas, glossary (user context) and architecture, coding style, security, testing, tech stack (tech context).
 
-- **`.context/user-context.md`** — Product, domain, personas, glossary (non-technical).
-- **`.context/tech-context.md`** — Architecture, coding style, security, testing, tech stack.
-
-AI tools are wired to this context: **CLAUDE.md**, **`.cursorrules`**, and **`.github/copilot-instructions.md`** all require reading and following `.context/` before making changes. When using Cursor, Claude, or GitHub Copilot, rely on these files so suggestions stay aligned with the project.
+AI tools are wired to this context: **CLAUDE.md**, **`.cursorrules`**, and **`.github/copilot-instructions.md`** all require reading and following `.context.md` before making changes. When using Cursor, Claude, or GitHub Copilot, rely on this file so suggestions stay aligned with the project.
 
 ### Branch Naming
 
