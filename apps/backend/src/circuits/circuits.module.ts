@@ -9,6 +9,7 @@ import { ParticipantsModule } from 'src/participants/participants.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { CeremoniesModule } from 'src/ceremonies/ceremonies.module';
 import { IsCircuitCoordinatorGuard } from './guards/is-circuit-coordinator.guard';
+import { IsCircuitCreateCoordinatorGuard } from './guards/is-circuit-create-coordinator.guard';
 
 @Module({
   imports: [
@@ -20,7 +21,7 @@ import { IsCircuitCoordinatorGuard } from './guards/is-circuit-coordinator.guard
     AuthModule,
   ],
   controllers: [CircuitsController],
-  providers: [CircuitsService, IsCircuitCoordinatorGuard],
+  providers: [CircuitsService, IsCircuitCoordinatorGuard, IsCircuitCreateCoordinatorGuard],
   exports: [CircuitsService],
 })
 export class CircuitsModule {}
