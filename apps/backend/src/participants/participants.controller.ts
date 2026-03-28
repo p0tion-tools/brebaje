@@ -1,10 +1,28 @@
-import { Controller, Get, Post, Patch, Body, Param, Request, UseGuards } from '@nestjs/common';
-import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
+import {
+  Controller,
+  Get,
+  Post,
+  Patch,
+  Body,
+  Param,
+  Query,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import {
+  ApiTags,
+  ApiOperation,
+  ApiResponse,
+  ApiParam,
+  ApiQuery,
+  ApiBearerAuth,
+} from '@nestjs/swagger';
 import { Participant } from './participant.model';
 import { ParticipantsService } from './participants.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { ParticipantStatus } from 'src/types/enums';
 
 @ApiTags('participants')
 @Controller('participants')
@@ -27,9 +45,11 @@ export class ParticipantsController {
 
   @Get()
   @ApiOperation({ summary: 'Find all participants' })
+  @ApiQuery({ name: 'ceremonyId', required: false, type: Number })
+  @ApiQuery({ name: 'status', required: false, enum: ParticipantStatus })
   @ApiResponse({ status: 200, description: 'Return all participants.', type: [Participant] })
-  findAll() {
-    return this.participantsService.findAll();
+  findAll(@Query('ceremonyId') ceremonyId?: number, @Query('status') status?: ParticipantStatus) {
+    return this.participantsService.findAll({ ceremonyId, status });
   }
 
   @Get(':id')

@@ -15,6 +15,7 @@ import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Participant } from './participant.model';
 import { ParticipantStatus, ParticipantContributionStep, CeremonyState } from 'src/types/enums';
+import { WhereOptions } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { formatZkeyIndex } from '@brebaje/actions';
 import { CircuitsService } from 'src/circuits/circuits.service';
@@ -54,8 +55,13 @@ export class ParticipantsService {
     }
   }
 
-  async findAll() {
-    return this.participantModel.findAll();
+  async findAll(filters?: { ceremonyId?: number; status?: ParticipantStatus }) {
+    const where: WhereOptions = {};
+
+    if (filters?.ceremonyId) where['ceremonyId'] = filters.ceremonyId;
+    if (filters?.status) where['status'] = filters.status;
+
+    return this.participantModel.findAll({ where });
   }
 
   async findOne(id: number) {
