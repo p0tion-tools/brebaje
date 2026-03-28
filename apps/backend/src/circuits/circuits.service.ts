@@ -25,7 +25,7 @@ import {
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { ParticipantsService } from 'src/participants/participants.service';
 import { Participant } from 'src/participants/participant.model';
-import { ParticipantTimeout } from 'src/types/declarations';
+import { ParticipantTimeoutInfractionRecord } from 'src/types/declarations';
 
 @Injectable()
 export class CircuitsService {
@@ -218,10 +218,19 @@ export class CircuitsService {
     }
   }
 
+  /**
+   * Records a timeout infraction for a participant and imposes a penalty wait period.
+   * Appends a new {@link ParticipantTimeoutInfractionRecord} to the participant's infraction history
+   * and sets their status to TIMEDOUT. The penalty duration is taken from the ceremony.
+   *
+   * @param participant - The participant who exceeded the time window
+   * @param circuit - The circuit being contributed to (used to read the ceremony penalty)
+   * @param type - The cause of the infraction
+   */
   async addTimeOut(participant: Participant, circuit: Circuit, type: ParticipantTimeoutType) {
     const { penalty } = circuit.ceremony;
 
-    const newTimeout: ParticipantTimeout = {
+    const newTimeout: ParticipantTimeoutInfractionRecord = {
       startDate: Date.now(),
       endDate: Date.now() + penalty,
       type: type,

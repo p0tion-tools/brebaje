@@ -95,11 +95,15 @@ export type NotificationConfig = {
 };
 
 /**
- * end date of the timeout period in milliseconds
- * start date of the timeout period in milliseconds
- * type of timeout
+ * Record of a single timeout infraction for a participant.
+ * Created when a participant exceeds the circuit's allowed contribution time window.
+ * The penalty duration is defined at the ceremony level.
+ *
+ * @param startDate - Timestamp in milliseconds when the penalty wait period began
+ * @param endDate - Timestamp in milliseconds when the penalty wait period expires (startDate + ceremony.penalty)
+ * @param type - The cause of the infraction
  */
-export type ParticipantTimeout = {
+export type ParticipantTimeoutInfractionRecord = {
   endDate: number;
   startDate: number;
   type: ParticipantTimeoutType;

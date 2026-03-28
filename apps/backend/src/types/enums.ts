@@ -47,6 +47,10 @@ export enum ParticipantContributionStep {
   COMPLETED = 'COMPLETED',
 }
 
+/**
+ * The cause of a participant's timeout infraction.
+ * Used to identify which phase of the contribution flow the participant failed to complete in time.
+ */
 export enum ParticipantTimeoutType {
   BLOCKING_CONTRIBUTION = 'BLOCKING_CONTRIBUTION',
   BLOCKING_BACKEND_FUNCTION = 'BLOCKING_BACKEND_FUNCTION',
