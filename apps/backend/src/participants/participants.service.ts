@@ -15,6 +15,7 @@ import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Participant } from './participant.model';
 import { ParticipantStatus, ParticipantContributionStep, CeremonyState } from 'src/types/enums';
+import { WhereOptions } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { formatZkeyIndex } from '@brebaje/actions';
 import { CircuitsService } from 'src/circuits/circuits.service';
@@ -54,8 +55,13 @@ export class ParticipantsService {
     }
   }
 
-  async findAll() {
-    return this.participantModel.findAll();
+  async findAll(filters?: { ceremonyId?: number; status?: ParticipantStatus }) {
+    const where: WhereOptions = {};
+
+    if (filters?.ceremonyId) where['ceremonyId'] = filters.ceremonyId;
+    if (filters?.status) where['status'] = filters.status;
+
+    return this.participantModel.findAll({ where });
   }
 
   async findOne(id: number) {
@@ -99,14 +105,24 @@ export class ParticipantsService {
   }
 
   /**
-   * Updates a participant by ID.
+   * Updates a participant by ID. Only the fields provided in the DTO are updated.
    *
    * @param id - The participant's unique identifier
-   * @param _updateParticipantDto - The DTO containing the updated participant data
-   * @returns A message indicating the update action (not yet implemented)
+   * @param updateParticipantDto - The DTO containing the fields to update (status, contributionStep, tempContributionData)
+   * @returns The updated participant
    */
-  update(id: number, _updateParticipantDto: UpdateParticipantDto) {
-    return `This action updates a #${id} participant`;
+  async update(id: number, updateParticipantDto: UpdateParticipantDto) {
+    try {
+      const participant = await this.participantModel.findByPk(id);
+      if (!participant) {
+        throw new Error('Participant not found');
+      }
+
+      await participant.update(updateParticipantDto);
+      return participant;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
   async remove(id: number) {
