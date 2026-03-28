@@ -99,14 +99,24 @@ export class ParticipantsService {
   }
 
   /**
-   * Updates a participant by ID.
+   * Updates a participant by ID. Only the fields provided in the DTO are updated.
    *
    * @param id - The participant's unique identifier
-   * @param _updateParticipantDto - The DTO containing the updated participant data
-   * @returns A message indicating the update action (not yet implemented)
+   * @param updateParticipantDto - The DTO containing the fields to update (status, contributionStep, tempContributionData)
+   * @returns The updated participant
    */
-  update(id: number, _updateParticipantDto: UpdateParticipantDto) {
-    return `This action updates a #${id} participant`;
+  async update(id: number, updateParticipantDto: UpdateParticipantDto) {
+    try {
+      const participant = await this.participantModel.findByPk(id);
+      if (!participant) {
+        throw new Error('Participant not found');
+      }
+
+      await participant.update(updateParticipantDto);
+      return participant;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
   async remove(id: number) {

@@ -1,8 +1,9 @@
-import { Controller, Get, Post, Body, Param, Request, UseGuards } from '@nestjs/common';
+import { Controller, Get, Post, Patch, Body, Param, Request, UseGuards } from '@nestjs/common';
 import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiBearerAuth } from '@nestjs/swagger';
 import { Participant } from './participant.model';
 import { ParticipantsService } from './participants.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
+import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 
 @ApiTags('participants')
@@ -38,5 +39,21 @@ export class ParticipantsController {
   @ApiResponse({ status: 404, description: 'Participant not found.' })
   findOne(@Param('id') id: number) {
     return this.participantsService.findOne(id);
+  }
+
+  @Patch(':id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Update a participant by ID' })
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiResponse({
+    status: 200,
+    description: 'The participant has been successfully updated.',
+    type: Participant,
+  })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 404, description: 'Participant not found.' })
+  update(@Param('id') id: number, @Body() updateParticipantDto: UpdateParticipantDto) {
+    return this.participantsService.update(id, updateParticipantDto);
   }
 }
