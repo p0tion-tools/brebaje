@@ -353,7 +353,7 @@ export class CircuitsService {
 
           if (contributionStep === ParticipantContributionStep.COMPLETED) {
             const allCircuitsCompleted =
-              contributionProgress && circuits.length < contributionProgress;
+              contributionProgress !== undefined && contributionProgress >= circuits.length - 1;
 
             if (allCircuitsCompleted) {
               currentParticipant.status = ParticipantStatus.DONE;
