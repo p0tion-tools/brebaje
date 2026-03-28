@@ -3,6 +3,7 @@ import {
   Get,
   Post,
   Patch,
+  Delete,
   Body,
   Param,
   Query,
@@ -22,6 +23,7 @@ import { ParticipantsService } from './participants.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
+import { IsParticipantOwnerOrCoordinatorGuard } from './guards/is-participant-owner-or-coordinator.guard';
 import { ParticipantStatus } from 'src/types/enums';
 
 @ApiTags('participants')
@@ -75,5 +77,17 @@ export class ParticipantsController {
   @ApiResponse({ status: 404, description: 'Participant not found.' })
   update(@Param('id') id: number, @Body() updateParticipantDto: UpdateParticipantDto) {
     return this.participantsService.update(id, updateParticipantDto);
+  }
+
+  @Delete(':id')
+  @UseGuards(JwtAuthGuard, IsParticipantOwnerOrCoordinatorGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Delete a participant by ID' })
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiResponse({ status: 200, description: 'The participant has been successfully deleted.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Participant not found.' })
+  remove(@Param('id') id: number) {
+    return this.participantsService.remove(id);
   }
 }
