@@ -262,6 +262,53 @@ describe('Coordinator (e2e)', () => {
     expect(savedParticipant.contributionStep).toBe(ParticipantContributionStep.DOWNLOADING);
   });
 
+  it('should accept storage temporary-state endpoints matching @brebaje/actions multipart contract', async () => {
+    const uploadId = 'e2e-test-multipart-upload-id';
+    const mpuUrl = new URL(
+      `${TEST_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
+    );
+    mpuUrl.searchParams.set('id', String(ceremonyId));
+    mpuUrl.searchParams.set('userId', String(coordinatorId));
+
+    const mpuResponse = await fetch(mpuUrl.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({ uploadId }),
+    });
+    expect(mpuResponse.status).toBe(200);
+
+    const chunkUrl = new URL(
+      `${TEST_URL}/storage/temporary-store-current-contribution-uploaded-chunk-data`,
+    );
+    chunkUrl.searchParams.set('id', String(ceremonyId));
+    chunkUrl.searchParams.set('userId', String(coordinatorId));
+
+    const chunkPayload = { chunk: { ETag: '"e2e-etag"', PartNumber: 1 } };
+    const chunkResponse = await fetch(chunkUrl.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify(chunkPayload),
+    });
+    expect(chunkResponse.status).toBe(200);
+
+    const participantRow = await Participant.findOne({
+      where: { userId: coordinatorId, ceremonyId },
+    });
+    if (!participantRow) {
+      throw new Error('Expected participant row after temporary store calls');
+    }
+    const temp = participantRow.tempContributionData;
+    expect(temp).toBeDefined();
+    expect(temp?.uploadId).toBe(uploadId);
+    expect(temp?.chunks).toEqual([chunkPayload.chunk]);
+  });
+
   it(
     'should upload the circuit artifacts to the bucket',
     async () => {

@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { ForbiddenException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { StorageController } from './storage.controller';
 import { StorageService } from './storage.service';
 import {
   ObjectKeyDto,
   GeneratePreSignedUrlsPartsData,
   CompleteMultiPartUploadData,
+  TemporaryStoreCurrentContributionUploadedChunkData,
+  UploadIdDto,
 } from './dto/storage-dto';
 
 describe('StorageController', () => {
@@ -21,6 +25,8 @@ describe('StorageController', () => {
       startMultipartUpload: jest.fn().mockResolvedValue({}),
       generatePreSignedUrlsParts: jest.fn().mockResolvedValue({}),
       completeMultipartUpload: jest.fn().mockResolvedValue({}),
+      temporaryStoreCurrentContributionMultiPartUploadId: jest.fn().mockResolvedValue(undefined),
+      temporaryStoreCurrentContributionUploadedChunkData: jest.fn().mockResolvedValue(undefined),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -31,7 +37,10 @@ describe('StorageController', () => {
           useValue: mockStorageService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .compile();
 
     controller = module.get<StorageController>(StorageController);
     storageService = module.get<StorageService>(StorageService) as jest.Mocked<StorageService>;
@@ -114,6 +123,56 @@ describe('StorageController', () => {
       };
       await controller.completeMultipartUpload(ceremonyId, userId, data);
       expect(storageService.completeMultipartUpload).toHaveBeenCalledWith(data, ceremonyId, userId);
+    });
+  });
+
+  describe('temporaryStoreMultipartUploadId', () => {
+    it('should call storageService.temporaryStoreCurrentContributionMultiPartUploadId when user matches', async () => {
+      const ceremonyId = 1;
+      const userId = 1;
+      const data: UploadIdDto = { uploadId: 'mpu-id' };
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.temporaryStoreMultipartUploadId(req, ceremonyId, userId, data);
+      expect(
+        storageService.temporaryStoreCurrentContributionMultiPartUploadId,
+      ).toHaveBeenCalledWith(data, ceremonyId, userId);
+    });
+
+    it('should reject when query userId does not match JWT user', () => {
+      const req = { user: { id: 2 } } as AuthenticatedRequest;
+      expect(() =>
+        controller.temporaryStoreMultipartUploadId(req, 1, 1, { uploadId: 'x' }),
+      ).toThrow(ForbiddenException);
+      expect(
+        storageService.temporaryStoreCurrentContributionMultiPartUploadId,
+      ).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('temporaryStoreUploadedChunkData', () => {
+    it('should call storageService.temporaryStoreCurrentContributionUploadedChunkData when user matches', async () => {
+      const ceremonyId = 1;
+      const userId = 1;
+      const data: TemporaryStoreCurrentContributionUploadedChunkData = {
+        chunk: { ETag: '"e1"', PartNumber: 1 },
+      };
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.temporaryStoreUploadedChunkData(req, ceremonyId, userId, data);
+      expect(
+        storageService.temporaryStoreCurrentContributionUploadedChunkData,
+      ).toHaveBeenCalledWith(data, ceremonyId, userId);
+    });
+
+    it('should reject when query userId does not match JWT user', () => {
+      const req = { user: { id: 99 } } as AuthenticatedRequest;
+      expect(() =>
+        controller.temporaryStoreUploadedChunkData(req, 1, 1, {
+          chunk: { ETag: '"e1"', PartNumber: 1 },
+        }),
+      ).toThrow(ForbiddenException);
+      expect(
+        storageService.temporaryStoreCurrentContributionUploadedChunkData,
+      ).not.toHaveBeenCalled();
     });
   });
 });
