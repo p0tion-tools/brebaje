@@ -4,40 +4,28 @@ This document describes the legal state transitions enforced by the contribution
 
 ## State Machine
 
-```mermaid
-stateDiagram-v2
-    direction LR
-
-    state "CeremonyState" as CS {
-        [*] --> SCHEDULED
-        SCHEDULED --> OPENED
-        OPENED --> PAUSED
-        PAUSED --> OPENED
-        OPENED --> CLOSED
-        CLOSED --> FINALIZED
-
-        state "ParticipantStatus (active when OPENED)" as PS {
-            [*] --> CREATED
-            CREATED --> WAITING
-            WAITING --> READY
-            READY --> CONTRIBUTING
-            CONTRIBUTING --> CONTRIBUTED
-            CONTRIBUTED --> WAITING : more circuits pending
-            CONTRIBUTED --> DONE : all circuits completed
-            READY --> TIMEDOUT
-            CONTRIBUTING --> TIMEDOUT
-            TIMEDOUT --> EXHUMED : penalty expires
-            EXHUMED --> WAITING : re-queued
-
-            state "ParticipantContributionStep (active when CONTRIBUTING)" as PCS {
-                [*] --> DOWNLOADING
-                DOWNLOADING --> COMPUTING
-                COMPUTING --> UPLOADING
-                UPLOADING --> VERIFYING
-                VERIFYING --> COMPLETED
-            }
-        }
-    }
+```
+CeremonyState
+├── SCHEDULED
+├── OPENED                              ← activates ParticipantStatus
+│   └── ParticipantStatus
+│       ├── CREATED
+│       ├── WAITING
+│       ├── READY
+│       ├── CONTRIBUTING                ← activates ParticipantContributionStep
+│       │   └── ParticipantContributionStep
+│       │       ├── DOWNLOADING
+│       │       ├── COMPUTING
+│       │       ├── UPLOADING
+│       │       ├── VERIFYING
+│       │       └── COMPLETED
+│       ├── CONTRIBUTED
+│       ├── TIMEDOUT
+│       ├── EXHUMED
+│       └── DONE
+├── PAUSED
+├── CLOSED
+└── FINALIZED
 ```
 
 ## Legal Transitions
