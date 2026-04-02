@@ -64,6 +64,12 @@ Thank you for your interest in contributing to Brebaje! This guide will help you
 
 ## Development Process
 
+### Project context and AI-assisted development
+
+Before writing code, use **`.context.md`** (project root) as the single source of truth. It contains product, domain, personas, glossary (user context) and architecture, coding style, security, testing, tech stack (tech context).
+
+AI tools are wired to this context: **CLAUDE.md**, **`.cursorrules`**, and **`.github/copilot-instructions.md`** all require reading and following `.context.md` before making changes. When using Cursor, Claude, or GitHub Copilot, rely on this file so suggestions stay aligned with the project.
+
 ### Branch Naming
 
 - `feature(app | package): description` - New features
