@@ -8,42 +8,36 @@ This document describes the legal state transitions enforced by the contribution
 stateDiagram-v2
     direction LR
 
-    state "Participant States" as PS {
-        [*] --> CREATED
-        CREATED --> WAITING
-        WAITING --> READY
-        READY --> CONTRIBUTING
+    state "CeremonyState" as CS {
+        [*] --> SCHEDULED
+        SCHEDULED --> OPENED
+        OPENED --> PAUSED
+        PAUSED --> OPENED
+        OPENED --> CLOSED
+        CLOSED --> FINALIZED
 
-        state "Contribution Window" as CW {
-            CONTRIBUTING --> DOWNLOADING : step
-            DOWNLOADING --> COMPUTING : step
-            COMPUTING --> UPLOADING : step
-            UPLOADING --> VERIFYING : step
+        state "ParticipantStatus (active when OPENED)" as PS {
+            [*] --> CREATED
+            CREATED --> WAITING
+            WAITING --> READY
+            READY --> CONTRIBUTING
+            CONTRIBUTING --> CONTRIBUTED
+            CONTRIBUTED --> WAITING : more circuits pending
+            CONTRIBUTED --> DONE : all circuits completed
+            READY --> TIMEDOUT
+            CONTRIBUTING --> TIMEDOUT
+            TIMEDOUT --> EXHUMED : penalty expires
+            EXHUMED --> WAITING : re-queued
+
+            state "ParticipantContributionStep (active when CONTRIBUTING)" as PCS {
+                [*] --> DOWNLOADING
+                DOWNLOADING --> COMPUTING
+                COMPUTING --> UPLOADING
+                UPLOADING --> VERIFYING
+                VERIFYING --> COMPLETED
+            }
         }
-
-        CONTRIBUTING --> CONTRIBUTED
-        CONTRIBUTED --> DONE
-        CONTRIBUTING --> TIMEDOUT
-        CONTRIBUTED --> FINALIZING
-        FINALIZING --> FINALIZED
     }
-
-    note right of UPLOADING
-        ✅ Can CREATE contribution
-    end note
-
-    note right of VERIFYING
-        ✅ Can CREATE contribution
-        ✅ Can SET valid (if CONTRIBUTED/FINALIZED)
-    end note
-
-    note right of CONTRIBUTED
-        ✅ Can SET valid (VERIFYING or COMPLETED step)
-    end note
-
-    note right of FINALIZED
-        ✅ Can SET valid (VERIFYING or COMPLETED step)
-    end note
 ```
 
 ## Legal Transitions
