@@ -30,15 +30,6 @@ export enum CircuitTimeoutType {
  * Outer state machine for a participant within an OPENED ceremony.
  * Tracks where the participant is in the ceremony flow.
  *
- * Regular participant path:
- *   CREATED → WAITING → READY → CONTRIBUTING → CONTRIBUTED → DONE
- *
- * Timeout path:
- *   READY | CONTRIBUTING → TIMEDOUT → (penalty expires) → EXHUMED → re-queue
- *
- * Coordinator path:
- *   READY → FINALIZING → FINALIZED → DONE
- *
  * @see ParticipantContributionStep for the inner state machine active during CONTRIBUTING
  */
 export enum ParticipantStatus {
