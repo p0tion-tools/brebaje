@@ -2,7 +2,6 @@ import {
   Controller,
   Get,
   Post,
-  Patch,
   Delete,
   Body,
   Param,
@@ -21,7 +20,6 @@ import {
 import { Participant } from './participant.model';
 import { ParticipantsService } from './participants.service';
 import { CreateParticipantDto } from './dto/create-participant.dto';
-import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { IsParticipantOwnerOrCoordinatorGuard } from './guards/is-participant-owner-or-coordinator.guard';
 import { ParticipantStatus } from 'src/types/enums';
@@ -63,20 +61,20 @@ export class ParticipantsController {
     return this.participantsService.findOne(id);
   }
 
-  @Patch(':id')
+  @Post(':id/start-contribution')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth('access-token')
-  @ApiOperation({ summary: 'Update a participant by ID' })
+  @ApiOperation({ summary: 'Transition participant from READY to CONTRIBUTING' })
   @ApiParam({ name: 'id', type: 'number' })
   @ApiResponse({
-    status: 200,
-    description: 'The participant has been successfully updated.',
+    status: 201,
+    description: 'Participant is now CONTRIBUTING with step DOWNLOADING.',
     type: Participant,
   })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 400, description: 'Participant is not in READY status.' })
   @ApiResponse({ status: 404, description: 'Participant not found.' })
-  update(@Param('id') id: number, @Body() updateParticipantDto: UpdateParticipantDto) {
-    return this.participantsService.update(id, updateParticipantDto);
+  startContribution(@Param('id') id: number) {
+    return this.participantsService.startContribution(id);
   }
 
   @Delete(':id')

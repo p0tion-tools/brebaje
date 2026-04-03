@@ -12,7 +12,6 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { CreateParticipantDto } from './dto/create-participant.dto';
-import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Participant } from './participant.model';
 import { ParticipantStatus, ParticipantContributionStep, CeremonyState } from 'src/types/enums';
 import { WhereOptions } from 'sequelize';
@@ -105,20 +104,29 @@ export class ParticipantsService {
   }
 
   /**
-   * Updates a participant by ID. Only the fields provided in the DTO are updated.
+   * Transitions a participant from READY to CONTRIBUTING.
+   * Atomically sets status to CONTRIBUTING and contributionStep to DOWNLOADING.
+   * Only valid when the participant is in READY status.
    *
    * @param id - The participant's unique identifier
-   * @param updateParticipantDto - The DTO containing the fields to update (status, contributionStep, tempContributionData)
    * @returns The updated participant
    */
-  async update(id: number, updateParticipantDto: UpdateParticipantDto) {
+  async startContribution(id: number) {
     try {
       const participant = await this.participantModel.findByPk(id);
       if (!participant) {
         throw new Error('Participant not found');
       }
 
-      await participant.update(updateParticipantDto);
+      if (participant.status !== ParticipantStatus.READY) {
+        throw new BadRequestException('Participant must be in READY status to start contributing');
+      }
+
+      await participant.update({
+        status: ParticipantStatus.CONTRIBUTING,
+        contributionStep: ParticipantContributionStep.DOWNLOADING,
+      });
+
       return participant;
     } catch (error) {
       this.handleErrors(error as Error);
