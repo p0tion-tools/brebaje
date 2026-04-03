@@ -12,9 +12,9 @@ import {
   forwardRef,
 } from '@nestjs/common';
 import { CreateParticipantDto } from './dto/create-participant.dto';
-import { UpdateParticipantDto } from './dto/update-participant.dto';
 import { Participant } from './participant.model';
 import { ParticipantStatus, ParticipantContributionStep, CeremonyState } from 'src/types/enums';
+import { WhereOptions } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { formatZkeyIndex } from '@brebaje/actions';
 import { CircuitsService } from 'src/circuits/circuits.service';
@@ -54,8 +54,13 @@ export class ParticipantsService {
     }
   }
 
-  async findAll() {
-    return this.participantModel.findAll();
+  async findAll(filters?: { ceremonyId?: number; status?: ParticipantStatus }) {
+    const where: WhereOptions = {};
+
+    if (filters?.ceremonyId) where['ceremonyId'] = filters.ceremonyId;
+    if (filters?.status) where['status'] = filters.status;
+
+    return this.participantModel.findAll({ where });
   }
 
   async findOne(id: number) {
@@ -99,14 +104,33 @@ export class ParticipantsService {
   }
 
   /**
-   * Updates a participant by ID.
+   * Transitions a participant from READY to CONTRIBUTING.
+   * Atomically sets status to CONTRIBUTING and contributionStep to DOWNLOADING.
+   * Only valid when the participant is in READY status.
    *
    * @param id - The participant's unique identifier
-   * @param _updateParticipantDto - The DTO containing the updated participant data
-   * @returns A message indicating the update action (not yet implemented)
+   * @returns The updated participant
    */
-  update(id: number, _updateParticipantDto: UpdateParticipantDto) {
-    return `This action updates a #${id} participant`;
+  async startContribution(id: number) {
+    try {
+      const participant = await this.participantModel.findByPk(id);
+      if (!participant) {
+        throw new Error('Participant not found');
+      }
+
+      if (participant.status !== ParticipantStatus.READY) {
+        throw new BadRequestException('Participant must be in READY status to start contributing');
+      }
+
+      await participant.update({
+        status: ParticipantStatus.CONTRIBUTING,
+        contributionStep: ParticipantContributionStep.DOWNLOADING,
+      });
+
+      return participant;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
   }
 
   async remove(id: number) {

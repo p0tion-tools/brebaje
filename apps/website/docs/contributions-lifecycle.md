@@ -4,46 +4,28 @@ This document describes the legal state transitions enforced by the contribution
 
 ## State Machine
 
-```mermaid
-stateDiagram-v2
-    direction LR
-
-    state "Participant States" as PS {
-        [*] --> CREATED
-        CREATED --> WAITING
-        WAITING --> READY
-        READY --> CONTRIBUTING
-
-        state "Contribution Window" as CW {
-            CONTRIBUTING --> DOWNLOADING : step
-            DOWNLOADING --> COMPUTING : step
-            COMPUTING --> UPLOADING : step
-            UPLOADING --> VERIFYING : step
-        }
-
-        CONTRIBUTING --> CONTRIBUTED
-        CONTRIBUTED --> DONE
-        CONTRIBUTING --> TIMEDOUT
-        CONTRIBUTED --> FINALIZING
-        FINALIZING --> FINALIZED
-    }
-
-    note right of UPLOADING
-        ✅ Can CREATE contribution
-    end note
-
-    note right of VERIFYING
-        ✅ Can CREATE contribution
-        ✅ Can SET valid (if CONTRIBUTED/FINALIZED)
-    end note
-
-    note right of CONTRIBUTED
-        ✅ Can SET valid (VERIFYING or COMPLETED step)
-    end note
-
-    note right of FINALIZED
-        ✅ Can SET valid (VERIFYING or COMPLETED step)
-    end note
+```
+CeremonyState
+├── SCHEDULED
+├── OPENED                              ← activates ParticipantStatus
+│   └── ParticipantStatus
+│       ├── CREATED
+│       ├── WAITING
+│       ├── READY
+│       ├── CONTRIBUTING                ← activates ParticipantContributionStep
+│       │   └── ParticipantContributionStep
+│       │       ├── DOWNLOADING
+│       │       ├── COMPUTING
+│       │       ├── UPLOADING
+│       │       ├── VERIFYING
+│       │       └── COMPLETED
+│       ├── CONTRIBUTED
+│       ├── TIMEDOUT
+│       ├── EXHUMED
+│       └── DONE
+├── PAUSED
+├── CLOSED
+└── FINALIZED
 ```
 
 ## Legal Transitions
