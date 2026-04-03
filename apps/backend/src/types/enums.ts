@@ -42,7 +42,7 @@ export enum ParticipantStatus {
   FINALIZING = 'FINALIZING',
   FINALIZED = 'FINALIZED',
   TIMEDOUT = 'TIMEDOUT',
-  EXHUMED = 'EXHUMED',
+  EXHUMED = 'EXHUMED', // Not used anywhere.
 }
 
 /**
