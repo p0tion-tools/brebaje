@@ -1,6 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
 import { App } from 'supertest/types';
+import { Op } from 'sequelize';
 import { AppModule } from '../src/app.module';
 import { configureApp } from '../src/app.config';
 import { AWS_CEREMONY_BUCKET_POSTFIX, PORT } from 'src/utils/constants';
@@ -8,6 +9,7 @@ import { ceremonyDto, circuits, coordinatorDto, projectDto } from './constants';
 import { User } from 'src/users/user.model';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Project } from 'src/projects/project.model';
+import { Contribution } from 'src/contributions/contribution.model';
 import {
   getBucketName,
   sanitizeString,
@@ -33,9 +35,14 @@ const circuitArtifactHashes: Record<
   { pot: string; r1cs: string; wasm: string; zkey: string }
 > = {};
 
-// pass the Nest SQLite models to the database in /.db/data.sqlite3
-process.env.DB_SQLITE_SYNCHRONIZE = 'true';
+// DB_SQLITE_SYNCHRONIZE and DB path: see test/e2e-env.setup.ts (must run before AppModule import eval).
 process.env.API_URL = TEST_URL;
+
+const awsIntegrationEnabled = Boolean(
+  process.env.AWS_ACCESS_KEY_ID?.trim() && process.env.AWS_SECRET_ACCESS_KEY?.trim(),
+);
+/** S3-backed steps; skipped when AWS credentials are not configured (local/CI). */
+const awsIt = awsIntegrationEnabled ? it : it.skip;
 
 describe('Coordinator (e2e)', () => {
   let app: INestApplication<App>;
@@ -62,13 +69,31 @@ describe('Coordinator (e2e)', () => {
   });
 
   afterAll(async () => {
-    await Promise.all([
-      Participant.destroy({ where: { id: ceremonyId || '' } }),
-      Ceremony.destroy({ where: { id: ceremonyId || '' } }),
-      Project.destroy({ where: { id: projectId || '' } }),
-      User.destroy({ where: { id: coordinatorId || '' } }),
-      app.close(),
-    ]);
+    try {
+      if (ceremonyId != null) {
+        const participants = await Participant.findAll({
+          where: { ceremonyId },
+          attributes: ['id'],
+        });
+        const participantIds = participants.map((p) => p.id);
+        if (participantIds.length > 0) {
+          await Contribution.destroy({
+            where: { participantId: { [Op.in]: participantIds } },
+          });
+        }
+        await Circuit.destroy({ where: { ceremonyId } });
+        await Participant.destroy({ where: { ceremonyId } });
+        await Ceremony.destroy({ where: { id: ceremonyId } });
+      }
+      if (projectId != null) {
+        await Project.destroy({ where: { id: projectId } });
+      }
+      if (coordinatorId != null) {
+        await User.destroy({ where: { id: coordinatorId } });
+      }
+    } finally {
+      await app?.close();
+    }
   });
 
   it('should create a new user', async () => {
@@ -209,24 +234,28 @@ describe('Coordinator (e2e)', () => {
     ceremonyId = body.id;
   });
 
-  it('should create a bucket in S3', async () => {
-    const url = new URL('/storage/bucket', TEST_URL);
-    url.searchParams.set('id', String(ceremonyId));
+  awsIt(
+    'should create a bucket in S3',
+    async () => {
+      const url = new URL('/storage/bucket', TEST_URL);
+      url.searchParams.set('id', String(ceremonyId));
 
-    const response = await fetch(url, {
-      method: 'POST',
-    });
+      const response = await fetch(url, {
+        method: 'POST',
+      });
 
-    const body = (await response.json()) as { bucketName: string };
+      const body = (await response.json()) as { bucketName: string };
 
-    const expectedBucketName = getBucketName(
-      AWS_CEREMONY_BUCKET_POSTFIX,
-      projectDto.name,
-      ceremonyDto.description,
-    );
+      const expectedBucketName = getBucketName(
+        AWS_CEREMONY_BUCKET_POSTFIX,
+        projectDto.name,
+        ceremonyDto.description,
+      );
 
-    expect(body.bucketName).toBe(expectedBucketName);
-  }, 15000); // S3 bucket creation can be slow in CI
+      expect(body.bucketName).toBe(expectedBucketName);
+    },
+    15000,
+  ); // S3 bucket creation can be slow in CI
 
   it('should create a participant', async () => {
     const response = await fetch(`${TEST_URL}/participants`, {
@@ -262,7 +291,75 @@ describe('Coordinator (e2e)', () => {
     expect(savedParticipant.contributionStep).toBe(ParticipantContributionStep.DOWNLOADING);
   });
 
-  it(
+  it('should accept storage temporary-state endpoints matching @brebaje/actions multipart contract', async () => {
+    if (coordinatorId == null) {
+      throw new Error('Expected coordinatorId to be defined');
+    }
+
+    const uploadId = 'e2e-test-multipart-upload-id';
+    const mpuUrl = new URL(
+      `${TEST_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
+    );
+    mpuUrl.searchParams.set('id', String(ceremonyId));
+    mpuUrl.searchParams.set('userId', String(coordinatorId + 999));
+
+    const mpuResponse = await fetch(mpuUrl.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({ uploadId }),
+    });
+    expect(mpuResponse.ok).toBe(true);
+
+    const chunkUrl = new URL(
+      `${TEST_URL}/storage/temporary-store-current-contribution-uploaded-chunk-data`,
+    );
+    chunkUrl.searchParams.set('id', String(ceremonyId));
+    chunkUrl.searchParams.set('userId', String(coordinatorId + 999));
+
+    const chunkPayload = { chunk: { ETag: '"e2e-etag"', PartNumber: 1 } };
+    const chunkResponse = await fetch(chunkUrl.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify(chunkPayload),
+    });
+    expect(chunkResponse.ok).toBe(true);
+
+    const participantRow = await Participant.findOne({
+      where: { userId: coordinatorId, ceremonyId },
+    });
+    if (!participantRow) {
+      throw new Error('Expected participant row after temporary store calls');
+    }
+    const temp = participantRow.tempContributionData;
+    expect(temp).toBeDefined();
+    expect(temp?.uploadId).toBe(uploadId);
+    expect(temp?.chunks).toEqual([chunkPayload.chunk]);
+  });
+
+  it('should reject unauthenticated storage temporary-state requests', async () => {
+    const url = new URL(
+      `${TEST_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
+    );
+    url.searchParams.set('id', String(ceremonyId));
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uploadId: 'unauthenticated-upload-id' }),
+    });
+
+    expect(response.status).toBe(401);
+  });
+
+  awsIt(
     'should upload the circuit artifacts to the bucket',
     async () => {
       // make the download directory if it doesn't exist
