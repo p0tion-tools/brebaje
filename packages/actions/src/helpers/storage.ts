@@ -56,7 +56,7 @@ export const getChunksAndPreSignedUrlsAPI = async (
     uploadId,
     chunks.length,
     ceremonyId,
-    userId,
+    _userId,
     accessToken,
   );
 
