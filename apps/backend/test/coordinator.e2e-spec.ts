@@ -292,12 +292,16 @@ describe('Coordinator (e2e)', () => {
   });
 
   it('should accept storage temporary-state endpoints matching @brebaje/actions multipart contract', async () => {
+    if (coordinatorId == null) {
+      throw new Error('Expected coordinatorId to be defined');
+    }
+
     const uploadId = 'e2e-test-multipart-upload-id';
     const mpuUrl = new URL(
       `${TEST_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
     );
     mpuUrl.searchParams.set('id', String(ceremonyId));
-    mpuUrl.searchParams.set('userId', String(coordinatorId));
+    mpuUrl.searchParams.set('userId', String(coordinatorId + 999));
 
     const mpuResponse = await fetch(mpuUrl.toString(), {
       method: 'POST',
@@ -313,7 +317,7 @@ describe('Coordinator (e2e)', () => {
       `${TEST_URL}/storage/temporary-store-current-contribution-uploaded-chunk-data`,
     );
     chunkUrl.searchParams.set('id', String(ceremonyId));
-    chunkUrl.searchParams.set('userId', String(coordinatorId));
+    chunkUrl.searchParams.set('userId', String(coordinatorId + 999));
 
     const chunkPayload = { chunk: { ETag: '"e2e-etag"', PartNumber: 1 } };
     const chunkResponse = await fetch(chunkUrl.toString(), {
@@ -336,6 +340,23 @@ describe('Coordinator (e2e)', () => {
     expect(temp).toBeDefined();
     expect(temp?.uploadId).toBe(uploadId);
     expect(temp?.chunks).toEqual([chunkPayload.chunk]);
+  });
+
+  it('should reject unauthenticated storage temporary-state requests', async () => {
+    const url = new URL(
+      `${TEST_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
+    );
+    url.searchParams.set('id', String(ceremonyId));
+
+    const response = await fetch(url.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ uploadId: 'unauthenticated-upload-id' }),
+    });
+
+    expect(response.status).toBe(401);
   });
 
   awsIt(

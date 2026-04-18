@@ -32,7 +32,7 @@ export const getBucketName = (postfix: string, project: string, description?: st
 export const getChunksAndPreSignedUrlsAPI = async (
   accessToken: string,
   ceremonyId: number,
-  userId: number,
+  _userId: number,
   objectKey: string,
   localFilePath: string,
   uploadId: string,
@@ -159,7 +159,7 @@ export const uploadPartsAPI = async (
  */
 export const completeMultiPartUploadAPI = async (
   ceremonyId: number,
-  userId: number,
+  _userId: number,
   token: string,
   objectKey: string,
   uploadId: string,
@@ -168,7 +168,6 @@ export const completeMultiPartUploadAPI = async (
   const url = new URL(`${process.env.API_URL}/storage/multipart/complete`);
   url.search = new URLSearchParams({
     id: ceremonyId.toString(),
-    userId: userId.toString(),
   }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
@@ -194,7 +193,7 @@ export const completeMultiPartUploadAPI = async (
  */
 export const temporaryStoreCurrentContributionUploadedChunkDataAPI = async (
   ceremonyId: number,
-  userId: number,
+  _userId: number,
   token: string,
   chunk: ETagWithPartNumber,
 ) => {
@@ -203,7 +202,6 @@ export const temporaryStoreCurrentContributionUploadedChunkDataAPI = async (
   );
   url.search = new URLSearchParams({
     id: ceremonyId.toString(),
-    userId: userId.toString(),
   }).toString();
   const result = await fetch(url.toString(), {
     headers: {
@@ -237,13 +235,12 @@ export const generatePreSignedUrlsPartsAPI = async (
   uploadId: string,
   numberOfParts: number,
   ceremonyId: number,
-  userId: number,
+  _userId: number,
   token: string,
 ) => {
   const url = new URL(`${process.env.API_URL}/storage/multipart/urls`);
   url.search = new URLSearchParams({
     id: ceremonyId.toString(),
-    userId: userId.toString(),
   }).toString();
   const result = (await fetch(url.toString(), {
     headers: {
@@ -272,13 +269,12 @@ export const generatePreSignedUrlsPartsAPI = async (
 export const openMultiPartUploadAPI = async (
   objectKey: string,
   ceremonyId: number,
-  userId: number,
+  _userId: number,
   token: string,
 ) => {
   const url = new URL(`${process.env.API_URL}/storage/multipart/start`);
   url.search = new URLSearchParams({
     id: ceremonyId.toString(),
-    userId: userId.toString(),
   }).toString();
   const result = await fetch(url.toString(), {
     headers: {
@@ -319,7 +315,7 @@ export const openMultiPartUploadAPI = async (
  */
 export const temporaryStoreCurrentContributionMultiPartUploadIdAPI = async (
   ceremonyId: number,
-  userId: number,
+  _userId: number,
   uploadId: string,
   token: string,
 ) => {
@@ -328,7 +324,6 @@ export const temporaryStoreCurrentContributionMultiPartUploadIdAPI = async (
   );
   url.search = new URLSearchParams({
     id: ceremonyId.toString(),
-    userId: userId.toString(),
   }).toString();
   const result = await fetch(url.toString(), {
     headers: {
