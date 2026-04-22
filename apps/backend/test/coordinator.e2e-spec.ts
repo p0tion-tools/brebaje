@@ -338,6 +338,25 @@ describe('Coordinator (e2e)', () => {
     expect(temp?.chunks).toEqual([chunkPayload.chunk]);
   });
 
+  it('should reject storage temporary-state endpoints when JWT userId does not match query userId', async () => {
+    const mpuUrl = new URL(
+      `${TEST_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
+    );
+    mpuUrl.searchParams.set('id', String(ceremonyId));
+    mpuUrl.searchParams.set('userId', String((coordinatorId ?? 0) + 1));
+
+    const response = await fetch(mpuUrl.toString(), {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({ uploadId: 'forbidden-upload-id' }),
+    });
+
+    expect(response.status).toBe(403);
+  });
+
   awsIt(
     'should upload the circuit artifacts to the bucket',
     async () => {

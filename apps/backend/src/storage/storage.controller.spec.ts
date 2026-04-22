@@ -89,8 +89,17 @@ describe('StorageController', () => {
       const ceremonyId = 1;
       const userId = 1;
       const data: ObjectKeyDto = { objectKey: 'test-key' };
-      await controller.startMultipartUpload(ceremonyId, userId, data);
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.startMultipartUpload(req, ceremonyId, userId, data);
       expect(storageService.startMultipartUpload).toHaveBeenCalledWith(data, ceremonyId, userId);
+    });
+
+    it('should reject when query userId does not match JWT user', () => {
+      const req = { user: { id: 2 } } as AuthenticatedRequest;
+      expect(() => controller.startMultipartUpload(req, 1, 1, { objectKey: 'test-key' })).toThrow(
+        ForbiddenException,
+      );
+      expect(storageService.startMultipartUpload).not.toHaveBeenCalled();
     });
   });
 
@@ -103,12 +112,25 @@ describe('StorageController', () => {
         uploadId: 'test-upload-id',
         numberOfParts: 3,
       };
-      await controller.generatePreSignedUrlsParts(ceremonyId, userId, data);
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.generatePreSignedUrlsParts(req, ceremonyId, userId, data);
       expect(storageService.generatePreSignedUrlsParts).toHaveBeenCalledWith(
         data,
         ceremonyId,
         userId,
       );
+    });
+
+    it('should reject when query userId does not match JWT user', () => {
+      const req = { user: { id: 2 } } as AuthenticatedRequest;
+      expect(() =>
+        controller.generatePreSignedUrlsParts(req, 1, 1, {
+          objectKey: 'test-key',
+          uploadId: 'test-upload-id',
+          numberOfParts: 3,
+        }),
+      ).toThrow(ForbiddenException);
+      expect(storageService.generatePreSignedUrlsParts).not.toHaveBeenCalled();
     });
   });
 
@@ -121,8 +143,21 @@ describe('StorageController', () => {
         uploadId: 'test-upload-id',
         parts: [],
       };
-      await controller.completeMultipartUpload(ceremonyId, userId, data);
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.completeMultipartUpload(req, ceremonyId, userId, data);
       expect(storageService.completeMultipartUpload).toHaveBeenCalledWith(data, ceremonyId, userId);
+    });
+
+    it('should reject when query userId does not match JWT user', () => {
+      const req = { user: { id: 2 } } as AuthenticatedRequest;
+      expect(() =>
+        controller.completeMultipartUpload(req, 1, 1, {
+          objectKey: 'test-key',
+          uploadId: 'test-upload-id',
+          parts: [],
+        }),
+      ).toThrow(ForbiddenException);
+      expect(storageService.completeMultipartUpload).not.toHaveBeenCalled();
     });
   });
 
