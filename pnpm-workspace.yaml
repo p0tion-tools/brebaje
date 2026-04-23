@@ -9,6 +9,8 @@ ignoredBuiltDependencies:
   - nx
   - sqlite3
   - unrs-resolver
+# Explicitly allow postinstall/build scripts for packages with required native/runtime artifacts.
+# This keeps pnpm's build-script policy locked down while still letting AWS/storage test deps work.
 onlyBuiltDependencies:
   - aws-sdk
   - bufferutil

@@ -1,4 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { StorageController } from './storage.controller';
@@ -91,6 +92,15 @@ describe('StorageController', () => {
       const req = { user: { id: userId } } as AuthenticatedRequest;
       await controller.startMultipartUpload(req, ceremonyId, data);
       expect(storageService.startMultipartUpload).toHaveBeenCalledWith(data, ceremonyId, userId);
+    });
+
+    it('should reject when the request user is undefined', () => {
+      const req = { user: undefined } as unknown as AuthenticatedRequest;
+
+      expect(() => controller.startMultipartUpload(req, 1, { objectKey: 'test-key' })).toThrow(
+        UnauthorizedException,
+      );
+      expect(storageService.startMultipartUpload).not.toHaveBeenCalled();
     });
   });
 

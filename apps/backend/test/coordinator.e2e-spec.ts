@@ -301,6 +301,7 @@ describe('Coordinator (e2e)', () => {
       `${TEST_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
     );
     mpuUrl.searchParams.set('id', String(ceremonyId));
+    // Intentionally wrong query param: the server must derive identity from the JWT instead.
     mpuUrl.searchParams.set('userId', String(coordinatorId + 999));
 
     const mpuResponse = await fetch(mpuUrl.toString(), {
@@ -317,6 +318,7 @@ describe('Coordinator (e2e)', () => {
       `${TEST_URL}/storage/temporary-store-current-contribution-uploaded-chunk-data`,
     );
     chunkUrl.searchParams.set('id', String(ceremonyId));
+    // Intentionally wrong query param: the server must derive identity from the JWT instead.
     chunkUrl.searchParams.set('userId', String(coordinatorId + 999));
 
     const chunkPayload = { chunk: { ETag: '"e2e-etag"', PartNumber: 1 } };
@@ -404,7 +406,6 @@ describe('Coordinator (e2e)', () => {
           multiPartUploadAPI(
             jwtToken!,
             ceremonyId!,
-            coordinatorId!,
             `${prefix}.r1cs`,
             localR1csPath,
             Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
@@ -413,7 +414,6 @@ describe('Coordinator (e2e)', () => {
           multiPartUploadAPI(
             jwtToken!,
             ceremonyId!,
-            coordinatorId!,
             `${prefix}.wasm`,
             localWasmPath,
             Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
@@ -422,7 +422,6 @@ describe('Coordinator (e2e)', () => {
           multiPartUploadAPI(
             jwtToken!,
             ceremonyId!,
-            coordinatorId!,
             `${prefix}.zkey`,
             localZkeyPath,
             Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
@@ -441,7 +440,6 @@ describe('Coordinator (e2e)', () => {
           await multiPartUploadAPI(
             jwtToken!,
             ceremonyId!,
-            coordinatorId!,
             `pot/${getFilenameFromUrl(powersOfTauURL)}`,
             localPTauPath,
             Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),

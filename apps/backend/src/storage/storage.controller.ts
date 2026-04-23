@@ -6,7 +6,7 @@ import {
   Query,
   UseGuards,
   Request,
-  ForbiddenException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -29,7 +29,7 @@ import {
 function getAuthenticatedUserId(req: AuthenticatedRequest): number {
   const userId = req.user?.id;
   if (userId === undefined) {
-    throw new ForbiddenException('User not authenticated');
+    throw new UnauthorizedException('User not authenticated');
   }
 
   return userId;
