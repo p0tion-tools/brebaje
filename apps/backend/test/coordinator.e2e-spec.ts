@@ -292,12 +292,17 @@ describe('Coordinator (e2e)', () => {
   });
 
   it('should accept storage temporary-state endpoints matching @brebaje/actions multipart contract', async () => {
+    if (coordinatorId == null) {
+      throw new Error('Expected coordinatorId to be defined');
+    }
+
     const uploadId = 'e2e-test-multipart-upload-id';
     const mpuUrl = new URL(
       `${TEST_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
     );
     mpuUrl.searchParams.set('id', String(ceremonyId));
-    mpuUrl.searchParams.set('userId', String(coordinatorId));
+    // Intentionally wrong query param: the server must derive identity from the JWT instead.
+    mpuUrl.searchParams.set('userId', String(coordinatorId + 999));
 
     const mpuResponse = await fetch(mpuUrl.toString(), {
       method: 'POST',
@@ -313,7 +318,8 @@ describe('Coordinator (e2e)', () => {
       `${TEST_URL}/storage/temporary-store-current-contribution-uploaded-chunk-data`,
     );
     chunkUrl.searchParams.set('id', String(ceremonyId));
-    chunkUrl.searchParams.set('userId', String(coordinatorId));
+    // Intentionally wrong query param: the server must derive identity from the JWT instead.
+    chunkUrl.searchParams.set('userId', String(coordinatorId + 999));
 
     const chunkPayload = { chunk: { ETag: '"e2e-etag"', PartNumber: 1 } };
     const chunkResponse = await fetch(chunkUrl.toString(), {
@@ -338,23 +344,21 @@ describe('Coordinator (e2e)', () => {
     expect(temp?.chunks).toEqual([chunkPayload.chunk]);
   });
 
-  it('should reject storage temporary-state endpoints when JWT userId does not match query userId', async () => {
-    const mpuUrl = new URL(
+  it('should reject unauthenticated storage temporary-state requests', async () => {
+    const url = new URL(
       `${TEST_URL}/storage/temporary-store-current-contribution-multipart-upload-id`,
     );
-    mpuUrl.searchParams.set('id', String(ceremonyId));
-    mpuUrl.searchParams.set('userId', String((coordinatorId ?? 0) + 1));
+    url.searchParams.set('id', String(ceremonyId));
 
-    const response = await fetch(mpuUrl.toString(), {
+    const response = await fetch(url.toString(), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        Authorization: `Bearer ${jwtToken}`,
       },
-      body: JSON.stringify({ uploadId: 'forbidden-upload-id' }),
+      body: JSON.stringify({ uploadId: 'unauthenticated-upload-id' }),
     });
 
-    expect(response.status).toBe(403);
+    expect(response.status).toBe(401);
   });
 
   awsIt(
@@ -402,7 +406,6 @@ describe('Coordinator (e2e)', () => {
           multiPartUploadAPI(
             jwtToken!,
             ceremonyId!,
-            coordinatorId!,
             `${prefix}.r1cs`,
             localR1csPath,
             Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
@@ -411,7 +414,6 @@ describe('Coordinator (e2e)', () => {
           multiPartUploadAPI(
             jwtToken!,
             ceremonyId!,
-            coordinatorId!,
             `${prefix}.wasm`,
             localWasmPath,
             Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
@@ -420,7 +422,6 @@ describe('Coordinator (e2e)', () => {
           multiPartUploadAPI(
             jwtToken!,
             ceremonyId!,
-            coordinatorId!,
             `${prefix}.zkey`,
             localZkeyPath,
             Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
@@ -439,7 +440,6 @@ describe('Coordinator (e2e)', () => {
           await multiPartUploadAPI(
             jwtToken!,
             ceremonyId!,
-            coordinatorId!,
             `pot/${getFilenameFromUrl(powersOfTauURL)}`,
             localPTauPath,
             Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),

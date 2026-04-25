@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/unbound-method */
-import { ForbiddenException } from '@nestjs/common';
+import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
 import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { StorageController } from './storage.controller';
@@ -85,26 +85,27 @@ describe('StorageController', () => {
   });
 
   describe('startMultipartUpload', () => {
-    it('should call storageService.startMultipartUpload with data, ceremonyId, and userId', async () => {
+    it('should call storageService.startMultipartUpload with data, ceremonyId, and authenticated user id', async () => {
       const ceremonyId = 1;
       const userId = 1;
       const data: ObjectKeyDto = { objectKey: 'test-key' };
       const req = { user: { id: userId } } as AuthenticatedRequest;
-      await controller.startMultipartUpload(req, ceremonyId, userId, data);
+      await controller.startMultipartUpload(req, ceremonyId, data);
       expect(storageService.startMultipartUpload).toHaveBeenCalledWith(data, ceremonyId, userId);
     });
 
-    it('should reject when query userId does not match JWT user', () => {
-      const req = { user: { id: 2 } } as AuthenticatedRequest;
-      expect(() => controller.startMultipartUpload(req, 1, 1, { objectKey: 'test-key' })).toThrow(
-        ForbiddenException,
+    it('should reject when the request user is undefined', () => {
+      const req = { user: undefined } as unknown as AuthenticatedRequest;
+
+      expect(() => controller.startMultipartUpload(req, 1, { objectKey: 'test-key' })).toThrow(
+        UnauthorizedException,
       );
       expect(storageService.startMultipartUpload).not.toHaveBeenCalled();
     });
   });
 
   describe('generatePreSignedUrlsParts', () => {
-    it('should call storageService.generatePreSignedUrlsParts with data, ceremonyId, and userId', async () => {
+    it('should call storageService.generatePreSignedUrlsParts with data, ceremonyId, and authenticated user id', async () => {
       const ceremonyId = 1;
       const userId = 1;
       const data: GeneratePreSignedUrlsPartsData = {
@@ -113,29 +114,17 @@ describe('StorageController', () => {
         numberOfParts: 3,
       };
       const req = { user: { id: userId } } as AuthenticatedRequest;
-      await controller.generatePreSignedUrlsParts(req, ceremonyId, userId, data);
+      await controller.generatePreSignedUrlsParts(req, ceremonyId, data);
       expect(storageService.generatePreSignedUrlsParts).toHaveBeenCalledWith(
         data,
         ceremonyId,
         userId,
       );
     });
-
-    it('should reject when query userId does not match JWT user', () => {
-      const req = { user: { id: 2 } } as AuthenticatedRequest;
-      expect(() =>
-        controller.generatePreSignedUrlsParts(req, 1, 1, {
-          objectKey: 'test-key',
-          uploadId: 'test-upload-id',
-          numberOfParts: 3,
-        }),
-      ).toThrow(ForbiddenException);
-      expect(storageService.generatePreSignedUrlsParts).not.toHaveBeenCalled();
-    });
   });
 
   describe('completeMultipartUpload', () => {
-    it('should call storageService.completeMultipartUpload with data, ceremonyId, and userId', async () => {
+    it('should call storageService.completeMultipartUpload with data, ceremonyId, and authenticated user id', async () => {
       const ceremonyId = 1;
       const userId = 1;
       const data: CompleteMultiPartUploadData = {
@@ -144,70 +133,36 @@ describe('StorageController', () => {
         parts: [],
       };
       const req = { user: { id: userId } } as AuthenticatedRequest;
-      await controller.completeMultipartUpload(req, ceremonyId, userId, data);
+      await controller.completeMultipartUpload(req, ceremonyId, data);
       expect(storageService.completeMultipartUpload).toHaveBeenCalledWith(data, ceremonyId, userId);
-    });
-
-    it('should reject when query userId does not match JWT user', () => {
-      const req = { user: { id: 2 } } as AuthenticatedRequest;
-      expect(() =>
-        controller.completeMultipartUpload(req, 1, 1, {
-          objectKey: 'test-key',
-          uploadId: 'test-upload-id',
-          parts: [],
-        }),
-      ).toThrow(ForbiddenException);
-      expect(storageService.completeMultipartUpload).not.toHaveBeenCalled();
     });
   });
 
   describe('temporaryStoreMultipartUploadId', () => {
-    it('should call storageService.temporaryStoreCurrentContributionMultiPartUploadId when user matches', async () => {
+    it('should call storageService.temporaryStoreCurrentContributionMultiPartUploadId with the authenticated user id', async () => {
       const ceremonyId = 1;
       const userId = 1;
       const data: UploadIdDto = { uploadId: 'mpu-id' };
       const req = { user: { id: userId } } as AuthenticatedRequest;
-      await controller.temporaryStoreMultipartUploadId(req, ceremonyId, userId, data);
+      await controller.temporaryStoreMultipartUploadId(req, ceremonyId, data);
       expect(
         storageService.temporaryStoreCurrentContributionMultiPartUploadId,
       ).toHaveBeenCalledWith(data, ceremonyId, userId);
     });
-
-    it('should reject when query userId does not match JWT user', () => {
-      const req = { user: { id: 2 } } as AuthenticatedRequest;
-      expect(() =>
-        controller.temporaryStoreMultipartUploadId(req, 1, 1, { uploadId: 'x' }),
-      ).toThrow(ForbiddenException);
-      expect(
-        storageService.temporaryStoreCurrentContributionMultiPartUploadId,
-      ).not.toHaveBeenCalled();
-    });
   });
 
   describe('temporaryStoreUploadedChunkData', () => {
-    it('should call storageService.temporaryStoreCurrentContributionUploadedChunkData when user matches', async () => {
+    it('should call storageService.temporaryStoreCurrentContributionUploadedChunkData with the authenticated user id', async () => {
       const ceremonyId = 1;
       const userId = 1;
       const data: TemporaryStoreCurrentContributionUploadedChunkData = {
         chunk: { ETag: '"e1"', PartNumber: 1 },
       };
       const req = { user: { id: userId } } as AuthenticatedRequest;
-      await controller.temporaryStoreUploadedChunkData(req, ceremonyId, userId, data);
+      await controller.temporaryStoreUploadedChunkData(req, ceremonyId, data);
       expect(
         storageService.temporaryStoreCurrentContributionUploadedChunkData,
       ).toHaveBeenCalledWith(data, ceremonyId, userId);
-    });
-
-    it('should reject when query userId does not match JWT user', () => {
-      const req = { user: { id: 99 } } as AuthenticatedRequest;
-      expect(() =>
-        controller.temporaryStoreUploadedChunkData(req, 1, 1, {
-          chunk: { ETag: '"e1"', PartNumber: 1 },
-        }),
-      ).toThrow(ForbiddenException);
-      expect(
-        storageService.temporaryStoreCurrentContributionUploadedChunkData,
-      ).not.toHaveBeenCalled();
     });
   });
 });
