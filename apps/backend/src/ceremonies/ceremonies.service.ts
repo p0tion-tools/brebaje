@@ -10,10 +10,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectModel } from '@nestjs/sequelize';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { Op } from 'sequelize';
 import { CreateCeremonyDto } from './dto/create-ceremony.dto';
 import { UpdateCeremonyDto } from './dto/update-ceremony.dto';
 import { Ceremony } from './ceremony.model';
 import { Project } from 'src/projects/project.model';
+import { CeremonyState } from 'src/types/enums';
 
 @Injectable()
 export class CeremoniesService {
@@ -88,6 +91,25 @@ export class CeremoniesService {
       return ceremony;
     } catch (error) {
       this.handleErrors(error as Error);
+    }
+  }
+
+  /**
+   * Cron job that runs every minute to automatically open scheduled ceremonies.
+   * Finds all SCHEDULED ceremonies whose start_date has passed and transitions them to OPENED.
+   */
+  @Cron(CronExpression.EVERY_MINUTE)
+  async openScheduledCeremonies() {
+    const ceremonies = await this.ceremonyModel.findAll({
+      where: {
+        state: CeremonyState.SCHEDULED,
+        start_date: { [Op.lte]: Date.now() },
+      },
+    });
+
+    for (const ceremony of ceremonies) {
+      ceremony.state = CeremonyState.OPENED;
+      await ceremony.save();
     }
   }
 

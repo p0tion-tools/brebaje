@@ -1,4 +1,12 @@
-import { PartialType } from '@nestjs/mapped-types';
-import { CreateParticipantDto } from './create-participant.dto';
+import { ApiPropertyOptional } from '@nestjs/swagger';
+import { IsObject, IsOptional } from 'class-validator';
+import { TemporaryParticipantContributionData } from 'src/types';
 
-export class UpdateParticipantDto extends PartialType(CreateParticipantDto) {}
+export class UpdateParticipantDto {
+  @ApiPropertyOptional({
+    description: 'Temporary contribution data used for resuming an interrupted contribution.',
+  })
+  @IsOptional()
+  @IsObject()
+  tempContributionData?: TemporaryParticipantContributionData;
+}

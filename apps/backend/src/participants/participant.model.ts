@@ -5,7 +5,7 @@ import { User } from 'src/users/user.model';
 import { Ceremony } from 'src/ceremonies/ceremony.model';
 import { Contribution } from 'src/contributions/contribution.model';
 import { TemporaryParticipantContributionData } from 'src/types';
-import { ParticipantTimeout } from 'src/types/declarations';
+import { ParticipantTimeoutInfractionRecord } from 'src/types/declarations';
 
 export interface ParticipantAttributes {
   userId: number;
@@ -17,7 +17,7 @@ export interface ParticipantAttributes {
   contributionStartedAt?: number;
   verificationStartedAt?: number;
   tempContributionData?: object;
-  timeout?: ParticipantTimeout[];
+  timeout?: ParticipantTimeoutInfractionRecord[];
 }
 
 export type ParticipantPk = 'id';
@@ -104,12 +104,12 @@ export class Participant extends Model implements ParticipantAttributes {
   })
   declare tempContributionData?: TemporaryParticipantContributionData;
 
+  /** History of timeout infractions for this participant. Each entry records when a penalty wait period started, ended, and what caused it. */
   @Column({
     type: DataType.JSON,
     allowNull: true,
-    comment: 'Array of timeouts. Check Timeout class',
   })
-  declare timeout?: ParticipantTimeout[];
+  declare timeout?: ParticipantTimeoutInfractionRecord[];
 
   @BelongsTo(() => User, 'userId')
   declare user: User;
