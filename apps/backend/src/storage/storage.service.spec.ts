@@ -73,6 +73,8 @@ describe('StorageService', () => {
     const mockParticipantsService = {
       findAll: jest.fn(),
       findByUserIdAndCeremonyId: jest.fn(),
+      checkPreConditionForCurrentContributorToInteractWithMultiPartUpload: jest.fn(),
+      checkUploadingFileValidity: jest.fn(),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -263,6 +265,94 @@ describe('StorageService', () => {
       await expect(service.completeMultipartUpload(mockData, 1, 1)).rejects.toThrow(
         InternalServerErrorException,
       );
+    });
+  });
+
+  describe('temporaryStoreCurrentContributionMultiPartUploadId', () => {
+    it('should persist upload id for an uploading participant', async () => {
+      const update = jest.fn().mockResolvedValue(undefined);
+      participantsService.findByUserIdAndCeremonyId.mockResolvedValue({
+        ...mockParticipant,
+        update,
+      } as never);
+      ceremoniesService.isCoordinator.mockResolvedValue({ isCoordinator: false } as never);
+
+      await service.temporaryStoreCurrentContributionMultiPartUploadId(
+        { uploadId: 'upload-123' },
+        1,
+        7,
+      );
+
+      expect(participantsService.findByUserIdAndCeremonyId).toHaveBeenCalledWith(7, 1);
+      expect(update).toHaveBeenCalledWith({
+        tempContributionData: {
+          uploadId: 'upload-123',
+        },
+      });
+    });
+
+    it('should allow coordinator override outside UPLOADING step', async () => {
+      const update = jest.fn().mockResolvedValue(undefined);
+      participantsService.findByUserIdAndCeremonyId.mockResolvedValue({
+        ...mockParticipant,
+        contributionStep: ParticipantContributionStep.DOWNLOADING,
+        update,
+      } as never);
+      ceremoniesService.isCoordinator.mockResolvedValue({ isCoordinator: true } as never);
+
+      await expect(
+        service.temporaryStoreCurrentContributionMultiPartUploadId(
+          { uploadId: 'upload-123' },
+          1,
+          7,
+        ),
+      ).resolves.toBeUndefined();
+      expect(update).toHaveBeenCalled();
+    });
+  });
+
+  describe('temporaryStoreCurrentContributionUploadedChunkData', () => {
+    it('should append chunk metadata for an uploading participant', async () => {
+      const update = jest.fn().mockResolvedValue(undefined);
+      participantsService.findByUserIdAndCeremonyId.mockResolvedValue({
+        ...mockParticipant,
+        tempContributionData: { uploadId: 'upload-123', chunks: [] },
+        update,
+      } as never);
+      ceremoniesService.isCoordinator.mockResolvedValue({ isCoordinator: false } as never);
+
+      await service.temporaryStoreCurrentContributionUploadedChunkData(
+        { chunk: { ETag: '"etag-1"', PartNumber: 1 } },
+        1,
+        7,
+      );
+
+      expect(update).toHaveBeenCalledWith({
+        tempContributionData: {
+          uploadId: 'upload-123',
+          chunks: [{ ETag: '"etag-1"', PartNumber: 1 }],
+        },
+      });
+    });
+
+    it('should allow coordinator override when participant is not uploading', async () => {
+      const update = jest.fn().mockResolvedValue(undefined);
+      participantsService.findByUserIdAndCeremonyId.mockResolvedValue({
+        ...mockParticipant,
+        contributionStep: ParticipantContributionStep.COMPUTING,
+        tempContributionData: { chunks: [] },
+        update,
+      } as never);
+      ceremoniesService.isCoordinator.mockResolvedValue({ isCoordinator: true } as never);
+
+      await expect(
+        service.temporaryStoreCurrentContributionUploadedChunkData(
+          { chunk: { ETag: '"etag-2"', PartNumber: 2 } },
+          1,
+          7,
+        ),
+      ).resolves.toBeUndefined();
+      expect(update).toHaveBeenCalled();
     });
   });
 

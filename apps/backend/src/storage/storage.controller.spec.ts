@@ -1,11 +1,15 @@
 /* eslint-disable @typescript-eslint/unbound-method */
+import { UnauthorizedException } from '@nestjs/common';
 import { Test, TestingModule } from '@nestjs/testing';
+import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { StorageController } from './storage.controller';
 import { StorageService } from './storage.service';
 import {
   ObjectKeyDto,
   GeneratePreSignedUrlsPartsData,
   CompleteMultiPartUploadData,
+  TemporaryStoreCurrentContributionUploadedChunkData,
+  UploadIdDto,
 } from './dto/storage-dto';
 
 describe('StorageController', () => {
@@ -21,6 +25,8 @@ describe('StorageController', () => {
       startMultipartUpload: jest.fn().mockResolvedValue({}),
       generatePreSignedUrlsParts: jest.fn().mockResolvedValue({}),
       completeMultipartUpload: jest.fn().mockResolvedValue({}),
+      temporaryStoreCurrentContributionMultiPartUploadId: jest.fn().mockResolvedValue(undefined),
+      temporaryStoreCurrentContributionUploadedChunkData: jest.fn().mockResolvedValue(undefined),
     };
 
     const module: TestingModule = await Test.createTestingModule({
@@ -31,7 +37,10 @@ describe('StorageController', () => {
           useValue: mockStorageService,
         },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({ canActivate: jest.fn(() => true) })
+      .compile();
 
     controller = module.get<StorageController>(StorageController);
     storageService = module.get<StorageService>(StorageService) as jest.Mocked<StorageService>;
@@ -76,17 +85,27 @@ describe('StorageController', () => {
   });
 
   describe('startMultipartUpload', () => {
-    it('should call storageService.startMultipartUpload with data, ceremonyId, and userId', async () => {
+    it('should call storageService.startMultipartUpload with data, ceremonyId, and authenticated user id', async () => {
       const ceremonyId = 1;
       const userId = 1;
       const data: ObjectKeyDto = { objectKey: 'test-key' };
-      await controller.startMultipartUpload(ceremonyId, userId, data);
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.startMultipartUpload(req, ceremonyId, data);
       expect(storageService.startMultipartUpload).toHaveBeenCalledWith(data, ceremonyId, userId);
+    });
+
+    it('should reject when the request user is undefined', () => {
+      const req = { user: undefined } as unknown as AuthenticatedRequest;
+
+      expect(() => controller.startMultipartUpload(req, 1, { objectKey: 'test-key' })).toThrow(
+        UnauthorizedException,
+      );
+      expect(storageService.startMultipartUpload).not.toHaveBeenCalled();
     });
   });
 
   describe('generatePreSignedUrlsParts', () => {
-    it('should call storageService.generatePreSignedUrlsParts with data, ceremonyId, and userId', async () => {
+    it('should call storageService.generatePreSignedUrlsParts with data, ceremonyId, and authenticated user id', async () => {
       const ceremonyId = 1;
       const userId = 1;
       const data: GeneratePreSignedUrlsPartsData = {
@@ -94,7 +113,8 @@ describe('StorageController', () => {
         uploadId: 'test-upload-id',
         numberOfParts: 3,
       };
-      await controller.generatePreSignedUrlsParts(ceremonyId, userId, data);
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.generatePreSignedUrlsParts(req, ceremonyId, data);
       expect(storageService.generatePreSignedUrlsParts).toHaveBeenCalledWith(
         data,
         ceremonyId,
@@ -104,7 +124,7 @@ describe('StorageController', () => {
   });
 
   describe('completeMultipartUpload', () => {
-    it('should call storageService.completeMultipartUpload with data, ceremonyId, and userId', async () => {
+    it('should call storageService.completeMultipartUpload with data, ceremonyId, and authenticated user id', async () => {
       const ceremonyId = 1;
       const userId = 1;
       const data: CompleteMultiPartUploadData = {
@@ -112,8 +132,37 @@ describe('StorageController', () => {
         uploadId: 'test-upload-id',
         parts: [],
       };
-      await controller.completeMultipartUpload(ceremonyId, userId, data);
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.completeMultipartUpload(req, ceremonyId, data);
       expect(storageService.completeMultipartUpload).toHaveBeenCalledWith(data, ceremonyId, userId);
+    });
+  });
+
+  describe('temporaryStoreMultipartUploadId', () => {
+    it('should call storageService.temporaryStoreCurrentContributionMultiPartUploadId with the authenticated user id', async () => {
+      const ceremonyId = 1;
+      const userId = 1;
+      const data: UploadIdDto = { uploadId: 'mpu-id' };
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.temporaryStoreMultipartUploadId(req, ceremonyId, data);
+      expect(
+        storageService.temporaryStoreCurrentContributionMultiPartUploadId,
+      ).toHaveBeenCalledWith(data, ceremonyId, userId);
+    });
+  });
+
+  describe('temporaryStoreUploadedChunkData', () => {
+    it('should call storageService.temporaryStoreCurrentContributionUploadedChunkData with the authenticated user id', async () => {
+      const ceremonyId = 1;
+      const userId = 1;
+      const data: TemporaryStoreCurrentContributionUploadedChunkData = {
+        chunk: { ETag: '"e1"', PartNumber: 1 },
+      };
+      const req = { user: { id: userId } } as AuthenticatedRequest;
+      await controller.temporaryStoreUploadedChunkData(req, ceremonyId, data);
+      expect(
+        storageService.temporaryStoreCurrentContributionUploadedChunkData,
+      ).toHaveBeenCalledWith(data, ceremonyId, userId);
     });
   });
 });

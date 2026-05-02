@@ -1,11 +1,39 @@
-import { Body, Controller, Post, Delete, Query } from '@nestjs/common';
-import { ApiOperation, ApiQuery, ApiResponse, ApiTags, ApiBody } from '@nestjs/swagger';
+import {
+  Body,
+  Controller,
+  Post,
+  Delete,
+  Query,
+  UseGuards,
+  Request,
+  UnauthorizedException,
+} from '@nestjs/common';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiResponse,
+  ApiTags,
+  ApiBody,
+} from '@nestjs/swagger';
+import { AuthenticatedRequest, JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
 import { StorageService } from './storage.service';
 import {
   CompleteMultiPartUploadData,
   GeneratePreSignedUrlsPartsData,
   ObjectKeyDto,
+  TemporaryStoreCurrentContributionUploadedChunkData,
+  UploadIdDto,
 } from './dto/storage-dto';
+
+function getAuthenticatedUserId(req: AuthenticatedRequest): number {
+  const userId = req.user?.id;
+  if (userId === undefined) {
+    throw new UnauthorizedException('User not authenticated');
+  }
+
+  return userId;
+}
 
 @ApiTags('storage')
 @Controller('storage')
@@ -61,50 +89,116 @@ export class StorageController {
   }
 
   @ApiOperation({ summary: 'Start multipart upload for large files' })
+  @ApiBearerAuth('access-token')
   @ApiQuery({ name: 'id', type: 'number', description: 'Ceremony ID' })
-  @ApiQuery({ name: 'userId', type: 'string', description: 'User ID' })
   @ApiBody({ type: ObjectKeyDto, description: 'Object key information' })
   @ApiResponse({ status: 200, description: 'Multipart upload started successfully.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Ceremony not found.' })
+  @UseGuards(JwtAuthGuard)
   @Post('multipart/start')
   startMultipartUpload(
+    @Request() req: AuthenticatedRequest,
     @Query('id') ceremonyId: number,
-    @Query('userId') userId: number,
     @Body() data: ObjectKeyDto,
   ) {
-    return this.storageService.startMultipartUpload(data, ceremonyId, userId);
+    return this.storageService.startMultipartUpload(data, ceremonyId, getAuthenticatedUserId(req));
   }
 
   @ApiOperation({ summary: 'Generate pre-signed URLs for multipart upload parts' })
+  @ApiBearerAuth('access-token')
   @ApiQuery({ name: 'id', type: 'number', description: 'Ceremony ID' })
-  @ApiQuery({ name: 'userId', type: 'string', description: 'User ID' })
   @ApiBody({ type: GeneratePreSignedUrlsPartsData, description: 'Multipart upload parts data' })
   @ApiResponse({ status: 200, description: 'Return pre-signed URLs for upload parts.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Ceremony not found.' })
+  @UseGuards(JwtAuthGuard)
   @Post('multipart/urls')
   generatePreSignedUrlsParts(
+    @Request() req: AuthenticatedRequest,
     @Query('id') ceremonyId: number,
-    @Query('userId') userId: number,
     @Body() data: GeneratePreSignedUrlsPartsData,
   ) {
-    return this.storageService.generatePreSignedUrlsParts(data, ceremonyId, userId);
+    return this.storageService.generatePreSignedUrlsParts(
+      data,
+      ceremonyId,
+      getAuthenticatedUserId(req),
+    );
   }
 
   @ApiOperation({ summary: 'Complete multipart upload' })
+  @ApiBearerAuth('access-token')
   @ApiQuery({ name: 'id', type: 'number', description: 'Ceremony ID' })
-  @ApiQuery({ name: 'userId', type: 'string', description: 'User ID' })
   @ApiBody({ type: CompleteMultiPartUploadData, description: 'Complete multipart upload data' })
   @ApiResponse({ status: 200, description: 'Multipart upload completed successfully.' })
   @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
   @ApiResponse({ status: 404, description: 'Ceremony not found.' })
+  @UseGuards(JwtAuthGuard)
   @Post('multipart/complete')
   completeMultipartUpload(
+    @Request() req: AuthenticatedRequest,
     @Query('id') ceremonyId: number,
-    @Query('userId') userId: number,
     @Body() data: CompleteMultiPartUploadData,
   ) {
-    return this.storageService.completeMultipartUpload(data, ceremonyId, userId);
+    return this.storageService.completeMultipartUpload(
+      data,
+      ceremonyId,
+      getAuthenticatedUserId(req),
+    );
+  }
+
+  @ApiOperation({
+    summary:
+      'Store multipart upload id for resumable contribution upload (actions client contract)',
+  })
+  @ApiBearerAuth('access-token')
+  @ApiQuery({ name: 'id', type: 'number', description: 'Ceremony ID' })
+  @ApiBody({ type: UploadIdDto, description: 'S3 multipart upload id' })
+  @ApiResponse({ status: 200, description: 'Temporary upload id stored.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Ceremony or participant not found.' })
+  @UseGuards(JwtAuthGuard)
+  @Post('temporary-store-current-contribution-multipart-upload-id')
+  temporaryStoreMultipartUploadId(
+    @Request() req: AuthenticatedRequest,
+    @Query('id') ceremonyId: number,
+    @Body() data: UploadIdDto,
+  ) {
+    return this.storageService.temporaryStoreCurrentContributionMultiPartUploadId(
+      data,
+      ceremonyId,
+      getAuthenticatedUserId(req),
+    );
+  }
+
+  @ApiOperation({
+    summary:
+      'Append uploaded chunk ETag/part for resumable contribution upload (actions client contract)',
+  })
+  @ApiBearerAuth('access-token')
+  @ApiQuery({ name: 'id', type: 'number', description: 'Ceremony ID' })
+  @ApiBody({ type: TemporaryStoreCurrentContributionUploadedChunkData, description: 'Chunk data' })
+  @ApiResponse({ status: 200, description: 'Chunk metadata stored.' })
+  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({ status: 401, description: 'Unauthorized.' })
+  @ApiResponse({ status: 403, description: 'Forbidden.' })
+  @ApiResponse({ status: 404, description: 'Ceremony or participant not found.' })
+  @UseGuards(JwtAuthGuard)
+  @Post('temporary-store-current-contribution-uploaded-chunk-data')
+  temporaryStoreUploadedChunkData(
+    @Request() req: AuthenticatedRequest,
+    @Query('id') ceremonyId: number,
+    @Body() data: TemporaryStoreCurrentContributionUploadedChunkData,
+  ) {
+    return this.storageService.temporaryStoreCurrentContributionUploadedChunkData(
+      data,
+      ceremonyId,
+      getAuthenticatedUserId(req),
+    );
   }
 }
