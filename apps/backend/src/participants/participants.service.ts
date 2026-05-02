@@ -133,6 +133,70 @@ export class ParticipantsService {
     }
   }
 
+  /**
+   * Transitions a participant from DOWNLOADING to COMPUTING.
+   * Called by the client after the zKey download from S3 completes.
+   * Only valid when the participant is CONTRIBUTING with step DOWNLOADING.
+   *
+   * @param id - The participant's unique identifier
+   * @returns The updated participant
+   */
+  async downloadingToComputing(id: number) {
+    try {
+      const participant = await this.participantModel.findByPk(id);
+      if (!participant) {
+        throw new Error('Participant not found');
+      }
+
+      if (
+        participant.status !== ParticipantStatus.CONTRIBUTING ||
+        participant.contributionStep !== ParticipantContributionStep.DOWNLOADING
+      ) {
+        throw new BadRequestException(
+          'Participant must be in CONTRIBUTING status and DOWNLOADING step',
+        );
+      }
+
+      await participant.update({ contributionStep: ParticipantContributionStep.COMPUTING });
+
+      return participant;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
+  /**
+   * Transitions a participant from COMPUTING to UPLOADING.
+   * Called by the client after local entropy computation completes.
+   * Only valid when the participant is CONTRIBUTING with step COMPUTING.
+   *
+   * @param id - The participant's unique identifier
+   * @returns The updated participant
+   */
+  async computingToUploading(id: number) {
+    try {
+      const participant = await this.participantModel.findByPk(id);
+      if (!participant) {
+        throw new Error('Participant not found');
+      }
+
+      if (
+        participant.status !== ParticipantStatus.CONTRIBUTING ||
+        participant.contributionStep !== ParticipantContributionStep.COMPUTING
+      ) {
+        throw new BadRequestException(
+          'Participant must be in CONTRIBUTING status and COMPUTING step',
+        );
+      }
+
+      await participant.update({ contributionStep: ParticipantContributionStep.UPLOADING });
+
+      return participant;
+    } catch (error) {
+      this.handleErrors(error as Error);
+    }
+  }
+
   async remove(id: number) {
     try {
       const participant = await this.participantModel.findByPk(id);

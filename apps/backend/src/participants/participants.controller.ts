@@ -77,6 +77,38 @@ export class ParticipantsController {
     return this.participantsService.startContribution(id);
   }
 
+  @Post(':id/downloading-to-computing')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Transition participant from DOWNLOADING to COMPUTING' })
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiResponse({
+    status: 201,
+    description: 'Participant is now CONTRIBUTING with step COMPUTING.',
+    type: Participant,
+  })
+  @ApiResponse({ status: 400, description: 'Participant is not in DOWNLOADING step.' })
+  @ApiResponse({ status: 404, description: 'Participant not found.' })
+  downloadingToComputing(@Param('id') id: number) {
+    return this.participantsService.downloadingToComputing(id);
+  }
+
+  @Post(':id/computing-to-uploading')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth('access-token')
+  @ApiOperation({ summary: 'Transition participant from COMPUTING to UPLOADING' })
+  @ApiParam({ name: 'id', type: 'number' })
+  @ApiResponse({
+    status: 201,
+    description: 'Participant is now CONTRIBUTING with step UPLOADING.',
+    type: Participant,
+  })
+  @ApiResponse({ status: 400, description: 'Participant is not in COMPUTING step.' })
+  @ApiResponse({ status: 404, description: 'Participant not found.' })
+  computingToUploading(@Param('id') id: number) {
+    return this.participantsService.computingToUploading(id);
+  }
+
   @Delete(':id')
   @UseGuards(JwtAuthGuard, IsParticipantOwnerOrCoordinatorGuard)
   @ApiBearerAuth('access-token')
