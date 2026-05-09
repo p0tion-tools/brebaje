@@ -15,7 +15,7 @@
 
 - The system shall allow a coordinator to create a ceremony under a project they own with one or more circuits.
 - The system shall validate all required ceremony fields before the ceremony becomes visible as ready for participation.
-- The system shall validate ceremony type, start and end dates, penalty duration, allowed identity providers, timeout policy, circuit metadata, artifact references, and circuit order.
+- The system shall validate start and end dates, penalty duration, allowed identity providers, timeout policy, circuit metadata, artifact references, and circuit order.
 - The system shall derive required circuit metadata from public circuit input artifacts.
 - The system shall initialize a queue for each circuit.
 

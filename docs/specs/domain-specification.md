@@ -38,23 +38,17 @@ A project shall have exactly one coordinator. A coordinator may own more than on
 
 ## Ceremony
 
-A ceremony coordinates contributions for one or more circuits inside a project.
+A ceremony coordinates Phase 2 contributions for one or more circuits inside a project.
 
 Required properties:
 
 - Project identity.
 - Description.
-- Type.
 - State.
 - Start date and end date.
 - Penalty duration applied to timed-out participants.
 - Allowed identity providers configuration.
 - Last update timestamp.
-
-Allowed types:
-
-- `PHASE1`: Powers of Tau ceremony.
-- `PHASE2`: circuit-specific proving key ceremony.
 
 Allowed states:
 

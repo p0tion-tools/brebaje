@@ -17,7 +17,7 @@ Brebaje shall provide a structured ceremony process that reduces operational mis
 ## Goals
 
 - Allow coordinators to organize ceremonies under a project they own.
-- Allow coordinators to define and manage ceremonies with one or more circuits, supporting Phase 1 and Phase 2 setups.
+- Allow coordinators to define and manage Phase 2 ceremonies with one or more circuits.
 - Allow participants to authenticate with the identity providers supported by the ceremony and to contribute to every required circuit in the correct order.
 - Verify every contribution before it becomes part of the trusted setup history.
 - Publish final artifacts, hashes, transcripts, and verifier outputs for public inspection.

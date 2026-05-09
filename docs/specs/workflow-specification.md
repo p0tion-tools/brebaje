@@ -17,7 +17,7 @@ Failure requirements:
 
 1. Coordinator authenticates.
 2. Coordinator selects a project they own.
-3. Coordinator submits a ceremony setup definition, including ceremony type, dates, penalty, allowed identity providers, timeout policy, and the circuit list.
+3. Coordinator submits a ceremony setup definition, including dates, penalty, allowed identity providers, timeout policy, and the circuit list.
 4. System validates ceremony metadata, dates, timeout policy, allowed identity providers, and circuit list.
 5. System validates every circuit definition and artifact reference.
 6. System extracts required circuit metadata.

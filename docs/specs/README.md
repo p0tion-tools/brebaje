@@ -18,7 +18,7 @@ Brebaje is the community version of [P0tion](https://github.com/privacy-scaling-
 
 ## Product Definition
 
-Brebaje is a ceremony coordination product for projects that need Groth16 trusted setup ceremonies. It enables coordinators to organize ceremonies under projects, participants to contribute securely, and observers to inspect the resulting artifacts and audit trail. Phase 2 ceremonies are the primary target; Phase 1 ceremonies are also supported.
+Brebaje is a ceremony coordination product for projects that need Groth16 Phase 2 trusted setup ceremonies. It enables coordinators to organize ceremonies under projects, participants to contribute securely, and observers to inspect the resulting artifacts and audit trail.
 
 The product shall prioritize:
 
