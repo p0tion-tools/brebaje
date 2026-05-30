@@ -129,7 +129,7 @@ root/
 - **API:** CORS with explicit origins (no `*` in production). Parameterized queries only (Sequelize). Rate limiting (e.g. express-rate-limit) for brute-force protection.
 - **Frontend:** No secrets in bundle; backend proxy if needed. Cookies: Secure, HttpOnly, SameSite.
 - **Transport:** HTTPS in production; security headers (X-Content-Type-Options, X-Frame-Options, etc.).
-- **Ceremony invariants:** verify every contribution before acceptance; record BLAKE2b hashes for file artifacts and SHA-256 for the beacon. See [docs/specs/security-and-trust-requirements.md](docs/specs/security-and-trust-requirements.md) and [docs/specs/artifact-and-integrity-specification.md](docs/specs/artifact-and-integrity-specification.md).
+- **Ceremony invariants:** verify every contribution before acceptance; record BLAKE2b hashes for file artifacts and SHA-256 for the beacon. See [docs/PRD.md § Security & Trust](docs/PRD.md#security--trust) and [docs/PRD.md § Artifacts & Integrity](docs/PRD.md#artifacts--integrity).
 
 ---
 
