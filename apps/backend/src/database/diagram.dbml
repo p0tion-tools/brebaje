@@ -1,6 +1,7 @@
 Enum UserProvider {
   'GITHUB'
   'ETHEREUM'
+  'CARDANO'
 }
 
 Enum CeremonyType {
@@ -44,9 +45,22 @@ Enum ParticipantContributionStep {
   'COMPLETED'
 }
 
+Enum ParticipantTimeoutType {
+  'BLOCKING_CONTRIBUTION'
+  'BLOCKING_BACKEND_FUNCTION'
+  'BLOCKING_VERIFICATION'
+  'UNKNOWN'
+}
+
+Enum VerificationMachineType {
+  'server'
+  'vm'
+}
+
 Table users {
   id int [pk, increment]
   displayName varchar [not null]
+  walletAddress varchar
   creationTime int [not null]
   lastSignInTime int
   lastUpdated int

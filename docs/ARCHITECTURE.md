@@ -111,14 +111,14 @@ Every protected route uses `JwtAuthGuard` first, then one or more resource guard
 
 ### Key Files
 
-| File                                            | Role                                                                                       |
-| ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
-| `src/main.ts`                                   | Entry point — bootstraps the NestJS app and applies global config                          |
-| `src/app.config.ts`                             | Wires global pipe, CORS, and Swagger — touch this before adding any global middleware      |
-| `src/types/enums.ts`                            | Source of truth for all state machines — all valid states and transitions are defined here |
-| `src/contributions/contribution-transitions.ts` | Enforces contribution step ordering — invalid transitions throw here, never in services    |
-| `src/database/diagram.dbml`                     | DBML schema — models are derived from this, edit here before touching Sequelize models     |
-| `src/utils/constants.ts`                        | Env var names and defaults — check here before adding a new environment variable           |
+| File                                            | Role                                                                                                                                                                                                |
+| ----------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/main.ts`                                   | Entry point — bootstraps the NestJS app and applies global config                                                                                                                                   |
+| `src/app.config.ts`                             | Wires global pipe, CORS, and Swagger — touch this before adding any global middleware                                                                                                               |
+| `src/types/enums.ts`                            | Source of truth for all state machines — all valid states and transitions are defined here                                                                                                          |
+| `src/contributions/contribution-transitions.ts` | Enforces contribution step ordering — invalid transitions throw here, never in services                                                                                                             |
+| `src/database/diagram.dbml`                     | Entity relationship reference diagram — renderable at dbdiagram.io for a visual overview of the schema. Kept in sync with the Sequelize models; the models are the authoritative schema definition. |
+| `src/utils/constants.ts`                        | Env var names and defaults — check here before adding a new environment variable                                                                                                                    |
 
 ---
 
@@ -218,8 +218,7 @@ User ─────────────────────────
 | Participant  | `participants/participant.model.ts`   | `id`, `userId`, `ceremonyId` (unique together — one participant per ceremony per user), `status` (enum), `contributionStep` (enum), `tempContributionData` (JSON), `timeout` (JSON array) |
 | Contribution | `contributions/contribution.model.ts` | `id`, `circuitId`, `participantId`, `zkeyIndex`, `valid`, timing fields, `files` (JSON), `verificationSoftware` (JSON), `beacon` (JSON)                                                   |
 
-All enums are defined in `src/types/enums.ts`. The DBML source is
-`src/database/diagram.dbml`.
+All enums are defined in `src/types/enums.ts`. A visual entity relationship diagram is maintained at `src/database/diagram.dbml` (renderable at dbdiagram.io); the Sequelize models are the authoritative schema definition.
 
 ### File Storage
 
