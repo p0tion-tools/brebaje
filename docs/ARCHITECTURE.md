@@ -53,8 +53,7 @@ brebaje/
 └── pnpm-workspace.yaml Workspace definitions
 ```
 
-Tooling: pnpm ≥10 workspaces, Lerna for versioning, Husky + lint-staged for pre-commit
-hooks (ESLint + Prettier on staged files).
+Tooling: **pnpm ≥10 workspaces** (local package linking), **Lerna** (versioning + changelog from Conventional Commits), **Husky + lint-staged** (pre-commit gate: ESLint + Prettier on staged files only, keeping commits clean without linting the whole repo).
 
 ---
 
@@ -87,7 +86,8 @@ AppModule
 ```
 
 Global bootstrap (`app.config.ts`):
-- `ValidationPipe` — `whitelist: true`, `forbidNonWhitelisted: true`, `transform: true`
+
+- `ValidationPipe` — `whitelist: true` (strips undeclared fields), `forbidNonWhitelisted: true` (rejects requests with unknown fields entirely — security boundary), `transform: true` (converts raw JSON into typed DTO instances — avoids manual casting)
 - CORS — allowed origins from `CORS_ORIGINS` env var
 - Swagger — OpenAPI doc at `/api` with JWT Bearer auth
 
@@ -97,27 +97,28 @@ Entry point: `src/main.ts`.
 
 Every protected route uses `JwtAuthGuard` first, then one or more resource guards:
 
-| Guard | File | Purpose |
-|-------|------|---------|
-| JwtAuthGuard | `auth/guards/jwt-auth.guard.ts` | Validate Bearer token; attach user to `req.user` |
-| IsProjectCoordinatorGuard | `projects/guards/is-project-coordinator.guard.ts` | User is coordinator of target project |
-| ProjectOwnershipGuard | `projects/guards/project-ownership.guard.ts` | User owns the project resource |
-| IsCeremonyCoordinatorGuard | `ceremonies/guards/is-ceremony-coordinator.guard.ts` | User is coordinator of ceremony's project |
-| IsCircuitCoordinatorGuard | `circuits/guards/is-circuit-coordinator.guard.ts` | User is coordinator of circuit's ceremony |
-| IsCircuitCreateCoordinatorGuard | `circuits/guards/is-circuit-create-coordinator.guard.ts` | Same, for circuit creation |
-| IsParticipantOwnerOrCoordinatorGuard | `participants/guards/is-participant-owner-or-coordinator.guard.ts` | Participant or ceremony coordinator |
-| IsContributionCoordinatorGuard | `contributions/guards/is-contribution-coordinator.guard.ts` | Ceremony coordinator only; attaches contribution to req |
-| IsContributionParticipantOrCoordinatorGuard | `contributions/guards/is-contribution-participant-or-coordinator.guard.ts` | Participant or coordinator |
+| Guard                                       | File                                                                       | Purpose                                                                                                                                                                   |
+| ------------------------------------------- | -------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| JwtAuthGuard                                | `auth/guards/jwt-auth.guard.ts`                                            | Validate Bearer token; attach user to `req.user`                                                                                                                          |
+| IsProjectCoordinatorGuard                   | `projects/guards/is-project-coordinator.guard.ts`                          | User is coordinator of the project supplied in the **request body** (`projectId`) — used on action routes like `POST /ceremonies` where there is no project ID in the URL |
+| ProjectOwnershipGuard                       | `projects/guards/project-ownership.guard.ts`                               | User is coordinator of the project supplied in the **route param** (`:id`) — used on resource routes like `PATCH /projects/:id` and `DELETE /projects/:id`                |
+| IsCeremonyCoordinatorGuard                  | `ceremonies/guards/is-ceremony-coordinator.guard.ts`                       | User is coordinator of ceremony's project                                                                                                                                 |
+| IsCircuitCoordinatorGuard                   | `circuits/guards/is-circuit-coordinator.guard.ts`                          | User is coordinator of circuit's ceremony                                                                                                                                 |
+| IsCircuitCreateCoordinatorGuard             | `circuits/guards/is-circuit-create-coordinator.guard.ts`                   | Same, for circuit creation                                                                                                                                                |
+| IsParticipantOwnerOrCoordinatorGuard        | `participants/guards/is-participant-owner-or-coordinator.guard.ts`         | Participant or ceremony coordinator                                                                                                                                       |
+| IsContributionCoordinatorGuard              | `contributions/guards/is-contribution-coordinator.guard.ts`                | Ceremony coordinator only; attaches contribution to req                                                                                                                   |
+| IsContributionParticipantOrCoordinatorGuard | `contributions/guards/is-contribution-participant-or-coordinator.guard.ts` | Participant or coordinator                                                                                                                                                |
 
 ### Key Files
 
-| File | Role |
-|------|------|
-| `src/types/enums.ts` | Canonical enums for all state machines |
-| `src/contributions/contribution-transitions.ts` | Explicit state machine for contribution steps |
-| `src/database/diagram.dbml` | DBML schema (source of truth for models) |
-| `src/utils/constants.ts` | Env var names + defaults |
-| `src/app.config.ts` | Global pipe, CORS, Swagger wiring |
+| File                                            | Role                                                                                       |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| `src/main.ts`                                   | Entry point — bootstraps the NestJS app and applies global config                          |
+| `src/app.config.ts`                             | Wires global pipe, CORS, and Swagger — touch this before adding any global middleware      |
+| `src/types/enums.ts`                            | Source of truth for all state machines — all valid states and transitions are defined here |
+| `src/contributions/contribution-transitions.ts` | Enforces contribution step ordering — invalid transitions throw here, never in services    |
+| `src/database/diagram.dbml`                     | DBML schema — models are derived from this, edit here before touching Sequelize models     |
+| `src/utils/constants.ts`                        | Env var names and defaults — check here before adding a new environment variable           |
 
 ---
 
@@ -127,15 +128,16 @@ Every protected route uses `JwtAuthGuard` first, then one or more resource guard
 
 ```
 app/
-├── page.tsx                        /  — public landing
-├── layout.tsx                      Root layout (AuthContext, QueryClientProvider)
-├── ceremonies/[slug]/page.tsx      Ceremony detail (public)
+├── page.tsx                              /  — public landing
+├── layout.tsx                            Root layout (AuthContext, QueryClientProvider)
+├── ceremonies/[slug]/page.tsx            Ceremony detail (public)
 ├── coordinator/
-│   ├── page.tsx                    Coordinator dashboard
-│   └── projects/[id]/page.tsx      Project detail
-├── blog/[slug]/page.tsx            Blog post
-├── ppot/page.tsx                   Perpetual Powers of Tau info
-└── auth/github/authorize-login/    GitHub OAuth callback handler
+│   ├── page.tsx                          Coordinator dashboard
+│   └── projects/[id]/page.tsx           Project detail
+├── blog/page.tsx                         Blog listing
+├── blog/[slug]/page.tsx                  Blog post
+├── ppot/page.tsx                         Perpetual Powers of Tau info
+└── auth/github/authorize-login/page.tsx  GitHub OAuth callback handler
 ```
 
 ### Patterns
@@ -145,10 +147,9 @@ app/
   `useGetCeremonyContributors`, `useGetCeremonyArtifacts`, `useGetLiveStatsByCeremonyId`,
   `useProjects`).
 - **Auth:** `AuthContext` (`app/contexts/AuthContext.tsx`) stores JWT in `localStorage`
-  and exposes `useAuth()`. Current browser auth supports **GitHub OAuth only**; Ethereum
-  and Cardano auth is backend-ready but not yet wired in the frontend.
+  and exposes `useAuth()`. Current browser auth supports **GitHub OAuth (Authorization Code Flow) only**; Ethereum and Cardano auth is backend-ready but not yet wired in the frontend. GitHub **Device Flow** is available via the CLI. Note: `localStorage` is used for simplicity but is vulnerable to XSS; migrating to `httpOnly` cookies is the recommended hardening step.
 - **UI:** Tailwind CSS + Lucide React. Shared components in `app/components/ui/` and
-  `app/components/shared/`; coordinator-specific in `app/components/coordinator/`.
+  `app/components/shared/`; coordinator-specific in `app/components/coordinator/`. Rule: `ui/` — generic, reusable primitives (buttons, inputs); `shared/` — cross-feature composed components; `coordinator/` — coordinator-specific components.
 
 ---
 
@@ -157,15 +158,15 @@ app/
 The CLI is ESM (`"type": "module"`) using Commander.js. Command groups live under
 `apps/cli/src/`:
 
-| Group | Commands |
-|-------|---------|
-| `auth/` | `login-github` (device flow), `logout`, `status`, `whoami` |
-| `ceremonies/` | participant: `contribute`, `list`; coordinator: `create`, `delete`, `finalize`, `update` |
-| `config/` | `path`, `new`, `gh-token`, `gh-token-scoped`, `name`, `ceremony-repo`, `migrate` |
+| Group                      | Commands                                                                                                                                                                                 |
+| -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `auth/`                    | `login-github` (device flow), `logout`, `status`, `whoami`                                                                                                                               |
+| `ceremonies/`              | participant: `contribute`, `list`; coordinator: `create`, `delete`, `finalize`, `update`                                                                                                 |
+| `config/`                  | `path`, `new`, `gh-token`, `gh-token-scoped`, `name`, `ceremony-repo`, `migrate`                                                                                                         |
 | `perpetual-powers-of-tau/` | `new`, `download`, `contribute`, `auto-contribute`, `upload`, `verify`, `post-record`, `beacon`, `generate-upload-url`, `generate-download-url`, `generate-urls`, `generate-urls-unsafe` |
-| `projects/` | `create` (from JSON template), `list` |
-| `participants/` | `list` |
-| `vm/` | `verify` |
+| `projects/`                | `create` (from JSON template), `list`                                                                                                                                                    |
+| `participants/`            | `list`                                                                                                                                                                                   |
+| `vm/`                      | `verify`                                                                                                                                                                                 |
 
 The CLI does **not** currently consume `@brebaje/actions`; its storage and crypto helpers
 are duplicated locally. Migrating to the shared package is a known gap.
@@ -183,14 +184,14 @@ Static documentation site (`apps/website/`). Built and deployed to GitHub Pages 
 
 `packages/actions/src/helpers/`:
 
-| File | Exports |
-|------|---------|
-| `crypto.ts` | `calculateBlake2bHash(input)` — BLAKE2b-512 via `@noble/hashes` |
-| `storage.ts` | `multiPartUploadAPI()`, `downloadCeremonyArtifact()`, `generateGetObjectPreSignedUrlAPI()`, `generatePreSignedUrlsPartsAPI()`, `completeMultiPartUploadAPI()`, `temporaryStoreCurrentContributionUploadedChunkDataAPI()`, `temporaryStoreCurrentContributionMultiPartUploadIdAPI()`, `openMultiPartUploadAPI()`, `checkIfObjectExistAPI()` |
-| `authentication.ts` | `isCoordinatorAPI()`, `formatMessageForSIWE()` |
-| `utils.ts` | `computeSmallestPowersOfTauForCircuit()`, `formatZkeyIndex()`, `sanitizeString()`, `getURLOfPowersOfTau()`, `convertBytesOrKbToGb()`, `convertToDoubleDigits()` |
-| `fetch.ts` | `fetchRetry()` — exponential back-off, socket timeout, configurable max duration |
-| `constants.ts` | PoT file URLs + sizes, genesis zKey index (`"00000"`), VM bootstrap script filename |
+| File                | Purpose                                                             | Exports                                                                                                                                                                                                                                                                                                                                    |
+| ------------------- | ------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `crypto.ts`         | BLAKE2b hashing for file artifact integrity                         | `calculateBlake2bHash(input)`                                                                                                                                                                                                                                                                                                              |
+| `storage.ts`        | Resumable S3 multipart upload and download helpers                  | `multiPartUploadAPI()`, `downloadCeremonyArtifact()`, `generateGetObjectPreSignedUrlAPI()`, `generatePreSignedUrlsPartsAPI()`, `completeMultiPartUploadAPI()`, `temporaryStoreCurrentContributionUploadedChunkDataAPI()`, `temporaryStoreCurrentContributionMultiPartUploadIdAPI()`, `openMultiPartUploadAPI()`, `checkIfObjectExistAPI()` |
+| `authentication.ts` | Auth utilities — role check and SIWE message formatting             | `isCoordinatorAPI()`, `formatMessageForSIWE()`                                                                                                                                                                                                                                                                                             |
+| `utils.ts`          | Domain utilities — PoT sizing, zKey formatting, string sanitization | `computeSmallestPowersOfTauForCircuit()`, `formatZkeyIndex()`, `sanitizeString()`, `getURLOfPowersOfTau()`, `convertBytesOrKbToGb()`, `convertToDoubleDigits()`                                                                                                                                                                            |
+| `fetch.ts`          | HTTP retry with exponential back-off and socket timeout             | `fetchRetry()`                                                                                                                                                                                                                                                                                                                             |
+| `constants.ts`      | Shared constants — PoT URLs, genesis zKey index, VM script filename | —                                                                                                                                                                                                                                                                                                                                          |
 
 Currently imported by: **backend only**. CLI depends on the same logic but has local
 copies; consolidation is pending.
@@ -208,14 +209,14 @@ User ─────────────────────────
                                     └─(has many)─▶ Circuit ──────────────────────────────────▶ Contribution
 ```
 
-| Model | File | Key Fields |
-|-------|------|-----------|
-| User | `users/user.model.ts` | `id`, `displayName` (indexed), `provider` (enum), `walletAddress`, `avatarUrl`, timestamps |
-| Project | `projects/project.model.ts` | `id`, `name`, `contact`, `coordinatorId` (FK → User) |
-| Ceremony | `ceremonies/ceremony.model.ts` | `id`, `projectId`, `state` (enum), `type` (enum), `start_date`, `end_date`, `penalty`, `authProviders` (JSON) |
-| Circuit | `circuits/circuit.model.ts` | `id`, `ceremonyId`, `name`, `sequencePosition`, `timeoutMechanismType` (enum), `currentContributor`, `contributors` (JSON), `verification` (JSON), `artifacts` (JSON), `pot` |
-| Participant | `participants/participant.model.ts` | `id`, `userId`, `ceremonyId` (unique together), `status` (enum), `contributionStep` (enum), `tempContributionData` (JSON), `timeout` (JSON array) |
-| Contribution | `contributions/contribution.model.ts` | `id`, `circuitId`, `participantId`, `zkeyIndex`, `valid`, timing fields, `files` (JSON), `verificationSoftware` (JSON), `beacon` (JSON) |
+| Model        | File                                  | Key Fields                                                                                                                                                                                |
+| ------------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| User         | `users/user.model.ts`                 | `id`, `displayName` (indexed), `provider` (enum), `walletAddress` (Cardano/Ethereum), `avatarUrl`, timestamps                                                                             |
+| Project      | `projects/project.model.ts`           | `id`, `name`, `contact`, `coordinatorId` (FK → User)                                                                                                                                      |
+| Ceremony     | `ceremonies/ceremony.model.ts`        | `id`, `projectId`, `state` (enum), `type` (enum), `start_date`, `end_date`, `penalty`, `authProviders` (JSON)                                                                             |
+| Circuit      | `circuits/circuit.model.ts`           | `id`, `ceremonyId`, `name`, `sequencePosition`, `timeoutMechanismType` (enum), `currentContributor`, `contributors` (JSON), `verification` (JSON), `artifacts` (JSON), `pot`              |
+| Participant  | `participants/participant.model.ts`   | `id`, `userId`, `ceremonyId` (unique together — one participant per ceremony per user), `status` (enum), `contributionStep` (enum), `tempContributionData` (JSON), `timeout` (JSON array) |
+| Contribution | `contributions/contribution.model.ts` | `id`, `circuitId`, `participantId`, `zkeyIndex`, `valid`, timing fields, `files` (JSON), `verificationSoftware` (JSON), `beacon` (JSON)                                                   |
 
 All enums are defined in `src/types/enums.ts`. The DBML source is
 `src/database/diagram.dbml`.
@@ -246,15 +247,16 @@ Lighter contributions can be verified server-side (`VerificationMachineType.serv
 All auth logic is in `apps/backend/src/auth/auth.service.ts`. Three providers are
 supported:
 
-| Provider | Flow | Key Endpoints |
-|----------|------|--------------|
-| GitHub | OAuth Authorization Code Flow + Device Flow | `GET /auth/github/client-id`, `POST /auth/github/user`, `GET /auth/github/authorize-login` |
-| Ethereum | Sign-In with Ethereum — EIP-4361 (SIWE) | `POST /auth/eth/generate-nonce`, `POST /auth/eth/verify-signature` |
-| Cardano | Wallet nonce + signature | `POST /auth/cardano/generate-nonce`, `POST /auth/cardano/verify-signature` |
+| Provider         | Flow                                    | Key Endpoints                                                                              |
+| ---------------- | --------------------------------------- | ------------------------------------------------------------------------------------------ |
+| GitHub (browser) | OAuth Authorization Code Flow           | `GET /auth/github/client-id`, `POST /auth/github/user`, `GET /auth/github/authorize-login` |
+| GitHub (CLI)     | Device Flow                             | `GET /auth/github/client-id`, `POST /auth/github/user`                                     |
+| Ethereum         | Sign-In with Ethereum — EIP-4361 (SIWE) | `POST /auth/eth/generate-nonce`, `POST /auth/eth/verify-signature`                         |
+| Cardano          | Wallet nonce + signature                | `POST /auth/cardano/generate-nonce`, `POST /auth/cardano/verify-signature`                 |
 
 Every successful auth returns a **short-lived JWT** (default expiry `1d`, from
 `JWT_EXPIRES_IN`). `JwtAuthGuard` validates Bearer tokens on protected routes and
-attaches the user record to `req.user`.
+attaches the user record to `req.user`. There is no token refresh endpoint — when a token expires the user must re-authenticate.
 
 Per-ceremony **provider whitelist** (`ceremony.authProviders` JSON column): the system
 rejects participant enrollment when the user's provider is not in the ceremony's whitelist.
@@ -280,6 +282,7 @@ Browser / CLI
 ```
 
 Frontend path:
+
 ```
 Page component
   └─ React Query hook (app/hooks/)
@@ -288,10 +291,11 @@ Page component
 ```
 
 CLI path:
+
 ```
 Commander action handler
   └─ HTTP client (axios / node-fetch)
-       └─ Authorization: Bearer <jwt stored in .env or config file>
+       └─ Authorization: Bearer <jwt stored in token file (~/.brebaje/token or configured path) via token.ts>
             └─ Backend REST API
 ```
 
@@ -310,7 +314,7 @@ requests with unknown or invalid fields before they reach services.
 Guards follow a consistent pattern:
 
 1. Extract authenticated user from `req.user` (set by `JwtAuthGuard`).
-2. Load the target entity from the DB using the route param.
+2. Load the target entity from the DB using the route param (`:id`) or the request body (`projectId`), depending on the route shape.
 3. Compare ownership or role; throw `ForbiddenException` / `NotFoundException` on mismatch.
 4. Optionally attach the loaded entity to `req` (e.g., `IsContributionCoordinatorGuard`
    attaches the `Contribution` so the controller skips a redundant DB call).
@@ -340,35 +344,36 @@ The generated spec is served at `/api` (configured in `configureSwagger()` in
 
 Defined with defaults in `apps/backend/src/utils/constants.ts`:
 
-| Category | Variable | Default |
-|----------|----------|---------|
-| Server | `PORT` | `3000` |
-| Database | `DB_SQLITE_STORAGE_PATH` | `.db/data.sqlite3` |
-| | `DB_SQLITE_SYNCHRONIZE` | `true` |
-| JWT | `JWT_SECRET` | `defaultSecret` |
-| | `JWT_EXPIRES_IN` | `1d` |
-| GitHub OAuth | `GITHUB_CLIENT_ID` | required |
-| | `GITHUB_CLIENT_SECRET` | required |
-| | `GITHUB_OAUTH_APP_CALLBACK` | required |
-| AWS | `AWS_ACCESS_KEY_ID` | required |
-| | `AWS_SECRET_ACCESS_KEY` | required |
-| | `AWS_REGION` | `us-east-1` |
-| | `AWS_CEREMONY_BUCKET_POSTFIX` | `brebaje-testing` |
-| | `AWS_AMI_ID` | (Ubuntu 22.04 AMI) |
-| CORS | `CORS_ORIGINS` | `http://localhost:3000,http://localhost:3001` |
-| Upload | `CONFIG_STREAM_CHUNK_SIZE_IN_MB` | `50` |
+| Category     | Variable                         | Default                                                                                   |
+| ------------ | -------------------------------- | ----------------------------------------------------------------------------------------- |
+| Server       | `PORT`                           | `3000`                                                                                    |
+| Database     | `DB_SQLITE_STORAGE_PATH`         | `.db/data.sqlite3`                                                                        |
+|              | `DB_SQLITE_SYNCHRONIZE`          | `true` ⚠️ **set to `false` in production — auto-sync can silently alter or drop columns** |
+| JWT          | `JWT_SECRET`                     | `defaultSecret` ⚠️ **must be overridden in production**                                   |
+|              | `JWT_EXPIRES_IN`                 | `1d`                                                                                      |
+| GitHub OAuth | `GITHUB_CLIENT_ID`               | required                                                                                  |
+|              | `GITHUB_CLIENT_SECRET`           | required                                                                                  |
+|              | `GITHUB_OAUTH_APP_CALLBACK`      | required                                                                                  |
+| AWS          | `AWS_ACCESS_KEY_ID`              | required                                                                                  |
+|              | `AWS_SECRET_ACCESS_KEY`          | required                                                                                  |
+|              | `AWS_REGION`                     | `us-east-1`                                                                               |
+|              | `AWS_CEREMONY_BUCKET_POSTFIX`    | `brebaje-testing`                                                                         |
+|              | `AWS_AMI_ID`                     | (Ubuntu 22.04 AMI)                                                                        |
+| CORS         | `CORS_ORIGINS`                   | `http://localhost:3000,http://localhost:3001`                                             |
+| Upload       | `CONFIG_STREAM_CHUNK_SIZE_IN_MB` | `50`                                                                                      |
+|              | `AWS_PRESIGNED_URL_EXPIRATION`   | `3600`                                                                                    |
 
 ### CI Pipelines
 
 `.github/workflows/`:
 
-| Workflow | Trigger | Steps |
-|----------|---------|-------|
-| `lint.yml` | push to main, PRs | install → build packages → ESLint |
-| `backend.yml` | push to main, PRs | install → build → unit tests → coverage → e2e tests |
-| `frontend.yml` | push to main, PRs | install → build packages → Next.js build |
-| `cli.yml` | push to main, PRs | install → build packages → CLI tests |
-| `actions.yml` | push to main, PRs | install → build packages → actions tests |
+| Workflow          | Trigger           | Steps                                                 |
+| ----------------- | ----------------- | ----------------------------------------------------- |
+| `lint.yml`        | push to main, PRs | install → build packages → ESLint                     |
+| `backend.yml`     | push to main, PRs | install → build → unit tests → coverage → e2e tests   |
+| `frontend.yml`    | push to main, PRs | install → build packages → Next.js build              |
+| `cli.yml`         | push to main, PRs | install → build packages → CLI tests                  |
+| `actions.yml`     | push to main, PRs | install → build packages → actions tests              |
 | `deploy-docs.yml` | push to main, PRs | Docusaurus build → GitHub Pages (deploy on main only) |
 
 All pipelines use Node 22.17.x and pnpm 10.24.0. Concurrent duplicate runs are cancelled.

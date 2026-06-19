@@ -17,7 +17,9 @@ export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
   @Get('github/client-id')
-  @ApiOperation({ summary: 'Get GitHub client ID for OAuth setup' })
+  @ApiOperation({
+    summary: 'Get GitHub client ID for frontend to build the GitHub OAuth authorization URL',
+  })
   @ApiResponse({ status: 200, description: 'GitHub client ID returned successfully' })
   getGithubClientId() {
     return this.authService.getGithubClientId();
