@@ -657,8 +657,10 @@ Capabilities:
 - [x] Ceremony setup definition under a project.
 - [x] Ceremony and circuit validation.
 - [x] Participant enrollment.
+- [ ] ⚠️ Auth provider whitelist enforcement at enrollment (`authProviders` field exists on the ceremony but `participants.service.ts` does not check the participant's provider against it).
 - [x] Circuit queues.
-- [x] Fixed timeout policy.
+- [x] Fixed and lobby timeout policy.
+- [ ] Dynamic timeout policy (average contribution time tracking not yet implemented — `averageContributionComputationTime` is never updated from real contribution timings).
 - [x] Public ceremony listing.
 
 - [x] Acceptance target: a coordinator can create a project, then create a ceremony with at least one circuit inside it, and a participant can enroll into the first queue.
@@ -672,7 +674,8 @@ Capabilities:
 - [x] Circuit input artifact registration.
 - [x] Required Phase 1 parameter association.
 - [x] Deterministic artifact naming.
-- [x] BLAKE2b hash computation and storage for file artifacts.
+- [x] BLAKE2b hash helper available in `@brebaje/actions` (`calculateBlake2bHash()`).
+- [ ] ⚠️ Server-side BLAKE2b hash computation and verification for file artifacts (helper exists but is never called server-side — hashes are currently accepted from the client as-is).
 - [x] Resumable multipart upload recovery metadata.
 
 - [x] Acceptance target: required input artifacts and participant-produced artifacts are tracked with hashes and recoverable upload state.
@@ -685,8 +688,11 @@ Capabilities:
 
 - [x] Ceremony discovery, including allowed identity providers per ceremony.
 - [x] Multi-provider authentication — backend (GitHub, Ethereum, Cardano); frontend: GitHub only.
+- [ ] ⚠️ Cardano nonce cleanup (`nonceStore` accumulates used nonces with no expiry or cleanup — unbounded memory growth over time).
+- [ ] Provider binding — allow a user to link multiple provider identities into a single account.
 - [ ] Participant check-in UI.
-- [x] Queue waiting.
+- [x] Queue waiting (backend only — `apps/cli/src/ceremonies/contribute.ts` is a stub).
+- [ ] CLI contribution flow (`apps/cli/src/ceremonies/contribute.ts` not yet implemented).
 - [ ] Contribution status updates UI.
 - [ ] Local entropy entry UI.
 - [ ] Public participation attestation.
@@ -713,11 +719,14 @@ Deliver the complete ceremony output flow.
 
 Capabilities:
 
-- [x] Ceremony closing and cancellation.
-- [x] Final beacon contribution with SHA-256 hashing of the beacon value.
+- [x] Ceremony closing and cancellation endpoints.
+- [ ] ⚠️ Ceremony state machine transition enforcement (invalid transitions such as `CANCELED → FINALIZED` are not blocked at the service layer).
+- [x] Final beacon contribution recording.
+- [ ] ⚠️ Server-side SHA-256 hashing of the beacon value (beacon data is currently accepted from the client as-is without server-side hash computation).
 - [ ] Final artifact generation endpoint.
 - [x] BLAKE2b hash publication for final file artifacts.
 - [ ] Verification key and verifier contract publication via public endpoint.
+- [ ] CLI finalization flow (`apps/cli/src/ceremonies/finalize.ts` is a stub — Phase 5 capabilities are backend-only).
 
 - [ ] Acceptance target: a closed ceremony can become finalized only after all required final outputs are published, and a canceled ceremony cannot finalize.
 
@@ -731,6 +740,7 @@ Capabilities:
 - [ ] Audit event review.
 - [ ] Timeout monitoring with typed timeout events.
 - [ ] Incident recovery procedures.
+- [ ] CLI migration to `@brebaje/actions` (CLI currently duplicates storage and crypto helpers locally instead of using the shared package).
 - [ ] Public documentation for participants and auditors.
 
 - [ ] Acceptance target: operators and auditors can explain ceremony state transitions and resolve common blocked states.
