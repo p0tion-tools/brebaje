@@ -91,7 +91,11 @@ A trusted role that owns a project and runs its ceremonies.
 
 ### Worker
 
-A system actor that performs verification or finalization tasks.
+A system actor that performs verification or finalization tasks. The Worker is **not a
+human user** — it is the automated verification process that runs inside an AWS EC2 VM,
+managed by `VmModule` and `verification-monitoring.service.ts`. It is assigned tasks by
+the backend, executes snarkjs verification, and its output is validated before it can
+affect public ceremony state.
 
 - **Can:** perform verification or finalization tasks assigned by the system.
 - **Cannot:** exceed narrowly scoped permissions; worker authority is limited to the required ceremony, circuit, and artifact operation, and its output is validated before it changes public ceremony state.
@@ -128,7 +132,7 @@ Allowed identity providers:
 - `ETHEREUM`
 - `CARDANO`
 
-User identity shall be uniquely scoped per provider. The same human may register with more than one provider, in which case each registration is a distinct user record.
+A user may authenticate with more than one identity provider. Provider binding allows linking multiple provider identities into a single account. Until provider binding is available, each provider registration creates a distinct user record.
 
 ### Project
 
@@ -186,9 +190,17 @@ Required properties:
 
 Allowed timeout mechanism types:
 
-- `DYNAMIC`: target time derived from observed contribution timings, gated by a configured threshold.
-- `FIXED`: target time defined by a fixed time window.
-- `LOBBY`: lobby-style waiting that does not enforce per-step timeouts.
+- `DYNAMIC`: the timeout window is calculated from the average of previous contribution
+  times observed in the ceremony. As contributions are recorded, the target time adjusts
+  based on observed timings, gated by a configured threshold to prevent unbounded growth.
+  Suitable for ceremonies where contribution time is unpredictable and fairness should
+  adapt to real conditions.
+- `FIXED`: a hard, pre-configured time window that applies equally to every contributor
+  regardless of how long others took. Simple and predictable — contributors know exactly
+  how long they have. Suitable for ceremonies with well-understood contribution times.
+- `LOBBY`: no per-step timeout is enforced. Participants wait in a lobby-style queue and
+  are not penalized for taking too long. Suitable for ceremonies where timing pressure is
+  not a concern or where coordinators want full manual control over pacing.
 
 Allowed verification machine types:
 
@@ -292,8 +304,13 @@ Required properties:
 Allowed timeout types:
 
 - `BLOCKING_CONTRIBUTION`: download, compute, or upload exceeded the contribution window.
+  The participant is at fault — a penalty shall be applied and the participant moved to
+  `TIMEDOUT`. After the penalty period expires the participant is exhumed and re-queued.
 - `BLOCKING_VERIFICATION`: verification did not settle within the verification window.
-- `BLOCKING_BACKEND_FUNCTION`: a backend operation required to advance the participant did not complete in time.
+  The failure is on the system side — the participant shall not be penalized. The
+  ceremony or circuit state requires system-side recovery or verification retry.
+- `BLOCKING_BACKEND_FUNCTION`: a backend operation required to advance the participant
+  did not complete in time. Treated as a system failure — no participant penalty applies.
 - `UNKNOWN`: the cause cannot be classified at the time the event is recorded.
 
 ### Artifact
@@ -612,7 +629,7 @@ Criteria are written as Given/When/Then and derived from product success criteri
 - **Given** a closed ceremony, **when** all required final outputs are published, **then** it can become `FINALIZED`; **and given** a `CANCELED` ceremony, **when** finalization is attempted, **then** it is rejected.
 - **Given** a finalized ceremony, **when** an observer inspects it, **then** final outputs can be independently verified using public artifacts and hashes.
 
-### Governance & Operations
+### Audit & Traceability
 
 - **Given** a ceremony's history, **when** an operator or auditor reviews it, **then** they can explain every state transition and resolve common blocked states.
 
