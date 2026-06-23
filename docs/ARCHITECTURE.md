@@ -203,10 +203,14 @@ copies; consolidation is pending.
 ### Sequelize Models (SQLite)
 
 ```
-User ──────────────────────────────┐
- └─(has many)─▶ Project            │
-                 └─(has many)─▶ Ceremony ─(has many)─▶ Participant ─(has many)─▶ Contribution
-                                    └─(has many)─▶ Circuit ──────────────────────────────────▶ Contribution
+User ──(coordinator of)──▶ Project ──▶ Ceremony ──▶ Circuit ────────────────────
+ │                                          │                                      │
+ │                                     (has many)                             (has many)
+ │                                          │                                      │
+ └────────────(has many)──────────────▶ Participant                               │
+                                            │                                      │
+                                       (has many)                                  │
+                                            └──────▶ Contribution ◀──(has many)──┘
 ```
 
 | Model        | File                                  | Key Fields                                                                                                                                                                                |
@@ -234,10 +238,17 @@ and download directly without routing large files through the API server.
 
 ### VM Verification
 
-Heavy proof verification runs on dedicated **AWS EC2** instances managed by `VmModule`
-(`vm.service.ts` + `vm.controller.ts`). SSM (`@aws-sdk/client-ssm`) is used to run
-commands on instances. `verification-monitoring.service.ts` polls verification progress.
-Lighter contributions can be verified server-side (`VerificationMachineType.server`).
+The verification machine type is configured **per circuit** by the coordinator at creation
+time via the `verification.serverOrVm` field. The deciding factor is artifact size
+(`zKeySizeInBytes`): smaller zKey files use `VerificationMachineType.server` (snarkjs runs
+in-process on the backend); larger zKey files that demand more compute use
+`VerificationMachineType.vm` (a dedicated EC2 instance is provisioned for that circuit).
+The specific size threshold will be defined by the application in a future iteration. The
+choice is fixed at circuit creation — there is no per-contribution switching.
+
+`VmModule` (`vm.service.ts` + `vm.controller.ts`) manages EC2 instances. SSM
+(`@aws-sdk/client-ssm`) dispatches verification commands to instances.
+`verification-monitoring.service.ts` polls for progress and records the result.
 
 ---
 
@@ -257,8 +268,27 @@ Every successful auth returns a **short-lived JWT** (default expiry `1d`, from
 `JWT_EXPIRES_IN`). `JwtAuthGuard` validates Bearer tokens on protected routes and
 attaches the user record to `req.user`. There is no token refresh endpoint — when a token expires the user must re-authenticate.
 
-Per-ceremony **provider whitelist** (`ceremony.authProviders` JSON column): the system
-rejects participant enrollment when the user's provider is not in the ceremony's whitelist.
+Each provider registration creates a **distinct user record** — the same person
+authenticating with GitHub and then with Ethereum results in two separate accounts.
+**Provider binding (planned):** a future feature will allow linking multiple provider
+identities into a single account. Until then, the one-provider-per-user model is
+intentional but temporary.
+
+Per-ceremony **provider whitelist** (`ceremony.authProviders` JSON column): stores the list
+of allowed auth providers for a ceremony. Enforcement at enrollment is **not yet
+implemented** — `participants.service.ts` does not currently check the participant's
+provider against this list, so any authenticated user can enroll in any ceremony.
+
+**Nonce management** (in `auth.service.ts`):
+
+- **Ethereum:** `ethNonceStore` (`Map<address, { nonce, timestamp }>`). Nonces expire
+  after 5 minutes; a cleanup function purges expired entries on each verification call.
+- **Cardano:** `nonceStore` (`Map<address, string[]>`). Used nonces are accumulated in an
+  array with **no expiry and no cleanup** — a known memory leak that grows unbounded over
+  time.
+- **Both stores are in-memory only:** nonces are lost on server restart, and the approach
+  does not scale horizontally — multiple instances would maintain separate stores with no
+  shared state.
 
 ---
 
@@ -318,16 +348,51 @@ Guards follow a consistent pattern:
 4. Optionally attach the loaded entity to `req` (e.g., `IsContributionCoordinatorGuard`
    attaches the `Contribution` so the controller skips a redundant DB call).
 
-### Contribution State Machine
+### Ceremony State Machine
 
-`src/contributions/contribution-transitions.ts` implements the explicit state machine for
-a participant's contribution steps:
+Valid ceremony state transitions (defined in `src/types/enums.ts`):
+
+```
+SCHEDULED → OPENED ↔ PAUSED → CLOSED → FINALIZED
+                                   ↘
+                                 CANCELED  (terminal — blocks finalization)
+```
+
+> **Note:** `ceremonies.service.ts:update` does not yet enforce these transitions. Any
+> state value can be written to any other state at the service layer — transition
+> enforcement is not yet implemented.
+
+### Participant Status State Machine
+
+**Outer lifecycle** (defined in `src/types/enums.ts`):
+
+```
+CREATED → WAITING → READY → CONTRIBUTING → CONTRIBUTED → DONE
+                                  ↓
+                              TIMEDOUT → (penalty period) → EXHUMED → WAITING (re-queue)
+```
+
+Coordinator finalization follows a separate path: `CONTRIBUTING → FINALIZING → FINALIZED → DONE`.
+
+**Contribution steps** (while `CONTRIBUTING`):
 
 ```
 DOWNLOADING → COMPUTING → UPLOADING → VERIFYING → COMPLETED
 ```
 
-Invalid transitions throw; the service never writes an illegal state.
+Transition enforcement for contribution steps is implemented in
+`src/contributions/contribution-transitions.ts` — invalid transitions throw there, never
+in services. The outer participant lifecycle and ceremony state machine do not yet have
+equivalent enforcement.
+
+### Resumable Multipart Upload
+
+Large zKey files are uploaded to S3 using multipart upload. To survive client restarts
+mid-upload, the multipart upload ID and the list of completed parts are persisted in
+`participant.tempContributionData` (JSON field on the Participant model) after each
+chunk. On resume, the client reads this field, skips already-uploaded parts, and
+continues from the last checkpoint. The upload helpers live in
+`packages/actions/src/helpers/storage.ts`.
 
 ### Swagger / OpenAPI
 
