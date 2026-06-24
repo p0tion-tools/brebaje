@@ -1,9 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsEnum, IsOptional, IsString } from 'class-validator';
 import { UserProvider } from 'src/types/enums';
-import { UserAttributes } from '../user.model';
 
-export class CreateUserDto implements Partial<UserAttributes> {
+export class CreateUserDto {
   @ApiProperty({
     description: 'The display name of the user (provider-specific stable username)',
     example: 'NicoSerranoP',
