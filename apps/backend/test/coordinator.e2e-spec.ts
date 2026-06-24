@@ -66,6 +66,16 @@ describe('Coordinator (e2e)', () => {
 
     await app.init();
     await app.listen(PORT);
+
+    // User creation is an internal operation owned by AuthService.
+    // Create the coordinator directly via the model rather than POST /users.
+    const coordinator = await User.create({
+      displayName: coordinatorDto.displayName,
+      avatarUrl: coordinatorDto.avatarUrl,
+      provider: coordinatorDto.provider,
+      creationTime: Date.now(),
+    });
+    coordinatorId = coordinator.id;
   });
 
   afterAll(async () => {
@@ -94,38 +104,6 @@ describe('Coordinator (e2e)', () => {
     } finally {
       await app?.close();
     }
-  });
-
-  it('should create a new user', async () => {
-    const response = await fetch(`${TEST_URL}/users`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(coordinatorDto),
-    });
-
-    const body = (await response.json()) as User;
-
-    expect(typeof body.id).toBe('number');
-    expect(typeof body.creationTime).toBe('number');
-    expect(body.displayName).toBe(coordinatorDto.displayName);
-    expect(body.avatarUrl).toBe(coordinatorDto.avatarUrl);
-    expect(body.provider).toBe(coordinatorDto.provider);
-
-    const userInstance = await User.findByPk(body.id);
-    if (!userInstance) {
-      throw new Error(`User with ID ${body.id} not found`);
-    }
-    const savedUser = userInstance.dataValues as User;
-
-    expect(savedUser).toBeDefined();
-    expect(savedUser.id).toBe(body.id);
-    expect(savedUser.displayName).toBe(coordinatorDto.displayName);
-    expect(savedUser.avatarUrl).toBe(coordinatorDto.avatarUrl);
-    expect(savedUser.provider).toBe(coordinatorDto.provider);
-
-    coordinatorId = body.id;
   });
 
   it('should authenticate the user using test endpoint', async () => {
