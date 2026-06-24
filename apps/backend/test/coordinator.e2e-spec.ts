@@ -71,6 +71,12 @@ describe('Coordinator (e2e)', () => {
   afterAll(async () => {
     try {
       if (ceremonyId != null) {
+        const url = new URL('/storage/bucket', TEST_URL);
+        url.searchParams.set('id', String(ceremonyId));
+        await fetch(url, { method: 'DELETE' }).catch(() => {
+          // best-effort cleanup — ignore errors if bucket does not exist
+        });
+
         const participants = await Participant.findAll({
           where: { ceremonyId },
           attributes: ['id'],

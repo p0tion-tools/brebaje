@@ -1,65 +1,44 @@
-# User context
-
-## Product and domain context for AI and contributors.
+# Product context
 
 ## Product
 
-- **What:** Zero-knowledge proof ceremony management platform: Phase 2 Trusted Setup coordination for Groth16/zkSNARK circuits (queueing, verification, beacon finalization).
-- **Value:** Coordinates decentralized Phase 2 ceremonies with coordinator/participant flows, contribution/verification timeouts (dynamic or fixed), penalty and exhumation, resumable uploads, and cryptographic verification before accepting contributions.
+- **What:** Brebaje is the community version of P0tion: a Groth16 Phase 2 trusted setup ceremony coordination platform.
+- **Value:** Coordinates coordinator/participant flows, contribution and verification timeouts, penalty and exhumation, resumable uploads, and cryptographic verification before accepting contributions.
 
 ### Domain Models
 
-- **Users** — Authenticated via GitHub, Ethereum, or Cardano.
-- **Projects** — Container for ceremonies; coordinators manage.
-- **Ceremonies** — Time-bounded events; phases: SCHEDULED → OPENED → CLOSED → FINALIZED (and PAUSED).
-- **Circuits** — Individual zkSNARK circuits; each has its own contribution chain.
-- **Participants** — Users enrolled in a ceremony; contribution tracking.
-- **Contributions** — Cryptographic contributions to circuit trusted setup.
+- **Users:** authenticated via GitHub (OAuth code + device flow), Ethereum (SIWE/EIP-4361), or Cardano (wallet signature).
+- **Projects:** coordinator-owned container that groups ceremonies.
+- **Ceremonies:** Phase 2 events under a project with a per-ceremony `authProviders` whitelist.
+- **Circuits:** zkSNARK targets with sequence position and per-circuit contribution queues.
+- **Participants:** users enrolled in a ceremony, unique per (ceremony, user).
+- **Contributions:** verified or failed circuit updates with timing, hashes, and verification metadata.
 
 ### Personas
 
-- **Coordinator:** Creates ceremony and circuits; uploads artifacts (R1CS, PoT, WASM, genesis zKey); opens/closes ceremony; monitors contributions; runs beacon and finalization (verification key, verifier contract).
-- **Participant:** Authenticates; joins waitlist per circuit; downloads last zKey; computes contribution with local entropy; uploads new zKey and transcript; awaits verification; completes all circuits in sequence (or DONE).
+- **Coordinator:** owns a project; configures ceremonies and circuits; opens/pauses/closes/cancels; runs beacon and finalization (verification key, verifier contract).
+- **Participant:** authenticates with one of the ceremony's allowed providers; joins per-circuit queue; downloads last zKey; computes contribution with local entropy; uploads new zKey and transcript; awaits verification; completes all circuits.
 
 ### Non-Functional Requirements
 
 - **Performance:** API &lt; 200ms where applicable; React SPA responsive.
 - **Scalability:** Backend concurrent connections; frontend code-splitting/lazy loading.
 - **Privacy:** GDPR compliant; no PII in logs.
-- **Ceremony:** Contribution/verification timeouts (dynamic/fixed); penalty and exhumation; resumable uploads; cryptographic verification (invalid contributions rejected, queue updated).
 
 ### Current Implementation
 
 - **Monorepo:** pnpm workspaces. **Apps:** backend (NestJS), frontend (Next.js 14 App Router), cli (Commander.js ESM), website (Docusaurus 3). **Shared:** @brebaje/actions (crypto, snarkjs, upload/download).
-- **Auth (GitHub):** Frontend gets client ID from backend → user completes OAuth (device or code flow) → backend exchanges token, creates/finds user → JWT issued for session.
+- **Auth:** short-lived JWT sessions. GitHub (frontend gets client ID, OAuth code or device flow → backend exchanges for token, creates/finds user). Ethereum (SIWE nonce → signed message → server verify). Cardano (server nonce → wallet signature → server verify). Per-ceremony `authProviders` whitelist enforced at enrollment.
 
 ---
 
 ## Domain Glossary
 
-### Lifecycle and Roles
-
-- **Ceremony lifecycle:** Initialization → Queueing → Contribution → Validation → Finalization.
-- **Phase 1 / Phase 2:** Phase 1 = Powers of Tau (PoT); Phase 2 = circuit-specific proving key (zKey) chain from R1CS + PoT and participant contributions.
-- **Waitlist (CircuitWaitingQueue):** Per-circuit queue (participant IDs, current contributor, completed/failed counts).
-
-### Ceremony States
-
-SCHEDULED → OPENED (start date); OPENED ↔ PAUSED; OPENED → CLOSED (end date); CLOSED → FINALIZED (beacon + export).
-
-### Participant States
-
-CREATED → WAITING → READY → CONTRIBUTING (steps: DOWNLOADING → COMPUTING → UPLOADING → VERIFYING → COMPLETED) → CONTRIBUTED → DONE. Timeout path: READY/CONTRIBUTING → TIMEDOUT → (penalty) → EXHUMED → re-queue. Coordinator: READY → FINALIZING → FINALIZED → DONE.
-
-### Artifacts
-
-- **R1CS** (`.r1cs`), **PoT** (`.ptau`), **zKey** (`.zkey`, index 00000=genesis … final), **Transcript** (`.log`, contribution hash), **Verification key**, **Verifier contract** (Solidity), **WASM** (witness generation).
-
-### Crypto and Timeouts
-
-- **Beacon:** Deterministic final contribution; value + SHA-256 hash; must be public and unpredictable.
-- **Contribution hash:** From transcript (crypto provider). **BLAKE2b** for file hashes; **SHA-256** for beacon.
-- **Timeouts:** BLOCKING_CONTRIBUTION (download/compute/upload), BLOCKING_VERIFICATION. **DYNAMIC** or **FIXED**. **Penalty** duration; **Exhumation** when penalty expires.
+- **Ceremony states:** SCHEDULED → OPENED ↔ PAUSED → CLOSED → FINALIZED. CANCELED is a terminal abandonment that blocks finalization.
+- **Participant lifecycle:** CREATED → WAITING → READY → CONTRIBUTING (steps: DOWNLOADING → COMPUTING → UPLOADING → VERIFYING → COMPLETED) → CONTRIBUTED → DONE. Timeout path: → TIMEDOUT → (penalty) → EXHUMED → re-queue. Coordinator finalization: → FINALIZING → FINALIZED → DONE.
+- **Artifacts:** R1CS (`.r1cs`), PoT (`.ptau`, Phase 1 input), zKey (`.zkey`, index 00000 = genesis ... final), transcript (`.log`), verification key, verifier contract (Solidity), WASM.
+- **Hashes:** BLAKE2b for file artifacts (zKey, transcript, R1CS, PoT, vKey, verifier); SHA-256 for the beacon value.
+- **Timeouts:** participant types BLOCKING_CONTRIBUTION, BLOCKING_VERIFICATION, BLOCKING_BACKEND_FUNCTION, UNKNOWN. Circuit timeout mechanisms DYNAMIC, FIXED, LOBBY. Penalty duration; exhumation when penalty expires.
 
 ---
 
@@ -150,7 +129,7 @@ root/
 - **API:** CORS with explicit origins (no `*` in production). Parameterized queries only (Sequelize). Rate limiting (e.g. express-rate-limit) for brute-force protection.
 - **Frontend:** No secrets in bundle; backend proxy if needed. Cookies: Secure, HttpOnly, SameSite.
 - **Transport:** HTTPS in production; security headers (X-Content-Type-Options, X-Frame-Options, etc.).
-- **Ceremony:** Verify every contribution cryptographically before acceptance; reject invalid and update queue. Artifact integrity: BLAKE2b for zKey, transcript, R1CS, PoT; store beacon value and SHA-256. Beacon value must be public and unpredictable.
+- **Ceremony invariants:** verify every contribution before acceptance; record BLAKE2b hashes for file artifacts and SHA-256 for the beacon. See [docs/PRD.md § Security & Trust](docs/PRD.md#security--trust) and [docs/PRD.md § Artifacts & Integrity](docs/PRD.md#artifacts--integrity).
 
 ---
 

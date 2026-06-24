@@ -83,6 +83,12 @@ export class StorageService {
       );
       this.logger.log(`Bucket created with location ${Location}`);
     } catch (error) {
+      if (error instanceof BucketAlreadyOwnedByYou) {
+        this.logger.log(
+          `Bucket ${bucketName} already exists and is owned by this account. Reusing.`,
+        );
+        return;
+      }
       this.handleErrors(error as Error);
     }
   }
