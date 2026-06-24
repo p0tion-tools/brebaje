@@ -1,33 +1,18 @@
-import { Optional } from 'sequelize';
 import { Column, DataType, Model, Table, HasMany, Index } from 'sequelize-typescript';
 import { UserProvider } from 'src/types/enums';
 import { Project } from 'src/projects/project.model';
 import { Participant } from 'src/participants/participant.model';
 
+/** Caller-supplied fields only. DB-managed fields (id, timestamps) are excluded. */
 export interface UserAttributes {
-  id?: number;
   displayName: string;
-  walletAddress?: string;
-  creationTime: number;
-  lastSignInTime?: number;
-  lastUpdated?: number;
-  avatarUrl?: string;
   provider: UserProvider;
+  walletAddress?: string;
+  avatarUrl?: string;
 }
 
-export type UserPk = 'id';
-export type UserId = User[UserPk];
-export type UserOptionalAttributes =
-  | 'id'
-  | 'walletAddress'
-  | 'lastSignInTime'
-  | 'lastUpdated'
-  | 'avatarUrl'
-  | 'provider';
-export type UserCreationAttributes = Optional<UserAttributes, UserOptionalAttributes>;
-
 @Table({ tableName: 'users' })
-export class User extends Model implements UserAttributes {
+export class User extends Model {
   @Column({
     type: DataType.INTEGER,
     primaryKey: true,
@@ -86,17 +71,3 @@ export class User extends Model implements UserAttributes {
   @HasMany(() => Participant, 'userId')
   declare participants: Participant[];
 }
-
-/**
- * User model with multi-provider OAuth support
- *
- * User lookup strategy: (displayName + provider) composite key
- *
- * For optimal performance, consider adding this database index:
- * CREATE INDEX idx_user_provider_displayname ON users(provider, displayName);
- *
- * This index dramatically improves login performance and enables:
- * - Fast provider-specific user lookups
- * - Efficient authentication queries
- * - Prevention of duplicate users per provider
- */

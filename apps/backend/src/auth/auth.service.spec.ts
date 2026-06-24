@@ -6,7 +6,7 @@ import { AuthService } from './auth.service';
 import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { UserProvider } from '../types/enums';
-import { UserAttributes } from '../users/user.model';
+import { User } from '../users/user.model';
 import { DeviceFlowTokenDto, AuthResponseDto } from './dto/auth-dto';
 import { GithubUser } from '../types/declarations';
 import { UnauthorizedException } from '@nestjs/common';
@@ -268,7 +268,7 @@ describe('AuthService', () => {
       email: 'test@example.com',
     };
 
-    const mockUser: UserAttributes = {
+    const mockUser: Partial<User> = {
       id: 1,
       displayName: 'testuser',
       creationTime: Date.now(),
@@ -368,7 +368,7 @@ describe('AuthService', () => {
   });
 
   describe('testAuthWithUserId', () => {
-    const mockUser: UserAttributes = {
+    const mockUser: Partial<User> = {
       id: 1,
       displayName: 'testuser',
       creationTime: Date.now(),
@@ -577,7 +577,7 @@ describe('AuthService', () => {
         token_type: 'bearer',
         scope: 'read:user user:email',
       };
-      const mockUser: UserAttributes = {
+      const mockUser: Partial<User> = {
         id: 1,
         displayName: 'testuser',
         provider: UserProvider.GITHUB,
@@ -736,7 +736,7 @@ describe('AuthService', () => {
   describe('SIWE (Sign-In with Ethereum) Authentication', () => {
     const validEthAddress = '0x71C7656EC7ab88b098defB751B7401B5f6d8976F';
     const normalizedAddress = validEthAddress.toLowerCase();
-    const mockUser: UserAttributes = {
+    const mockUser: Partial<User> = {
       id: 1,
       displayName: validEthAddress,
       walletAddress: validEthAddress,
