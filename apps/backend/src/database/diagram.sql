@@ -32,7 +32,7 @@ CREATE TABLE "ceremonies" (
   "start_date" INTEGER NOT NULL,
   "end_date" INTEGER NOT NULL,
   "penalty" INTEGER NOT NULL,
-  "authProviders" JSON NOT NULL,
+  "authProviders" JSON NOT NULL, -- Non-empty array of UserProvider enum values (GITHUB, ETHEREUM, CARDANO)
   FOREIGN KEY ("projectId") REFERENCES "projects" ("id")
 );
 

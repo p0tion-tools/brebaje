@@ -657,7 +657,7 @@ Capabilities:
 - [x] Ceremony setup definition under a project.
 - [x] Ceremony and circuit validation.
 - [x] Participant enrollment.
-- [ ] ⚠️ Auth provider whitelist enforcement at enrollment (`authProviders` field exists on the ceremony but `participants.service.ts` does not check the participant's provider against it).
+- [x] Auth provider whitelist enforcement at enrollment (`authProviders` is a non-empty `UserProvider[]` validated at ceremony create/update; enrollment checks provider and ceremony state, with coordinator bypass).
 - [x] Circuit queues.
 - [x] Fixed and lobby timeout policy.
 - [ ] Dynamic timeout policy (average contribution time tracking not yet implemented — `averageContributionComputationTime` is never updated from real contribution timings).

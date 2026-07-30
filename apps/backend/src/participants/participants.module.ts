@@ -8,6 +8,7 @@ import { CircuitsModule } from 'src/circuits/circuits.module';
 import { ContributionsModule } from 'src/contributions/contributions.module';
 import { AuthModule } from 'src/auth/auth.module';
 import { CeremoniesModule } from 'src/ceremonies/ceremonies.module';
+import { UsersModule } from 'src/users/users.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { CeremoniesModule } from 'src/ceremonies/ceremonies.module';
     forwardRef(() => CircuitsModule),
     forwardRef(() => ContributionsModule),
     forwardRef(() => CeremoniesModule),
+    UsersModule,
     AuthModule,
   ],
   controllers: [ParticipantsController],

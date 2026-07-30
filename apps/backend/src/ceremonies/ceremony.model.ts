@@ -1,6 +1,6 @@
 import { Optional } from 'sequelize';
 import { Column, DataType, Model, Table, BelongsTo, HasMany } from 'sequelize-typescript';
-import { CeremonyType, CeremonyState } from 'src/types/enums';
+import { CeremonyType, CeremonyState, UserProvider } from 'src/types/enums';
 import { Project } from 'src/projects/project.model';
 import { Circuit } from 'src/circuits/circuit.model';
 import { Participant } from 'src/participants/participant.model';
@@ -14,7 +14,7 @@ export interface CeremonyAttributes {
   start_date: number;
   end_date: number;
   penalty: number;
-  authProviders: object;
+  authProviders: UserProvider[];
 }
 
 export type CeremonyPk = 'id';
@@ -80,9 +80,9 @@ export class Ceremony extends Model implements CeremonyAttributes {
   @Column({
     type: DataType.JSON,
     allowNull: false,
-    comment: 'check auth providers classes',
+    comment: 'Non-empty array of UserProvider enum values allowed to enroll',
   })
-  declare authProviders: object;
+  declare authProviders: UserProvider[];
 
   @BelongsTo(() => Project, 'projectId')
   declare project: Project;

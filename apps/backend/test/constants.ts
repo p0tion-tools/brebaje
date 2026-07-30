@@ -32,7 +32,7 @@ export const ceremonyDto: CreateCeremonyDto = {
   start_date: startDate,
   end_date: endDate,
   penalty: 1,
-  authProviders: { github: true },
+  authProviders: [UserProvider.GITHUB],
 };
 
 export const circuits: CreateCircuitDto[] = [

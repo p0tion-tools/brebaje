@@ -1,6 +1,6 @@
 import fs from "fs";
 import path from "path";
-import { CeremonyType, CeremonyState } from "./declarations";
+import { CeremonyType, CeremonyState, UserProvider } from "./declarations";
 
 /**
  * Reads and parses a JSON template file.
@@ -34,6 +34,29 @@ export function isValidCeremonyType(type: any): type is CeremonyType {
  */
 export function isValidCeremonyState(state: any): state is CeremonyState {
   return Object.values(CeremonyState).includes(state);
+}
+
+/**
+ * Checks if a value is a valid UserProvider.
+ */
+export function isValidUserProvider(provider: unknown): provider is UserProvider {
+  return Object.values(UserProvider).includes(provider as UserProvider);
+}
+
+function validateAuthProviders(authProviders: unknown): void {
+  if (!Array.isArray(authProviders) || authProviders.length === 0) {
+    throw new Error(
+      `authProviders must be a non-empty array of UserProvider values: ${Object.values(UserProvider).join(", ")}`,
+    );
+  }
+
+  for (const provider of authProviders) {
+    if (!isValidUserProvider(provider)) {
+      throw new Error(
+        `authProviders must be a non-empty array of UserProvider values: ${Object.values(UserProvider).join(", ")}`,
+      );
+    }
+  }
 }
 
 /**
@@ -77,9 +100,7 @@ export function validateCreateTemplate(template: any): void {
   if (typeof template.penalty !== "number" || template.penalty < 0) {
     throw new Error("penalty must be a non-negative number");
   }
-  if (typeof template.authProviders !== "object" || template.authProviders === null) {
-    throw new Error("authProviders must be an object");
-  }
+  validateAuthProviders(template.authProviders);
 }
 
 /**
@@ -116,10 +137,7 @@ export function validateUpdateTemplate(template: any): void {
   ) {
     throw new Error("penalty must be a non-negative number");
   }
-  if (
-    template.authProviders !== undefined &&
-    (typeof template.authProviders !== "object" || template.authProviders === null)
-  ) {
-    throw new Error("authProviders must be an object");
+  if (template.authProviders !== undefined) {
+    validateAuthProviders(template.authProviders);
   }
 }

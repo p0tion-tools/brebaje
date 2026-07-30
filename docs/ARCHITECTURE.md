@@ -217,7 +217,7 @@ User ──(coordinator of)──▶ Project ──▶ Ceremony ──▶ Circui
 | ------------ | ------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | User         | `users/user.model.ts`                 | `id`, `displayName` (indexed), `provider` (enum), `walletAddress` (Cardano/Ethereum), `avatarUrl`, timestamps                                                                             |
 | Project      | `projects/project.model.ts`           | `id`, `name`, `contact`, `coordinatorId` (FK → User)                                                                                                                                      |
-| Ceremony     | `ceremonies/ceremony.model.ts`        | `id`, `projectId`, `state` (enum), `type` (enum), `start_date`, `end_date`, `penalty`, `authProviders` (JSON)                                                                             |
+| Ceremony     | `ceremonies/ceremony.model.ts`        | `id`, `projectId`, `state` (enum), `type` (enum), `start_date`, `end_date`, `penalty`, `authProviders` (JSON array of `UserProvider` values)                                              |
 | Circuit      | `circuits/circuit.model.ts`           | `id`, `ceremonyId`, `name`, `sequencePosition`, `timeoutMechanismType` (enum), `currentContributor`, `contributors` (JSON), `verification` (JSON), `artifacts` (JSON), `pot`              |
 | Participant  | `participants/participant.model.ts`   | `id`, `userId`, `ceremonyId` (unique together — one participant per ceremony per user), `status` (enum), `contributionStep` (enum), `tempContributionData` (JSON), `timeout` (JSON array) |
 | Contribution | `contributions/contribution.model.ts` | `id`, `circuitId`, `participantId`, `zkeyIndex`, `valid`, timing fields, `files` (JSON), `verificationSoftware` (JSON), `beacon` (JSON)                                                   |
@@ -274,10 +274,15 @@ authenticating with GitHub and then with Ethereum results in two separate accoun
 identities into a single account. Until then, the one-provider-per-user model is
 intentional but temporary.
 
-Per-ceremony **provider whitelist** (`ceremony.authProviders` JSON column): stores the list
-of allowed auth providers for a ceremony. Enforcement at enrollment is **not yet
-implemented** — `participants.service.ts` does not currently check the participant's
-provider against this list, so any authenticated user can enroll in any ceremony.
+Per-ceremony **provider whitelist** (`ceremony.authProviders` JSON column): a non-empty
+array of `UserProvider` enum values (`GITHUB`, `ETHEREUM`, `CARDANO`) validated at ceremony
+create and update. At enrollment, `ParticipantsService.create()` loads the ceremony and
+enforces two gates: the ceremony must be `OPENED` (or `CLOSED` for the coordinator), and
+the enrolling user's provider must appear in the whitelist. The provider is read from the
+user record, not the JWT. Enrollment fails closed when the whitelist is missing, empty, or
+in a legacy format. The ceremony coordinator bypasses the provider whitelist so they can
+obtain the participant record required for finalization. Already-enrolled participants are
+grandfathered if the whitelist is narrowed later — the gate applies only at enrollment.
 
 **Nonce management** (in `auth.service.ts`):
 

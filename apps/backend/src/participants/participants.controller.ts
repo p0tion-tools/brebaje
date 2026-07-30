@@ -38,7 +38,16 @@ export class ParticipantsController {
     description: 'The participant has been successfully created.',
     type: Participant,
   })
-  @ApiResponse({ status: 400, description: 'Bad Request.' })
+  @ApiResponse({
+    status: 400,
+    description: 'Bad Request — ceremony is not accepting enrollments.',
+  })
+  @ApiResponse({
+    status: 403,
+    description: 'Forbidden — auth provider is not permitted for this ceremony.',
+  })
+  @ApiResponse({ status: 404, description: 'Ceremony not found.' })
+  @ApiResponse({ status: 409, description: 'Conflict — participant already exists.' })
   create(@Request() req: AuthenticatedRequest, @Body() createParticipantDto: CreateParticipantDto) {
     return this.participantsService.create(createParticipantDto, req.user!.id!);
   }
