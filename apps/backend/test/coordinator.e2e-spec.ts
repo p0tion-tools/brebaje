@@ -26,7 +26,12 @@ import { zKey } from 'snarkjs';
 import { Circuit } from 'src/circuits/circuit.model';
 import { JwtService } from '@nestjs/jwt';
 import { Participant } from 'src/participants/participant.model';
-import { ParticipantContributionStep, ParticipantStatus } from 'src/types/enums';
+import {
+  ParticipantContributionStep,
+  ParticipantStatus,
+  CeremonyState,
+  UserProvider,
+} from 'src/types/enums';
 
 const DOWNLOAD_DIRECTORY = './.downloads';
 const TEST_URL = `http://localhost:${PORT}`;
@@ -240,6 +245,80 @@ describe('Coordinator (e2e)', () => {
     },
     15000,
   ); // S3 bucket creation can be slow in CI
+
+  it('should open the ceremony for enrollment', async () => {
+    const response = await fetch(`${TEST_URL}/ceremonies/${ceremonyId}`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${jwtToken}`,
+      },
+      body: JSON.stringify({ state: CeremonyState.OPENED }),
+    });
+
+    expect(response.ok).toBe(true);
+    const body = (await response.json()) as Ceremony;
+    expect(body.state).toBe(CeremonyState.OPENED);
+  });
+
+  it('should reject enrollment when the user auth provider is not whitelisted', async () => {
+    const ethereumUser = await User.create({
+      displayName: 'ethereum-participant',
+      provider: UserProvider.ETHEREUM,
+      creationTime: Date.now(),
+    });
+
+    const authResponse = await fetch(`${TEST_URL}/auth/test/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: ethereumUser.id }),
+    });
+    const authBody = (await authResponse.json()) as { jwt: string };
+
+    const response = await fetch(`${TEST_URL}/participants`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authBody.jwt}`,
+      },
+      body: JSON.stringify({ ceremonyId }),
+    });
+
+    expect(response.status).toBe(403);
+
+    await User.destroy({ where: { id: ethereumUser.id } });
+  });
+
+  it('should allow enrollment when the user auth provider is whitelisted', async () => {
+    const githubParticipant = await User.create({
+      displayName: 'github-participant',
+      provider: UserProvider.GITHUB,
+      creationTime: Date.now(),
+    });
+
+    const authResponse = await fetch(`${TEST_URL}/auth/test/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ userId: githubParticipant.id }),
+    });
+    const authBody = (await authResponse.json()) as { jwt: string };
+
+    const response = await fetch(`${TEST_URL}/participants`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${authBody.jwt}`,
+      },
+      body: JSON.stringify({ ceremonyId }),
+    });
+
+    expect(response.status).toBe(201);
+    const body = (await response.json()) as Participant;
+    expect(body.userId).toBe(githubParticipant.id);
+
+    await Participant.destroy({ where: { id: body.id } });
+    await User.destroy({ where: { id: githubParticipant.id } });
+  });
 
   it('should create a participant', async () => {
     const response = await fetch(`${TEST_URL}/participants`, {

@@ -1,7 +1,7 @@
 import { ConflictException, NotFoundException } from '@nestjs/common';
 import { getModelToken } from '@nestjs/sequelize';
 import { Test, TestingModule } from '@nestjs/testing';
-import { CeremonyState, CeremonyType } from 'src/types/enums';
+import { CeremonyState, CeremonyType, UserProvider } from 'src/types/enums';
 import { CeremoniesService } from './ceremonies.service';
 import { CreateCeremonyDto } from './dto/create-ceremony.dto';
 import { UpdateCeremonyDto } from './dto/update-ceremony.dto';
@@ -35,7 +35,7 @@ describe('CeremoniesService', () => {
     start_date: 1672531200,
     end_date: 1675209600,
     penalty: 100,
-    authProviders: { github: true, eth: false },
+    authProviders: [UserProvider.GITHUB, UserProvider.ETHEREUM],
     update: jest.fn(),
     destroy: jest.fn(),
   };
@@ -75,7 +75,7 @@ describe('CeremoniesService', () => {
         start_date: 1672531200,
         end_date: 1675209600,
         penalty: 100,
-        authProviders: { github: true, eth: false },
+        authProviders: [UserProvider.GITHUB, UserProvider.ETHEREUM],
       };
 
       mockCeremonyModel.create.mockResolvedValueOnce({
@@ -98,7 +98,7 @@ describe('CeremoniesService', () => {
         start_date: 1672531200,
         end_date: 1675209600,
         penalty: 100,
-        authProviders: { github: true, eth: false },
+        authProviders: [UserProvider.GITHUB, UserProvider.ETHEREUM],
       };
 
       const error = new Error('Ceremony already exists');

@@ -10,16 +10,44 @@ import {
   ForbiddenException,
   Inject,
   forwardRef,
+  HttpException,
 } from '@nestjs/common';
 import { CreateParticipantDto } from './dto/create-participant.dto';
 import { Participant } from './participant.model';
-import { ParticipantStatus, ParticipantContributionStep, CeremonyState } from 'src/types/enums';
+import {
+  ParticipantStatus,
+  ParticipantContributionStep,
+  CeremonyState,
+  UserProvider,
+} from 'src/types/enums';
 import { WhereOptions } from 'sequelize';
 import { InjectModel } from '@nestjs/sequelize';
 import { formatZkeyIndex } from '@brebaje/actions';
 import { CircuitsService } from 'src/circuits/circuits.service';
 import { ContributionsService } from 'src/contributions/contributions.service';
+import { CeremoniesService } from 'src/ceremonies/ceremonies.service';
+import { UsersService } from 'src/users/users.service';
 import { Cron, CronExpression } from '@nestjs/schedule';
+
+const VALID_USER_PROVIDERS = new Set(Object.values(UserProvider));
+
+/**
+ * Returns the ceremony auth provider whitelist when it is a non-empty array of known providers.
+ * Returns null for legacy or malformed values so enrollment fails closed.
+ */
+function parseAuthProvidersWhitelist(authProviders: unknown): UserProvider[] | null {
+  if (!Array.isArray(authProviders) || authProviders.length === 0) {
+    return null;
+  }
+
+  for (const provider of authProviders) {
+    if (!VALID_USER_PROVIDERS.has(provider as UserProvider)) {
+      return null;
+    }
+  }
+
+  return authProviders as UserProvider[];
+}
 
 @Injectable()
 export class ParticipantsService {
@@ -30,10 +58,19 @@ export class ParticipantsService {
     private readonly circuitsService: CircuitsService,
     @Inject(forwardRef(() => ContributionsService))
     private readonly contributionsService: ContributionsService,
+    @Inject(forwardRef(() => CeremoniesService))
+    private readonly ceremoniesService: CeremoniesService,
+    private readonly usersService: UsersService,
   ) {}
 
   /**
    * Creates a new participant.
+   *
+   * Enrollment is gated by ceremony state and the ceremony's auth provider whitelist.
+   * Non-coordinators may enroll only when the ceremony is OPENED and their provider
+   * is whitelisted. Coordinators bypass the provider whitelist and may also enroll when
+   * the ceremony is CLOSED (required for finalization). The enrolling user's provider
+   * is read from the database, not from the JWT.
    *
    * @param createParticipantDto - The DTO containing participant creation data
    * @param userId - The ID of the authenticated user creating the participant
@@ -41,6 +78,33 @@ export class ParticipantsService {
    */
   async create(createParticipantDto: CreateParticipantDto, userId: number) {
     try {
+      const ceremony = await this.ceremoniesService.findOne(createParticipantDto.ceremonyId);
+
+      const coordinatorCeremony = await this.ceremoniesService.findCoordinatorOfCeremony(
+        userId,
+        createParticipantDto.ceremonyId,
+      );
+      const isCoordinator = !!coordinatorCeremony;
+
+      const allowedStates = isCoordinator
+        ? [CeremonyState.OPENED, CeremonyState.CLOSED]
+        : [CeremonyState.OPENED];
+
+      if (!allowedStates.includes(ceremony.state)) {
+        throw new BadRequestException('Ceremony is not accepting enrollments');
+      }
+
+      if (!isCoordinator) {
+        const user = await this.usersService.findById(userId);
+        const whitelist = parseAuthProvidersWhitelist(ceremony.authProviders);
+
+        if (!whitelist || !whitelist.includes(user.provider)) {
+          throw new ForbiddenException(
+            'This ceremony does not accept participants authenticated with your auth provider',
+          );
+        }
+      }
+
       const participant = await this.participantModel.create({
         ...createParticipantDto,
         userId,
@@ -50,6 +114,9 @@ export class ParticipantsService {
 
       return participant;
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       this.handleErrors(error as Error);
     }
   }

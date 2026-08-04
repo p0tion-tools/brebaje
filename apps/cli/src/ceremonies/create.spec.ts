@@ -2,7 +2,7 @@ import { create } from "./create";
 import * as utils from "./utils";
 import { ScriptLogger } from "../utils/logger";
 import { authenticatedFetch } from "../auth/http";
-import { CeremonyCreate, CeremonyType, CeremonyState } from "./declarations";
+import { CeremonyCreate, CeremonyType, CeremonyState, UserProvider } from "./declarations";
 
 jest.mock("../utils/logger");
 jest.mock("./utils");
@@ -29,7 +29,7 @@ describe("create", () => {
       start_date: 1700000000,
       end_date: 1700003600,
       penalty: 0,
-      authProviders: { github: true },
+      authProviders: [UserProvider.GITHUB],
     };
     (utils.readTemplate as jest.Mock).mockReturnValue(template);
     (utils.validateCreateTemplate as jest.Mock).mockReturnValue(undefined);
@@ -69,7 +69,7 @@ describe("create", () => {
       start_date: 1700000000,
       end_date: 1700003600,
       penalty: 0,
-      authProviders: { github: true },
+      authProviders: [UserProvider.GITHUB],
     };
     (utils.readTemplate as jest.Mock).mockReturnValue(template);
     (utils.validateCreateTemplate as jest.Mock).mockReturnValue(undefined);

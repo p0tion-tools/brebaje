@@ -84,7 +84,7 @@ Table ceremonies {
   start_date int [not null]
   end_date int [not null]
   penalty int [not null]
-  authProviders json [not null, note: 'check auth providers classes']
+  authProviders json [not null, note: 'Non-empty array of UserProvider enum values (GITHUB, ETHEREUM, CARDANO)']
 }
 
 Table circuits {

@@ -1,7 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unsafe-argument */
 /* eslint-disable @typescript-eslint/unbound-method */
 import { Test, TestingModule } from '@nestjs/testing';
-import { CeremonyState, CeremonyType } from 'src/types/enums';
+import { CeremonyState, CeremonyType, UserProvider } from 'src/types/enums';
 import { CreateCeremonyDto } from './dto/create-ceremony.dto';
 import { UpdateCeremonyDto } from './dto/update-ceremony.dto';
 import { JwtAuthGuard } from 'src/auth/guards/jwt-auth.guard';
@@ -71,7 +71,7 @@ describe('CeremoniesController', () => {
         start_date: 1672531200,
         end_date: 1675209600,
         penalty: 100,
-        authProviders: { github: true, eth: false },
+        authProviders: [UserProvider.GITHUB, UserProvider.ETHEREUM],
       };
 
       const expectedResult = {
@@ -100,7 +100,7 @@ describe('CeremoniesController', () => {
           start_date: 1672531200,
           end_date: 1675209600,
           penalty: 100,
-          authProviders: { github: true, eth: false },
+          authProviders: [UserProvider.GITHUB, UserProvider.ETHEREUM],
         },
       ];
 
@@ -121,7 +121,7 @@ describe('CeremoniesController', () => {
         start_date: 1672531200,
         end_date: 1675209600,
         penalty: 100,
-        authProviders: { github: true, eth: false },
+        authProviders: [UserProvider.GITHUB, UserProvider.ETHEREUM],
       };
 
       jest.spyOn(service, 'findOne').mockResolvedValue(expectedResult as any);
@@ -147,7 +147,7 @@ describe('CeremoniesController', () => {
         start_date: 1672531200,
         end_date: 1675209600,
         penalty: 100,
-        authProviders: { github: true, eth: false },
+        authProviders: [UserProvider.GITHUB, UserProvider.ETHEREUM],
       };
 
       jest.spyOn(service, 'update').mockResolvedValue(expectedResult as any);

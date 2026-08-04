@@ -15,6 +15,12 @@ export enum CeremonyState {
   FINALIZED = "FINALIZED",
 }
 
+export enum UserProvider {
+  GITHUB = "GITHUB",
+  ETHEREUM = "ETHEREUM",
+  CARDANO = "CARDANO",
+}
+
 // Ceremony creation template (matches CreateCeremonyDto)
 export interface CeremonyCreate {
   projectId: number;
@@ -24,7 +30,7 @@ export interface CeremonyCreate {
   start_date: number;
   end_date: number;
   penalty: number;
-  authProviders: Record<string, boolean>;
+  authProviders: UserProvider[];
 }
 
 // Ceremony update template (matches UpdateCeremonyDto, all fields optional except id)
@@ -35,7 +41,7 @@ export interface CeremonyUpdate {
   start_date?: number;
   end_date?: number;
   penalty?: number;
-  authProviders?: Record<string, boolean>;
+  authProviders?: UserProvider[];
 }
 
 // Ceremony API response (matches backend model)
@@ -48,5 +54,5 @@ export interface Ceremony {
   start_date: number;
   end_date: number;
   penalty: number;
-  authProviders: Record<string, boolean>;
+  authProviders: UserProvider[];
 }

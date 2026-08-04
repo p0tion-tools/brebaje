@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEnum, IsNumber, IsObject, IsString } from 'class-validator';
-import { CeremonyState, CeremonyType } from 'src/types/enums';
+import { ArrayNotEmpty, IsArray, IsEnum, IsNumber, IsString } from 'class-validator';
+import { CeremonyState, CeremonyType, UserProvider } from 'src/types/enums';
 
 export class CreateCeremonyDto {
   @ApiProperty({ example: 1 })
@@ -31,7 +31,13 @@ export class CreateCeremonyDto {
   @IsNumber()
   penalty: number;
 
-  @ApiProperty({ example: { github: true, eth: false } })
-  @IsObject()
-  authProviders: object;
+  @ApiProperty({
+    enum: UserProvider,
+    isArray: true,
+    example: [UserProvider.GITHUB],
+  })
+  @IsArray()
+  @ArrayNotEmpty()
+  @IsEnum(UserProvider, { each: true })
+  authProviders: UserProvider[];
 }

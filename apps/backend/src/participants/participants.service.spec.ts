@@ -8,25 +8,70 @@ import {
   ParticipantContributionStep,
   CircuitTimeoutType,
   VerificationMachineType,
+  CeremonyState,
+  UserProvider,
 } from 'src/types/enums';
 import { Circuit } from 'src/circuits/circuit.model';
 import { ContributionsService } from 'src/contributions/contributions.service';
+import { CeremoniesService } from 'src/ceremonies/ceremonies.service';
+import { UsersService } from 'src/users/users.service';
+import { BadRequestException, ForbiddenException, NotFoundException } from '@nestjs/common';
+import { CreateParticipantDto } from './dto/create-participant.dto';
+import { Ceremony } from 'src/ceremonies/ceremony.model';
+import { User } from 'src/users/user.model';
 
 describe('ParticipantsService', () => {
   let service: ParticipantsService;
+  let mockParticipantModel: { create: jest.Mock };
   let mockCircuitsService: Partial<CircuitsService>;
   let mockContributionsService: Partial<ContributionsService>;
+  let mockCeremoniesService: Partial<CeremoniesService>;
+  let mockUsersService: Partial<UsersService>;
+
+  const ceremonyId = 1;
+  const userId = 10;
+
+  const createDto: CreateParticipantDto = { ceremonyId };
+
+  const mockCeremony = {
+    id: ceremonyId,
+    state: CeremonyState.OPENED,
+    authProviders: [UserProvider.GITHUB],
+  } as Ceremony;
+
+  const mockUser = {
+    id: userId,
+    provider: UserProvider.GITHUB,
+  } as User;
 
   beforeEach(async () => {
+    mockParticipantModel = {
+      create: jest.fn().mockResolvedValue({
+        id: 1,
+        userId,
+        ceremonyId,
+        status: ParticipantStatus.CREATED,
+        contributionStep: ParticipantContributionStep.DOWNLOADING,
+      }),
+    };
     mockCircuitsService = {};
     mockContributionsService = {};
+    mockCeremoniesService = {
+      findOne: jest.fn().mockResolvedValue(mockCeremony),
+      findCoordinatorOfCeremony: jest.fn().mockResolvedValue(null),
+    };
+    mockUsersService = {
+      findById: jest.fn().mockResolvedValue(mockUser),
+    };
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
         ParticipantsService,
-        { provide: getModelToken(Participant), useValue: {} },
+        { provide: getModelToken(Participant), useValue: mockParticipantModel },
         { provide: CircuitsService, useValue: mockCircuitsService },
         { provide: ContributionsService, useValue: mockContributionsService },
+        { provide: CeremoniesService, useValue: mockCeremoniesService },
+        { provide: UsersService, useValue: mockUsersService },
       ],
     }).compile();
 
@@ -35,6 +80,143 @@ describe('ParticipantsService', () => {
 
   it('should be defined', () => {
     expect(service).toBeDefined();
+  });
+
+  describe('create', () => {
+    it('should allow a whitelisted provider to enroll in an OPENED ceremony', async () => {
+      const result = await service.create(createDto, userId);
+
+      expect(mockCeremoniesService.findOne).toHaveBeenCalledWith(ceremonyId);
+      expect(mockUsersService.findById).toHaveBeenCalledWith(userId);
+      expect(mockParticipantModel.create).toHaveBeenCalled();
+      expect(result).toMatchObject({
+        userId,
+        ceremonyId,
+        status: ParticipantStatus.CREATED,
+      });
+    });
+
+    it('should reject a non-whitelisted provider with ForbiddenException', async () => {
+      (mockUsersService.findById as jest.Mock).mockResolvedValueOnce({
+        ...mockUser,
+        provider: UserProvider.ETHEREUM,
+      });
+
+      await expect(service.create(createDto, userId)).rejects.toThrow(ForbiddenException);
+      expect(mockParticipantModel.create).not.toHaveBeenCalled();
+    });
+
+    it('should reject enrollment when authProviders is a legacy boolean map', async () => {
+      (mockCeremoniesService.findOne as jest.Mock).mockResolvedValueOnce({
+        ...mockCeremony,
+        authProviders: { github: true },
+      });
+
+      await expect(service.create(createDto, userId)).rejects.toThrow(ForbiddenException);
+      expect(mockParticipantModel.create).not.toHaveBeenCalled();
+    });
+
+    it.each([
+      CeremonyState.SCHEDULED,
+      CeremonyState.PAUSED,
+      CeremonyState.CLOSED,
+      CeremonyState.CANCELED,
+      CeremonyState.FINALIZED,
+    ])('should reject non-coordinator enrollment when ceremony is %s', async (state) => {
+      (mockCeremoniesService.findOne as jest.Mock).mockResolvedValueOnce({
+        ...mockCeremony,
+        state,
+      });
+
+      await expect(service.create(createDto, userId)).rejects.toThrow(BadRequestException);
+      expect(mockParticipantModel.create).not.toHaveBeenCalled();
+    });
+
+    it('should reject enrollment when ceremony is not found', async () => {
+      (mockCeremoniesService.findOne as jest.Mock).mockRejectedValueOnce(
+        new NotFoundException('Ceremony not found'),
+      );
+
+      await expect(service.create(createDto, userId)).rejects.toThrow(NotFoundException);
+      expect(mockParticipantModel.create).not.toHaveBeenCalled();
+    });
+
+    it('should allow coordinator to bypass provider whitelist', async () => {
+      (mockCeremoniesService.findCoordinatorOfCeremony as jest.Mock).mockResolvedValueOnce({
+        id: ceremonyId,
+      });
+      (mockCeremoniesService.findOne as jest.Mock).mockResolvedValueOnce({
+        ...mockCeremony,
+        authProviders: [UserProvider.ETHEREUM],
+      });
+      (mockUsersService.findById as jest.Mock).mockResolvedValueOnce({
+        ...mockUser,
+        provider: UserProvider.GITHUB,
+      });
+
+      await service.create(createDto, userId);
+
+      expect(mockUsersService.findById).not.toHaveBeenCalled();
+      expect(mockParticipantModel.create).toHaveBeenCalled();
+    });
+
+    it('should allow coordinator to enroll when ceremony is CLOSED', async () => {
+      (mockCeremoniesService.findCoordinatorOfCeremony as jest.Mock).mockResolvedValueOnce({
+        id: ceremonyId,
+      });
+      (mockCeremoniesService.findOne as jest.Mock).mockResolvedValueOnce({
+        ...mockCeremony,
+        state: CeremonyState.CLOSED,
+        authProviders: [UserProvider.ETHEREUM],
+      });
+
+      await service.create(createDto, userId);
+
+      expect(mockParticipantModel.create).toHaveBeenCalled();
+    });
+
+    it.each([CeremonyState.CANCELED, CeremonyState.FINALIZED])(
+      'should reject coordinator enrollment when ceremony is %s',
+      async (state) => {
+        (mockCeremoniesService.findCoordinatorOfCeremony as jest.Mock).mockResolvedValueOnce({
+          id: ceremonyId,
+        });
+        (mockCeremoniesService.findOne as jest.Mock).mockResolvedValueOnce({
+          ...mockCeremony,
+          state,
+        });
+
+        await expect(service.create(createDto, userId)).rejects.toThrow(BadRequestException);
+        expect(mockParticipantModel.create).not.toHaveBeenCalled();
+      },
+    );
+
+    it('should reject a coordinator of a different ceremony who is not whitelisted', async () => {
+      (mockCeremoniesService.findCoordinatorOfCeremony as jest.Mock).mockResolvedValueOnce(null);
+      (mockUsersService.findById as jest.Mock).mockResolvedValueOnce({
+        ...mockUser,
+        provider: UserProvider.ETHEREUM,
+      });
+
+      await expect(service.create(createDto, userId)).rejects.toThrow(ForbiddenException);
+      expect(mockParticipantModel.create).not.toHaveBeenCalled();
+    });
+
+    it('should read provider from the user record, not session credentials', async () => {
+      (mockUsersService.findById as jest.Mock).mockResolvedValueOnce({
+        ...mockUser,
+        provider: UserProvider.ETHEREUM,
+      });
+      (mockCeremoniesService.findOne as jest.Mock).mockResolvedValueOnce({
+        ...mockCeremony,
+        authProviders: [UserProvider.ETHEREUM, UserProvider.GITHUB],
+      });
+
+      await service.create(createDto, userId);
+
+      expect(mockUsersService.findById).toHaveBeenCalledWith(userId);
+      expect(mockParticipantModel.create).toHaveBeenCalled();
+    });
   });
 
   describe('addParticipantToCircuitsQueues', () => {

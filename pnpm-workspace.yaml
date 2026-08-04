@@ -2,6 +2,22 @@ packages:
   - packages/*
   - apps/*
 
+allowBuilds:
+  "@nestjs/core": true
+  "@scarf/scarf": true
+  "@swc/core": true
+  aws-sdk: true
+  bufferutil: true
+  chacha-native: true
+  core-js: true
+  core-js-pure: true
+  esbuild: true
+  node-datachannel: true
+  nx: true
+  unrs-resolver: true
+  utf-8-validate: true
+  utp-native: true
+
 ignoredBuiltDependencies:
   - "@nestjs/core"
   - "@scarf/scarf"
