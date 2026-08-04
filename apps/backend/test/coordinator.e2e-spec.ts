@@ -49,6 +49,13 @@ const awsIntegrationEnabled = Boolean(
 /** S3-backed steps; skipped when AWS credentials are not configured (local/CI). */
 const awsIt = awsIntegrationEnabled ? it : it.skip;
 
+async function expectOk(response: Response, context: string): Promise<void> {
+  if (!response.ok) {
+    const body = await response.text();
+    throw new Error(`${context}: ${response.status} ${response.statusText} — ${body}`);
+  }
+}
+
 describe('Coordinator (e2e)', () => {
   let app: INestApplication<App>;
   let jwtService: JwtService;
@@ -246,6 +253,119 @@ describe('Coordinator (e2e)', () => {
     15000,
   ); // S3 bucket creation can be slow in CI
 
+  awsIt(
+    'should upload the circuit artifacts to the bucket',
+    async () => {
+      // make the download directory if it doesn't exist
+      if (!existsSync(DOWNLOAD_DIRECTORY)) {
+        mkdirSync(DOWNLOAD_DIRECTORY);
+      }
+
+      for (const circuit of circuits) {
+        const { artifacts, name } = circuit;
+
+        const prefix = sanitizeString(name);
+
+        const localR1csPath = `${DOWNLOAD_DIRECTORY}/${prefix}.r1cs`;
+        await downloadAndSaveFile(artifacts.r1csStoragePath, localR1csPath);
+
+        const localWasmPath = `${DOWNLOAD_DIRECTORY}/${prefix}.wasm`;
+        await downloadAndSaveFile(artifacts.wasmStoragePath, localWasmPath);
+
+        const powersOfTauURL = await getURLOfPowersOfTau(localR1csPath);
+        const localPTauPath = `${DOWNLOAD_DIRECTORY}/${getFilenameFromUrl(powersOfTauURL)}`;
+        await downloadAndSaveFile(powersOfTauURL, localPTauPath);
+
+        const localZkeyPath = `${DOWNLOAD_DIRECTORY}/${prefix}_${genesisZkeyIndex}.zkey`;
+        await zKey.newZKey(localR1csPath, localPTauPath, localZkeyPath);
+
+        const [r1csBlake2bHash, wasmBlake2bHash, potBlake2bHash, zkeyBlake2bHash] =
+          await Promise.all([
+            calculateBlake2bHash(localR1csPath),
+            calculateBlake2bHash(localWasmPath),
+            calculateBlake2bHash(localPTauPath),
+            calculateBlake2bHash(localZkeyPath),
+          ]);
+
+        circuitArtifactHashes[prefix] = {
+          pot: potBlake2bHash,
+          r1cs: r1csBlake2bHash,
+          wasm: wasmBlake2bHash,
+          zkey: zkeyBlake2bHash,
+        };
+
+        await Promise.all([
+          multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            `${prefix}.r1cs`,
+            localR1csPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          ),
+          multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            `${prefix}.wasm`,
+            localWasmPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          ),
+          multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            `${prefix}.zkey`,
+            localZkeyPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          ),
+        ]);
+
+        const alreadyUploadedPot = await checkIfObjectExistAPI(
+          jwtToken!,
+          ceremonyId!,
+          `pot/${getFilenameFromUrl(powersOfTauURL)}`,
+        );
+
+        // If it wasn't uploaded yet, upload it.
+        if (!alreadyUploadedPot) {
+          await multiPartUploadAPI(
+            jwtToken!,
+            ceremonyId!,
+            `pot/${getFilenameFromUrl(powersOfTauURL)}`,
+            localPTauPath,
+            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
+            true,
+          );
+        }
+      }
+    },
+    5 * 60 * 1000, // Sets timeout to 5 minutes
+  );
+
+  // Circuit creation requires the ceremony to remain SCHEDULED (IsCircuitCreateCoordinatorGuard).
+  // Open the ceremony only after circuits are created.
+  it('should create the circuits', async () => {
+    for (const circuit of circuits) {
+      const response = await fetch(`${TEST_URL}/circuits`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${jwtToken}`,
+        },
+        body: JSON.stringify({
+          ...circuit,
+          ceremonyId,
+        }),
+      });
+
+      await expectOk(response, 'POST /circuits');
+      const body = (await response.json()) as Circuit;
+
+      expect(typeof body.id).toBe('number');
+    }
+  });
+
   it('should open the ceremony for enrollment', async () => {
     const response = await fetch(`${TEST_URL}/ceremonies/${ceremonyId}`, {
       method: 'PATCH',
@@ -256,7 +376,7 @@ describe('Coordinator (e2e)', () => {
       body: JSON.stringify({ state: CeremonyState.OPENED }),
     });
 
-    expect(response.ok).toBe(true);
+    await expectOk(response, 'PATCH /ceremonies (open for enrollment)');
     const body = (await response.json()) as Ceremony;
     expect(body.state).toBe(CeremonyState.OPENED);
   });
@@ -375,7 +495,7 @@ describe('Coordinator (e2e)', () => {
       },
       body: JSON.stringify({ uploadId }),
     });
-    expect(mpuResponse.ok).toBe(true);
+    await expectOk(mpuResponse, 'POST temporary-store multipart upload id');
 
     const chunkUrl = new URL(
       `${TEST_URL}/storage/temporary-store-current-contribution-uploaded-chunk-data`,
@@ -393,7 +513,7 @@ describe('Coordinator (e2e)', () => {
       },
       body: JSON.stringify(chunkPayload),
     });
-    expect(chunkResponse.ok).toBe(true);
+    await expectOk(chunkResponse, 'POST temporary-store uploaded chunk data');
 
     const participantRow = await Participant.findOne({
       where: { userId: coordinatorId, ceremonyId },
@@ -422,116 +542,5 @@ describe('Coordinator (e2e)', () => {
     });
 
     expect(response.status).toBe(401);
-  });
-
-  awsIt(
-    'should upload the circuit artifacts to the bucket',
-    async () => {
-      // make the download directory if it doesn't exist
-      if (!existsSync(DOWNLOAD_DIRECTORY)) {
-        mkdirSync(DOWNLOAD_DIRECTORY);
-      }
-
-      for (const circuit of circuits) {
-        const { artifacts, name } = circuit;
-
-        const prefix = sanitizeString(name);
-
-        const localR1csPath = `${DOWNLOAD_DIRECTORY}/${prefix}.r1cs`;
-        await downloadAndSaveFile(artifacts.r1csStoragePath, localR1csPath);
-
-        const localWasmPath = `${DOWNLOAD_DIRECTORY}/${prefix}.wasm`;
-        await downloadAndSaveFile(artifacts.wasmStoragePath, localWasmPath);
-
-        const powersOfTauURL = await getURLOfPowersOfTau(localR1csPath);
-        const localPTauPath = `${DOWNLOAD_DIRECTORY}/${getFilenameFromUrl(powersOfTauURL)}`;
-        await downloadAndSaveFile(powersOfTauURL, localPTauPath);
-
-        const localZkeyPath = `${DOWNLOAD_DIRECTORY}/${prefix}_${genesisZkeyIndex}.zkey`;
-        await zKey.newZKey(localR1csPath, localPTauPath, localZkeyPath);
-
-        const [r1csBlake2bHash, wasmBlake2bHash, potBlake2bHash, zkeyBlake2bHash] =
-          await Promise.all([
-            calculateBlake2bHash(localR1csPath),
-            calculateBlake2bHash(localWasmPath),
-            calculateBlake2bHash(localPTauPath),
-            calculateBlake2bHash(localZkeyPath),
-          ]);
-
-        circuitArtifactHashes[prefix] = {
-          pot: potBlake2bHash,
-          r1cs: r1csBlake2bHash,
-          wasm: wasmBlake2bHash,
-          zkey: zkeyBlake2bHash,
-        };
-
-        await Promise.all([
-          multiPartUploadAPI(
-            jwtToken!,
-            ceremonyId!,
-            `${prefix}.r1cs`,
-            localR1csPath,
-            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
-            true,
-          ),
-          multiPartUploadAPI(
-            jwtToken!,
-            ceremonyId!,
-            `${prefix}.wasm`,
-            localWasmPath,
-            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
-            true,
-          ),
-          multiPartUploadAPI(
-            jwtToken!,
-            ceremonyId!,
-            `${prefix}.zkey`,
-            localZkeyPath,
-            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
-            true,
-          ),
-        ]);
-
-        const alreadyUploadedPot = await checkIfObjectExistAPI(
-          jwtToken!,
-          ceremonyId!,
-          `pot/${getFilenameFromUrl(powersOfTauURL)}`,
-        );
-
-        // If it wasn't uploaded yet, upload it.
-        if (!alreadyUploadedPot) {
-          await multiPartUploadAPI(
-            jwtToken!,
-            ceremonyId!,
-            `pot/${getFilenameFromUrl(powersOfTauURL)}`,
-            localPTauPath,
-            Number(process.env.CONFIG_STREAM_CHUNK_SIZE_IN_MB),
-            true,
-          );
-        }
-      }
-    },
-    5 * 60 * 1000, // Sets timeout to 5 minutes
-  );
-
-  it('should create the circuits', async () => {
-    for (const circuit of circuits) {
-      const response = await fetch(`${TEST_URL}/circuits`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${jwtToken}`,
-        },
-        body: JSON.stringify({
-          ...circuit,
-          ceremonyId,
-        }),
-      });
-
-      expect(response.ok).toBe(true);
-      const body = (await response.json()) as Circuit;
-
-      expect(typeof body.id).toBe('number');
-    }
   });
 });
