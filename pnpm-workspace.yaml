@@ -8,7 +8,7 @@ allowBuilds:
   "@swc/core": true
   aws-sdk: true
   bufferutil: true
-  chacha-native: true
+  chacha-native: false
   core-js: true
   core-js-pure: true
   esbuild: true
@@ -30,7 +30,6 @@ ignoredBuiltDependencies:
 onlyBuiltDependencies:
   - aws-sdk
   - bufferutil
-  - chacha-native
   - core-js
   - core-js-pure
   - esbuild

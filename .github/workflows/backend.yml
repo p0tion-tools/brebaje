@@ -38,10 +38,10 @@ jobs:
           pnpm --version
           which pnpm
 
-      - name: Use Node.js 22
+      - name: Use Node.js from .nvmrc
         uses: actions/setup-node@v4
         with:
-          node-version: 22.17.x
+          node-version-file: .nvmrc
           cache: "pnpm"
           cache-dependency-path: pnpm-lock.yaml
 

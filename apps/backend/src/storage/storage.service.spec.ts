@@ -188,6 +188,22 @@ describe('StorageService', () => {
       expect(mockS3Send).toHaveBeenCalledTimes(1);
     });
 
+    it('should start multipart upload for coordinator without participant enrollment', async () => {
+      ceremoniesService.findOne.mockResolvedValue(mockCeremony as never);
+      ceremoniesService.isCoordinator.mockResolvedValue({ isCoordinator: true } as never);
+
+      mockS3Send.mockResolvedValueOnce({
+        $metadata: { httpStatusCode: 200 },
+        UploadId: 'test-upload-id',
+      });
+
+      const result = await service.startMultipartUpload(mockData, 1, 1);
+
+      expect(result).toEqual({ uploadId: 'test-upload-id' });
+      expect(participantsService.findByUserIdAndCeremonyId).not.toHaveBeenCalled();
+      expect(mockS3Send).toHaveBeenCalledTimes(1);
+    });
+
     it('should throw NotFoundException if ceremony not found', async () => {
       ceremoniesService.findOne.mockResolvedValue(null as never);
 
