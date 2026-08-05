@@ -146,6 +146,9 @@ export class ParticipantsService {
 
       return participant;
     } catch (error) {
+      if (error instanceof HttpException) {
+        throw error;
+      }
       this.handleErrors(error as Error);
     }
   }

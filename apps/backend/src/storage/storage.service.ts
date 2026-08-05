@@ -175,15 +175,21 @@ export class StorageService {
     const bucketName = await this.getCeremonyBucketName(ceremonyId);
 
     const { isCoordinator } = await this.ceremoniesService.isCoordinator(userId, ceremonyId);
-    const { status } = await this.participantsService.findByUserIdAndCeremonyId(userId, ceremonyId);
-    const isFinalizing = status === ParticipantStatus.FINALIZING;
-    if (!isCoordinator && !isFinalizing) {
-      await this.participantsService.checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(
+
+    if (!isCoordinator) {
+      const { status } = await this.participantsService.findByUserIdAndCeremonyId(
         userId,
         ceremonyId,
       );
-      // Check the validity of the uploaded file.
-      await this.participantsService.checkUploadingFileValidity(userId, ceremonyId, objectKey);
+      const isFinalizing = status === ParticipantStatus.FINALIZING;
+      if (!isFinalizing) {
+        await this.participantsService.checkPreConditionForCurrentContributorToInteractWithMultiPartUpload(
+          userId,
+          ceremonyId,
+        );
+        // Check the validity of the uploaded file.
+        await this.participantsService.checkUploadingFileValidity(userId, ceremonyId, objectKey);
+      }
     }
 
     const s3 = this.getS3Client();
